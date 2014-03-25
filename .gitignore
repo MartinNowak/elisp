@@ -1,1 +1,10 @@
 README.html
+*.elc
+*~
+/TAGS
+/octave-core
+/tags
+semantic.cache
+/python-mode/.bzr
+.undo
+.trash
