@@ -1,6 +1,6 @@
 ;;; acronym.el --- Build string acronyms.
 
-(defun acrnoymize-string (string &optional ctx group)
+(defun acronymize-string (string &optional ctx group)
   (let ((mid (cond ((eq ctx 'word)
                     "[[:word:]]*?")
                    ((eq ctx 'symbol)
@@ -18,15 +18,15 @@
      (cond ((eq ctx 'word) "\\>")
            ((eq ctx 'symbol) "\\_>"))
      (when group "\\)"))))
-;; Use: (acrnoymize-string "alpha")
-;; Use: (acrnoymize-string "a.b")
-;; Use: (acrnoymize-string "a-b")
-;; Use: (re-search-forward (acrnoymize-string "Dy"))
+;; Use: (acronymize-string "alpha")
+;; Use: (acronymize-string "a.b")
+;; Use: (acronymize-string "a-b")
+;; Use: (re-search-forward (acronymize-string "Dy"))
 ;; _Dummy_
-;; Use: (re-search-forward (acrnoymize-string "Dy" 'word))
-;; Use: (re-search-forward (acrnoymize-string "Dy" 'symbol t))
-;; Use: (re-search-forward (acrnoymize-string "Dy" 'symbol))
+;; Use: (re-search-forward (acronymize-string "Dy" 'word))
+;; Use: (re-search-forward (acronymize-string "Dy" 'symbol t))
+;; Use: (re-search-forward (acronymize-string "Dy" 'symbol))
 ;; _Dummy_
-(defalias 'string-acronym 'acrnoymize-string)
+(defalias 'string-acronym 'acronymize-string)
 
 (provide 'acronym)
