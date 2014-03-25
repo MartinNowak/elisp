@@ -1,0 +1,2943 @@
+                            -*- mode: org; -*-
+                        -*- coding: mule-utf-8-unix -*-
+
+#+LINK: bugzilla http://10.1.2.9/bugzilla/show_bug.cgi?id=
+#+LINK: google http://www.google.com/search?q=%s
+
+* Emacs ToDoelispelispelispelispelispelispelispelispelispelispelisp* TODO [#A] C/C++
+    Align constructs like these:
+:     IF/ELSE (ID    O ID                     (ID             { ID  O ID
+:     if      (csize < chashid_get_digest_size(CHASH_MD5))    { hid = CHASH_MD5; }
+:     else if (csize < chashid_get_digest_size(CHASH_SHA1))   { hid = CHASH_SHA1; }
+:     else if (csize < chashid_get_digest_size(CHASH_SHA256)) { hid = CHASH_SHA256; }
+
+    This is similar to how the regexp below works but must forbid it from
+    aligning different kinds of parens, hooks etc.
+*** TODO Per Operator Precedence Expression Breaks :Indentation:Alignment
+Inspired by http://www.sgvsarc.com/overview_autoformatting.htm.
+*** DONE [#B] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/d8f910df4b063321/#][Extending Alignment in C/C++ expressions (align.el)]]
+   CLOSED: [2007-09-11 tis 22:00]
+   - M-x customize-variable align-rules-list
+   - C-s c-assignment
+   - Then below you see the regexp-string, which matters.
+				 [^-=!^&*+<>/|
+		     ]\(\s-*[-=!^&*+<>/|]*\)=\(\s-*\)\([^=
+				    ]\|$\)
+     In the middle a single, not parentised `=' - the char taken for indentation.
+     Simply extend expression here, replace `=' by `[{(=]' -
+     a group of signes. (Or any others you want indentation
+     work on...)
+   - Set first attributes Value Menu to "Repeat:"
+   - And again below `Boolean' to "on".
+   /Andreas Röhler
+
+** TODO Execute/Run/Evaluate
+** TODO [#A] Merge Interface for
+    - dired-find-file
+    - dired-run-associated-program
+    - dired-eval-file
+    - eval-defun, eval-region, eval-buffer
+** TODO [#B] RETURN in dired should ask for operation to apply on binary files
+    If [[elisp-symbol:file-executable-elf-p]]
+    - Run
+    - Run with Arguments
+    - View (Read-only)
+
+** TODO [#A] Debugging
+
+*** TODO [#A] Auto-Start GUD upon Setting of Breakpoints in C/C++
+    Ask for exec (defaults guessed from Makefile, Makefile.am, ... or EDE).
+
+*** TODO [#A] GUD-Wrapper for GDB [[http://sourceware.org/gdb/current/onlinedocs/gdb/Conditions.html#Conditions][Conditional Breakpoints]]
+    - "Break on Condition ...": break ... if cond
+
+*** TODO [#B] Add GUD/GDB Interface to Remote Debugging
+    [[shell:gdbserver :PORT PROG]]
+    From gdb shell send commands:
+    [[shell:target remote HOST:PORT; file PROG;]]
+
+*** TODO [#B] How do I guide GUD/GDB and Compiler Messages to source files if they are placed in another directory? (ask gnu.emacs.help)
+
+*** TODO [#A] Upon Startup Error in .emacs display lisp code context and not just:
+   Debugger entered--Lisp error: (invalid-read-syntax ")")
+   eval-buffer(#<buffer  *load*> nil "~/.emacs" nil t)  ; Reading at buffer position 158193
+
+*** TODO [#B] Add entry to "Emacs-Lisp" menu the functions:
+    - edebug-all-forms
+    - edebug-all-defs
+
+*** TODO [#B] Add an entry for EDebug in "Tools" menu
+
+*** TODO [#A] How do I get debug-on-entry() to work
+    Tried with find-file-at-point() but could not get it to work. I need this to
+    figure out what is causing the automatic raising of frames during
+    compilation and debugging.
+
+** TODO [#A] C-c Toggles Case-Sensitivity in find-ectag
+
+** TODO [#C] Use hungry-delete.el in really-hungry.el.
+** TODO [#A] Integrate pardef-mode and hungry-mode
+   Especially fix stuff in c-common-mode.
+
+** TODO Define c-kill-token-2 and bind it to C-M-S-delete in structed.el
+
+** TODO Add General Template Insertion C-c C-j RET to c-assist.el
+   Read string as either: if, while for, etc.
+
+** TODO [#B] /X/ should italicize in latex mode aswell
+
+** TODO [#A] Rename fse(SRC) to fse(DST) upon file rename from SRC to DST.
+   fse stands for file-name-sans-extension.
+
+** TODO [#A] mark-active on X in c-common-mode-hook
+   - Reuse paredit
+   - {,} must haromnize with c-electic-brace
+   - c-insert-if-stub or i (if (use-region-p)): if (SEC_SEL) { SEL1; }
+   - c-insert-for-stub or f: for (SEC_SEL) { SEL1; }
+   - c-insert-while-stub or w: while (SEC_SEL) { SEL1; }
+   - c-insert-switch-stub or s: switch () { SEL1 }
+   - c-insert-main-stub or m: int main (...) { SEL1 }
+   - ...
+
+** DONE [#C] Make use of directory-files-no-dot-files-regexp instead of my version
+   CLOSED: [2010-07-02 fre 11:20]
+
+** TODO [#B] complete-symbol in cc-mode should respect C++ and Java scope operator ::
+   Example =vis::CIR= completes to =vis::CIRCLE=. Reuse ectags.el to find tags including its complete scope.
+
+** TODO [#B] Cache grep results in fcache
+
+** DONE [#B] Pressing g (recompile) in Grep should overwrite existing buffer
+   CLOSED: [2010-05-29 lör 10:24]
+
+** DONE [#B] Make tgrep-repeat and bind it C-c G
+   CLOSED: [2010-05-29 lör 10:24]
+
+** TODO [#B] Fontify Anything Completions
+   - *Buffers* in font-lock-buffer-name-face
+   - *File Name History* in font-lock-file-name-face
+   - *Emacs Commands* in font-lock-function-name-face
+   - *Emacs Variables* in font-lock-variable-name-face
+
+** TODO [#C] Completion should sort according on Context Relevance
+   For example M-x should put dired commands first when in dired-mode.
+
+** TODO [#B] define-minor-mode auto-vc-hint-mode
+   Use in dired-mode by default.
+   Hooks into copy (C), rename (R) and delete (D).
+
+** TODO [#B] Macro that makes it simple to define a face for both dark and bright backgrounds
+   defface-dark-bright
+
+** TODO [#C] eldoc should explain meaning of regex expression such \_< if they are marked
+
+** TODO [#C] Ctrl-a: beginning-of-line-indentation
+   See recenter-top-bottom for details.
+   Check last-command to figure out if second press.
+   Should first go indentation and second press then to beginning of line.
+   Mimic behaviour in org-mode. Reuse [[elisp:back-to-indentation]].
+   M-m. does it for us. Now we can use M-m for something else.
+
+** TODO [#C] M-DEL do c-kill-statement instead of undo or undo-tree-undo
+
+** TODO [#A] Find font-lock bug
+   Probably from Emacs-bzr.
+
+** TODO [#A] Find Sluggish semantic Bug?
+
+** TODO [#C] Shortcut in tags-query-replace for replace all hits in all remaining files.
+
+** TODO [#A] Implement (TRAMP) File-System-Like Interfaces to GConf
+   Either use
+   - DBUS ([[http://emacs-fu.blogspot.com/2009/01/using-d-bus-example.html][Emacs example)]] and [[http://developer.imendio.com/projects/misc/gconf-dbus][GConf D-BUS]]. Fastest!
+   - [[shell:gconftool-2 --help]] or [[shell:gconftool --help]] to fetch information.
+   Add it to package gconf.el.
+
+** TODO [#C] Multi-Sub-Dir VC Update
+   Use locate regexp
+   -  "/CVS" with parent-parent-dir not having sub-dir named "CVS"
+   -  "/.svn" with parent-parent-dir not having sub-dir named ".svn"
+   Allocate lots of windows and put them beside each other.
+
+** TODO [#B] Symref
+*** DONE [#A] Make query version of semantic-symref-list-call-macro-on-open-hits
+    CLOSED: [2010-04-28 ons 22:52]
+*** DONE [#B] Previous/Next Hit Navigation
+    CLOSED: [2010-04-28 ons 22:52]
+*** TODO [#C] Make symref support regexp
+
+** TODO [#C] Unify highwin, pulse, flash-window-region (power-utils.el), next-error etc
+
+** TODO [#C] Duplicate Bug jka-compr, tar-mode entries in auto-mode-alist
+
+** TODO [#B] Colorize Completion Candidates in Senator Lookups/Jumps
+
+** TODO [#A] Automatic Extraction of C function declarations from definitioins
+   When standing on a
+   Use the functions
+
+   - c-beginning-of-defun() followed by the function
+   - c-end-of-statement()
+
+   As [[elisp:semantic-ia-fast-jump]] can now lookup /local variables/ it
+   should easy to create this [[elisp:semantic-extract-function]]
+
+** TODO [#A] Revert to substring match if senator-lookups fail
+
+** TODO [#C] Mark History Undo/Redo
+   How to nicely intergrate with normal undo/redo?
+
+** TODO [#A] Enhance Grep/Compilation Hit Buffer with Fringe Coloring
+
+** TODO [#B] Better Naming Scheme for compilation buffer names
+
+** TODO [#C] Add support for GCC Swedish translations (fel, varning, anm:) in compilation-error-regexp-alist
+
+** TODO [#B] Make compilation-mode detect gcc-4.4 Notes (ask gnu.emacs.help)
+   Emacs should detected the 3:rd line in
+: pmdb/pobj.c: In function 'pobj_getCHash':
+: pmdb/pobj.c:226: warning: passing argument 1 of 'ppatt_getCHash' discards qualifiers from pointer target type
+: pmdb/ppatt.h:1176: note: expected 'struct pPatt *' but argument is of type 'const struct pPatt *'
+: pmdb/pobj.c: In function 'mhash_id_from_size':
+
+** TODO [#A] Compilation Source File Lookup Bug
+   Emacs doesn't correctly guess (and open) the source files in
+   sub-directories of compilation root. For example it thinks that the
+   following line
+:  dvis/forces.cpp:14:35: fel: "VREL_PARENT" deklarerades inte i detta definitionsområde
+   should open the file
+:  dvis/forces.cpp:14
+   instead of
+:  dvis/forces.cpp
+   The solution would be to search for the source file
+   1. "dvis/forces.cpp"
+   2. "dvis/forces.cpp:14"
+
+** TODO [#A] Preserve All kinds of Cases in Replaces such as
+   Example: Replacing prel with vrel should mean
+   - pRel => vRel
+   - PRel => VRel
+   Ask Google Groups on this one.
+
+** TODO [#A] Isearch during macro should only Signal Bell when leaving isearch mode
+   See [[isearch-mode-end-hook]]. Requires modding isearch.el.
+
+** TODO [#A] Refactoring Pattern Language (RPL)
+   Should be as /easy/ as possible to /specify/. Input is assisted by a
+   graphical 2-dimensional interactive representation. Relaxes whitespace using
+   lex-utils.el. Alternatively extend [[elisp:(describe-function 'rx)]] with these
+   symbols (rx token op type enum class struct id fun "(" var lit). Input should
+   support *incremental input* like *Isearch* does.
+*** Syntax
+    C-like (therefore I suggest to use dollar sign, which is normally
+    not used in C-like languages.
+    - whitespace relaxed
+    and be inspired by the following use-cases
+    - =$TOKEN=: *Token*
+      - =$OP/$O=: *Operator (Token)*
+      - =$TYPE/$T=: *Primitive or User-Defined Type Specifier (Token)*
+        - =$ENUM/$E=: *Enumeration*
+        - =$CLASS/$C=: *Class*
+        - =$STRUCT/$S=: *Structure*
+      - =$ID=: *Identifer (Token) specified by user*
+        - =$VAR/$V=: *Variable*
+          - =$VDECL=: *Declaration*
+          - =$VDEF=: *Definition*
+          - =$VREF=: *Reference*
+          - =$VMOD=: *Modification/Change*
+        - =$FUN/$F=: *Function*
+          - =$FDECL=: *Declaration*
+          - =$FDEF=: *Definition*
+          - =$FREF=: *Call (Reference)*
+      - =$LIT/$L=: *Literal (Token)*
+        - =$BIN=: *Binary: 0b1001*
+        - =$DEC=: *Decimal: 42*
+        - =$OCT=: *Octal: 0x07*
+        - =$HEX=: *Hexadecimal: 0xff*
+        - =$STR=: *String: "xyz"*
+        - =$CH=: *Character: 'x'*
+    - =$EXPR/$X=: *Expression*
+    - =$ARG/$A=: *Function (Call) Argument*
+    - =$ARGLIST/$AL=: *Function (Call) Argument List*
+    - =$STMT=: *Statement*
+    - $( $EXPR $): *Matching Parentheses*
+    - $[ $ID $]: *Matching Hooks*
+    - ${ $STMT $}: *Matching Braces*
+    - *Limiters*
+      - *Type*
+        - $(OFTYPE T ...): *Expression ... of Type T*
+      - *Context*
+        - $(DECLRET(N) ...): *Expression ... in Context Function Return
+        - $(DEFRET(N) ...): *Expression ... in Context Function Return
+        - $(DECLARG(N) ...): *Expression ... in Context Function Declaration Argument Number N
+        - $(DEFARG(N) ...): *Expression ... in Context Function Definition Argument
+        - $(CALLARG(N) ...): *Expression ... in Context Function Call Argument
+          - $(BEGINCALLARG ...): *Expression ... at Beginning of Function Call Argument
+          - $(ENDCALLARG ...): *Expression ... at Beginning of Function Call Argument
+*** Common Examples
+   - Pattern *Matcher* can be
+     - Reference of =$ID= rx or regexp, say "x[0-9]" (using [[elisp:semantic-symref]])
+       - of type =$TYPE=
+       - in context =$CTX= function call argument.
+   - Operation on *match* can be
+     - Delete
+     - Rename
+     - Upcase or Downcase
+     - Move
+:  int * x = 42 ;
+:  $T * $V = $DEC ;
+:  $T * $V = $HEX ;
+:  $T * $ID = $NUM ;
+:  $T * $ID = $HEX ;
+
+** TODO [#A] Navigate, Complete, Kill, Copy and Edit Function Arguments in C-like Languages
+   Use my arg-navigation functions at the end of c-assist.el
+   And c-eldoc:
+   - [[elisp:c-eldoc-format-arguments-string]]
+   - [[elisp:c-eldoc-function-and-argument]]
+   If you write code like this:
+:  (let ((ctxt (semantic-analyze-current-ctxt)))
+:     ...)
+   while point is in code like this:
+:  int main(int argc, char*argv[]) {
+:    main(1,!);  // Cursor is the !
+:  }
+   Then the ctxt has slots like this:
+: ] :function #<TAG LIST: 1 entries>
+:  * main : int
+: ] :index 2
+: ] :argument #<TAG LIST: 1 entries>
+:  * argv : char
+   which you can examine in detail with the command
+   [elisp:semantic-adebug-analyze]].
+   Then use [[elisp:semantic-analyze-possible-completions]].  Those two
+   items along with [[elisp:semantic-documentation-for-tag]] should
+   provide all the data needed to create the UI you are looking for.
+   Also see [[elisp:semantic-ia-show-doc]].
+   Also see the mail thread [[https://mail.google.com/mail/?ui=2&shva=1#inbox/127fbfc96405013a]].
+
+** TODO [#A] Detect X.d as C/C++ dependency file when X.h and X.c exists
+   And contains for example
+: asxparser.d asxparser.o: asxparser.c config.h playtree.h playtreeparser.h \
+: stream/stream.h config.h mp_msg.h config.h stream/url.h stream/network.h \
+: stream/stream.h stream/http.h libmpdemux/demuxer.h stream/stream.h \
+: libass/ass_mp.h subreader.h libass/ass.h libass/ass_types.h asxparser.h \
+: mp_msg.h m_config.h
+   Use fmd.el to override auto-mode-alist
+
+** TODO [#B] Make C++ templates hooks be interpreted as "(" and but leave less-than operator as usual
+   This behaviour is not supported by Emacs syntax table. So we need
+   to think outside the box.
+:  (modify-syntax-entry ?< "(")
+:  (modify-syntax-entry ?> ")")
+
+** TODO [#A] Add hook to find-file that prompts user to open it with sudo rights instead?
+
+** TODO [#A] Improve Interface using new Animated image API.
+   See symbols starting with =image-animate=.
+
+** TODO [#C] Wish: [[elisp:(match-data)]] in tree-format
+
+** TODO [#A] Enhance Interface of =read-regexp=
+   In [[elisp-symbol:read-regexp-mode-map]] C-( and C-) inserts \( and \).
+
+** TODO [#A] read-file-name-of-types() doesn't work
+   In [[elisp:icy-mode]] it matches *everything*, in non icy-mode it
+   matches *nothing*.
+
+** TODO [#A] Save ectags obarray to Memory/File when we do =find-ectag= outside current ectags root directory
+
+** TODO [#A] ASync FIle Operations in Dired/TRAMP
+   Reuse [[http://www.emacswiki.org/emacs/Sunrise_Commander#toc4][Sunrise Commander: The Loop Extension: copying and renaming files in the background]]
+
+** TODO [#A] Auto-Open in Binary and Unrecognized Files in hexl-mode
+
+** TODO [#B] fmd-file-or-cache-match-uncached in cscan.el fails
+   Debugger entered--Lisp error: (error "Selecting deleted buffer")
+:  cscan-file-uncached("~/pnw/cognia/pmdb/pany.hpp" "#!\\s-*\\(?:/.*\\)" 0 t txt nil 64 (19326 22834) 1871)
+:  cscan-file("~/pnw/cognia/pmdb/pany.hpp" "#!\\s-*\\(?:/.*\\)" 0 t nil txt nil 64)
+:  (and (file-regular-p filename) (cscan-file (file-chase-links filename) "#!\\s-*\\(?:/.*\\)" 0 t nil (quote txt) nil fmd-script-type-magic-limit))
+:  (lambda (filename) (and (file-regular-p filename) (cscan-file ... "#!\\s-*\\(?:/.*\\)" 0 t nil ... nil fmd-script-type-magic-limit)))("~/pnw/cognia/pmdb/pany.hpp")
+:  fmd-file-or-cache-match-uncached("~/pnw/cognia/pmdb/pany.hpp" Script nil)
+
+** TODO [#B] Make misearch.el support C/C++ Header/Source
+   See CEDET package eassist.el.
+
+** TODO [#B] Make Emacs Visualize output from Serial Devices
+   See [[http://www.gnu.org/software/emacs/elisp/html_node/Serial-Ports.html][37.19 Communicating with Serial Ports]].
+   Write a special mode [[file:dev-mode.el]] for it.
+
+** TODO [#B] Do =deactivate-mark= in functions that use use-region-p
+   For example fancy-rgrep-string and find-ectag
+
+** TODO [#B] Extend info-look in C/C++ to support more libraries upon inclusion of their header files
+   See: caml-info-look.el for details.
+
+** TODO [#A] Save/Load symbol-face cache to/from file upon Exit/Startup
+
+** TODO [#A] Enhance [[undo-tree.el]] with flashing/highlighting and fringe
+
+** TODO [#A] TScan
+   - When opening files as bin set them as read-only.
+   - Clustered Query Replace
+     Use read-char-spec:
+     - y/n: Accept/Decline and go to next
+     - h: Hit
+     - c: Cluster
+     - a,!: All
+   - Hit Buffer *Fringe* Coloring
+   - *Multi-Search*: Best Match First
+   - Regexp *Sub-Match Coloring* like Google Apps Search Does.
+     Reuse [[elisp:(read-regexp "Regexp")]].
+
+** TODO [#A] TScan/Grep/Locate: M-r toggle regexp
+   See [[elisp:(describe-variable 'minibuffer-local-map)]]
+
+** TODO [#A] Minibuffer Pattern Combination Operations
+   - C-%: Either (OR)
+   - C-&: And/All (AND)
+   Ask Drew Adams how to /generalize/ to to other kinds of input than strings
+   and regexps.  Use in TScan Key Input and hint these.
+   Minibuffer Hint String: "C-% (OR) C-& (AND)"
+
+** TODO [#A] Enhance Semantic Tags with Fringe Coloring
+
+** TODO [#A] Tag-Find Completion when cursor on do_thing in Class::do_thing() should not propose Class::do_things() aswell.
+
+** TODO [#B] pnw-comment-dwim() and c-insert-doxygen-line-comment()
+   Reuse [[ectags-tag-kinds-at-point]]
+
+** TODO [#B] Extract Tag Doc in ectags.el for use by icicle-help and add as a string
+   Support curly variants of markups for example:
+:  @em{nota bene}
+
+** TODO [#B] Use setf/putf to set all obarray-interned symbols :face value to be a reference to a face.
+
+** TODO [#C] Add rx() expressions to all complex regexps
+   Search for [[re-search-forward]], [[looking-at]].
+
+** TODO [#A] FIx Expansion
+*** TODO [#A] try-expand-ectag(first?). Inspire try-expand-tag(), try-expand-substring-tag(),
+*** TODO [#B] TAB+TAB, TAB expands again. Inspire kmacro-end-and-call-macro.
+
+** TODO [#B] Merge file-journal.el into session.el.
+
+** TODO [#C] Bug: eldoc current arg highlight is updated by paredit-mode navigation functions
+
+** TODO [#B] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/8830a83f25a09590#][Quote Selection Do What I Mean (DWIM)]]
+   Use [[file:wrap-region.el]] or [[elisp:paredit-insert-quote]] in
+   [[file:paredit-extension.el]].
+
+** TODO Merge paredit with auto-pair.el auto-pair+.el and skeleton-pair-insert-maybe
+See http://code.google.com/p/autopair/.
+
+** TODO [#B] How do I fetch [[https://code.launchpad.net/s-x-emacs-werkstatt]]?
+
+** TODO [#B] Tag Lookup Default Argument should be sensitive to Member Tags in C++, Java, C#, etc.
+   Modify functions icicle-find-first-tag (find-tag).
+   Use packages thingatpt.el and thingatpt+.el.
+
+** TODO [#B] Add interface and keybinding for [[elisp:vc-delete-file]] in [[elisp:vc-dir-mode]]
+** TODO [#B] vc-dir() should ask for directory of database if serveral overlapping VC Databases are present
+** TODO [#B] atags.el should call make tags if BOL tags: is present in Makefile
+   Reuse EDE to find out if target tags is present.
+
+** TODO [#B] hl-line-mode doesn't always work during =tags-query-replace=
+** TODO [#B] Regexp that makes zero pointer inits use "NULL" instead of "0"
+   (tags-query-replace "\([a-zA-Z_]+\)\s-*\*\s-*\([a-zA-Z_]+\)\s-*=[ ]*0;" "\1 * \2 = NULL;")
+
+** TODO [#A] Doxygen-Enhance pnw-comment-dwim()
+   - Line Comment: Looking back on macro, variable or function definition.
+     In c++-mode insert: "///< "
+   - Block Comment: Looking at blank line followed by macro, variable or
+     function definition. This is already defined in somewhere but does not
+     work quite right yet.
+
+** TODO [#A] GNU GLOBAL Single FIle Update Support
+   Use option --update-file.
+   Patch: https://mail.google.com/mail/?zx=1e107ujr27y6n&shva=1#label/GNU+GLOBAL/122f77dfc0986ba0
+
+** TODO [#C] Entries in locate-mode should be copyable (C) and deleteable (D) like in dired-mode
+
+** TODO [#A] ctags-prepare-lookup fails in atags-prepare-lookup().
+
+** TODO [#B] file:emdb.el Make TKEY into a list of Type Key Strings and put CATEGORY last in this list
+   Now we can lookup emdb-types using for example:
+   - [[(and "C" "Header")]]
+   - [[(and "C++" "Source")]]
+   - [[(or "C" "C++")]]
+
+** TODO [#A] [[M-x icicle-find-first-tag]] ger felen
+   - "Symbol's function definition is void: ftype"
+   - "Symbol's function definition is void: nil"
+   Händer bara när vi står i en katalog som inte har någon TAGS-fil.
+
+** TODO [#B] vc-dir: Query VC Root when Multiple VC Parenting Roots exist
+
+** TODO [#B] Abbrev Expand
+
+*** TODO [#A] Smarter Abbrevations Expansion
+**** TODO Make mdabbrev-expand revert to standard dabbrev-expand if mdabbrev-expand has no completion
+**** TODO [#A] New built-in function: all-sub/partial-completions() should speed Icicles dabbrev-expand-partial
+**** TODO [#A] Complete Source files of Import Statements in C/C++
+     - Search for use of regexps in file:pnw-regexps.el
+     - Reuse mdabbrev-expand to allow mid-expansion.
+
+**** TODO [#A] String Dynamic Abbreviations (sdabbrev)
+     Like dabbrev-expand but for strings. Scanner searches for pattern: "[^"]"
+     and skipping backslashed (escaped) double-quotes \" inside string.
+**** TODO [#C] dabbrev-expand() should choose the most common first
+**** TODO [#C] Highlight dabbrev-expand() hits found in other visible buffers.
+
+*** TODO [#A] Bug in mdabbrev-expand()                               :Regexp:
+    Does not work for Lisp Identifers/Symbols that contain for pluses. Can it
+    have something to do with Regular Expressions and syntax-table?
+
+** TODO [#A] Highlight Minibuffer when cursor is there.
+   Try using a colorized frame as in standard GUIs *GTK* and *Aqua*.
+
+** TODO [#A] Default Minibuffer Completion should do order-independent word completion :Google:Search:Style:
+   M-x =find-file= TAB should show =find-file=, =find-this-file=, =find-other-file= etc.
+   This reflects the way we search on Google. Exact words are important, order is not.
+
+** TODO [#A] Minibuffer Hinting Help for Prefix Commands (Keymaps) using [[elisp:define-prefix-command()]]
+   - unicomplete-map: "Complete:" See: org-remember() for hints.
+   - vc-.*-map: Version Control:
+   - Fontify Keyboard Combinations in font-lock-key-comb-face in
+     pnw-faces.el. Use some boxed minus or plus as *Simultaneous Combinator*
+     Symbol.
+   - Also see mult-press.el.
+
+** DONE [#B] TAB TAB TAB... should Continue Expand Hippie-Expand Candidates
+   CLOSED: [2009-11-13 fre 10:35]
+   This is essentially what yank-pop (bound to M-y) does. so check out its
+    implementation in simple.el. basically, you need the variables last-command
+   and this-command.  See:
+   http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/107a06516a940f24
+   - Replace my use of define-prefix-command() in unicomplete.el for this to work nicely.
+
+** TODO [#B] Design Patterns in Emacs
+   Menu: "Patterns" should *remind* or *inspire* the user during the *creative*
+   *brainstorming* phase of development.
+
+** TODO [#B] Print http://www.emacswiki.org/emacs/PareditCheatsheet and perhaps activate it!
+
+** TODO [#C] Test Email/News Clients
+   - *GNUs*
+   - [[http://box.matto.nl/emacsgmail.html][Vanderlust]]: Advanced?
+
+** TODO [#C] Syntax Highlight in [[proced]]
+
+** TODO [#C] Every Function in Emacs-Lisp Should be Source-Reflective even if it is compiled (ask gnu.emacs.help)
+
+** TODO [#B] Optimize Font Lock :Syntax:Highlighting:Performance:Speed:
+   See. font-lock, jit-lock. Benchmark font-lock-fontify()
+
+** TODO [#A] Use ToolTips!
+   - Reuse [[elisp:(pos-tip-show "Tip")]]
+   - Google for tooltip in Emacs Lisp Reference Manual.
+   - See doc on [[elisp-fun:tooltip-show()]].
+   - Grep for tooltip-show under [[file:~/cs/]].
+   - See [[file::auto-complete.el]].
+   - See [[file::dabbrev-expand-multiple.el]].
+   - Also see http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/db3c5fb7c3efc8c5?pli=1.
+   - Use with
+     - tooltip-help.el.
+     - eldoc-mode
+     - which-function-mode (which-func.el)
+
+** TODO [#B] Merge fixme-mode.el with my pnw-alert-tags.el and display them in imenu "TAGS" menu.
+
+** TODO [#B] ECB Left-Clicks Does not Follow Links which is Standard in Emacs (ask ECB maintainer)
+
+** TODO [#B] Enhance ECB Directory View with VC-state Icons on the Directories like TortoiseSVN does.
+
+** TODO [#B] Trigger Insertion of SRecode Templates from my unicomplete <tab> <tab> (ask Eric M. Ludlam)
+   Tedious manual specifications for now.
+*** TODO In emacs-lisp-mode
+    - [[read "]] triggers complete filename
+    - [[defvar ]] triggers [[elisp:(srecode-insert "declaration:variable")]].
+    - [[defconst ]] triggers [[elisp:(srecode-insert "declaration:variable-const")]].
+    - [[defcustom ]] triggers [[elisp:(srecode-insert "declaration:variable-const")]].
+*** TODO In c-mode
+*** TODO In c++-mode
+
+** TODO [#C] Make insert-relative() non-recursive, perhaps reusing some list-find-operation?
+
+** TODO [#C] Colorize [[X]] in [[(compile "X")]] in shell-mode style
+** TODO [#A] Colorize Strings in Overline
+
+** TODO [#C] Add YASnippets for emacs-lisp
+   See: [[http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/ff1fac06a3b04ae2?hl=sv#][YAsnippet Emacs-Lisp Templates]]
+*** Change the triggering of these like follows:
+    - "let" => ("(" WS "let")
+    - "fun" => ("(" WS "defun")
+    - "mac" => ("(" WS "defmacro")
+
+** TODO [#C] Alternative Triggering of YAsnippet Expansions
+   See: http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/0f44932971db4de7#
+   Can we solve this with symbol links?
+
+** TODO [#B] Lookup Unicode Symbol from its standard symbol naming
+   Use hashtable from name string to unicode symbol.  Use
+   [[file:pnw/src/UNICODE.h]] and [[file:unicode-overlays.el]].
+
+** TODO [#A] Use http://www.emacswiki.org/emacs-en/PaulTipper
+
+** DONE [#B] Unified Interface to Marking with prefix key M-m. See
+   CLOSED: [2009-06-11 tor 20:17]
+   See mark-thing
+
+** IN-PROGRESS [#C] Extend Bindings in tree-buffer.el with Keys:
+   - \+ <right>
+   - \- <left>
+   - \* expand-whole-tre?
+
+** TODO [#B] Merge Aquamacs changes into my stuff
+
+** TODO [#A] Make elib structures compatible with setf() by calling defsetf() on them
+
+** TODO [#C] Mark a Lisp Sexp get Assistance on Possible/Suitable Functions that modify it
+
+** TODO [#C] Emacs Lisp defalias() not supported by Semantic Index-menu (ask Eric M. Ludlam)
+
+** TODO [#A] Use SRecoder Comment Generate in pnw-comment-dwim()  (ask Eric M. Ludlam)
+   Only if possible otherwise default to standard =comment-dwim()=. Look at
+   =srecode-document-insert-comment()= to see how to implement it.
+
+** TODO [#B] Grep/Locate Interface Enhancements
+*** TODO [#C] with =git grep --cached -E=
+   - If given directory contains .git try with =git grep --cached -E= instead.
+*** TODO [#C] Content part of Grep hits should be syntax highlighted
+    Easily implemented if a hit's file is opened in a buffer.  Just use
+    buffer-substring() if the buffer exists and copy strings properties to grep buffer.
+*** TODO [#A] Hide call to grep in grep-buffer
+*** TODO [#B] Navigation grep hits in org-mode buffers does not expand hit context as they do with isearch
+*** TODO [#B] Fault Tolerant, Redundant, Fuzzy, Grep for Text
+    Grep for text with multiple words, dynamically reordering the hist as they
+    come according to a ranking function:
+    - Maximum Number of Word-Consecutive Matching Characters.
+    - Reuse file:/usr/bin/agrep.
+*** TODO [#C] In pnw-grep.el
+    Skip default completely if (thing-at-point 'symbol) is nil or ""
+    and don't perform grep and instead signal error if patt was "" or nil.
+    Do the same with my pnw-locate-string() and pnw-locate-regexp()
+*** TODO [#C] Grep/Compilation Window Adjustments
+    Grep/Compilation of C/Lisp should shrink-window-if-larger-than-buffer().
+    This adjustment should be done when Grep/Compilation process completes.
+    - Buffer Name for Emacs Lisp Compilation: "*Compile-Log*"
+*** TODO [#C] Syntax Highlighting in *Locate*
+    Highlight matching part in hits as grep does.
+*** TODO [#B] Enhanced Grep Interface for Compressed Files
+    Detect if a file is compressed and do either
+    1. Query the user if he wants to decompress and scan the file.
+    2. Collect all the compressed files in a cluster and ask the user at the end
+       of the scan.
+    Use: zgrep, zfgrep, zegrep, bzgrep, bzfgrep, bzegrep
+*** TODO [#B] fancy-rgrep should hide current-directory of the hit file part
+*** TODO [#A] If normal grep fails revert to fuzzy grep (agrep).
+    Ask gnu.emacs.help how to check for empty hit list from grep.
+    From what you want to do, it sounds like you need a combination of "grep -c"
+    and compilation-finish-functions. But from you question, it sounds like you
+    want something like this:
+    (adapted from my package full-ack.el, which is an ack front-end)
+: (defun grep-count-matches ()
+:  "Count the matches printed by `grep' in the current buffer."
+:  ;; Force fontification.
+:  (font-lock-fontify-region (point-min) (point-max))
+:  (let ((c 0)
+:        (beg (point-min)))
+:    (setq beg (next-single-char-property-change beg 'font-lock-face))
+:    (while (< beg (point-max))
+:      (when (eq (get-text-property beg 'font-lock-face) 'match)
+:        (incf c))
+:      (setq beg (next-single-char-property-change beg 'font-lock-face)))
+:    c))
+*** TODO [#A] Google-like Fuzzy Search (GreP) Fault-Tolerant using all possible regexp combinations N-faculty (N!) of the given search terms:
+    - Use [[elisp-var:worder-insensitive-flag]]
+    - For each file grep for all Regexp Combinations (case-insensitive) of a
+      given set of word (in any order)
+    - '(alpha beta) =>
+      - "alpha" SPACING "beta"
+      - "beta" SPACING "alpha"
+    where SPACING can be either
+    - ".*" (single-line)
+    - "[.\n]*" (multi-line)
+    - "\s-*"
+    - Functionize and reuse interactive spec. for =regexpl-search-replace-list()= in [[file::regexpl.el]].
+      into read-string-pairs().
+    - Reuse =all-combinations()= in [[file:combinations.el]].
+    - Handle 'all and 'some cases of MULTI-FLAG.
+
+** TODO [#A] Fix Bug in eassist.el and then activate it in pnw-dot-emacs.el (ask Eric M. Ludlam)
+   Cannot require nor compile it.
+
+** TODO [#A] Fix Semantic Symref Global Error
+
+** TODO [#C] Define and use key–binding-face
+
+** TODO [#C] Support Doxygen Template Parameter Doc Tag @tparam in C/C++ Assistance (pnw-cc-tools.el)
+
+** TODO [#C] Auto-Suggest Removal of all references (#includes) to header file X upon its deletion
+
+** TODO [#B] Menu: "Options" => "Completion for Query Replace" ISearch Bug
+   Makes it impossible to leave replacement text empty.
+
+** TODO [#A] Use CEDET's [[http://cedet.sourceforge.net/codegen.shtml][Code Generation]] instead of my hacks in pnw-cc-tools.el
+   Add these features to C++ menu.
+
+** TODO [#A] Use doc-mode.el and integrate with pnw-cc-tools.el
+   Fantastic help for Doxygen/Javadoc:
+   - Auto-Assist Function Template
+   - Auto-Update Variable Docs
+   - Auto-Reorder
+
+** TODO [#B] Multi/Compount Selection Operations
+   S/C-M-w adds region to multi/compound selection.  Find common
+   prefix/sub-string in multi-selection and use this as source argument to
+   query-replace when compound-version of transient-mark-mode is active.
+
+** TODO [#A] [[elisp-fun-regexp:.*query-replace.*]] should insert active-region if transient-mark-mode is active.
+
+** TODO [#B] Complete Ops/Fun using Multi-Argument (Selection) structs/classes
+*** TODO [#A] Often Convenient to go through Multiple Selections
+*** TODO [#A] Use ectags.el (Easier)
+*** TODO [#A] Use Semantic (Harder and Slower but More Correct)
+*** TODO [#A] Use second-sel.el
+
+** TODO [#C] Highlight Active Region (ask gnu.emacs.help)
+
+** TODO [#B] Split up pnw-dot-emacs.el into ~/elisp/mine/eload-....el
+
+** TODO [#A] Integration with Unit Testing Frameworks
+*** DONE Upon buffer-save run Unit-Tests, after compile and load.
+    CLOSED: [2009-06-23 tis 14:55]
+    See =query-test-buffer()= in [[file:do-on-save.el]].
+*** TODO [#A] Emacs Lisp: elk-test.el
+    - Pro: Provides *menu* for running tests. Tests can be *defined together*
+      with the code it tests, which is my preferred way of working.
+*** TODO [#B] Emacs Lisp: etest.el
+    - Pro: *Syntax-highlights* result buffer.
+*** TODO [#C] Emacs Lisp: el-expectations.el
+*** TODO [#A] Emacs Lisp: elunit.el
+*** TODO [#C] General: test-runner (WORK IN PROGRESS) Unit Tests
+    Run your JUnit, CxxTest, Ruby Test::Unit, .elk-test or you own test cases
+    from within Emacs. See [[http://nschum.de/src/emafcs/test-runner/]]
+*** TODO [#C] General: autotest.el
+*** TODO [#C] General: test-case-mode.el
+*** IN-PROGRESS Thoughts on Unit Testing (ask gnu.emacs.help)
+**** Subject: Unit Testing Framework Wishlist
+**** Text:
+     Does anyone know of any Unit Testing Framework that integrates nicely with
+     the code it is testing --- I believe the tests should lie as close to the
+     defs (defun/defmacro/...) as possible so that people don't forget to keep
+     the tests up-to-date.
+
+     I already have a query-for-compile-and-load-hook attached to
+     save-buffer. I indent to extend this to a compile-load-and-test hook where
+     the load-and-test will only run if the compile is a success.
+
+     I also would like the Unit-Test (minor-mode i guess) to auto-detect tests
+     (in emacs-lisp-mode) and then populate a "Test"-section in the
+     imenu-menu. Along with also add a “Test” menu to menubar that lists the
+     different tests present in the current buffer, with an extra target for
+     "all".
+
+     Does anyone know of unit test framework that fullfils some or even all of
+     these requirements?
+
+     Thanks in advance,
+     Per Nordlöw
+
+** TODO [#C] What can fringe-helper.el do for me?
+
+** TODO [#B] Org-Mode
+
+*** TODO [#B] org-mode should fontify elisp-links in emacs-lisp-mode
+    You could probably use =mumamo-quick-static-chunk= for this. (You must
+    define a new multi major mode too, using =define-mumamo-multi-major-mode=.
+    See: file:mmm-mode.el, file:mumamo.el, file:multi-mode.el.  Org-mode now
+    has support for inlining source code. Syntax Highligting of these sections
+    are probably under way. Example for C Code:
+#+BEGIN_SRC c
+    #include <stdio.h>
+    int foo(int x, int y);
+#+END_SRC
+
+*** TODO [#A] Org-Mode Should Remember Outline Folding State!
+
+*** TODO [#B] Org-Mode Templates for Posting Questions to Google Groups
+    - Template asks for:
+      1. Question: Text Block
+      2. Title: Line
+      3. Group Name: Complete using: [[elisp:google-groups-names]]
+
+** TODO [#B] Dragged Web Links are converted into org-links using both its URL and Title. (ask gnu.emacs.help)
+
+*** TODO [#B] Read [[http://members.optusnet.com.au/~charles57/GTD/org_dates/][Using dates and times in Emacs org-mode]]
+
+** TODO Reusable Key Regexps (ask gnu.emacs.help) :Regular:Expression:
+*** TODO [#B] C Identifer (c-id-regexp)
+    Is this efficient?: \(\sw\|\s_\) \(\sw\|\s_[0-9]\)+
+*** TODO [#B] C Type (c-type-regexp)
+
+** TODO [#A] Ask Drew Adams: Not Enough Face Attributes in Emacs
+   icicle-historical-candidate-face and others defined
+   Icicle-Completions-Display overrides my font-lock-class-face. This is used
+   in my ECTags Colorized Interface (ectags.el) and in my C++ Coding Assitance
+   defined in (pnw-cc-tools.el).
+
+   An alternative would be to add prefix/suffix character to Completion
+   Candidates. This will probably result in a performance hit because
+   Candidates will need to be re layed-out when a character is added to any of
+   candidates.
+*** What String Attributes Have I Missed?: propertize()
+*** Can we set background pattern for specific buffers, modes etc.
+
+** TODO [#C] Dired Mark and Apply-Macro (ask gnu.emacs.help)
+   Use [[elisp:for-each-dired-marked-file()]].
+
+** TODO [#C] dired-mark-all-alike
+Use directory-files-of-types
+
+** TODO [#A] Make rename-files-in-list() operate only on the relative part of the filenames
+
+** TODO [#C] Make Builtins
+   - Highlight them in font-lock-builtin-variable-face inheriting font-lock-builtin-face
+   - Make them insertable with completion from Make menu.
+
+** DONE [#C] Dired Mark and Add-To-Project using EDE
+   CLOSED: [2009-06-09 tis 14:40]
+   Logic already present in EDE: [[elisp:(add-hook 'dired-mode-hook 'ede-dired-minor-mode)]]
+
+** TODO [#B] Natural UI Tip for icicle-file()
+   Empty minibuffer enter local filename (without parenting directory) and
+   press S-TAB to do a locate-file.
+
+** TODO [#B] Coding Assistance in Build Tools (makefile-mode, jam-mode, autoconf-mode)
+*** Project Ops (Clean) Completion (reusing imenu regexp)
+    - Clean: [[shell:bjam —clean debug release libxxx]]
+*** Menu Entries and Mouse-Over Descriptions for Implicit Rules, Macros, Variables, etc.
+    See: [[file:///usr/share/doc/bjam/index.html][Boost.Jam : 3.1.16 Documentation]]
+
+** TODO [#A] Optimize Emacs Lisp Code
+*** TODO Use push()
+    Use [[elisp:(setq x (cons y x))]] instead of [[elisp:(push y x)]] to avoid copying.
+
+** TODO Highlight patterns such as
+: pmdb/ppatt.c: In function 'ppatt_read_instance_limits':
+   in font-lock-function-name-face
+
+** TODO Use Boxed Letter as type prefix when pretty displaying tags
+   - F Function
+
+** TODO [#A] Intermittent Bug in recompile() C-f9
+: Debugger entered--Lisp error: (wrong-type-argument stringp nil)
+:   get-buffer-create(nil)
+:   compilation-start("\\nice -n 19 scons -j 2 t_pmdb")
+:   apply(compilation-start "\\nice -n 19 scons -j 2 t_pmdb")
+:   recompile(nil)
+
+** TODO [#A] browse-kill-ring() gives empty result
+   ask Drew Adams.
+
+** TODO [#A] vc-global-update(): find-buffer-no-select and use locate to find all dirs that are version controlled
+   Optional argument limits locate to given dir-tree.
+
+** TODO [#A] Navigation and Deletion does not care about sub-words in identifiers in python-mode
+
+** TODO [#A] Detect and Propose Automation of Interaction (UI) History Repetitions/Cycles (Future)
+   Propose to make command repeatable using package [[elisp-package:repeatable.el]].
+   - Detect Interpolations in Relative Cursor Movements or Absolute History.
+   - Convert consecutive [[self-insert-command]] to a string and detect interpolations.
+   - Minibuffer feedback only when the user normally looks at it.
+   - Interaction: (message "Future Prediction Available. Press C-x Z to
+     automate."). Bind C-x Z to [[repeat-future-dwim]].
+   - Avoid <help-echo> and <mouse-movement> in lossage.
+*** TODO [#A] Bugs and Wishes for repdet.el
+     - Merge each batch of consecutive cursor movements to a single absolute
+       (point) movement.
+     - There is a bug in the feedback printer.
+     - User should choose between different possible repetions. For example the
+       pattern "abababab..." has the possible repetitions:
+       - "abab"
+       - "ababab"
+       - "abababab"
+       - ...
+       These possible alternatives should be chosen using completing-read()
+       showing the most recently typed first.
+*** [#C] Relations and Links
+    - repeat-complex-command in simple.el
+*** [#B] Hooks
+    - (add-hook 'pre-command-hook 'predict-future-logger t))
+    - (remove-hook 'pre-command-hook 'predict-future-logger t))
+*** Reuse
+    - [[http://www.emacswiki.org/cgi-bin/wiki/RepetitionDetection][RepetitionDetection]]
+    - [[http://www.emacswiki.org/cgi-bin/wiki/RepetitionDetectionPackage][RepetitionDetectionPackage]]: repdet.el uses
+      - [[htt												p://www.emacswiki.org/cgi-bin/wiki/LoopFindPackage][LoopFindPackage]]: loops.el
+    - [[http://www.emacswiki.org/cgi-bin/wiki/DribbleX][DribbleX]] dribble-x.el (NOTE: not yet online)
+    - [[http://groups.google.com/group/gnu.emacs.sources/msg/afec3b6c282eda12][keyolution.el]]
+    - [[http://www.cb1.com/~john/computing/emacs/lisp/startup/predict-future.el][predict-future.el]]
+    - [[elisp:view-lossage]]
+    - [[elisp:open-dribble-file]]
+    - [[elisp:recent-keys]]
+    - Only log functions that match interactive-p()
+    - command-frequency.el
+
+** TODO [#A] Delete all .elc in [[file:~/elisp/]] and [[file:~/elisp/mine]] and use byte-code-cache.el (bcc-.*) instead.
+   To work with my stuff we have to make it work with [[elisp:require]] statements.
+
+** TODO [#A] Ask maintainer about file:anything.el to give it compact (Icicles) layout
+   Or implement this general *Go-To/Lookup* interface myself:
+   - Info/Man-Pages
+   - Emacs-Symbols (variables, functions, faces, groups)
+   - Buffers
+   - Files
+
+** TODO [#B] Use grail.el with pnw-dot-emacs.el
+
+** TODO [#B] Use auto-install.el with pnw-elbuilder.el in elbuild-file()
+
+** TODO [#A] cool-lock in gud shell mode to highlight variable assignments numeric literals
+   Ask gnu.emacs.help.
+
+** TODO [#B] Highlight Lines that equal the current (like highlight-symbol but for lines)
+
+** TODO [#A] Only do make bootstrap if needed otherwise normal make :Emacs:Build:Install:
+   Ask Google Groups.
+
+** TODO [#A] Niceness of External Processes
+   - Interfaces for grep and locate should call processes with niceness 19.
+   - Hide nice and jobs argument from compile command minibuffer read.
+
+** TODO [#B] Guessing Indentation and Intra-Token Whitespace Style
+
+** DONE [#A] Auto-Relaxation/Insensitivity of Lexical Intra-Token-Whitespace
+   CLOSED: [2009-09-11 fre 13:15]
+   Like case insensitive but for whitespaces.  Add support in =pnw-rgrep=,
+   =occur=, =isearch=, =query-replace=, etc.  Useful when searching for
+   patterns in source code that can have arbitrary indentation. Use
+   =relax-whitespace-in-string()=. M-s in =isearch-mode-map= runs
+   =isearch-toggle-whitespace-sensitivity=. Requires lexer for syntax of
+   interest. Reused semantic-flex.
+
+** TODO [#A] Toggle Source Enhancements
+*** TODO [#A] Make it search other directories if nothing found locally
+*** TODO [#B] Merge and generalize with c-open-relational-file() in pnw-dot-emacs.el
+
+** TODO [#C] Auto-Generated files should be set find-file-read-only as default (ask gnu.emacs.help)
+   Example:
+: # Makefile.in generated by automake 1.10.2 from Makefile.am.
+: # Makefile.  Generated from Makefile.in by configure.
+
+** TODO [#B] Enhance read-file-name() and read-directory-name() with Type and VC-state Icons
+   Look for =vc-state= in the source of Emacs Code Browser (ECB) currently in
+   [[file:~/elisp/ecb/]].
+
+** TODO [#A] Unify Lookup/Find/Go to defintion
+   - =find-tag()=
+   - =find-file-at-point()=
+   - In =emacs-lisp-mode= generalize =find-file-at-point()= to
+     =find-thing-at-point()= that also looks up symbols (symbol-at-point) and
+     if possible go to its definition.
+
+** TODO [#A] Enhance Semantic Jumps to Tag with Icicles Documentation in Completion (Ctrl+Prev/Next) :Intellisense:
+   Jump Functions:
+   - [[elisp:semantic-complete-jump-local()]]
+   - [[elisp:semantic-complete-jump()]]
+   Get documentation using: semantic-ia-show-doc()
+   Icicle Documentation in Completions: [[regexp:icicle.*doc]]
+
+** TODO [#B] Help Enhancements
+*** TODO [#B] Unify Help Interface to Single (Prefix) Key
+    - C-h f,v,...
+    - M-.
+    Suggestions for Key:
+    - =f1=: Show help sensitive to current mode
+    - =M-f1=: Show help for all possible contexts
+    See: =th-show-help()=
+*** TODO [#C] Lookup emacs symbols in help-mode and colorize them as I do in emacs lisp mode.
+    - special forms: font-lock-keyword-face
+    - functionp: font-lock-function-name-face
+    - subrp: font-lock-builtin-face
+    - boundp font-lock-variable-name-face.
+*** TODO [#A] Mouse/Cursor Over Identifier Popup Documentation
+    In cc-mode lookup Doxygen-documentation for parameters (@param) and present
+    it in using either =c-eldoc-fashion()= or =tooltip-help.
+
+** TODO [#A] Regexp Input Completion especially for Backslashed constructs. :Intellisense:Semantic:
+   This first requires Emacs to change its input minibuffer behaviour when
+   entering Regexps (query-replace-regexp). This should fix the problem:
+   "Nobody uses Regexps because nobody can remember their cryptic syntax". A
+   simple start would be to looking-back() to see if we are standing after two
+   backslashes if so this be highlighted somehow.
+
+** TODO [#B] Context-Clustered Operations
+*** TODO [#A] Clustered Scan/Search and Query-Replace (in tscan.el)
+    Sort Hit according to (in Ascending Priority):
+    1. *Syntax-Class* (either *Code*, *String*, *Comment* or Combination of
+       these). See [[elisp:(read-syntax-context)]]. Code-Comments should probably
+       be grouped with the code they refer to. For example /functions comments/
+       should be scanned for their /argument/ names.
+    2. *Case-Format*
+       - lowercase
+       - uppercase
+       - mixedcase
+    3. Code-Syntax-Context
+       - Functions
+         - Declaration-Definition
+         - Reference (Functor) (as a pointer in compiled languages)
+       - Variables:
+         - Assignment
+         - Reference
+*** TODO [#A] File/Buffer Renaming should trigger renaming of similar patterns in file contents and vice versa.
+    Example: Renaming from [[file:atomic_int.hpp]] to [[file:atomic_short.hpp]] should
+    query for query-replace of =atomic_int= to =atomic_short= in current-buffer
+    aswell if =atomic_int= is (case-insensitive) present anywhere in buffer. Add
+    logic to either =before-save-hook= or =after-save-hook=.
+*** TODO [#B] Complete query-replace-regexp-in-ftree() and merge replace-in-filenames
+*** TODO [#B] Syntactic Context in I-search and Query-Replace
+    Reuse [[elisp:search-in-syntax-code]] and  [[elisp:re-search-in-syntax-code]].
+*** TODO [#A] tags-query-replace() should be sensitive to transient-mark-mode and thing-at-point
+*** TODO [#B] M-w/s during query-replace toggles word/symbol delimited
+    See: query-replace-map.
+**** TODO [#B] M-in ... query-replace should cycle syntax-context
+*** TODO [#A] Repetition Detect calls to query-replace(-regexp) and apply macro
+    Propose Calls to [[elisp:query-replace-regexp-in-ftree]] and
+    [[elisp:query-apply-macro-in-ftree]]. These calls queries for context:
+    - Buffer
+      - (Forward/Backward) from point
+      - Whole
+    - File
+    - Directory (Tree) with emdb-filter.
+*** TODO [#A] Contextual Operations
+    Use [[info:semantic-appdev][Semantic Application Development Manual]] and/or the functions
+    thing-at-point-.*()
+
+** TODO [#A] Refactoring Assistance
+
+*** TODO [#B] Query/Read Syntax Context
+    Use c-where-wrt-brace-construct()
+
+*** TODO [#C] Auto-Refactoring of Emacs-Lisp to Compacter Code
+    - (when (not) ) => (unless)
+
+*** TODO [#B] Integrate my Package relangs.el with SRecoder
+
+*** TODO [#A] CEDET SRecoder (ask Eric M. Ludlam)
+    Auto-Insert Interface/Implementation Stubs of all Virtual Base Class
+    Members when inheriting a virtual base class into a real class.
+
+*** TODO [#B] CEDET about SRecoder Killer Feature: Auto-extract function from marking of sub-function
+    Compare with XRefactory.
+**** DONE Email semantic-devel: How do I implement using SRecoder
+
+*** TODO [#B] File Renaming Assistance
+    Rename pair of header and source file and update all files from current
+    directory that include the header file.
+**** Update C Header Statements (for file foo.h)
+     #ifndef .*FOO_H
+     #define .*FOO_H
+**** Update Doxygen File Tag @file or \file
+**** Variables: c-hcpp-statement-regexp
+**** Pattern: .[ch]
+**** Function: rename-recursively(include "foo.h" to dir)
+**** defadvice after rename-file()
+**** Function: (file-name-extension "foo.h") (url-file-extension "foo.h")
+**** Function: (file-name-sans-extension "foo.h")
+**** Function: strip-file-extension "foo.h" "h")
+**** Functions:
+     -- (file-truename "~/.emacs")
+     -- (file-truename (buffer-file-name))
+     -- (file-name-sans-extension "~/.emacs.d")
+     -- (file-name-extension "~/.emacs.d")
+     -- (file-name-directory "/etc/passwd")
+     -- (file-name-as-directory "/etc/passwd")
+     -- (file-name-nondirectory "/etc/passwd")
+     -- (file-relative-name "/etc/passwd")
+     -- (file-relative-name-to-file "avg/utils.h" "avg/utils2.h")
+**** Generalize to cases where we replace across directories:
+                      "/proj/foo.h" with "/proj/sub/foo.h"
+                                       and
+                      "/proj/sub/foo.h" with "/proj/foo.h"
+**** Use: tracker-search to find files that need to be updated
+
+*** TODO [#B] Refactoring of Elisp
+    - Extract SExp/Function/Selection/Mark/Region into File (file.el) if
+      transient-mark-mode is active. Use [[elisp:common-prefix()]] or common
+      substring as proposal for dir/filename.el. dir is readable parts from
+      load-path. Add to menu at "Elisp" => "Refactor" => ...
+
+*** TODO [#B] Refactoring C to C++ (C++ify) of Contexts File/Selection/Marked Files
+    - Note: Also see file:PMDB_README.html
+**** TODO Types and Structuring
+***** TODO Change type of definition/declaration at point.
+***** TODO [[C:struct X]] => [[C:class Y]]
+      - Propose class member of X as public inheritance in Y.
+      - Propose struct member of X (converted to class) and made a
+        public inheritance in Y.
+      - [[x_do(X * X, ...)]] => [[x::do(...)]] and [[C:X->]] => [[C:this->]]
+      - [[x_do(const X * X, ...)]] => [[x::do(...) const]] and [[C:X->]] => [[C:this->]]
+         where x is X with all letters lower-cased.
+***** TODO Use =bool= in =struct= and =class=: [[C:uint var:1;]] => [[C:bool var:1;]]
+***** TODO Replace =Bitvec= on =boost::dynamic_bitset<>=
+**** TODO Other
+     - Convert: Enum Range To Statement (transient-mark-mode)
+#+BEGIN_SRC c
+       (x == A || x == B || ...)
+#+END_SRC
+     - Convert: [[C:static (inline|__inline__)]] => [[C:inline]]
+     - Convert: [[C:int]] to [[C:bool]] and alongside [[C:FALSE/TRUE]] and [[C:0/1]] to [[C:false|true]]
+**** TODO C++ to C++0x: Constructor Reuse
+***** TODO [[http://www.devx.com/cplus/10MinuteSolution/33052/1954?pf=true][Delegating Constructors]]
+      Call Constructors in Constructs instead of reusing (normally private)
+      init().
+***** TODO (Multiple) [[http://www.devx.com/cplus/10MinuteSolution/42828/1954?pf=true][Inheriting Constructors]]
+      When a derived class has two or more immediate base classes (*Multiple
+      Inheritance*), you can selectively state which base class's constructors
+      to inherit using this syntax:
+#+BEGIN_SRC c
+      struct B1 { B1(char); };
+      struct B2 { B2(double); B2(int); };
+      struct D1 : B1, B2
+      {
+         using B1::B1; //  D1(char)
+         using B2::B2;  // D1(double), D1(int)
+      };
+      D1 d('c'); //OK, invokes D1(char)
+#+END_SRC
+
+**** TODO [#B] C Function Argument Matcher/Iterator is Central to Refactoring of Functions and their Arguments
+     - Note: cc-mode probably has such a function that can be reused. It
+       probably matches next argument and returns non-nil one is present. Ask
+       groups about this.
+     - Note: Start with semantic-symref()
+     - Note: global-semantic-idle-tag-highlight-mode() should give hints on how
+       to iterate backwards in current scope (function) to find local var decls/defs.
+     - Example: fname(aA, aB, aC, ..., aN), where aI is of the form (ATTR TYPE "[\*]*&" ARGNAME)
+***** TODO [#B] Use this Iterator to implement
+      - Add/Remove/Modify Function Argument(s) (Function Type Signature)
+        - Auto-Propose Synched Update of Declarations, Definitions and
+          References (Calls).
+        - The Interactive Spec for these could look something like:
+          - Function (complete from tags or Semantic): foo
+          - Type of Refactor: (insert (at position), remove, change)
+          - Argument Number: (first, 1, 2, ..., 3, last)
+      - In turn we want assistance on how these (new) arguments should be
+        integrated into the new code at the existing calls to the function of
+        interest.
+**** TODO Sync Use of Dynamic Memory Usage in Constructors and Destructors
+     Note: Patterns: malloc()-free(), new()-delete()
+**** TODO [#B] Interface for Viewing/Setting GCC Attributes and Macros in c-common-mode
+     - [[http://www.ibm.com/developerworks/linux/library/l-gcc-hacks/index.html][GCC hacks in the Linux kernel]]
+     - [[http://www.ibm.com/developerworks/linux/library/l-gcc4/index.html?S_TACT=105AGX03&S_CMP=ART][Get to know GCC 4]]
+     - [[http://gcc.gnu.org/onlinedocs/gcc-4.3.2/gcc/][GCC 4.3.2 Manual]]
+     - Macros: __FILE__, __FUNCTION__, __PRETTY_FUNCTION__
+     Use icicle-completing-read with documentation attribute.
+**** TODO [#C] Interactive Macro Expansions in C/C++ Mode (c-common-mode-hook)
+     Create the function =c-expand-macro-at-point()= and =c-expand-all-macros()=.
+     Suitable binding C-c +, C-c x, C-x x.
+
+** TODO [#C] Suggest Generalizing Crosshair Usage in Icicles to for example [[elisp:ctx-flash-.*]] (Context Flash)
+   Mail Drew about it.
+
+** TODO [#C] icicle candidate help on finding-files use file()
+
+** TODO [#B] Propose to ReOpen PROG using either ltrace, strace or gdb upon segfault of PROG
+
+** TODO [#B] Display Compilation Messages together with the Source Code
+   Layout alternatives:
+   1. Interleave source and messages
+   2. Source on the left and message to the right on the same line
+   3. Show message as a popup under the related source line
+
+** TODO [#A] Project Management the /Helpful/ Way
+   - *Help EDE figure out Project Settings*
+     - [[elisp: semanticdb-project-predicate-functions]]
+     - [[elisp: semanticdb-project-root-functions]]
+     and merge with [[elisp:any-tags-rootdir-p]].
+   - *Reuse*: file:emacs-rc-cedet.el, file:smart-compile.el, file:compile-bookmarks.el, file:pnw/.*compile.*
+   - *Find File*: Use [[ede-new-target]] to add logic and put into [[find-file-hook]]
+   - *Compile (new target)*: [[ede-compile-target]], [[ede-compile-project]]
+   - *Recompile (last target)*:
+   - *Debug*: [[ede-debug-target]]
+   - *Run*: [[ede-run-target]]
+   - *Trace*: [[ede-trace-target]] using [[shell:ltrace --help]], [[shell:strace -h]], etc or own program using [[man:ptrace]].
+   - *ValGrind*:
+   - *Profile*: [[ede-profile-target]] using OProfile.
+   - *Hierarchy*: [[ede-parent-project]], [[ede-current-project]]
+   - Replace compile() with a function =project-build()= that provides fancy
+     presentation, using completing-read(), of previous build commands together
+     with a new (customized) command.
+   - Auto-register EDE-targets when their directories or sub-directories are visited.
+   - Use menu "*Project*"
+     Add Auto-Query upon [[mode-specific-after-save-buffer-hooks]] (in [[file:do-on-save.el]]).
+     - Build/Compile
+     - Run (auto Build) (auto-creating temporary target and running it showing
+       its output in the buffers say [[buffer:*Run:PROG-out*]] and [[buffer:*Run:PROG-err*]].
+     - Debug (auto Build) (using [[lisp:ede-debug-target]])
+     - Install (auto Build)
+     - Test (auto Build)
+     - Previous (completing-read() previous projects)
+     For C/C++ files with a *main()*-function but not registered in any build
+     file EDE should provide a one-click build for this aswell. *Simple things
+     should be easy!*
+   - Suggested filename for my code: file:eproj.el.
+   - For automake project look in file:project-am.el. Provides the
+     interesting functions: =project-debug-target()=, etc.
+   - *Inspirations*: [[file:project-root.el]], [[file:projman.el]], [[file:mk-project.el]]
+   - *Reuse* =project-rootdir-p()= in [[file:emdb.el]].
+   - Compile/Build *Context-Sensitive* to the contents of =default-directory=.
+     - CMakeList.txt (cmake CMakeList.txt)
+     - SConstruct (scons)
+     - Jamroot (bjam)
+     Add this logic to file:emdb.el and reuse from there.
+   - Detect Project *root* Directories upon =find-file()= and "Project"
+     menu.
+   - Rebuild/Install upon =save-buffer(s)= using advices.
+   - Rebuild/Install when Build Type Changes. See [[elisp:pnw-build]]. Keep Track
+     of recent build type for each combination of (directory target). Add
+     "Verbose? (y/n):" Flag V=1 for recent autoconf features.
+   - Project Local Frame Configurations
+     http://www.emacswiki.org/cgi-bin/wiki/FramesAndRegisters
+   - Save/Load upon exit/startup of Emacs
+     http://www.emacswiki.org/cgi-bin/emacs/frame-restore.el
+   - Extract *Project Names and Details* etc
+     - Look configure.in, configure.ac, Makefile.am
+     - Use these to provide enable prettier use of completion-read()
+       in function gtags-prepare-lookup().
+     - Look in =configure.ac/in= and get details (using re-search-forward() or
+       EDE-functions), of AC_INIT macro:
+       - =AC_INIT([GNU GLOBAL],[5.7.3])=
+       - =AC_INIT([PNW Projects], [0.1], per.nordlow@gmail.com)=
+       - =AC_INIT(source-highlight,2.11)=
+     - Sample Directory (GNU GLOBAL): (file:~/pnw/global-CVS)
+     - PNW (~/pnw/src/)
+   - Add Top-Menu Item "Project" having the sub-menus:
+     - *Configure* in [GNU GLOBAL 5.7.3, PNW Projects, Current-Project (current directory)]
+     - *Build* in [GNU GLOBAL, PNW]
+     - *Install* in [GNU GLOBAL, PNW]
+     - *Check* in [GNU GLOBAL, PNW]
+     - *Clean* in [GNU GLOBAL, PNW]
+     All these default to =eproj-last= and use =eproj-alist=. Icicles
+     Multi-Completions is supported in =eproj-read()= where the car of each
+     entry in the alist is (PROJ-NAME PROJ-DIR).
+   - *Auto-Propose Install* of Linux Distribution Packages (RPM, DEB) (using
+     either PackageKit, APT, Yum) that provide #include C/C++ header files that
+     cannot be found under standard include directories (/usr/include,
+     /usr/local/include, etc). The shared libs should be looked up using
+     package-config. Also *pre-advice* [[elisp:call-process]] and
+     [[elisp:start-process]] and [[elisp:executable-find]] the same way.
+     - Use either:
+       - [[shell:dpkg-query -S "*/pkgconfig/*.pc"]]
+       - [[shell:dpkg-query -S "*/pkgconfig/PKG_NAME.pc"]]
+       - [[shell:dpkg-query -S "*/include/HEADER_NAME.h"]]
+       - [[shell:apt-file search <LITERAL-PATTERN>]] (supports regular expressions)
+     - Cache can be regenerated using [[shell:/usr/share/apt-file/do-apt-file-update.]]
+     - Sample Lookups:
+       - [[shell:apt-file search etc/fstab]]
+       - [[shell:apt-file -x search passwd$]]
+       - [[shell:apt-file -x search /stdio.h$]]
+     - With GCC-4.5 Plugins when can add a hook to a missing #include, say
+       [[file:gmp.h]], lookup its package using APT: [[shell:zgrep "/gmp.h"
+       /var/cache/apt/apt-file/*;]] query the user for installation and package
+       installed successfully retry compilation.
+
+** TODO [#A] Unify file-execute matlab-shell-save-and-go and uproj-rerun
+
+** TODO [#A] Unify Interface to Setting Breakpoints in Emacs-Lisp, C/C++
+
+** TODO [#A] Exuberant CTags :ectags:ctags-exuberant:
+*** TODO [#A] Exuberant CTags should index shell variables aswell.
+   Regexp: "^" "[ \t]+" "\\(\w+\\)" "[ \t]+" "="
+*** TODO [#C] Perhaps use =mode-specific-after-save-buffer-hooks= instead of =save-buffer-and-update-tags-tables()=
+
+** TODO [#B] (info "(emacs)Recognize Coding")
+
+** TODO [#B] Move my changes of debugger-make-xrefs into my own Emacs CVS tree on an USB drive.
+
+** TODO [#C] I-Search Regexp (C-M-s) for [[regexp:vc-.*rename]] in [[file:emacs/lisp/Changelog]] and update vc-.el vc+.el and vc-hooks+.el accordingly.
+
+** TODO [#C] Sub-string completion in shell-commands
+   Scan exec-path for substring matches to current input. Use emdb.el. This
+   logic already exist in =read-shell-commmand= or =icicle-read-shell-command=
+   and =minibuffer-default-add-shell-commands=.
+
+** TODO [#B] Strip away prefix .mine and .rXXX from end of file before checking it with =auto-mode-alist=
+
+** TODO [#B] Prevent Subversion form auto-merging my stuff
+
+** TODO [#A] Pretty Printing, Highlighting and Overlays (font-lock) in file:coolock.el
+
+*** TODO [#C] Enable syntax highlighting in *Help* buffer
+   - C-h f: font-lock-function-name-face
+   - C-h v: font-lock-variable-name-face
+   - Documentation in font-lock-comment-face
+
+*** TODO [#B] Highlight texinfo comments in Octave .m files
+    Tags start with @.
+
+*** TODO [#A] Make default font in Info and Man mode "sans".
+    Ask gnu.emacs.help for this. Mode-local face settings.
+
+*** TODO [#B] Format and Fontify Doxygen styled Comments semantic-ia-show-doc
+    - Use Overlays to fontify snarfed text.
+    - For virtual functions we find the /bottom-most base class/ for
+      the /interface documentation/.
+
+*** TODO [#A] Haskell font-locking of operators seems to use variable-name-face
+    - Instead of operator-name-face in coolock.el
+    - It also has some way of detecting if point at a function/operator. Also
+      highlight function calls FUN-ID ARG-ID... and backquoted id's in
+      function-call or operator-face.
+    - Pretty print -> with Unicode arrow overlay.
+    - Look at the paper "Wrap Speed Haskell" for super nice pretty-printing of
+      Haskell for inspirations.
+*** TODO [#A] Integrate [[http://www.cs.kent.ac.uk/projects/refactor-fp/hare.html][HaRe]] with Emacs and filedb.el and eval-dwim.el :Haskell:Refactoring:IDE:
+
+*** TODO [#A] ,@sym-name is not highlighted correctly by cool-lock
+
+*** TODO [#A] Emacs Lisp Readability Enhancements using Unicode Symbol Overlays
+    Use Unicode Mathematical, Logical, Relation Operators.
+    - *Constants*:
+      - [[nil]]: [[U+2205 EMPTY SET]]
+    - *Functions*:
+      - [[member]]: [[U+2208 ELEMENT OF]]
+      - [[not]]: [[U+2201 COMPLEMENT]]
+
+*** TODO [#A] Match Functions with Hidden Relations
+    - Examples: [[elisp-fun-regexp:re-search-forward()/backward()]] — [[elisp-fun-regexp:match-.*()]]
+
+*** TODO [#B] Semantic Highlighting using Tags and Function Prototype
+    Use ectags symbol type from *ectags-obarray* to enable type highlighting of
+    global symbol references/uses and use function arguments to highlight local
+    variables.
+    - c	*class*: =font-lock-class-face=
+    - d	*define* (from #define XXX): =font-lock-define-face=
+    - e	*enumerator*: =font-lock-enumerator-face=
+    - f	*function* or *method*: =font-lock-function-name-face=
+    - F	*file*: =font-lock-file-name-face=
+    - g	*enumeration* name: =font-lock-enum-name-face=
+    - m	*member* (of structure or class data): =font-lock-member-face=
+    - p	*function* prototype: =font-lock-function-name-face=
+    - s	*structure* name: =font-lock-structure-name-face=
+    - t	*typedef*: =font-lock-typedef-face=
+    - u	*union*: =font-lock-union-name-face=
+    - v	*variable*: =font-lock-variable-name-face=
+    As function calls already are known this may require a special attribute
+    for *function calls*.
+
+*** TODO [#B] Better lambda highlighters for Variable Assignments in
+   Initially only searches for "=[^=]" and then searches backwards for
+   variables. Multiple hits possible in
+   - *Octave/Matlab*: [x,y] = foo();
+   - *Python*: x,y = foo();
+   Only for contexts where =inside-syntax-code-p= is true.
+   Use MATCH-ANCHORED
+
+*** TODO [#B] Merge unicode-overlays.el med cool-lock.el by using propertize on highlighters
+    Also called overlays. Use cool-overlay-flag.
+
+*** TODO [#A] Use and test the function pretty-icons() in pnw-dot-emacs.el
+
+*** TODO [#A] How to extend file:pretty-mode.el with specific faces (fonts)?
+    Ask at http://www.emacswiki.org/cgi-bin/wiki/PrettyLambda.
+
+*** TODO [#B] Highlight #if 0 ... #endif multi-line blocks in C/C++C/ObjC
+    Make use of Semantic CPP State? Use /overstrike/ attribute and
+    [[elisp-symbol:font-lock-inactive-face]].
+
+*** DONE [#B] Highlight free(XXX) and delete(xxx) in overstrike face
+    CLOSED: [2009-05-28 tor 15:44]
+    Make use of Semantic CPP State? Use overstrike face attribute. Done in cool-lock.el
+
+*** TODO [#C] More Efficient Lambda Highlighters for Fancy Dec and Hex Integer Literals in C/C++/ObjC/Java/..
+
+*** TODO [#C] Function Argument Lambda Highlighter for Python Mode in
+    def foo (args...)
+
+*** TODO [#C] Highlight Evaluation State of Emacs-Lisp controlled by quotes, back-quotes and comma
+   Signal to developer using face slant attribute as follows:
+   - code which will be evaluated: regular
+   - code which will be quoted: italic
+**** Cases
+   - Should highlight both a and b in italic
+     : '(a b)
+   - Should highlight only a in italic.
+     : `(a ,b)
+
+*** TODO [#C] Make cool-lock/setq-args-matcher support statements such as
+   [[elisp:(setq ,(car spec) (1+ ,(car spec)))]]
+
+*** TODO [#C] Emacs Lisp Coloring
+    - (setq SYM VALUE) SYM in font-lock-variable-name-face
+
+*** TODO [#B] Highlight Variable References in C/C++
+    I C and C++ Mode find references of a symbol, \w+ after a its defintion, in
+    region up to =mark-c-scope-end()=.
+    See: file:cool-lock.el
+
+** DONE [#B] icicle-locate-file() should respect vc-directory-exclusion-list and perhaps even emdb.el
+CLOSED: [2012-10-01 mån 16:10]
+   I asked Drew about it...
+
+** TODO [#C] Add Cycle Visiblity (outline) in file:pnw-uni-complete.el
+   Binding it to Tab+v.
+
+** TODO [#C] Line-by-line comparison/merge in Emacs
+   For files that have changed to much (lines have been reorder) making the
+   ediff-merge useless we should use an alternative merge algorithm that simply
+   unites all lines from both buffers with each other. Does any have any
+   suggestion for such alternative algorithms?
+
+** TODO [#C] [[http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/0fcebed5bb3796d3#][Make pnw-locate-string() hits clickable by using the answers from this post.]]
+   Use
+   - (make-button)
+   - (help-xref-button 0 'help-function-def sym file))
+   - (help-insert-xref-button (string type &rest args)
+*** TODO [#C] Make urls uniformaly clickable aswell
+
+** IN-PROGRESS [#B] Duplicate entries in font-lock-keywords in emacs-lisp-mode
+   Use delete-duplicates on font-lock-keywords and c-font-lock-extra-types and c++-font-lock-extra-types
+   [[elisp:(delete-duplicates font-lock-keywords)]]
+   [[elisp:(delete-duplicates c-font-lock-extra-types)]]
+   [[elisp:(delete-duplicates c++-font-lock-extra-types)]]
+
+** TODO [#B] Merge completion-selection.el with uni-complete
+
+** TODO [#B] Read/Learn/User [[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands]] for paredit.el
+
+** TODO [#C] Use a more clever way of modifying [[regexp:.*-font-lock-extra-types]] in ~/elisp/mine
+   See: [[http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/569f93f3b1ce4a3d#][post]] on gnu.emacs.help.
+
+** TODO [#C] Marked Region Highlighting
+   Active region (non transient-mark-mode region) should be highlighted in
+   paler color with the same hue as transient-mark-mode color.
+
+** TODO [#B] Tuple-Click Behaviour
+   Reuse [[file:thingatpt.el]] and [[file:thingatpt+.el]].
+   - 2-click: Select Word
+   - 3-click: Select Symbol
+   - 4-click: Select Sub-Expression (SExp)
+   - 5-click: Select Sentence
+   - 6-click: Select Region/Section/Paragraph/Function
+   - 7-click: Select Class
+   - 8-click: Select Namespace
+
+** TODO [#A] Auto-Sync elisp/ with [[http://artavatar.net/elm/][The Emacs Lisp Mirror]]
+
+** TODO [#A] Doxymacs in all modes whose language is supported by Doxygen
+   Perhaps easier to support all programming modes. Is there a hook for all programming modes?
+
+** TODO [#A] Auto-Creation of Doxygen tags for new and existing C/C++ Function Arguments
+   Add code in [[file:~/elisp/mine/pnw-cc-tools.el]].
+
+** TODO Anything
+*** TODO [#B] Merge switch-to-buffer() and find-file() into one single interface reusing Anything?
+*** TODO [#C] Index Info Documentation Headings and Complete in anything.el
+    For example Regexp.
+*** TODO [#A] Does anything provide shell command completion and execution?
+    See anything-c-open-file-externally.
+*** TODO [#C] anything.el listing of org-mode TODOs
+*** TODO [#C] Use Icicles icicle-narrow-candidates() M-* in anything
+*** TODO [#B] Integrate mthesaur.el with anything.el
+*** TODO [#C] Extensions
+    - 1. Processes (see vkill.el)
+    - 2. All Programs using =apt-query-executables= defaulting to programs in
+      [[elisp:(getenv "PATH")]] if APT is notc available.
+    - 3. Users
+    - 4. (C)Tags
+
+** TODO [#A] Couldn't Emacs Regular Expression be extended "somehow" operators for finding everything til matching parenthesis/brace/hook?
+   The package [[file:auto-overlay.el]] by Toby Cubitt provides a similar way of specifying fontification.
+
+** DONE [#B] autoconf aclocal m4 macro completion
+   CLOSED: [2008-10-22 ons 11:12]
+   [[file:/usr/share/aclocal/]]
+   [[file:~/alt/share/aclocal/]]
+   [[file:m4/]]
+
+** DONE [#A] Optimize highlighting in cool-lock.el
+   CLOSED: [2008-10-22 ons 11:12]
+   By concatenating operators and separators regexps and their highlighters.
+
+** DONE [#A] Error-Free Navigation in Trees of Sub-Expressions (sexp) in Font-Locking Function Matchers
+   CLOSED: [2008-10-13 mån 09:54]
+   How can I programmatically iterate over all sexps in an emacs-lisp
+   expression without risking getting an error? I have tried forward-sexp() and
+   backward-sexp() and up/down-list() but these generate an error when I get to
+   the beginning or end in each "direction". Why, on earth, doesn't these
+   functions have an optional argument, say no-error, that inhibits errors in
+   these cases and instead indicates this event by returning nil?
+
+   I believe I need these functions because I am currently extending
+   font-locking in emacs-lisp-mode to highlight variables in let and defun-like
+   statements.
+
+   Here is my moccup so far:
+
+   :(defun cool-lock/setq-args-matcher (limit)
+   :  (let ((start (point)))    ; remember beginning
+   :    (if (looking-at (concat "[[:blank:]\n]*" "'?\\(\\w+\\)")) ; One more SYM?
+   :        (progn (goto-char (match-end 1))
+   :               (forward-sexp); skip VAL
+   :               t)); signal hit
+   :    ))
+   :(defun cool-lock/emacs-lisp-variables-font-locking ()
+   :  (font-lock-add-keywords
+   :   nil
+   :   (list
+   :    ;; setq-statements: (setq SYM VAL ...)
+   :    `(;; MATCHER: (SETQ
+   :      ,(concat "(" (regexp-opt '("set"
+   :                                 "setq"
+   :                                 "setq-default"
+   :                                 "setq-mode-local") t)
+   :               "[[:blank:]\n]*")
+   :      ;; SUBEXP-HIGHLIGHTER
+   :      (1 'font-lock-function-call-face keep)
+   :      ;; ANCHORED-HIGHLIGHTER: (setq SYM VAL ...)
+   :      (;; ANCHORED-MATCHER
+   :       cool-lock/setq-args-matcher
+   :       nil ; PRE-FORM
+   :       nil ; POST-FORM
+   :       (1 'font-lock-variable-name-face prepend) ; SUBEXP-HIGHLIGHTERS
+   :       ))
+   :    ) t))
+   :(add-hook 'emacs-lisp-mode-hook 'cool-lock/emacs-lisp-variables-font-locking)
+
+   Test on these examples:
+
+   :(setq a 1 b 2 c 3)
+   :(setq a 1
+   :      b 2
+   :      c 3)
+   :(setq x-1 '(1 1) x-2 '(2 2) x-3 '(3 3))
+
+   It currently doesn't work for multi-line variants of setq-form. Is this
+   beyond the capabilities of font-lock?
+
+   As I have said above it silently errors when the last VAL is missing like in the
+   following statement:
+
+   :(setq a 1 b 2 c)
+
+   What is the most clever way of checking when we are at the last sexp
+   (forward-sexp will fail as mentioned above)?
+
+   Thanks in advance,
+   Nordlöw
+
+** TODO [#A] Fix problem with setting of comment-insert-comment-function
+
+** TODO [#B] Unused Key Slots: Ctrl+, and Ctrl+
+
+** TODO [#C] Inhibit update of Messages during Emacs Lisp Compilations
+
+** TODO [#C] What is the difference between `assq', `assoc', and `rassq'?
+
+** TODO [#B] Optimize font-locking in file:doxymacs.el by using a common entry for all tags
+   Let =font-lock-add-keywords()= argument MATCHER use
+   =inside-syntax-comment-p()= combined with searching for "@".
+
+** TODO [#A] Find a remove duplicate #includes in C/C++ mode
+   Reuse logic from my auto-insertion of C++ STL headers (in [[file:~/elisp/mine/pnw-cc-tools.el]])
+   upon use of their symbols. The trigger of this should be done inside a hook
+   that is called whenever the contents of a buffer changes. Is there such a
+   hook?
+
+** TODO [#A] Querying Function Contexts
+   Specialize c-insert-general-multiline-comment() to be sensitive to functions-contents.
+   In those cases
+   - Scan arguments and create =@param= entries for those.
+   - Check return argument and add =@return= entry if non-void.
+   - The answers to the following question titled [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/03dff600126fdacf#][Beginning/End of Function Predicate (bofp,eofp)]] may give ideas.
+   - Also see [[elisp-fun-regexp:.*-defun-atpt]] and
+     [[elisp-fun-regexp:.*-defun-bfpt()]] in [[file:thingatpt-util.el]].
+   - Also try the emacs-lisp function containing: function-name, defun-name()
+
+** TODO [#B] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/11b34d804154d283#][Lookup the key-bindings of a function]]
+   - *Answer*: [[elisp:(mapcar 'key-description (where-is-internal 'org-agenda))]]
+   - *Answer*: [[elisp:(where-is 'find-file)]].
+*** TODO [#A] Use this *auto-build* a *quick-sheet* for my most used functions
+
+** TODO [#C] Help from compiler in multi-threaded programs (gnu.g++.help)
+   Warn about use of global variables, optionally only in functions that are
+   called in multi-thread programs.
+
+** TODO [#C] Remove warnings from fillcode.el
+   : assignment to free variable `fillcode-wrapped-fill-function'
+
+** TODO [#B] Checkout [[file:~/elisp/mic-paren.el]]
+
+** TODO [#C] Fix Commented TODOs before replace-in-file-list()
+
+** TODO [#A] Fix bug in replace-under-directory-and-filenames()
+
+** DONE [#B] completing-read-multiple() in crm.el is buggy in Non-Vanilla Emacs
+   Drew Adams deactivated icy-mode in crm.
+   CLOSED: [2009-05-14 tor 22:54]
+
+** TODO [#B] Add ediff-merge alternative upon
+   - rename-file() queries for verification of overwrite
+   - auto-save data is available when opening a file. Normally through M-x recover-file()
+   - Version Control Update/Pull Conflicts.
+
+** TODO [#A] Make lots of logic depend on the result of (syntax-ppss &optional pos)
+*** TODO [#A] The logic in auto-insert0-c++-stl-include-from-std-symbol() does not check for inserts (yanks)
+*** DONE [#A] Use in smart-operator.el
+    CLOSED: [2008-10-03 fre 15:12]
+   - smart-operator() *inhibit* in comments, strings.
+*** TODO [#C] Idea: Perhaps skip-syntax-forward() may be related
+*** See: http://www.nabble.com/Idea-for-syntax-ppss.--Is-it-new---Could-it-be-any-good--td18671186.html#a18672509
+
+** TODO [#B] eval-last-sexp-sh
+- Go to beginning of statement in sh-mode using sh-beginning-of-command and sh-end-of-command.
+- Support $(SHELL-COMMAND) in makefile-mode
+
+** TODO [#B] eval-last-sexp-c and eval-last-sexp-c++
+Uses new functions =eval-c-expr-string= and =eval-c++-expr-string=.
+** TODO [#A] Error from eval-last-sexp should not result in switch to error buffer. This disturbs workflow.
+
+** TODO [#A] Enable uni-complete() in eval-expression(). How do I describe major-mode?
+*** TODO Post this message to gnu.emacs.help:
+Subject: Customizing TAB in eval-expression()
+How can I change the meaning of the key TAB in eval-expression()
+minibuffer-interaction? eval-expression() uses fundamental-mode but
+fundamental-mode-map is not defined so I can't use define-key(). I would like
+to prevent from using global-set-key because I don't want this completion in
+read-only modes such as info-mode. Should I define an advice on
+eval-expression()?
+Thanks in advance,
+Nordlöw
+
+** TODO [#B] Better layout (under current line) of eldoc and c-eldoc
+   This makes it easier for user to see the argument tips while he codes.
+
+** TODO [#C] General use of vc-register() automatically when creating new files?
+
+** TODO [#B] add-hook self-insert-command() that inserts #include statement iff we are writing code (not inside comment or string)
+
+** TODO [#C] Create Matcher for old-style backquotes:
+   [[elisp:(` .*)]] replaced by [[elisp:` \1]] using forward-sexp
+   [[elisp:(, .*)]] replaced by [[elisp:, \1]] using forward-sexp
+   And highlight them in elisp:font-lock-warning-face.
+
+** TODO [#B] Put org DONE-entries at the end of current section
+
+** TODO [#C] Performance Question: Which is fastest?
+   - For strings:
+     :(string= "ELF" (buffer-string))
+     or
+     :(goto-point (point-min))
+     :(looking-at "ELF")
+     or
+     :(goto-point (point-min))
+     :(search-forward "ELF" nil t)
+   - For regexps:
+     :(goto-point (point-min))
+     :(re-search-forward "ELF" nil t)
+
+** TODO [#C] Menu/Command for (with completion of course) Entering/Exiting/Toggling *All* Major/Minor Modes?
+
+
+** TODO [#C] Implement native support for Extended Attributes (xattr) in Emacs
+   Look in [[file:emacs/src/fileio.c]] for how to do it.
+
+** TODO [#A] Why isn't Emacs Lisp more general in type support for basic functions like nth()
+   How do I index a vector? nth() works only for lists.
+   [[elisp:(nth 0 '(1 2))]]
+   Answer:
+   [[elisp:(elt '(1 2) 0)]]
+   See: http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/e5b4274d3bfb53a7#
+*** TODO [#A] Unified Wrapper defun index() with defalias idx()
+*** TODO [#A] Unified Wrapper defun assoc() for lists/vectors of lists/vectors
+
+** TODO [#A] Easy Browsing and Insertion of C++ STL/Boost Containers, Algorithms, Types, Constants, etc
+*** TODO Use "Insert" or C++ Menu? Ask Drew Adams
+*** TODO Can I reuse YAsnippet somehow?
+*** TODO Also provide *short descriptive documentation* on mouse over for each container and algorithm
+    Ask Drew Adams: should work like C-p/n during Icicles Minibuffer interaction
+    Supported Doc Formats:
+    - JavaDoc/Doxygen comments for
+      - Variables [V]
+      - Constants/Defines [C]
+      - Functions [F]
+      - Files (@brief).
+
+** TODO [#A] (Synonym, Acronym, Fuzzy and Sub(Word/Sentence)) (Match, Completion)
+   - Ask Drew Adams how to activate in Icicles.
+   - Auto Hint/Present/Display these as fallbacks when no match is found in:
+     - completion-read()
+
+** TODO [#A] Auto-include #include-statement required headers when using C++ STL and Boost classes
+   Merge with logic from "Insert"-menu defined in c++-mode.
+
+** TODO [#A] Define <tab> to a prefix key for completion-read()
+*** s: Dabbrev Expand String:
+     TODO: Ask Google Groups.
+*** t: Tag: try-expand-tag()
+     Use *Exuberant Ctags* extended file format for determining tag type:
+     - s: Structure:
+     - c: Class:
+     - v: Variable:
+     - c: Constant:
+     - k: Keyword:
+     - f: Function:
+*** TODO [#A] Substring match mode for all of the above alternatives
+*** TODO [#A] Find suitable YAsnippet forward/next
+    - Proposals for Previous/Next Argument
+      - <Meta>, <p/n>
+      - <TAB>, <p/n>
+      - <TAB>, <Left/Right>
+      - <TAB>, <Up/Down>:
+      - <TAB>, <TAB>:
+    - Proposals for First/Last Argument
+      - <Meta>, <P/N>
+      - <TAB>, <Home/End>:
+      - <TAB>, <Shift-TAB>:
+
+** TODO [#A] Show Context for tags that have duplicate definitions
+   :vec2f_do() vec2f.h:17 (HDR)
+   :vec2f_do() vec2f.c:24 (SRC)
+   or
+   :vec2f_do()@vec2f.h:17 (HDR)
+   :vec2f_do()@vec2f.c:24 (SRC)
+   or alternatively
+   :vec2f.h:17vec2f_do() (HDR)
+   :vec2f_do()@vec2f.c:24 (SRC)
+   Where the file part is highlighted in =font-lock-file-name-face= and =HDR=,
+   =SRC= are highlighted in =font-lock-type-face=.
+
+** TODO [#A] Rebind keybindings in org-mode
+
+** TODO [#A] Prevent auto-raise in Emacs when using Compiz. Ask Compiz developers
+
+** TODO [#A] Use install-elisp.el in pnw-install-file()
+
+** TODO [#C] find-file-at-point() at tag should open file that contains tag or file that begins with tag-name
+   Example: At vobj_new() ffap opens vobj.[hc]
+
+** TODO [#C] Check out net/xesam.el
+
+** TODO [#B] Checking vc-state recursively under a directory
+:  (progn
+:   (let ((retval nil))
+:     (dolist (cur-file (directory-files dir-path t "^[^\.]") retval)
+:       (push  (vc-recompute-state cur-file) retval))))
+
+** TODO [#C] Add =hi-lock= Patterns to my Emacs Lisp Source Files
+:  ;;;; for hi-lock
+:  ;; Hi-lock: (("^;;; .*" (0 (quote hi-black-hb) t)))
+:  ;; Hi-lock: (("^;;;; .*" (0 (quote hi-black-b) t)))
+:  ;; Hi-lock: (("make-variable-buffer-\\(local\\)" (0 font-lock-keyword-face)(1 'italic append)))
+:  ;; Hi-lock: end
+
+** TODO [#C] LaTeX Examplex
+   Here is an example of LaTeX support:
+:                                     $1+3$
+** TODO [#B] OProfile Question
+   Ask the developers of OProfile if we need to call [[shell:opcontrol --dump]]
+   before [[opcontrol --stop]] and [[shell:opreport -l]]. If so make the needed
+   changes to pnw-oprofile.el
+
+*** TODO [#A] Auto-detect operator surrounding spaces for file:smart-operator.el similar to file:guess-offset.el
+
+*** TODO [#A] Merge guess-style.el and guess-offset.el
+
+** TODO [#A] Extend logic in file:smart-operator.el to also check =if=, =for=, =while=, =do=
+
+** TODO [#C] Can we auto-detect and apply this pattern?
+   Replace
+:    (add-hook 'c-mode-hook '(lambda () (outline-minor-mode t)))
+:    (add-hook 'c++-mode-hook '(lambda () (outline-minor-mode t)))
+:   with
+:  (let ((func (lambda () (outline-minor-mode 1))))
+:    (dolist (hook '(c-mode-hook c++-mode-hook))
+:      (add-hook hook func)))
+
+** TODO [#A] Delayed Auto-Hint of Continuation of Multi-Keyboard Shortcuts when at least one part has been entered
+   Logic already present (default delay is around 1 seconds) for displaying prefix key:
+                                    =C-x-=
+   So we only need to hook to this logic and merge with PREFIX + C-h logic.
+   Even simpler to would be to just hint =C-h=
+                              =C-x- (C-h for help on possible continuations)=
+
+** TODO [#A] Better feedback for Undo/Redo Messages
+*** Highlight undo/redo-history entries in the buffer like is done in isearch-mode.
+    - Next *upcoming kill* is highlighted in a stronger colored red face or
+      perhaps even better overstriked in red.
+    - The rest of the *pending kills* are highlighted like the next kill but in
+      a more red-fainter color.
+    - Already *performed inserts* could be highlighted in some opposite
+      attribute say in green color but without the overstrike attribute.
+    See: buffer-undo-list.
+*** Position in Undo/Redo History
+    - Highlight
+    - Undo!: [X/N]
+    - Redo!: [X/N]
+    where X/N is the Position/Length of the Undo-Redo-history.
+    See: file:redo.el
+    See: http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/1220007cea9a6116?hl=sv#c9201d6ba5829bf2
+
+** TODO [#C] Python Script for enabling Extended Attributes in Ubuntu
+   In file:/etc/fstab replace "relatime" with "relatime,user_xattr"
+
+** TODO Respect (Secondary) Selection or pre-cursor Context in semantic-analyze-possible-completions()
+   Example:
+:     box2f b;
+:     vec2f v;
+:     box2f_rd... + TAB
+   completes with list a where all the functions take both =box2f= and =vec2f=
+   arguments are put first.
+
+** TODO [#B] Mark Syntax Levels
+   C-S-SPC +
+   - =c=: Character
+   - =w=: Word
+   - =i=: Identifier
+   - =l=: Line
+   - =e=: Expression
+   - =s=: Sentence
+   - =f=: Function
+   - =p=: Page
+   Reuse mark-thing() and thing-at-point().
+
+** TODO [#C] Highlight Function/Macro Definition Arguments
+:   '(' "defun\\*"/"defmacro\\*" WS \\w  (WS \\W)+ &body/&rest/&optional (WS \\W)+ ')'
+                                                    -faint-
+   Fainter means darker for dark backgrounds.
+
+** TODO [#A] Highlight Function/Macro Calls
+   Are the predicate functions `functionp'/`macrop fast enough for this use?
+
+** TODO [#B] Load most recent .el[c]? upon mulitple hits in Emacs' load-path
+
+** DONE [#A] Set tab to pnw/uni-complete-or-indent in org-mode
+   CLOSED: [2008-05-30 fre 16:23]
+
+** DONE [#A] Try out file:key-chord.el
+   CLOSED: [2009-05-18 mån 13:24]
+
+** TODO [#B] Try out pabbrev.el. If useful remove binding to tab
+
+** TODO [#A] Try out file:~/elisp/idle-highlight.el. Is it better than [[file:highlight-symbol.el]]?
+
+** TODO [#A] Try out pc-select-shifted-mark
+
+** TODO [#C] Try out FileSets
+   file:filesets+.el (patch not needed when using Icicles)
+   http://members.a1.net/t.link/CompEmacsFilesets.html
+
+** TODO [#A] Try out and possibly activate [[http://flymake.sourceforge.net/][FlyMake]] in my .emacs
+   Now in Emacs CVS as: flymake.el
+   Also see [[http://www.emacswiki.org/cgi-bin/wiki?action=browse;id=FlyMake][EmacsWiki: FlyMake]]
+
+** TODO [#B] Try out in ~/elisp/contrib/
+   - usage-memo.el
+   - gds.el (make alias google-desktop-search())
+
+** TODO [#C] Try out ~/elisp/mmm-mode-0.4.8.tar.gz
+
+** TODO [#C] Try out package multiselect.el
+   Add to edit-menu like as done with multi-region. Add menu sensitive to state
+   of multiselect.
+
+** TODO [#C] Flymake Stuff
+   flymake-goto-prev-error() and flymake-goto-next-error() should notify when
+   first or last message have been reached just like previous-error() and
+   next-error() does.
+
+** TODO [#A] Ask Google Groups: Instead of SMerge (smerge-mode) do ediff-merge-with-ancestor upon svn update conflict
+
+** TODO [#B] Skip binding pnw/smart-tab-complete-or-indent() to tab for these modes
+   Modes: gud-mode, sh-mode, vc-mode, info-mode.
+   Check if buffer-read-only is set.
+
+** TODO [#A] Completion (using Semantic) of C header-files #include-statements
+   By searching sub-directories of /usr/include/ for matches X when user has entered:
+                                 :#include <X>
+
+** TODO [#C] minibuf-isearch does not work. Complains about load file: migemo
+
+** TODO Add DVC to ~/elisp
+:   cd ~/src
+:   bzr get http://bzr.xsteve.at/dvc/
+:   cd dvc
+:   mkdir ++build/
+:   cd ++build/
+:   ../configure
+:   make
+   Then add this to your .emacs:
+:     (add-to-list 'load-path "~/src/dvc/++build/lisp")
+:     (require 'dvc-autoloads)
+
+** TODO [ ]-font for light backgrounds
+
+** TODO [#C] scons-mode derived from python-mode define-derived-mode()
+   auto-mode-alist SConstruct
+
+** DONE [#A] Enable any-hungry-mode in all modes
+   CLOSED: [2008-07-03 tor 17:32]
+
+** TODO [#B] Completion of macros in autoconf and autoconf-archive (m4) mode
+   See: file:/usr/share/autoconf-archive/
+   See: http://autoconf-archive.cryp.to/
+   See: m4-mode.el
+
+** TODO [#C] How do I temporarily suspend an external process (compilation/grep) from within Emacs?
+
+** TODO [#B] Use ido-completing-read() in elsewhere especially in etags.el
+
+** TODO [#C] Variable apropos-do-all
+
+** TODO [#B] Default argument for M-x using thingatpt or similar
+
+** TODO [#C] Like with locate propose default arguments to
+   - file-magic()
+   using logic from thingatpt.el
+
+** TODO [#B] Uniquify Tags using FILE-FUNCTION-context
+
+** TODO [#B] Generalize lookup of tags to lookup of thing at cursor point (thingatpt) using
+   Define the function pnw-url-lookup()
+   if thingatpt() is an include statement
+    ff-find-related-file()
+    else
+    lookup tag
+    And bind this to M-.
+
+    Or if not tag match is found default other stuff like hippie-expand() does
+    using its hippie-expand-try-functions-list does.
+
+** TODO Emacs Google Groups Question
+   - Make the command gse-locate propose with the expression (thingatpt.el and
+     thingatpt+.el)
+
+** TODO On nonempty region as default regexp in transient-mark-mode
+
+** TODO [#B] Improve Interface to mthesaur.el to use completing-read()
+   mthesaur-completing-reading()
+
+** TODO [#A] Integrate ppindent.el with normal indentation (add hooks to indent-line/region?)
+
+** TODO [#B] M-r toggles between string and regexp match in all interactions
+   Typically used in interfaces to grep, local, search etc.
+
+** TODO [#A] How do I map the "Esc" key without altering M-... bindings?
+   Bind the <escape> function key.
+   http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/9e52f5dfe11fc446/#
+
+** TODO [#C] Auto-insertion of Curly Braces in if()-statements
+   Auto-insert curly brace around if or else case when standing at the end the
+   second line or fourth line and pressing return in the following code.
+   1: if (x)
+   2:   do_x;
+   3: else
+   4:  do_else;
+
+** TODO [#B] c-insert-include-statement bound to C-c C-j #
+   This could perform smart completion of
+   - global includes upon <...
+   - local include upon "...
+** TODO [#C] Highlighting operators in shell-mode
+
+** TODO [#B] Merge my auto-insert templates in pnw-cc-tools.el with Emacswiki stuff
+   http://www.emacswiki.org/cgi-bin/wiki/AutoInsertHeaderGuards
+   Are we helped by using [[elisp:define-auto-insert()]]?
+
+** TODO [#A] Help with #includes in C/C++ Source Files
+   Automatically assure inclusion of relevant header file upon insertion of
+   opening parenthesis after a function name (call).
+   Use: =TAGS=-tables, =semanticdb=.
+
+** TODO [#A] Automatically suggest solution(s) to common C/C++ compilation warnings/errors
+   Examples:
+   - Missing Function and Type (=typedef=, =struct=, =class=) Declarations.
+   When many alternatives are possible show these and let the user do the pick.
+
+** TODO [#A] Fixes for compilation-mode
+*** TODO [#A] Control Characters in compilation-mode
+    Control Characters Printed by tools such as =wget= should be handled
+    correctly in compilation-mode.
+*** TODO [#A] Decoding of International (Swedish) Compilation Messages
+    For now do setenv() LANG to C in .emacs to fix compilation mode messages.
+
+** TODO [#A] winner.el enhancements
+*** TODO [#C] First/Back/Forward/Last Buttons for Window Configuration a la Web Browser
+    Use [[elisp:winner-undo]] and [[elisp:winner-redo]]. Reuse standard gnome icons namings. Use tool-bar-add-item
+*** TODO [#C] Winner Bug?
+    =winner-redo()= undos everything, not one step.
+
+** TODO [#C] Emacs Splint Interface
+   Tools Menu:
+   - Splint File (splint-file)
+   - calls (compile (concat "splint file"))
+
+** TODO [#C] Emacs GNU cflow Interface
+   Tools Menu:
+   - cflow File (cflow-file)
+   - calls (compile (concat "cflow file"))
+
+** TODO [#C] Info Directorys should be reread when we install new documentation say with aptitude
+
+** TODO [#C] Replace pnw-\([a-z0-9]+\) with pnw/\1 under [[file://~/elisp/mine]]
+
+** TODO [#B] No icy-mode() as default
+   Set keybindings for
+   - icicle-buffer()
+
+** TODO [#C] Recursive (E)Diff
+   - diff --unified --recursive
+   - smerge.el
+   - smerge-mode
+
+** TODO [#C] CEDET tries to store lots of semantic.cache in system paths using sudo
+   Does it forget to ask for password?
+   Try with [[shell:\emacs -q &]]
+
+** TODO [#B] GUD: Add more items to Menu "Gud" (gud-minor-mode-map)
+   Use =define-key-after()=.
+   - gud-break (C-x C-a C-b)
+   - gud-jump  (C-x C-a C-j)
+   - gud-run  (C-x C-a C-r)
+   - gud-reset  (C-x C-a C-R)
+   - gud-toggle-breakpoint (C-x C-a C-SPC)
+   - gud-pstar (C-x C-a C-P)
+   - gud-stop-subjob (C-x C-a C-S)
+
+** TODO [#A] GUD: Mouse over identifier should display value as popup
+   This is surely managable since *gud* has a list of the variables and can
+   easily pick out these and since the "print" command has completion.
+** DONE [#A] Getting Number of CPU(-core)s and giving it as the --jobs argument to GNU Make
+   CLOSED: [2007-09-12 ons 23:39]
+   This does the trick on Linux: [[shell:grep -c processor /proc/cpuinfo]]
+*** Windows: GetSystemInfo
+
+** TODO [#B] Visually Distinguish the current Emacs Window to More Easily Find it
+   - Change Background
+** DONE [#A] GDBA Problem
+   CLOSED: [2007-09-11 tis 14:04]
+   - Running gdb/gdba with =gdb -nx -annotate=3 <prog>= solved it!
+   - My [[file://~/.gdbinit]] contained =set ann 1= which disturbed stuff.
+
+** TODO [#B] icicle-find-tag() does not pick up thing at point as default arg
+
+** TODO [#A] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/0423a7aca5488264/#][Problem binding f5 when using Icicles]]
+
+** TODO [#A] Enrich Text Interaction with Graphics (Icons) like [[http://code.google.com/p/hotwire-shell/][hotwise-shell]] does
+
+** TODO [#A] Highlighting in pc-selection-mode
+   Ask gnu.emacs.help again: Why does not pc-selection-mode highlight both old
+   and new style selections?
+
+** TODO [#B] C-c o C-h shows menu of options instead of just help and then exitiing interaction
+
+** TODO [#C] How do I prevent org-mode from interpreting my underscores as subscript formatting?
+
+** DONE [#A] Skip cscope.out in grep and replace-in-files()
+   CLOSED: [2008-01-08 tis 13:02]
+
+** TODO [#B] Behaviour when compilation-auto-jump-to-first-error is non-nil
+   Should only jump to first /error/ (if there are any) and /not/ to the first
+   warning as it does now.
+
+** TODO [#B] C-c r does not work when replacing
+				   \([a-z]\)
+				     with
+				 \,(upcase\1))
+
+** TODO [#A] xscope+.el
+
+** TODO [#C] Fixes for highlight-symbol.el
+   highlight-symbol-mode should distinguish current from other symbols and mix (append)
+   with current font attributes.
+
+** TODO [#A] Visually Distinguish current symbol (highlight-symbol.el)
+   using other attributes than background/foreground color, such as
+   - underlined
+*** DONE [#B] Enboxed like Icicles do in minibuffer when size of M-x stack => 2
+    CLOSED: [2007-08-05 sön 18:12]
+*** TODO [#C] Enbox in cursor color
+*** TODO [#C] Highlighting should not be temporarily removed when doing
+    - highlight-symbol-prev()
+    - highlight-symbol-next()
+
+** TODO [#A] Emacs Wish: Finding Functions with Specific Arguments
+   Find all functions that operate on a specific (combination) /type/ of input
+   and or output arguments.  Useful examples: Find all functions operating on C
+   file streams, that is having the type =FILE*=.
+
+** TODO [#B] gnu.emacs.help: Cursor blink problem
+   Hello again, Emacs Coders.
+
+   I have a lot of extra stuff enabled in my Emacs. And now I have noticed a
+   quite annoying problem. After a while of usage the cursor blinking keeps
+   being activate even when I do cursor movement. This makes it harder to see
+   if I have reached the right position.
+
+   The problem does not occur in Vanilla Emacs and because I have a lot of
+   extensions enabled it's quite complicated to track down the problem just by
+   removing parts of all my add-ons. So I thought I could track down the
+   problem by investigating the logic controlling the cursor blink in
+   Emacs. I'm guessing that the prefix blink- is probably what I want. I also
+   suspect that the add-on flash-paren.el might be the source of the
+   problem. Does anyone have clues?
+
+   Thanks in advance,
+   Nordlöw
+
+** TODO [#A] Template Insertion Interaction Improvements
+   Template Insertion (pnw-cc-tools.el) should insert code as soon as possible
+   to make it more clear to the user in what context he is inserting arguments.
+** TODO [#A] C++ Template Arguments to classes, functions
+   (read-string
+      "Template arguments (comma separated or empty for no template): ")
+
+** TODO [#C] Remove local Shift+Keybindings in org-mode
+   C-c , up/down changes prio up and down.
+
+** TODO [#A] Design regexp-opt-alt-list() and replace regexp-alt-list() with it
+
+** TODO [#C] ~/elisp/contrib/policy-switch.el
+
+** TODO [#C] Use gnus to read EmacsWiki
+
+** TODO [#C] flash-paren.el and flash-paren-mode
+
+** TODO [#C] Install auctex and preview-latex
+
+** TODO [#C] Google Groups: Color Compilation Exit Status if there were errors
+   Use font-lock-warning-face.
+
+** TODO [#C] Save/Restore buffer font-locking-state upon buffer Save/Open
+   Save them using Extended Attributes in #include <sys/xattr.h>
+
+** TODO [#C] Gtags Lookup Window Layout
+   When calling gtags-find-tag only split-window-vertically() if we are in
+   source file and looking up a function.
+
+** TODO [#C] On w32 systems, if you want to startup with emacs maximised, you can do
+   so by adding the following to your .emacs
+    (w32-send-sys-command #xf030)
+
+** TODO [#C] Doxygen Stuff
+*** DONE [#C] Copy Doxymacs Emacs Lisp to ~/elisp/mine/
+    CLOSED: [2008-10-07 tis 16:12]
+*** DONE [#C] Use more advanced Doxygen @param statements
+    CLOSED: [2007-11-12 mån 10:19]
+    In ~/elisp/mine/doxymacs.el
+    @param[in]
+    @param[out]
+    @param[in,out]
+    Colorize "in" and "out" as bold font-lock-type-face.
+*** TODO [#C]
+    @file File.h
+    Highlight "File.h" in font-lock-file-name-face (white?)
+    font-lock-directory-name-face (bold white)
+    NOTE: But first Google for these to face names.
+*** TODO [#C] Helper "Doxygen" Menu for Inserting Doxygen Tags
+    defun insert-doxygen-tag() using completing-read() and doxygen-tag-list
+*** TODO Emacs
+    Create function that automatically inserts various kinds of doxygen comments.
+    - c-doxygen-comment-group automatically insert
+    /** @name Group Name */
+    /* @{ */
+    /* @} */
+    around the current region.
+*** DONE [#B] Colorize Doxyen Specific Tags plus its Possible Argument
+    CLOSED: [2007-07-11 ons 14:27]
+    Used doxymacs.el.
+    Reuse doxygen-tag-list from above.
+    Highlight tag in keyword face.
+    Highlight the x in "@param x" in font-lock-variable-name-face.
+    Highlight the x in "@p x" in font-lock-variable-name-face
+    Highlight the x in "@b x" in font-lock-doxygen-bold-face
+    Highlight "@todo" in font-lock-warning-face
+
+** TODO [#C] SpeedBar Coloring of Tags
+   SpeedBar should use font-lock-function-name-face etc for constitency.
+
+** TODO [#A] Undo All Buffers
+   Useful when undoing the complete result of tags-query-replace()
+
+** TODO [#A] URL Browsing Behaviour
+   Browsing an URL such as http://www.xsteve.at/prg/emacs/psvn.el
+   with the command find-file-at-point() opens the file in my web browser.
+   It would like this command to open all URLs matching auto-mode-alist
+   directly in an Emacs instead.
+*** Answer: The variable `browse-url-browser-function' should give some clues
+
+** TODO [#A] Recursive Regexp Completion when reading file(s)
+   Example: /etc/.*/.*f.*/g
+
+** TODO [#A] Context Sensitive Insertion of Comment Stubs
+   upon press of "C-M-;"
+*** Easy Solution
+    Indent current line then check if cursor is at top-most by checking if
+    current column is zero. If so insert this kind of comment:
+    /**
+     * This function does something extraordinary.
+     */
+*** Use: c-show-syntactic-information()
+*** Google Groups Message:
+    Hello, Emacs Powerusers.
+
+    I would like to enhance my comment-dwim to be more context sensitive
+    when I am standing with my cursor right before a
+	      (function/struct/class/variable,constant,enum,...)
+			  definition/declaration
+    We could then automatically insert for example Java-styled
+    function comment:
+    /**
+     * This function		does something extraordinary fooishly.
+     */
+    int foo(void);
+
+    I guess we should make use of either
+    - thing-at-point() or
+    - c-show-syntactic-information() or
+    - some context query function from the Semantic package
+
+    How could this be achived?
+    Many thanks in advance,
+    Per Nordlöw
+
+** TODO [#C] Check out SLIME at [[http://common-lisp.net/project/slime/][SLIME]] and [[http://www.cliki.net/SLIME][Cliki: SLIME]]
+
+** TODO [#A] URLs can include compressed archives
+   This makes find-file, etc access completely transparent inside compressed
+   packages.
+   Example: /ware/src/package-version.tar.gz/somefile.txt
+
+** TODO Checkout and test [[http://www.emacswiki.org/cgi-bin/wiki?action=browse;id=PredictiveMode][PredictiveMode]]
+
+** TODO Checkout and test auto-complete.el
+
+** TODO [#C] Add PC-lisp-complete-symbol to somewhere in
+   hippie-expand-try-functions-list
+
+** TODO [#B] Extend User Query Interaction in Multi-Buffer Replaces
+   Especially in the function findr-replace()
+   Extend the set of options: y, n, ! to an option that
+		 Skips all the elements in the current buffer
+   but the continues on to the next buffer.
+*** Ask gnu.emacs.help
+
+** TODO [#C] Implement file-magic as an Emacs built-in C function using libmagic (-lmagic)
+
+** TODO [#B] Enhance hippie-expand()
+*** TODO [#C] Make hippie-expand use dictionaries
+   Look in gnu.emacs.help
+   - try-expand-dictionary-english
+   - try-expand-dictionary-swedish
+   For a list of available dictionaries use the command
+   [[shell:aspell dump dicts]]
+**** See: flyspell-mode, aspell
+
+*** TODO [#C] Make hippie-expand use GNU global (gtags/global)
+   - try-expand-dabbrev-gtags(-with-argument)
+*** TODO [#A] Make hippie-expand complete inside symbols like:
+   vobj_typed() completes to vobj_new_typed() when standing with cursor
+   at underscore.
+*** TODO [#A] Make hippie-expand context sensible
+   - c-mode (real code, not comment): don't complete lisp-symbol but e/g-tags
+   - emacs-lisp-mode:
+
+** TODO [#A] Isearch enhancements
+    - Add isearch-toggle-symbol() (M-s) in isearch-mode-map or perhaps better
+      add state to isearch-toggle-word() (M-w) toggle ring. See
+      file:isearch+.el on how to extend for example isearch-mode-map.
+    - Toggle syntax-context (M-S-s). Reuse inside-syntax-.*
+
+** TODO [#B] Emacs Uniform KeyBindings for toggling case and regexp
+   Should be same as for isearch, that M-c, M-r.
+   - Interfaces to
+     - grep:
+     - locate: (globalff)
+     - tags: (tags-)query-replace(-regexp)
+   - Asked gnu.emacs.help. [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/28d4ea480c1fb605/8695333509844a94#8695333509844a94][Here]] is the thread.
+   - See: variable `case-fold-search'.
+   - See: function `isearch-toggle-case-fold'
+   - For tags-query-replace() also enable M-c to toggle `tags-case-fold-search'.
+   - Change C-c to M-c in gtag-...
+
+** TODO [#C] Left-Click <down-mouse-1> on minibuffer while in isearch-mode
+   should equal behaviour on M-e.
+
+** TODO [#C] Emacs History
+   Is there a history for isearch and isearch-regexp?
+
+** TODO [#B] Lookup of Tags Functions, Variables in any Language
+   (C,C++,Emacs Lisp)
+*** C-h C-f: Go to definition of function
+*** C-h C-v: Go to definition of variable
+*** C-h C-m: Go to definition of mode
+*** DONE C-h C-k: Go to definition of a function mapped to a key sequency
+    CLOSED: [2007-06-08 fre 10:00]
+    See: find-key-function-definition()
+*** C-h f: Describe function
+*** C-h v: Describe variable
+*** C-h m: Describe mode
+
+** TODO [#A] Function for killing-buffer and deleting its corresponding file and
+   bind it to Ctrl-x K.
+
+** DONE [#A] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/33e2ad2c6d0c532e][icicle-kill-buffer should not delete the frame]]
+   CLOSED: [2007-07-11 ons 14:27]
+
+** TODO [#C] Add hook to compilation-mode-hook to highlight the function name in
+   font-lock-function-name-face
+   In function ‘kdPoint_ins_Point’:
+
+** TODO [#C] describe-advice()
+
+** TODO [#C] What does Emacs prefer - a .el or a .elc when loading?
+   Does the date of recent change affect the choice?
+
+** TODO [#B] Both PC-style and Emacs style selection
+   should be syntax highlighted.
+
+** TODO [#C] gtags-find-tag should work when the cursor stands at the end of a word
+
+** TODO [#C] ido-completing-read() with gtags
+   Somehow make ido-completing-read() work on vector and then use it instead
+   of completing-read() when looking up tags.
+
+** TODO [#C] Resolve mcomplete icomplete ido conflicts
+
+** DONE [#B] Use crm.el in replace-in-files.*() to specify which files to operate on
+   CLOSED: [2008-01-08 tis 15:16]
+
+** TODO How do we easily exclude binary files from tags-query-replace?
+   We also need a special history for this command.
+   Replace in these files:
+*** Test A
+    (completing-read-multiple "Replace in files of type (comma separated list): "
+      '("non-backup" "ASCII" "C" "C-header" "C-source" "C++" "C++-header" "C++-source" "Binary")
+      'replace-in-files-history)
+   Look at how icicle-read-color() use comments after its candicates.
+   We could do something similar with our file types:
+   - ASCII (regexp)
+   - C-header (\.h$)
+   - C-source (\.c$)
+   - etc...
+*** Also see logic in lgrep() that uses the variable grep-file-aliases
+
+** TODO Octave
+   In octave-mode highlight function-name with font-lock-function-name-face()
+   in patterns
+   - Function File:  hist (Y, X, NORM)
+** TODO [#C] Support octave-mode by using Octave's help system
+
+** TODO [#C] Octave Font-locking
+   Type
+   [[shell:octave]]
+   type help and parse its output to build a table of Syntax Categories:
+   - operators: font-lock-operator-face
+   - reserved words: font-lock-keyword-face
+   - built-in constants: font-lock-constant-face
+   - built-in variables: font-lock-variable-name-face
+   - commands: font-lock-function-name-face
+   - mapper functions: font-lock-function-name-face
+   - general functions: font-lock-builtin-face
+   - function files in
+     - [[~/Desktop/GSMSP_Analyzing_GSM_data_in_MatLab/]]:
+     - [[/usr/lib/octave/2.1.73/site/oct/i486-pc-linux-gnu/]]:
+     - [[/usr/lib/octave/site/oct/api-v13/i486-pc-linux-gnu/]]:
+     - [[/usr/lib/octave/site/oct/api-v13/i486-pc-linux-gnu/gpc/]]:
+     - [[/usr/lib/octave/site/oct/api-v13/i486-pc-linux-gnu/octave-forge/]]:
+     - [[/usr/share/octave/site/api-v13/m/gpc/]]:
+     - [[/usr/share/octave/site/api-v13/m/octave-forge/graceplot/]]:
+     - [[/usr/share/octave/site/api-v13/m/octave-forge/vrml/]]:
+     - [[/usr/share/octave/site/m/PLplot/]]:
+     - [[/usr/lib/octave/2.1.73/oct/i486-pc-linux-gnu/]]:
+     - [[/usr/share/octave/2.1.73/m/deprecated/]]:
+
+
+** TODO [#C] Enable Highlighting of more function-calls such as
+   void fun(void)
+   {
+   	foo(x, y,
+	z);
+   }
+   Where
+   - fun() should font-lock-function-name-face and
+   - foo() should font-lock-function-call-face
+
+** TODO [#C] Google Groups: Lookup of documentation of function with
+   describe-function()
+   In *Help* buffer:
+*** arguments: font-lock-variable-name-face
+*** function: font-lock-function-[name|call]-face
+
+** TODO [#C] How do I optimize the the font-locking of C,C++ Operators
+   in pnw-cc-exts.el
+
+** TODO [#C] Disable (x)bell/ding/ in emacs
+
+** TODO [#C] Construct locate-and-tracker-search()
+   - locate: lists global stuff and
+   - tracker-search: lists home-stuff.
+
+** TODO [#C] Prevent iswitchb from upon tab-press choosing a unique selection
+
+** TODO Make an interactable wrapper to thing-at-point()
+
+** TODO [#C] Fix mcomplete.el subtring completion bug
+*** Error: sequence-p
+*** Use: EDebug: Set some variable to enter EDebug on error
+
+** TODO [#C] New Type of Completion - Mcomplete
+   Matches target if all keywords entered occur one more times in any order.
+
+** TODO [#B] Google Groups: Better Completion of _ and -
+   Make gtags-lookup automatically complete _ to - and vice versa if completion
+   is unique.
+
+** TODO [#B] Google Groups: How do I open an URL directly into my text editor?
+*** See: browse-url-at-point()
+
+** TODO [#C] Merge [[http://www.xsteve.at/prg/zsh/.zshrc]] with my .zshrc
+** TODO [#C] Complete use of fp-literal-regexp
+** TODO [#B] Google Groups: Prevent find-file-completion from ignoring patterns like "emacs-cvs"?
+
+** TODO [#C] Locate Interface
+   Should add data incrementally to buffer and use font-lock-warning-face on
+   marked files.
+*** See: locate.el
+
+** TODO [#C] Font-locking of function arguments in python-mode.el
+
+** TODO Centralize Concept of Inverse/Reverse Operation to a prefix do-in-reverse()
+
+** TODO Completion Should Work also by reordering subwords
+   (delimited by '-' or '_'): bar-foo => foo-bar
+
+** TODO C Comment Function
+*** A
+    Reuse c-comment-edit() to implement c-comment-function() using
+    thing-at-point('defun)
+    Also add an advice: split-window(), other-window(). to place the window
+    editing the comment above the window showing the beginning of the function
+    that is to be commented.
+*** B
+    Go to (c-beginning-of-defun).
+    Reuse my commenting function in c-insert-function-doxygen-stub()
+    If (thing-at-point 'symbol) is void skip return value.
+
+** TODO Test zenburn-2005-05-17.el
+
+** TODO Scott - scott-dot-emacs.el
+
+** TODO Stefan Reichör
+*** stefan-reichoer-dot-emacs.el
+    Especially (when (require 'align nil t)... in
+*** xsteve-functions.el
+    which could be used for indenting c preprocessor (cpp) directives.
+*** progr-align.el
+
+** TODO Emacs Menu
+   - "Edit" => "Replace"
+     - Replace Recursively (findr)
+
+** TODO RE-Builder Menu
+   Add Main-Menu "RE-Builder" when in RE-Builder making it easier to discover
+   the key-bindings:
+   - (define-key reb-mode-map "\C-c\C-c" 'reb-toggle-case)
+   - (define-key reb-mode-map "\C-c\C-q" 'reb-quit)
+   - (define-key reb-mode-map "\C-c\C-w" 'reb-copy)
+   - (define-key reb-mode-map "\C-c\C-s" 'reb-next-match)
+   - (define-key reb-mode-map "\C-c\C-r" 'reb-prev-match)
+   - (define-key reb-mode-map "\C-c\C-i" 'reb-change-syntax)
+   - (define-key reb-mode-map "\C-c\C-e" 'reb-enter-subexp-mode)
+   - (define-key reb-mode-map "\C-c\C-u" 'reb-force-update))
+
+** TODO Solve coloring conflict between highline-mode and highlight-symbol-mode
+   highlight-symbol-mode does not work that well with other highlighting modes.
+   Solution: highlight-symbol-mode should override highline-mode background
+   instead of the opposite.
+*** See: [[http://www.emacsblog.org/2007/04/17/quick-tip-light-symbol-mode/]]
+
+** TODO eldoc-mode should support faces aswell
+*** See: describe-face()
+** TODO eldoc-mode variable tool-tip bug
+   Eldoc mode incorrectly layouts text when display tip about variables when
+   name variable-name and its doc spans more than what fits in the minibuffer.
+
+** TODO find-file-at-point() and/or browse-url-at-point()
+   on an URL should bring current browser, such as firefox, to front.
+
+** TODO Emacs Lisp mode Electric Behaviour
+
+** TODO Use font-lock-function-call-face
+   Pattern: \\w.*(.*)
+
+** TODO Byte Compile: [[http://edward.oconnor.cx/elisp/color-theme-hober2.el]]
+
+** TODO Lägg till kommando får 'E' i pcl-cvs får fÃ¥ samma beteende som i svn.el
+
+** TODO C mode Highlighting
+*** Fix Highlighting of l-value in expressions such as: x[j] = y;
+
+** TODO Add user interaction in compilation buffer M-x compile
+
+** TODO How do we check for syntactic contexts,
+   such as inside comment, in cc-mode? Use this to highlight emails and URLs in
+   italic only inside comments.  <luo.jinhua@gd-linux.com>
+
+** TODO Don't use space as completion character because it conflicts
+
+** TODO Opening http-URL with find-file
+
+** TODO [#B] Make it easier, more guiding, for to open generic URLs (tramp)
+
+** TODO [#C] Emacs Font Locking for file/libmagic source files
+   font-lock-type-face: [[lb]e]+[us]+[byte/short/int/long], string
+
+** DONE [#C] Emacs GDB and GDB 6.6
+   CLOSED: [2007-09-12 ons 19:04]
+   New in GDB 6.6
+   - set substitute-path
+   - unset substitute-path
+   - show substitute-path
+   Manage a list of substitution rules that GDB uses to rewrite the name
+   of the directories where the sources are located. This can be useful
+   for instance when the sources were moved to a different location
+   between compilation and debugging.
+   Set this flag correctly when launched from within Emacs.
+
+** DONE [#C] Emacs GDB: ELF Completion
+   CLOSED: [2007-09-12 ons 19:04]
+   Add wrapper function for gdb that first asks for an ELF-file from
+   file-system.
+   Complete gdb -f <PROG> with only ELF-files using
+			    file-magic-is-ELF-exe-p
+   Continue on the function gdb-elf()
+
+** TODO [#B] Add Support for [[http://www.ltrace.org/][ltrace]] and strace
+   See:
+   What is nice with it. Doesn't oprofile and valgrind solve all these problems already?
+
+** TODO GDB
+*** TODO [#B] Make GUD more clever at finding Source Files
+    When GUD still needs guiding to source files make it remember this state
+    for the file/project.
+*** TODO [#B] Add some missing command to GUD Menu
+    - Breakpoint
+    - Breakpoint with expression: =break LINE if EXPR=
+*** TODO [#A] Valgrind Note
+    Run gdb (like this):
+		        =valgrind --db-attach=yes ~/myprog=
+    and after you have attached to GDB, type:
+    (gdb) set ann 3
+    (gdb) frame
+    This is like starting with "gdb --annotate=3" and gives you the graphical
+    interface.  You can do "M-x gdb-many-windows" for the other buffers.  Use
+    "set ann 1" if you just want the old text command mode.
+*** TODO [#C] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/5214a5ae311b8cf4#][Save & Restore GUD (gdb) Command Line History]]
+*** TODO [#B] Emacs GDB: Show Attributes upon Mouse-over function, variable, constant
+    Mouse Hovering over variable in source should somehow show its value either
+    through
+    - Popup Window
+    - Display in Minibuffer
+
+** TODO [#B] Emacs (interactive)
+   Emacs behöver fler alternativ till functionen interactive()'s "Code letters".
+   Exempelvis behöver
+   - valgrind-run() kunna välja endast ELF-filer.
+   Output from command "file FILE" should match:
+		       "\\(ELF\\).*\\(Intel 80306\\).*"
+*** Example
+    (defun file-name-is-ELF() (sh-command "file" )
+    (defun read-file-name-ELF()
+    (read-file-name "Program to debug: " nil nil t nil 'file-magic-is-ELF-exe-p)
+*** See
+    - `read-file-name()' argument PREDICATE
+    - `read-file-name-completion-ignore-case'
+    - `read-file-name-function'
+
+** TODO [#B] Emacs Completion
+   Complete arguments AC_CHECK_LIB in autoconf-mode by finding everything that
+   matches
+	    lib\(.*\)*.so.* in /lib /usr/lib and $LD_LIBRARY_PATH.
+
+** TODO [#B] Fixa buggar i valgrind-run()
+
+** TODO [#C] Emacs Single-click of mouse should not open files in dired,
+   cvs, etc mode. Instead use Return.
+
+** TODO Emacs Recursive Delete
+   Using delete-directory-recursively() or recursively-delete-directory()
+
+** TODO [#C] Mouse Pointer disappear upon keyboard event
+
+** DONE [#C] Emacs: Correct insertion of ifndef-define
+   CLOSED: [2007-07-11 ons 14:27]
+   Add input prompt verifying suggested ifndef-define constant in
+   c-insert-header-template-info
+   Make this suggestion more verboser (relative to home directory) for example:
+			      PNW_SRC_AVG_VOBJ_H
+
+** TODO [#B] Scrollwheel should only scroll a part (a 10:th) of the window
+
+** TODO [#C] Emacs Localized Compilation Output
+   Låt compilation-mode i Emacs välja k	zodning efter värdet på (getenv
+   "LC_ALL") enligt följande tabell:
+   sv_SE.UTF-8 => mule-utf8
+   sv_SE.ISO-LATIN-1 => iso-latin-1
+   osv. Nog posta denna förfrågan då någon förmodligen redan har
+   konstruerat denna översättningstabell.
+
+** TODO [#C] Emacs Recursive Replace
+   Add fourth interactive argument to the function rename-recursively()
+   suggesting default values of nothing entered.
+
+** TODO [#C] Emacs Menu "Index"
+   Index is not automatically update when a buffer is saved to disk. Why?
+
+** TODO [#B] Emacs C Processor Statement Indentation
+   C processor statement indentation for example to more easily
+   see the structure of large complex nested #if statements
+
+** TODO [#C] Emacs Hippie Expand Extensions
+   - foo(Ctrl-RET should try to complete function call arguments.
+   - Hitting tab after "#include <" should build an index of all C header files
+   in /usr/include and use it to complete.
+
+** TODO [#C] Emacs Font
+   Make the gnome font "Clean" available in Emacs.
+
+** TODO [#C] Emacs Valgrind
+   Rename Valgrind Compile Buffer to separate it from standard compilation
+   output buffer.
+
+** TODO [#C] Emacs Lisp Replacement for recursive grep
+
+** TODO [#C] Emacs Goby
+   Checkout goby.el, a WYSIWYG presentation tool, which runs on Emacs 21.4 or
+   Emacs current.
+
+** TODO FlySpell
+*** TODO [#A] Fix flyspell-insert-and-replace-all()
+*** TODO More Context Sensitive Spellchecking
+**** TODO Emacs Flyspell in C
+   Flyspell in c-mode should only spell-correct comments.
+**** TODO flyspell-correct-word should ask to correct all ocurrencies of the word.
+**** TODO flyspell should skip URL in \href{URL}
+
+
+** TODO Emacs PComplete Problem
+   pcomplete is bound to the tab key in at least one mode, namely
+   octave-shell. Remove it!
+
+** TODO Emacs Argument Proposal (like in replace+.el)
+   for rename-c-ident and rename-c-ident-recursively.
+
+** TODO Emacs GTags
+*** gtags-find-rtag should move cursor to column where beginning of tag reference
+*** gtags-find... should NOT change cursor position in the buffer if a default lookup is performed
+    - Tag lookup should first step up and then traverse down to look for any directory containing GNU GLOBAL gtags files G*.
+    - Update by running "global -vu" in directory.
+    - M-x gtags-make-complete-list from Emacs.
+    The following steps are used to change gtags contex.
+    - Run gtags or global -vu in directory.
+    - gtags-visit-rootdir() that directory.
+    - Do gtags-make-complete-list from Emacs.
+    - Lookup without current database should interactively input dir to such.
+
+** TODO Emacs Tag Lookup
+   When finding a function tag one should be able to choose to go to the
+   declaration (.h) or definition (.c).
+
+** TODO Emacs: Look in ~/elisp/shell-command.el
+   After gtags-update-upon-buffer-saver call of gtags-make-complete-list.
+
+** TODO M-! shell-command in background. Rename Buffer names to
+			      *backgroup-ls* etc
+
+** TODO Emacs Macro History
+
+** TODO Emacs: Fix and add to pnw-regexps.el
+   - Correct URL-matchers.
+   - Make all other modes that inherit text-mode also inherit my font-lockings.
+
+** TODO Emacs Wish
+   Auto update function declaration when corresponding definition change.
+
+** TODO Emacs Multiline Search
+   Is there a way to perform multiline search & replaces in Emacs?
+
+** TODO Emacs Multiple Selections
+   Package for specifying and operating on multiple selections.
+
+** TODO Emacs Index outline-mode heading with etags or gtags
+
+** TODO Emacs nroff-mode
+   What kind of formatting does it offer inline?
+
+** TODO Emacs Google Groups Question
+   Why doesn't GNU GLOBAL support tag lookup of c++-style expression like
+   Object::member_function()
+
+** TODO Emacs Menubar: Automatic Index => Rescan
+   In the Menubar: Index => Rescan should be called automatically upon save of
+   buffer.
+
+** TODO [#C] Rebind C-l to be a prefix for functions operating on current line
+   C-l C-c 'recenter
+   C-l C-d 'duplicate-line
+
+** TODO My Emacs Terminal Emulator: Modify keys in local mode-map like here:
+   (defvar ansys-mode-map nil
+   "Keymap used in Ansys mode.")
+   (if ansys-mode-map
+   ()
+   (let ((map (make-sparse-keymap)))
+    (define-key map "`" 'ansys-abbrev-start)
+    (define-key map " " 'ansys-electric-space)
+    (define-key map "\n" 'ansys-reindent-then-newline-and-indent)
+    (define-key map "\t" 'indent-according-to-mode)
+    (define-key map "\e\n" 'ansys-indent-new-comment-line)
+    (define-key map "\e\t" 'ansys-complete-symbol)
+    (define-key map "\C-c;" 'ansys-comment-region)
+    (define-key map "\C-c:" 'ansys-uncomment-region)
+    (define-key map "\C-c\C-b" 'ansys-submit-bug-report)
+    (define-key map "\C-c\C-p" 'ansys-previous-code-line)
+    (define-key map "\C-c\C-n" 'ansys-next-code-line)
+    (define-key map "\C-c\C-a" 'ansys-beginning-of-line)
+    (define-key map "\C-c\C-e" 'ansys-end-of-line)
+    (define-key map "\C-c\M-\C-n" 'ansys-forward-block)
+    (define-key map "\C-c\M-\C-p" 'ansys-backward-block)
+    (define-key map "\C-c\M-\C-u" 'ansys-backward-up-block)
+    (define-key map "\C-c\M-\C-d" 'ansys-down-block)
+    (define-key map "\C-c]" 'ansys-close-block)
+    (define-key map "\C-c\C-r" 'ansys-column-ruler)
+    (define-key map "\C-c\C-i" 'ansys-if)
+    (define-key map "\C-c\C-t" 'ansys-if-then)
+    (define-key map "\C-c\C-d" 'ansys-do)
+    (define-key map "\C-c\C-m" 'ansys-mp)
+    (setq ansys-mode-map map)))
+
+** TODO Google Groups: gnu.emacs.help: Refactoring Notes
+   Hey again, Emacs Powerusers.
+
+   I am building some refactoring functions for automatic update of references of
+   a file upon renaming of the file.
+
+   When renaming a file say
+   - source: $HOME/project/include/foo.h to
+   - dest: $HOME/project/other-include/foo.h
+
+   I want to automatically find and strip away the common path-prefix from source
+   and destination, in this case $HOME/project/. Then I can easily do recursive
+   query-replace from a user-given directory, in this case $HOME/project without
+   having to specify the src and dst again.
+
+   I have found the following code to find the prefix:
+
+   (defun common-prefix (collection)
+   "Find the (longest) common prefix of the elments in list"
+   (try-completion "" collection))
+
+   I now want to have a function that does the above mentioned stripping. This is
+   what I have come up with:
+
+   (defun strip-common-prefix (collection)
+   "Strip the common prefix from all the elements in COLLECTION."
+   (let ((from (string-width (common-prefix collection))))
+   (mapcar '(lambda (string) (substring string from))
+   collection)))
+   ;; TEST: (strip-common-prefix '("a1" "a2"))
+
+   And I would like this preferrably for all kinds of argument types, not only on
+   a list of strings. How do I generalize my idea to work for all kinds of
+   argument types?
+
+   Thanks in advance,
+   Nordlöw
+
+** DONE Buffer switches should also ignore case
+   CLOSED: [2007-05-23 ons 12:56]
+*** See: read-file-name-completion-ignore-case, completion-ignore-case
+    (setq completion-ignore-case t)
+
+** DONE Emacs Uniform keybinding for toggling case
+   CLOSED: [2007-05-23 ons 12:56]
+   Add key-binding of MComplete-toggle-ignore-case from C-c to M-c.
+
+** DONE [#A] Change C++ namespace and extern "C" indentation to 0
+   CLOSED: [2007-06-29 fre 00:57]
+*** Solution:
+    (add-hook 'c-mode-common-hook
+	  (function (lambda ()
+		      (c-set-offset 'innamespace 0 t)
+		      (c-set-offset 'namespace-open  0 t)
+		      (c-set-offset 'namespace-close 0 t)
+		      (c-set-offset 'inextern-lang 0 t)
+		      (c-set-offset 'extern-lang-open  0 t)
+		      (c-set-offset 'extern-lang-close 0 t)
+		      )))
+
+** DONE [#A] customize-variable() compilation-auto-jump-to-first-error to on
+   CLOSED: [2007-07-10 tis 21:12]
+
+** DONE [#B] Integrate
+   CLOSED: [2007-07-15 sön 21:42]
+*** DONE ~/elisp/contrib/ipa.el
+    CLOSED: [2007-07-15 sön 21:38]
+*** DONE ~/elisp/contrib/sudo-save.el
+    CLOSED: [2007-07-15 sön 21:42]
+*** DONE ~/elisp/contrib/extra-edit.el
+    CLOSED: [2007-07-15 sön 21:42]
+
+** DONE [#C] What font attributes does org-mode support other *bold*?
+   CLOSED: [2007-08-23 tor 00:03]
+   *bold*, /italic or emphasized/, _underlined_, +strikethrough+, =code=
+
+** DONE [#C] Support @i and @em for Italic Style in Doxymacs
+   CLOSED: [2007-08-24 fre 01:18]
+
+** DONE [#A] Add elisp/nxhtml elisp/nxhtml/nxhtml elisp/nxhtml/util to load-path
+   CLOSED: [2008-08-01 fre 20:46]
+
+** DONE [#A] [[http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/43c449f070188cd7#][Adding Lists/Sequences]]
+   CLOSED: [2008-09-23 tis 15:20]
+   Is there a general function, say foo, that adds lists or, even better,
+   sequences together?
+   - Answer: (append '("a" "b") '("c" "d"))
+   Also See: (info "(Elisp) Building Lists")
+
+** DONE [#A] Boost headers in semanticdb
+   CLOSED: [2008-09-29 mån 14:47]
+
+** DONE [#B] Call eval-buffer() upon save of Emacs Lisp Source file
+   CLOSED: [2008-09-29 mån 14:51]
+   See the functions =ask-to-byte-compile=, =ask-to-eval-buffer= and =ask-to-do-stuff=.
+
+** DONE [#C] Compare performance tramp-directory-files() and directory-files(). First and Second time (cached)
+   CLOSED: [2008-09-29 mån 15:02]
+   They are about the same:
+
+   [[elisp:(benchmark-run 10 (tramp-handle-directory-files "~/pnw/src"))]]
+   [[elisp:(benchmark-run 10 (directory-files "~/pnw/src"))]]
+
+** DONE [#C] Vanilla Emacs: run-vanilla-emacs()
+   CLOSED: [2008-10-02 tor 16:37]
+
+** DONE [#B] Update cuc upon cedet-update-and-rebuild()
+   CLOSED: [2008-10-13 mån 16:48]
+** TODO [#B] Successive call to slick-copy advice should mark N lines
+Add to pgo-kill.el.
+** TODO Checkout speck.el
+** TODO Add Auto Lookup of Packages for LaTex Packages
+   - Search for \usepackage[]{PNAME}
+   - Lookup PNAME.sty
+   - Extend/Reuse cc-assist.el to work with these patterns
+
+** TODO [#A] Auto-Assure Header File that containing tag at point
+   - c-auto-include-symbol-tag-decl-header.
+   - add-hook abbrev-expand-functions (intern-soft ID *ectags*)
+   - trigger on ID WS "(" in syntax-code-p and propose auto-insert its
+     header. Reuse auto-insert-header function in cc-assist.el.
+
+** IN-PROGRESS [#A] Advice gud-break to assure buffer is being debugged :Emacs:
+   Doesn't work cause gud-break is not defined until we load it.
+
+** TODO [#B] Advice mkdir to add it to version control aswell
+
+** TODO [#C] M-x ltrace should work similar to M-! or make
+
+** TODO [#A] When following grep link to org-mode org should expand to show hit context :Emacs:Grep:Org:
+** TODO mark-sexp in comments in emacs-lisp-mode should use c-like syntax table
+
+** TODO Sync File Histories with Directory and File Moves Copyings and Deletions
+** TODO [#C] Support search for Categories  in [[elisp:find-ectag]]
+** TODO [#A] When I-search fails in whole buffer suggest lexical relaxation in minibuffer using M-l
+** TODO Use latex-electric-env-pair-mode
+** TODO [#A] Support [[http://clang-analyzer.llvm.org/][Clang Static Analyzer]]
+** TODO [#A] Use Clang Diagnostics and Fix-Its :Clang:Emacs:Fix:It:Compilation:Messages:
+   - See: http://clang.llvm.org/diagnostics.html
+   - See: clang arguments -fshow-column -fshow-source-location
+     -fcaret-diagnostics -fdiagnostics-fixit-info -fdiagnostics-parseable-fixits
+     -fdiagnostics-print-source-range-info -fprint-source-range-info
+     -fdiagnostics-show-option -fmessage-length
+** TODO [#A] customize-thing-at-point (thatpt)
+** TODO [#B] Auto-Lookup HTML Title from Link Content
+Use in for example org-mode.2
+Example:
+: <html>
+: <head>
+:   <title>Clang Static Analyzer</title>
+: ...
+** TODO find-file semantic-*.el
+  With prefix ask to open the files side-by-side in separate balanced windows.
+** TODO describe-variable/symbol should have extra mode for adding value matcher
+   Bind this mode to C-v.
+** TODO [#C] Checkout c-cleanup-list
+
+** TODO [#A] Completion
+*** TODO [#B] Give Minibuffer Feedback about what Type of Matching Gave a
+    Completion Advance Only relevant when [[elisp:completion-styles]] is a list of styles
+    such as the default: [[elisp:'(basic partial-completion emacs22 initials
+    substring)]].
+*** TODO Word-Order and Underscore/Space/Minus Insensitive Completion
+    See [[elisp:completion-styles-alist]] and [[file:completion-styles-cycle.el]].
+*** TODO [#B] Complete formattings such as %d in string part of [a-z].*printf() in c-mode and c++-mode
+    completion-at-point
+** TODO Implement Mode-Local variants of Sub-Expression Navigation using SMIE for c-like languages
+Octave mode forward/backward-sexp works like expected with if, while, for,
+etc.
+- Variables: [[elisp:(describe-variable 'forward-sexp-function)]]
+- Functions: [[elisp:smie-forward-sexp-command]]
+- Package: smie.el, octave-mod.el
+** TODO makefile-mode highlightinger should handle lines containing  "@#"
+   Example:
+   : @# will run on any Debian box and that's enough for now
+** TODO eval-dwim main() search is not sensitive enough
+   Check for C/C++/Objective-C extension aswell.
+
+** TODO M-x matlab-shell errors with
+:  Debugger entered--Lisp error: (void-variable gdb-active-process)
+:  (if gdb-active-process "Continue" "Run")
+** TODO Support eldoc-mode in matlab-mode and octave-mode
+** TODO [#C] GUD wrapper in matlab.el should support support red circle in the fringe for breakpoints
+** TODO [#A] Completion for matlab-shell-describe-command and matlab-shell-describe-variable :MATLAB:
+   Ask Eric M Ludlam about extracting this information from MATLAB.
+
+** TODO [#A] Fix Bad Side Effects Continuation Indentation in Multi-Line C/C++ Comments
+   First and Second line gets wrongly indented.
+:   /*
+:    *
+:    */
+** TODO Integrate one-key.el with all my packages having long shortcuts
+   Examples: tscan, oprofile, valgrind, etc.
+** TODO c-kill-arg should keep argument index position
+   Instead c-backward-kill-arg should do that.
+** TODO [#C] AUCTEX TeX-command-master should check for dependencies
+   Check status \1 found in the pattern \includegraphics[]{ \(\) }.
+
+
+** TODO [#A] charedit.el should support Doxygen comments in cc-mode comments context
+** TODO [#A] Emacs GUD LLDB Integration
+** TODO [#A] Unify file-xattr, fcache.el, semanticdb using backends. Use to cache eval-args in file-dwim, matlab-shell-save-and-go
+** TODO [#A] hippie-expand
+   1. mdabbrev-expand
+   2. complete-files in default-directory
+   3. complete-files in file-name-history
+** TODO Integrate APT-searches into Anything           :Emacs:APT:Debian:Deb:
+** TODO isearch-yank-pop M-y?
+   Seat taken in isearch-mode-map?
+** TODO Selected mode-line shown in select color.
+** TODO Not Really Hungry in emacs-lisp-mode
+** TODO gdb-up/down/.. should ctx-flash both source and stack buffer
+** TODO Use New Completion Metadata Logic
+Use complete-with-action and completion-metadata.* minibuffer-completion-help
+See emacs/lisp/ChangeLog for details.
+Use ectags.el tag type as metadata `category'.
+** TODO Use SLIME and el-swank-fuzzy.el
+** TODO Use Syntactic and Semantic Hashes to Detect Functions whose contents is explicitly used in code.
+** TODO Detect Infinite Loops and Predict a Better Future based on User Interaction History
+** TODO Remove Duplicates C/C++ Includes upon Save in cc-assist.el
+** TODO *Backtrace* buffer should shrinked to fit
+** TODO c-electic-brace when region-active-p should insert spaces around {}

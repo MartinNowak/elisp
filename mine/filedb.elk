@@ -1,0 +1,1 @@
+(deftest "" (assert-t (functionp (fmd-nmatch-expr (ftype-nmatch (fmd-get-type 'GNU-GLOBAL-Directory))))))

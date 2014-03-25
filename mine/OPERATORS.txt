@@ -1,0 +1,70 @@
+			      Highest Precedence
+
+Operator	Description			Associates	Languages
+
+   ++		Post-increment			Left to right	C, C++
+   --		Post-decrement			Left to right	C, C++
+
+   ()		Function call			Left to right	C, C++
+   []		Array element			Left to right	C, C++
+
+   ->		Pointer to structure member	Left to right	C, C++
+   .		Structure or union member	Left to right	C, C++
+
+   ++		Pre-increment			Right to left	C, C++
+   --		Pre-decrement			Right to left	C, C++
+
+   !		Logical NOT			Right to left	C, C++
+   ~		Bitwise NOT			Right to left	C, C++
+
+   -		Unary minus			Right to left	C, C++
+   +		Unary plus			Right to left	C, C++
+
+   &		Address of			Right to left	C, C++
+   *		Indirection			Right to left	C, C++
+   sizeof	Size in bytes			Right to left	C, C++
+
+   new		Allocate memory			Left to right	C++
+   delete	Deallocate memory		Left to right	C++
+
+   (type)	Type cast			Left to right	C, C++
+
+   .*		Pointer to member (objects)	Left to right	C++
+   ->*		Pointer to member (pointers)	Left to right	C++
+
+   *		Multiply			Left to right	C, C++
+   /		Divide				Left to right	C, C++
+   %		Remainder			Left to right	C, C++
+
+   +		Add				Left to right	C, C++
+   -		Subtract			Left to right	C, C++
+
+   <<		Shift left			Left to right	C, C++
+   >>		Shift right			Left to right	C, C++
+
+   <		Less than			Left to right	C, C++
+   <=		Less than or equal to		Left to right	C, C++
+   >		Greater than			Left to right	C, C++
+   >=		Greater than or equal to	Left to right	C, C++
+
+   ==		Equal to			Left to right	C, C++
+   !=		Not equal to			Left to right	C, C++
+
+   &		Bitwise AND			Left to right	C, C++
+   ^		Bitwise XOR			Left to right	C, C++
+   |		Bitwise OR			Left to right	C, C++
+
+   &&		Logical AND			Left to right	C, C++
+   ||		Logical OR			Left to right	C, C++
+
+   ? :		Conditional			Right to left	C, C++
+
+   =		Assignment			Right to left	C, C++
+   *=, /=, %=,	Compound assignment		Right to left	C, C++
+   +=, -=,
+   <<=, >>=,
+   &=, |=, ^=
+
+   ,		Comma	 			Left to right	C, C++
+
+			       Lowest Precedence

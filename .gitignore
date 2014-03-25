@@ -1,9 +1,9 @@
 README.html
 *.elc
 *~
-/TAGS
+TAGS
 /octave-core
-/tags
+tags
 semantic.cache
 /python-mode/.bzr
 .undo

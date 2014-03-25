@@ -1,0 +1,4 @@
+(assert-equal (let ((l '(a b c))) (setnthcar l 1 'B) l) '(a B c))
+(assert-equal (let ((l '[a b c])) (aset l 1 'B) l) '[a B c])
+(assert-equal (let ((l '(a b c))) (sequence-setnth 1 l 'B) l) '(a B c))
+(assert-equal (let ((l '[a b c])) (sequence-setnth 1 l 'B) l) '[a B c])q

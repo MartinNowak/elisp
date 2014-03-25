@@ -1,0 +1,26 @@
+                            -*- mode: org; -*-
+                        -*- coding: mule-utf-8-unix -*-
+
+#+LINK: bugzilla http://10.1.2.9/bugzilla/show_bug.cgi?id=
+#+LINK: google http://www.google.com/search?q=%s
+
+* TODO Emacs Matlab
+** TODO [#A] Clicking on left fringe should set breakpoint at that line.
+Keywords: fringe, gud, gdb
+
+** TODO [#A] mlint Message Buttons
+When middle-clicked on apply fix. Show this as a hint.
+
+** TODO [#C] Autodetect .m files and choose either Matlab, Octave or Objective-C
+   Use content to figure it out. Use [[elisp:magic-mode-alist]].
+
+** TODO [#A] M-; in matlab-mode should check (use-region-p)
+** TODO MATLAB Debugger
+   - GUD Keys
+   - Support Mouse-Over (print size, type, precision and parts of content)
+   - Up/Down Stack?
+** TODO [#A] Auto-insert pairs of ' and " matlab-mode and octave-mode
+** TODO [#A] Fontify Symbols that aren't functions as font-lock-variable-name-face
+Use cached results from [[elisp:matlab-find-user-functions]] in hash-table. If any id is *not* in
+this hash-table treat as a variable.
+** TODO [#A]  Remove Completions in Matlab Shell when a non-completion key is pressed

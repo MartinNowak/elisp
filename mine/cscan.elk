@@ -1,0 +1,30 @@
+(deftest "test-ls-str-begin" (assert-nil (cscan-file-uncached "/bin/ls" "str" 'beg)))
+(deftest "test-ls-str-full" (assert-nil (cscan-file-uncached "/bin/ls" "str" 'full)))
+(deftest "test-ls-str-nil" (assert-nonnil (cscan-file-uncached "/bin/ls" "str" nil)))
+(deftest "test-ls-elf-beg" (assert-equal '(1 5) (cscan-file-uncached "/bin/ls" "ELF" 'beg nil)))
+(deftest "test-ls-elf-beg" (assert-equal '(1 5) (cscan-file-uncached "/bin/ls" "ELF" 0 nil)))
+(deftest "test-ls-elf-beg" (assert-equal '(1 4) (cscan-file-uncached "/bin/ls" "ELF" 1 nil)))
+(deftest "test-etc-passwd-elf-beg" (assert-nil (cscan-file-uncached "/etc/passwd" "ELF" 'beg)))
+
+(deftest "" (assert-equal 15 (file-size "cscan-test.txt")))
+(deftest "" (assert-nonnil (cscan-file-uncached "cscan-test.txt" "(alpha" 'beg)))
+
+(deftest "" (assert-equal '(1 16) (cscan-file-uncached "cscan-test.txt" "(alpha . ALPHA)" 'full)))
+(deftest "" (assert-equal '(1 16) (cscan-file-uncached "cscan-test.txt" "(alpha . ALPHA)" t)))
+
+(deftest "" (assert-nonnil (cscan-file-uncached "cscan-test.txt" "ALPHA)" 'end t)))
+(deftest "" (assert-nonnil (cscan-file-uncached "cscan-test.txt" "alpha")))
+
+(deftest "" (assert-equal '(1 2) (cscan-file-uncached "cscan-test.txt" "(" 'beg nil)))
+(deftest "" (assert-equal '(2 3) (cscan-file-uncached "cscan-test.txt" "a" nil nil nil 1)))
+(deftest "" (assert-equal '(6 7) (cscan-file-uncached "cscan-test.txt" "a" nil nil nil 2)))
+
+(deftest "" (assert-nil (cscan-file-uncached "cscan-test.txt" "a" 'beg nil)))
+(deftest "" (assert-nil (cscan-file-uncached "cscan-test.txt" "(" t nil)))
+
+(deftest "" (assert-equal '(2 3 6 7 10 11 14 15) (cscan-file-uncached "cscan-test.txt" "a" nil nil nil t)))
+
+(deftest "" (assert-t (equal (cscan-file "~/elisp/mine/tscan-tests/COPYING.gz" "jam" nil nil 'txt)
+                             (cscan-file "~/pnw/emacs/mine/tscan-tests/COPYING.gz.link" "jam" nil nil 'txt))))
+
+;; FIXME: Incorrect clustering for when scanning palt.cpp for key "palt"

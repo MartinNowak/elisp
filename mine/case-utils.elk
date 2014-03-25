@@ -1,0 +1,14 @@
+(deftest 'upcased-aa (assert-nil (upcased-p "aa")))
+(deftest 'upcased-AA (assert-t (upcased-p "AA")))
+(deftest 'upcased-Aa (assert-nil (upcased-p "Aa")))
+(deftest 'upcased-aA (assert-nil (upcased-p "aA")))
+
+(deftest 'downcased-aa (assert-t (downcased-p "aa")))
+(deftest 'downcased-AA (assert-nil (downcased-p "AA")))
+(deftest 'downcased-Aa (assert-nil (downcased-p "Aa")))
+(deftest 'downcased-aA (assert-nil (downcased-p "aA")))
+
+(deftest 'capitalized-aa (assert-nil (capitalized-p "aa")))
+(deftest 'capitalized-AA (assert-nil (capitalized-p "AA")))
+(deftest 'capitalized-Aa (assert-t (capitalized-p "Aa")))
+(deftest 'capitalized-aA (assert-nil (capitalized-p "aA")))
