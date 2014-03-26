@@ -516,11 +516,9 @@ Suitables choices are `hictx-buffer' line `hictx-buffer'."
   ;;   ad-do-it) (ad-activate 'add-name-to-file)
 
   ;; Undo/Redo
-  (when nil
-    (defadvice undo-tree-undo (after ctx-flash-undo-tree-undo activate) (when (called-interactively-p 'any) (hictx-line))) (ad-deactivate 'undo-tree-undo)
-    (defadvice undo-tree-redo (after ctx-flash-undo-tree-redo activate) (when (called-interactively-p 'any) (hictx-line))) (ad-deactivate 'undo-tree-redo))
-
-  )
+  (when t
+    (defadvice undo-tree-undo (after ctx-flash-undo-tree-undo activate) (when (called-interactively-p 'any) (hictx-line))) (ad-activate 'undo-tree-undo)
+    (defadvice undo-tree-redo (after ctx-flash-undo-tree-redo activate) (when (called-interactively-p 'any) (hictx-line))) (ad-activate 'undo-tree-redo)))
 
 (when t
   ;; See: http://www.gnu.org/software/emacs/manual/html_node/elisp/Undo.html
