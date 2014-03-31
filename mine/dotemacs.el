@@ -1280,16 +1280,18 @@ save it in `ffap-file-at-point-line-number' variable."
                (8 'font-lock-comment-face)
                ))
 
+;;; FlyCheck
+(global-set-key [(control f7)] 'flycheck-previous-error)
+(global-set-key [(control f8)] 'flycheck-next-error)
+;; (repeatable-command-advice flycheck-previous-error)
+;; (repeatable-command-advice flycheck-next-error)
+
 ;; (c-add-style "D" '((c++-indent-level . 4)
 ;;                    (c-basic-offset . 4)
 ;;                    (substatement-open . 0)
 ;;                    (inline-open . 0)))
 (defun d-mode-setup-pnw ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
-  (local-set-key [(control f7)] 'flycheck-previous-error)
-  (local-set-key [(control f8)] 'flycheck-next-error)
-  ;; (repeatable-command-advice flycheck-previous-error)
-  ;; (repeatable-command-advice flycheck-next-error)
   (setq imenu-generic-expression nil)
   (c-set-style "D")
 
