@@ -9,7 +9,9 @@
 
 (defun find-file-use-region (filename &optional wildcards)
   (interactive
-   (let ((icicle-default-in-prompt-format-function (lambda (default) (format " (%s)" (faze default 'file)))))
+   (let ((icicle-default-in-prompt-format-function
+          (lambda (default) "" ;; (format " (%s)" (faze default 'file))
+            )))
      (find-file-read-args (if (region-active-p)
                               "Find file (possibly from region): "
                             "Find file: ")
