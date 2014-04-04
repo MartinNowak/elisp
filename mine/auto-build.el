@@ -201,7 +201,8 @@ Currently supported through GCC's flags -MD."
     (let ((warn-flags (let* ((tag :warn-flags)
                              (val (fcache-get-tag fcache tag)))
                         (or (when try-last val)
-                            (fcache-set-tag fcache tag (compilation-read-warn-type-flags compiler))))) ;TODO: Use `compilation-read-warn-type' and lookup flags afterwards
+                            (fcache-set-tag fcache tag
+                                            (compilation-read-warn-type-flags compiler))))) ;TODO: Use `compilation-read-warn-type' and lookup flags afterwards
           (has-main (file-main-function filename lang)))
       (unless out-filename (setq out-filename
                                  (if (or has-main
