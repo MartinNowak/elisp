@@ -186,6 +186,7 @@ http://stackoverflow.com/questions/13525774/clang-and-float128-bug-error"
 (defconst gdc-warn-types `(("All" ("-Wall")))
   "GDC Warn Types. First element becomes default.")
 (defconst dmd-warn-types `(("Warnings-As-Message" ("-wi"))
+                           ("Warnings-GC-As-Message" ("-wi" "-vgc"))
                            ("Warnings-As-Errors" ("-w")))
   "DMD Warn Types. First element becomes default.")
 
@@ -985,7 +986,8 @@ of jobs running with nicenessrity NICENESS."
                   (car hist)))
            (bdir (directory-file-name
                   (let ((icicle-default-in-prompt-format-function
-                         (lambda (default) (format " (%s)" (faze default 'dir)))))
+                         (lambda (default) "";; (format " (%s)" (faze default 'dir))
+                           )))
                     (read-directory-name "Build in directory: "
                                          (or dir
                                              (car (trace-directory-upwards-r
@@ -1032,12 +1034,10 @@ otherwise choose any target."
                          (let ((default (or default
                                             (car hist)
                                             (car files))))
-                           (let ((icicle-default-in-prompt-format-function
-                                  (lambda (default) (format " (%s)" (faze default 'file)))))
-                             (completing-read "Build File: "
-                                              files
-                                              nil ;; TODO: require doesn't work so use instead: `(lambda (filename) (file-exists-p (expand-file-name filename ,directory)))
-                                              t nil 'hist default)))
+                           (completing-read "Build File: "
+                                            files
+                                            nil ;; TODO: require doesn't work so use instead: `(lambda (filename) (file-exists-p (expand-file-name filename ,directory)))
+                                            t nil 'hist default))
                        (car files)))))))
     (when bfile
       (add-to-history 'uproj-build-file-history bfile)
@@ -1046,7 +1046,7 @@ otherwise choose any target."
       bfile
       ;; (expand-file-name bfile directory)
       )))
-;; Use: (compilation-read-build-file "/tmp")
+;; Use: (compilation-read-build-file "/etc")
 ;; Use: (compilation-read-build-file "~/cognia")
 
 ;; (directory-files-of-types "~/cognia" 'Makefile 'name-recog)
