@@ -21,7 +21,8 @@ prompt whether or not we should register it there."
         (basename (file-name-nondirectory file)))
     (when (and
            (not (and
-                 (member (file-name-nondirectory (directory-file-name dirname))
+                 (member (file-name-nondirectory
+                          (directory-file-name dirname))
                          vc-directory-exclusion-list)
                  ;; (or
                  ;;  (string-equal basename
