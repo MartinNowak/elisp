@@ -21,14 +21,16 @@ prompt whether or not we should register it there."
         (basename (file-name-nondirectory file)))
     (when (and
            (not (and
-                 (string-ends-with dirname ".git/")
-                 (or
-                  (string-equal basename
-                                "git-rebase-todo"
-                                )
-                  (string-equal basename
-                                "COMMIT_EDITMSG" ;don't check this for when Git commits files
-                                ))))
+                 (member (file-name-nondirectory (directory-file-name dirname))
+                         vc-directory-exclusion-list)
+                 ;; (or
+                 ;;  (string-equal basename
+                 ;;                "git-rebase-todo"
+                 ;;                )
+                 ;;  (string-equal basename
+                 ;;                "COMMIT_EDITMSG" ;don't check this for when Git commits files
+                 ;;                ))
+                 ))
            (file-under-vc-directory-p file))
       (case (vc-state file)
         ((unregistered nil)
