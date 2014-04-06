@@ -2183,7 +2183,8 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;;; YASnippet
 (when (eload 'yasnippet (elsub "yasnippet"))
-  (yas-global-mode 1))
+  (yas-global-mode -1)                  ;disable for now because steals completion key
+  )
 ;; (eload 'pgo-yasnippet)
 
 ;;; Hide C Preprocessor ifdef regions
