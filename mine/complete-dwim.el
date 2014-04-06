@@ -107,11 +107,13 @@ using a menu, which default to `completing-read."
                    (region-end))
     (message "Region indented"))
 
+   ;; Indentation
    ((looking-back "^[[:blank:]]*") ;standing after beginning of line plus whitespace
     (if (fboundp 'indent-dwim)
         (indent-dwim arg)
       (indent-for-tab-command arg)))
 
+   ;; In Code
    ((and (at-syntax-code-p)             ;in code (not in comment nor string)
          (unless (or (and (cc-derived-mode-p)
                           (c-try-expand-stub-bfpt)))
