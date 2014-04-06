@@ -90,6 +90,7 @@ using a menu, which default to `completing-read."
         ((memq major-mode '(gud-mode               ;GUD/GDB
                             inferior-octave-mode)) ;Octave
          (completion-at-point))                    ;Complete using comint
+
         ((use-region-p)                        ;mark is active
          (indent-region (region-beginning)
                         (region-end))
