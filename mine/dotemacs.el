@@ -759,6 +759,10 @@
 (eload 'pgo-eshell)                   ;EShell
 (eload 'pgo-ansi-color)
 
+;;; Tree
+(and (append-to-load-path (elsub "neotree"))
+     (require 'neotree nil t))
+
 ;;; Shell-mode
 (defun sh-mode-setup-pnw ()
   ;; Disable imenu for now because it make editing of large shell scripts slow!
