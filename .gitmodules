@@ -1,3 +1,6 @@
 [submodule "magit"]
 	path = magit
 	url = git://github.com/magit/magit.git
+[submodule "neotree"]
+	path = neotree
+	url = https://github.com/jaypei/emacs-neotree.git

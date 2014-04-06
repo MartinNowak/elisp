@@ -8,9 +8,9 @@
 ;; Created: Tue Aug  1 14:21:16 1995
 ;; Version: 2013.07.23
 ;; Package-Requires: ()
-;; Last-Updated: Sat Mar  8 10:12:12 2014 (-0800)
+;; Last-Updated: Sat Apr  5 10:05:32 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 23532
+;;     Update #: 23539
 ;; URL: http://www.emacswiki.org/icicles.el
 ;; Doc URL: http://emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -109,8 +109,9 @@
 ;;    `icicle-find-file-abs-of-content-action-1',
 ;;    `icicle-find-file-no-search-action-1',
 ;;    `icicle-find-file-of-content-action-1',
-;;    `icicle-maybe-cached-action', `icicle-search-modes',
-;;    `icicle-with-comments-hidden', `icicle-with-selected-window'.
+;;    `icicle-maybe-cached-action', `icicle-menu-bar-make-toggle',
+;;    `icicle-search-modes', `icicle-with-comments-hidden',
+;;    `icicle-with-selected-window'.
 ;;
 ;;  Commands defined in Icicles -
 ;;
@@ -201,6 +202,7 @@
 ;;    `icicle-bookmark-specific-buffers-other-window',
 ;;    `icicle-bookmark-specific-files',
 ;;    `icicle-bookmark-specific-files-other-window',
+;;    `icicle-bookmark-tagged', `icicle-bookmark-tagged-other-window',
 ;;    `icicle-bookmark-temporary',
 ;;    `icicle-bookmark-temporary-other-window',
 ;;    `icicle-bookmark-this-buffer',
@@ -1378,6 +1380,7 @@
 ;;    `icicle-fundoc-last-initial-cand-set',
 ;;    `icicle-general-help-string',
 ;;    `icicle-get-alist-candidate-function',
+;;    `icicle-goto-imenu-menu-map', `icicle-goto-menu-map',
 ;;    `icicle-hist-cands-no-highlight', `icicle-hist-var',
 ;;    `icicle-ignored-extensions', `icicle-ignored-extensions-regexp',
 ;;    `icicle-incremental-completion-p', `icicle-info-buff',
@@ -1418,7 +1421,8 @@
 ;;    `icicle-new-bufs-to-keep', `icicle-new-bufs-to-kill',
 ;;    `icicle-new-last-cmd', `icicle-next-apropos-complete-cycles-p',
 ;;    `icicle-next-prefix-complete-cycles-p',
-;;    `icicle-options-menu-map', `icicle-orig-buff',
+;;    `icicle-options-menu-map', `icicle-options-choose-menu-map',
+;;    `icicle-options-toggle-menu-map', `icicle-orig-buff',
 ;;    `icicle-ORIG-crm-local-completion-map',
 ;;    `icicle-ORIG-crm-local-must-match-map',
 ;;    `icicle-orig-extra-cands', `icicle-orig-font',

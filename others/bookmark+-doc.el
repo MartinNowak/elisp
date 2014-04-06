@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Thu Dec 26 08:31:46 2013 (-0800)
+;; Last-Updated: Sat Apr  5 16:56:24 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 14748
+;;     Update #: 14763
 ;; URL: http://www.emacswiki.org/bookmark+-doc.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search,
@@ -141,6 +141,7 @@
 ;;    (@> "Using Multiple Bookmark Files")
 ;;      (@> "Bookmark-File Bookmarks")
 ;;    (@> "The Bookmark List Display")
+;;      (@> "Jumping To Bookmarks from the Bookmark List Display")
 ;;      (@> "Tag Commands and Keys")
 ;;      (@> "Tags: Sets of Bookmarks")
 ;;      (@> "Open Dired for the Marked File Bookmarks")
@@ -477,6 +478,10 @@
 ;;         And again, a prefix arg (`C-u C-h RET') means show the full
 ;;         (internal) bookmark information.
 ;;
+;;         `C-h >' shows the same information that `C-h RET' shows,
+;;         but for all of the marked bookmarks, in the current sort
+;;         order.  That is, it describes each of the marked bookmarks.
+;;
 ;;     - General Bookmark+ documentation.
 ;;
 ;;       . Anywhere in Emacs, `M-x bmkp-bmenu-mode-status-help' shows
@@ -715,6 +720,9 @@
 ;;  the prefix is `C-x 4 j', not `C-x j'.  For instance,
 ;;  `bmkp-dired-jump-other-window' is bound to `C-x 4 j d'.
 ;;
+;;  (In the bookmark-list display, you can use just `j' instead of
+;;  `C-x 4 j', and just `J' (uppercase) instead of `C-x j'.)
+;;
 ;;  More precisely, the bookmark jump commands are on the prefix maps
 ;;  `bmkp-jump-map' and `bmkp-jump-other-window-map', which have the
 ;;  default bindings `C-x j' and `C-x 4 j'.  You can bind these maps
@@ -910,7 +918,9 @@
 ;;  Most commands pertaining to tags are by default on prefix key `C-x
 ;;  p t' - use `C-x p t C-h' to see them.  In buffer `*Bookmark
 ;;  List*', commands pertaining to tags are on prefix key `T' - use `T
-;;  C-h' to see them.
+;;  C-h' to see them.  And remember that you can use `C-h >' to
+;;  describe all of the marked bookmarks, in the current sort order.
+;;  The bookmark descriptions include the tags.
 ;;
 ;;  When combined with other Bookmark+ commands (e.g. search,
 ;;  query-replace) that apply to the marked bookmarks in the
@@ -1065,16 +1075,17 @@
 ;;  bookmark from the marked bookmarks in the bookmark-list display,
 ;;  in their current order.
 ;;
-;;  Command `bmkp-create-dired-bookmarks-recursive' creates a Dired
-;;  bookmark for the current Dired buffer and each of its marked
-;;  subdirectories.  Each of those subdirectories is handled
-;;  similarly, and so on, recursively.  And it creates a sequence
-;;  bookmark that includes all of these Dired bookmarks, so that it
-;;  represents a tree (hierarchy) of Dired buffers that are opened
-;;  together.  This provides an alternative to inserting all of the
-;;  relevant subdirectories into the same Dired buffer.  With a prefix
-;;  argument, all of the descendent Dired buffers are included,
-;;  whether or not they are marked.
+;;  If you use library `Dired+' (`dired+.el') then you can use command
+;;  `diredp-do-bookmark-dirs-recursive' to create a Dired bookmark for
+;;  the current Dired buffer and each of its marked subdirectories.
+;;  Each of those subdirectories is handled similarly, and so on,
+;;  recursively.  This command also creates a sequence bookmark that
+;;  includes all of these Dired bookmarks, so that it represents a
+;;  tree (hierarchy) of Dired buffers that are opened together.  This
+;;  provides an alternative to inserting all of the relevant
+;;  subdirectories into the same Dired buffer.  With a prefix arg, all
+;;  of the descendent Dired buffers are included, whether or not they
+;;  are marked.
 ;;
 ;;  A variable-list bookmark saves and restores the values of a set of
 ;;  variables.  Command `bmkp-set-variable-list-bookmark' prompts you
@@ -2052,6 +2063,16 @@
 ;;  * A legend for the faces used for different bookmark types.
 ;;
 ;;
+;;(@* "Jumping To Bookmarks from the Bookmark List Display")
+;;  *** Jumping To Bookmarks from the Bookmark List Display ***
+;;
+;;  Bookmark visiting (jumping) commands are globally on prefix keys
+;;  `C-x j' and `C-x 4 j'.  In the bookmark-list display they are
+;;  additionally on `j' (other window) and `J' (same window).  In
+;;  addition, `j >' is bound to `bmkp-bmenu-jump-to-marked', which
+;;  jumps to each of the marked bookmarks in other windows.
+;;
+;;
 ;;(@* "Tag Commands and Keys")
 ;;  *** Tag Commands and Keys ***
 ;;
@@ -2064,9 +2085,10 @@
 ;;  key `T'.  Elsewhere, they begin with prefix key `C-x p t' (or `C-x
 ;;  j t', for jump commands - see (@> "Different Types of Jump Commands")).
 ;;
-;;  `C-h m' (or `?') is your friend, of course.  Likewise `T C-h' and
-;;  `C-x p t C-h'.  Beyond that, the tag-related keys that are more
-;;  than two keystrokes are organized as follows:
+;;  `C-h m' (or `?') is your friend, of course.  Likewise `T C-h',
+;;  `C-x p t C-h', and `C-h >' (which describes the marked bookmarks).
+;;  Beyond that, the tag-related keys that are more than two
+;;  keystrokes are organized as follows:
 ;;
 ;;    They all have the prefix key `T'.
 ;;
@@ -2127,6 +2149,10 @@
 ;;  * `C-h RET' (`C-x p ?') shows you the tags that belong to a
 ;;    bookmark.  With a prefix argument it shows you the full internal
 ;;    form of the tags, that is, the name+value pairs.
+;;
+;;  * `C-h >' describes all of the marked bookmarks, in the current
+;;    sort order.  The descriptions include the tags.  (You can use `T
+;;    m * RET' to mark all of the tagged bookmarks.)
 ;;
 ;;  * `T e' (`C-x p t e') lets you edit a bookmark's tags.
 ;;

@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Sun Mar  9 10:00:46 2014 (-0700)
+;; Last-Updated: Sat Apr  5 10:12:04 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10738
+;;     Update #: 10808
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -85,6 +85,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
+;; 2014/04/01 dadams
+;;     icicle-bookmark(-other-window|-list|-set):
+;;       Faces icicle-annotation & icicle-msg-emphasis, not file-name-shadow & bookmark-menu-heading.
 ;; 2014/03/09 dadams
 ;;     icicle-file(-other-window): Set this-command so user sees msgs appropriate to the command.
 ;; 2014/03/08 dadams
@@ -1067,6 +1070,12 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/04/01 dadams
+;;     Added: icicle-bookmark-tagged, icicle-bookmark-tagged-other-window.
+;;     icicle-search-bookmark:
+;;       Faces icicle-annotation & icicle-msg-emphasis, not file-name-shadow & bookmark-menu-heading.
+;; 2014/03/30 dadams
+;;     icicle-find-file-tagged(-other-window): Rebind icicle-candidate-help-fn to appropriate help fn.
 ;; 2014/03/08 dadams
 ;;     Use (featurep 'icomplete), not (boundp 'icomplete-mode), everywhere.
 ;; 2014/03/03 dadams
@@ -1981,6 +1990,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/04/01 dadams
+;;     icicle-display-candidates-in-Completions:
+;;       For icicle-candidate-properties-alist, use \', not $, in regexp for string-match.
+;;     icicle-insert-candidates: Do not use icomplete-tidy for Emacs 20-22.
 ;; 2014/03/06 dadams
 ;;     icicle-insert-candidates:
 ;;       Respect new options icicle-icomplete-mode-max-candidates and icicle-sorting-max-candidates.
@@ -3917,6 +3930,11 @@
 ;;       macros needs to be byte-compiled anew after loading the updated macros.
 ;; ****************************************************************************************************
 ;;
+;; 2014/04/05 dadams
+;;     Added: icicle-menu-bar-make-toggle - same as bmkp-menu-bar-make-toggle in bookmark+-mac.el.
+;; 2014/04/01 dadams
+;;     icicle-define-bookmark-command-1:
+;;       Faces icicle-annotation & icicle-msg-emphasis, not file-name-shadow & bookmark-menu-heading.
 ;; 2013/03/08 dadams
 ;;     icicle(-file)-define-command:
 ;;       Use generated let-var CHOICE for (CMD|FILE)-CHOICE.
@@ -5830,6 +5848,36 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mode.el'")
 ;;
+;; 2014/04/05 dadams
+;;     Removed: icicle-search-tags-menu-map.
+;;     Renamed: icicle-search-goto-menu-map       to icicle-goto-menu-map,
+;;              icicle-search-goto-imenu-menu-map to icicle-goto-imenu-menu-map.
+;;     icicle-search-menu-map: Renamed submenu from Search to Icicles Search.  Reordered.
+;;                             icicle-tags-search: Renamed Tagged to Emacs Tagged.
+;;     icicle-goto-imenu-menu-map: Renamed submenu from Definition to Definition (Imenu).
+;;     icicle-goto-menu-map: Moved Emacs TAGS stuff here (from deleted icicle-search-tags-menu-map).
+;;     icicle-options-toggle-menu-map:
+;;       Use icicle-menu-bar-make-toggle (new) for
+;;         icicle-toggle-(~-for-home-dir|search-replace-common-match|search-replace-whole
+;;                        |search-whole-word|WYSIWYG-Completions),
+;;       Corrected :help and :keys for icicle-toggle-completions-format (typo).
+;;     Moved Frames menu after Customize menu.
+;;     icicle-custom-menu-map, icicle-apropos-menu-map: Added `+ ' prefix for multi-command menu items.
+;; 2014/04/04 dadams
+;;     Added: icicle-options-choose-menu-map, icicle-options-toggle-menu-map.
+;;     icicle-options-menu-map: Added submenus Choose and Toggle.  Renamed items, removing Toggle etc.
+;;                              Changed :visible to :enable for Do Re Mi, swank, etc.
+;;     icicle-define-icicle-maps:
+;;       Put Icicles bookmark jump commands on Icicles menu, wherever it might be.  Use `+ ' prefix.
+;;       Added commands icicle-find-file-tagged-other-window and icicle-bookmark-tagged-other-window.
+;; 2014/04/02 dadams
+;;     icicle-define-icicle-maps:
+;;       Without touche-pas and without Bookmark+: do not define icicle-bookmark-with-tags-menu-map.
+;;       With touchs-pas and without Bookmark+: use icicle-search-goto-menu-map.
+;;       With touche-pas and with Bookmark+: just copy Bookmark+ keymaps.
+;;       Unless Bookmark+, add icicle-bookmark-other-window to Icicles submap.
+;;       Removed all of the replacement menu items for Bookmark+ case - ineffective, since copy-keymap.
+;;       (Typos) icicle-search-menu-map -> icicle-search-goto-menu-map; [search] -> [goto].
 ;; 2014/03/08 dadams
 ;;     icicle-top-level-prep:
 ;;       Test minibuffer-depth, not recursion-depth.  Do not set icicle-last-top-level-command for
@@ -7072,6 +7120,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/04/01 dadams
+;;     icicle-top-level-key-bindings: Bind icicle-bookmark-tagged(-other-window) to C-x (4) j t j.
 ;; 2014/03/08 dadams
 ;;     icicle-Completions-toggle-submenu: Added icicle-toggle-icomplete-mode.
 ;;     icicle-completion-key-bindings: Bind icicle-toggle-icomplete-mode to C-M-#.

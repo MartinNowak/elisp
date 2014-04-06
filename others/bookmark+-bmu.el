@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 09:05:21 2010 (-0700)
-;; Last-Updated: Mon Mar 10 11:01:43 2014 (-0700)
+;; Last-Updated: Wed Apr  2 09:42:15 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 2616
+;;     Update #: 2914
 ;; URL: http://www.emacswiki.org/bookmark+-bmu.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -255,15 +255,19 @@
 ;;
 ;;    `bmkp-bmenu-before-hide-marked-alist',
 ;;    `bmkp-bmenu-before-hide-unmarked-alist',
-;;    `bmkp-bmenu-define-command-menu', `bmkp-bmenu-filter-function',
-;;    `bmkp-bmenu-filter-pattern', `bmkp-bmenu-filter-timer',
-;;    `bmkp-bmenu-first-time-p', `bmkp-bmenu-header-lines',
-;;    `bmkp-bmenu-highlight-menu', `bmkp-bmenu-line-overlay',
-;;    `bmkp-bmenu-mark-menu', `bmkp-bmenu-marked-bookmarks',
-;;    `bmkp-bmenu-marks-width', `bmkp-bmenu-menubar-menu',
-;;    `bmkp-bmenu-omit-menu', `bmkp-bmenu-show-menu',
-;;    `bmkp-bmenu-sort-menu', `bmkp-bmenu-tags-menu',
-;;    `bmkp-bmenu-title', `bmkp-flagged-bookmarks',
+;;    `bmkp-bmenu-define-command-history',
+;;    `bmkp-bmenu-define-command-menu', `bmkp-bmenu-delete-menu',
+;;    `bmkp-bmenu-filter-function', `bmkp-bmenu-filter-pattern',
+;;    `bmkp-bmenu-filter-timer', `bmkp-bmenu-first-time-p',
+;;    `bmkp-bmenu-header-lines', `bmkp-bmenu-highlight-menu',
+;;    `bmkp-bmenu-line-overlay', `bmkp-bmenu-mark-menu',
+;;    `bmkp-bmenu-marked-bookmarks', `bmkp-bmenu-marks-width',
+;;    `bmkp-bmenu-mark-types-menu', `bmkp-bmenu-menubar-menu',
+;;    `bmkp-bmenu-omit-menu', `bmkp-bmenu-search-menu',
+;;    `bmkp-bmenu-show-menu',
+;;    `bmkp-bmenu-show-types-menu',`bmkp-bmenu-sort-menu',
+;;    `bmkp-bmenu-tags-menu', `bmkp-bmenu-title',
+;;    `bmkp-bmenu-toggle-menu', `bmkp-flagged-bookmarks',
 ;;    `bmkp-last-bmenu-bookmark'.
 ;;
 ;;
@@ -811,6 +815,9 @@ Bookmark names thus begin in this column number (since zero-based).")
 
 (defvar bmkp-bmenu-before-hide-unmarked-alist ()
   "Copy of `bookmark-alist' made before hiding unmarked bookmarks.")
+
+(defvar bmkp-bmenu-define-command-history ()
+  "History of names of commands you have defined for `*Bookmark List*'.")
 
 (defvar bmkp-bmenu-filter-function  nil "Latest filtering function for `*Bookmark List*' display.")
 
@@ -1366,8 +1373,7 @@ Here:
 Anywhere:
 
 \\[bmkp-toggle-autotemp-on-set]\t- Toggle making bookmarks temporary when setting them
-\\[bmkp-set-bookmark-file-bookmark]\t- Create a bookmark to a bookmark file     \
-\(`\\[bmkp-bookmark-file-jump]' to load)
+\\[bmkp-set-bookmark-file-bookmark]\t- Create a bookmark to a bookmark file (`j y' to load it)
 \\[bmkp-delete-bookmarks]\t- Delete some bookmarks at point or all in buffer
 \\[bmkp-make-function-bookmark]\t- Create a function bookmark
 \\[bmkp-choose-navlist-of-type]\t- Set the navlist to the bookmarks of a type you choose
@@ -1393,64 +1399,70 @@ Create/Set Bookmarks (anywhere)
 Jump to (Visit) Bookmarks
 -------------------------
 
-Here:
-
-\\[bmkp-bmenu-jump-to-marked]\t- Bookmarks marked `>', in other windows
-\\[bookmark-bmenu-this-window]\t- Bookmark in the same window
-\\[bookmark-bmenu-other-window]\t- Bookmark in another window
-\\[bookmark-bmenu-switch-other-window]\t- Bookmark in other window, without selecting it
-\\[bookmark-bmenu-1-window]\t- Bookmark in a full-frame window
+\\[bookmark-bmenu-this-window]\t- This bookmark in the same window
+\\[bookmark-bmenu-other-window]\t- This bookmark in another window
+\\[bookmark-bmenu-switch-other-window]\t- This bookmark in other window, without selecting it
+\\[bookmark-bmenu-1-window]\t- This bookmark in a full-frame window
 \\[bookmark-bmenu-2-window]\t- This bookmark and last-visited bookmark
 
-Anywhere (`C-x j C-h' to see this, and `C-x j t C-h' for tags):
+\\[bmkp-bmenu-jump-to-marked]\t- Bookmarks marked `>', in other windows
 
-\\[bookmark-jump]\t- Bookmark by name
-\\[bmkp-jump-to-type]\t- Bookmark by type
-\\[bmkp-jump-in-navlist]\t- Bookmark in the navigation list
-\\[bmkp-lighted-jump]\t- Highlighted bookmark
-\\[bmkp-autofile-jump]\t- Autofile bookmark
-\\[bmkp-autonamed-jump]\t- Autonamed bookmark
-\\[bmkp-autonamed-this-buffer-jump]\t- Autonamed bookmark in buffer
-\\[bmkp-temporary-jump]\t- Temporary bookmark
-\\[bmkp-desktop-jump]\t- Desktop bookmark
-\\[bmkp-bookmark-list-jump]\t- Bookmark-list bookmark
-\\[bmkp-bookmark-file-jump]\t- Bookmark-file bookmark
-\\[bmkp-snippet-to-kill-ring]\t- Snippet bookmark (copy to `kill-ring')
-\\[bmkp-dired-jump]\t- Dired bookmark
-\\[bmkp-file-jump]\t- File or directory bookmark
-\\[bmkp-dired-this-dir-jump]\t- Dired bookmark for this dir
-\\[bmkp-file-this-dir-jump]\t- Bookmark for a file or subdir in this dir
-\\[bmkp-local-file-jump]\t- Local-file bookmark
-\\[bmkp-remote-file-jump]\t- Remote-file bookmark
-\\[bmkp-region-jump]\t- Region bookmark
-\\[bmkp-image-jump]\t- Image-file bookmark
-\\[bmkp-info-jump]\t- Info bookmark
-\\[bmkp-man-jump]\t- `man'-page bookmark
-\\[bmkp-non-file-jump]\t- Non-file (buffer) bookmark
-\\[bmkp-gnus-jump]\t- Gnus bookmark
-\\[bmkp-url-jump]\t- URL bookmark
-\\[bmkp-variable-list-jump]\t- Variable-list bookmark
-\\[bmkp-some-tags-jump]\t- Bookmark having some tags you specify
-\\[bmkp-all-tags-jump]\t- Bookmark having each tag you specify
-\\[bmkp-some-tags-regexp-jump]\t- Bookmark having a tag that matches a regexp
-\\[bmkp-all-tags-regexp-jump]\t- Bookmark having all its tags match a regexp
-\\[bmkp-file-some-tags-jump]\t- File bookmark having some tags you specify
-\\[bmkp-file-all-tags-jump]\t- File bookmark having each tag you specify
-\\[bmkp-file-some-tags-regexp-jump]\t- File bookmark having a tag that matches a regexp
-\\[bmkp-file-all-tags-regexp-jump]\t- File bookmark having all its tags match a regexp
-\\[bmkp-file-this-dir-some-tags-jump]\t- File in this dir having some tags you specify
-\\[bmkp-file-this-dir-all-tags-jump]\t- File in this dir having each tag you specify
-\\[bmkp-file-this-dir-some-tags-regexp-jump]\t- File in this dir having a tag that matches a regexp
-\\[bmkp-file-this-dir-all-tags-regexp-jump]\t- File in this dir having all its tags match a regexp
+Prefix `j' uses another window; prefix `J' reuses this window:
+
+\\[bookmark-jump-other-window]\t- Bookmark by name
+\\[bmkp-jump-in-navlist-other-window]\t- Bookmark in the navigation list
+\\[bmkp-lighted-jump-other-window]\t- Highlighted bookmark
+
+\\[bmkp-jump-to-type-other-window]\t- Bookmark by type
+\\[bmkp-autonamed-jump-other-window]\t- Autonamed bookmark
+\\[bmkp-autonamed-this-buffer-jump-other-window]\t- Autonamed bookmark in this buffer
+\\[bmkp-temporary-jump-other-window]\t- Temporary bookmark
+
+\\[bmkp-autofile-jump-other-window]\t- Autofile bookmark
+\\[bmkp-dired-jump-other-window]\t- Dired bookmark
+\\[bmkp-file-jump-other-window]\t- File or directory bookmark
+\\[bmkp-dired-this-dir-jump-other-window]\t- Dired bookmark for this dir
+\\[bmkp-file-this-dir-jump-other-window]\t- Bookmark for a file or subdir in this dir
+\\[bmkp-local-file-jump-other-window]\t- Local-file bookmark
+\\[bmkp-remote-file-jump-other-window]\t- Remote-file bookmark
+\\[bmkp-non-file-jump-other-window]\t- Non-file (buffer) bookmark
+
+j K\t- Desktop bookmark
+j B\t- Bookmark-list bookmark
+j y\t- Bookmark-file bookmark
+
+\\[bmkp-region-jump-other-window]\t- Region bookmark (restores region)
+j M-w\t- Snippet bookmark (copy to `kill-ring')
+\\[bmkp-image-jump-other-window]\t- Image-file bookmark
+\\[bmkp-info-jump-other-window]\t- Info bookmark
+\\[bmkp-man-jump-other-window]\t- `man'-page bookmark
+\\[bmkp-gnus-jump-other-window]\t- Gnus bookmark
+\\[bmkp-url-jump-other-window]\t- URL bookmark
+j v\t- Variable-list bookmark
+
+\\[bmkp-some-tags-jump-other-window]\t- Bookmark having some tags you specify
+\\[bmkp-all-tags-jump-other-window]\t- Bookmark having each tag you specify
+\\[bmkp-some-tags-regexp-jump-other-window]\t- Bookmark having a tag that matches a regexp
+\\[bmkp-all-tags-regexp-jump-other-window]\t- Bookmark having all its tags match a regexp
+\\[bmkp-file-some-tags-jump-other-window]\t- File bookmark having some tags you specify
+\\[bmkp-file-all-tags-jump-other-window]\t- File bookmark having each tag you specify
+\\[bmkp-file-some-tags-regexp-jump-other-window]\t- File bookmark having a tag that matches a regexp
+\\[bmkp-file-all-tags-regexp-jump-other-window]\t- File bookmark having all its tags match a regexp
+\\[bmkp-file-this-dir-some-tags-jump-other-window]\t- File in this dir having some tags you specify
+\\[bmkp-file-this-dir-all-tags-jump-other-window]\t- File in this dir having each tag you specify
+\\[bmkp-file-this-dir-some-tags-regexp-jump-other-window]\t- \
+File in this dir having a tag that matches a regexp
+\\[bmkp-file-this-dir-all-tags-regexp-jump-other-window]\t- \
+File in this dir having all its tags match a regexp
 
 
-Autonamed Bookmarks (anywhere)
+Autonamed Bookmarks
 -------------------
 
 \\[bmkp-toggle-autonamed-bookmark-set/delete]\t- Create/delete autonamed bookmark at point
 C-u \\[bmkp-toggle-autonamed-bookmark-set/delete]\t- Delete all autonamed bookmarks in current buffer
-\\[bmkp-autonamed-jump]\t\t- Jump to an autonamed bookmark
-\\[bmkp-autonamed-this-buffer-jump]\t- Jump to an autonamed bookmark in a given buffer
+\\[bmkp-autonamed-jump-other-window]\t\t- Jump to an autonamed bookmark
+\\[bmkp-autonamed-this-buffer-jump-other-window]\t\t- Jump to an autonamed bookmark in a given buffer
 
 
 Cycle Bookmarks (anywhere)
@@ -1535,12 +1547,16 @@ C-u \\[bmkp-bmenu-show-or-edit-annotation]\t- Edit bookmark's annotation
 Bookmark Tags
 -------------
 
+Here:
+
+\\[bmkp-bmenu-copy-tags]\t- Copy tags from this bookmark (for subsequent pasting)
 \\[bmkp-add-tags]\t- Add some tags to a bookmark
 \\[bmkp-remove-tags]\t- Remove some tags from a bookmark (`C-u': from all bookmarks)
 \\[bmkp-remove-all-tags]\t- Remove all tags from a bookmark
 \\[bmkp-remove-tags-from-all]\t- Remove some tags from all bookmarks
 \\[bmkp-rename-tag]\t- Rename a tag in all bookmarks
 \\[bmkp-list-all-tags]\t- List all tags used in any bookmarks (`C-u': show tag values)
+\\[bmkp-bmenu-list-tags-of-marked]\t- List tags used in the marked bookmarks (`C-u': show tag values)
 \\[bmkp-bmenu-edit-tags]\t- Edit bookmark's tags
 \\[bmkp-bmenu-set-tag-value]\t- Set the value of a tag (as attribute)
 
@@ -1573,6 +1589,16 @@ in a set      (NOT OR)
 \\[bmkp-bmenu-unmark-bookmarks-tagged-not-all]\t- Unmark bookmarks not having all tags \
 in a set      (NOT AND)
 
+Anywhere:
+
+\\[bmkp-copy-tags]\t- Copy tags from a bookmark (for subsequent pasting)
+\\[bmkp-paste-add-tags]\t- Add (paste) tags copied from a bookmark
+\\[bmkp-paste-replace-tags]\t- Replace (paste) a bookmark's tags with copied tags
+\\[bmkp-set-tag-value-for-navlist]\t- Set a tag value for each bookmark in navlist
+\\[bmkp-edit-tags]\t- Edit a bookmark's tags (prompt for the bookmark)
+\\[bmkp-tag-a-file]\t- Add tags to a file (create/update autofile bookmark)
+\\[bmkp-untag-a-file]\t- Remove tags from a file (an autofile bookmark)
+
 
 Bookmark Highlighting
 ---------------------
@@ -1591,6 +1617,7 @@ Bookmark Highlighting
 \\[bmkp-unlight-bookmarks]\t- Unhighlight bookmarks (see prefix arg)
 \\[bmkp-bookmarks-lighted-at-point]\t- List bookmarks highlighted at point
 \\[bmkp-unlight-bookmark-here]\t- Unhighlight a bookmark at point or on same line
+\\[bmkp-lighted-jump-other-window]\t- Jump to a highlighted bookmark (other window)
 
 
 Sort `*Bookmark List*' (`s C-h' to see this)
@@ -3376,6 +3403,30 @@ Non-interactively, non-nil MSG-P means display messages."
       (bmkp-bmenu-sort-tagged-before-untagged))
     (when (and msg-p  tags) (message "Tags removed: %S" tags))))
 
+;;;###autoload (autoload 'bmkp-bmenu-list-tags-of-marked "bookmark+")
+(defun bmkp-bmenu-list-tags-of-marked (fullp &optional msg-p)
+                                        ; Bound to `T > l' in bookmark list
+  "List the tags used in the marked bookmarks.
+Show the list in the minibuffer or, if not enough space, in buffer
+`*All Tags*'.  The tags are listed alphabetically, respecting option
+`case-fold-search'.
+
+With no prefix arg, list only the tag names.  With a prefix arg, list
+the full alist of tags.  Note that when the full tags alist is shown,
+the same tag name appears once for each of its different values.
+
+Non-interactively, non-nil MSG-P means display a status message."
+  (interactive "P\np")
+  (require 'pp)
+  (when msg-p (message "Gathering tags..."))
+  (pp-display-expression (sort (let ((bookmark-alist  (bmkp-marked-bookmarks-only))
+                                     bmkp-tags-alist) ; Prevent updating it.
+                                 (bmkp-tags-list (not fullp) t))
+                               (if fullp
+                                   (lambda (t1 t2) (bmkp-string-less-case-fold-p (car t1) (car t2)))
+                                 'bmkp-string-less-case-fold-p))
+                         "*Tags of Marked Bookmarks*"))
+
 ;;;###autoload (autoload 'bmkp-bmenu-mark-bookmarks-tagged-regexp "bookmark+")
 (defun bmkp-bmenu-mark-bookmarks-tagged-regexp (regexp &optional notp no-re-sort-p msg-p)
                                         ; `T m %' in bookmark list
@@ -3636,7 +3687,13 @@ sort order is marked first or last (`s >'), then re-sort."
 
 ;;;###autoload (autoload 'bmkp-bmenu-copy-tags "bookmark+")
 (defun bmkp-bmenu-copy-tags (&optional msg-p) ; `T c', `T M-w', `mouse-3' menu in bookmark list.
-  "Copy tags from this bookmark, so you can paste them to another bookmark."
+  "Copy tags from this bookmark, so you can paste them to another bookmark.
+NOTE: It is by design that you can *remove all* tags from a bookmark
+by copying an empty set of tags and then pasting to that bookmark
+using replacement.  So be careful pasting with replacement.  If you
+want to be sure that you do not replace tags with an empty list of
+tags, you can check the value of variable `bmkp-copied-tags' before
+pasting."
   (interactive (list 'MSG))
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (bookmark-bmenu-ensure-position)
@@ -3652,7 +3709,12 @@ sort order is marked first or last (`s >'), then re-sort."
 
 ;;;###autoload (autoload 'bmkp-bmenu-paste-replace-tags "bookmark+")
 (defun bmkp-bmenu-paste-replace-tags (&optional msg-p) ; `T q', `mouse-3' menu.
-  "Replace tags for this bookmark with those copied from another bookmark."
+  "Replace tags for this bookmark with those copied from another bookmark.
+NOTE: It is by design that you can *remove all* tags from a bookmark
+by copying an empty set of tags and then pasting to that bookmark
+using this command.  So be careful using it.  If you want to be sure
+that you do not replace tags with an empty list of tags, you can check
+the value of variable `bmkp-copied-tags' before pasting."
   (interactive (list 'MSG))
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (bookmark-bmenu-ensure-position)
@@ -3680,7 +3742,13 @@ With a prefix arg, act on all bookmarks."
 (defun bmkp-bmenu-paste-replace-tags-for-marked (&optional allp msg-p) ; `T > q'
   "Replace tags for the marked bookmarks with tags copied previously.
 If no bookmark is marked, act on the bookmark of the current line.
-With a prefix arg, act on all bookmarks."
+With a prefix arg, act on all bookmarks.
+
+NOTE: It is by design that you can *remove all* tags from a bookmark
+by copying an empty set of tags and then pasting to that bookmark
+using this command.  So be careful using it.  If you want to be sure
+that you do not replace tags with an empty list of tags, you can check
+the value of variable `bmkp-copied-tags' before pasting."
   (interactive (list current-prefix-arg 'MSG))
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (let ((marked              (bmkp-bmenu-marked-or-this-or-all allp))
@@ -3956,7 +4024,7 @@ Save the command definition in `bmkp-bmenu-commands-file'."
                                                                          bmkp-bmenu-omitted-bookmarks))
                                           bmkp-bmenu-marked-bookmarks))))
          (fn     (intern (read-string "Define command to jump to a bookmark now marked: " nil
-                                      'bmkp-bmenu-define-command-history)))
+                                      bmkp-bmenu-define-command-history)))
          (def    `(defun ,fn (bookmark-name &optional use-region-p)
                    (interactive (list (bmkp-read-bookmark-for-type nil ',cands t) current-prefix-arg))
                    (bmkp-jump-1 bookmark-name 'bmkp-select-buffer-other-window use-region-p))))
@@ -3993,7 +4061,7 @@ buffer `*Bookmark List*' are encapsulated as part of the command.
 Use the command at any time to restore them."
   (interactive)
   (let* ((fn   (intern (read-string "Define sort+filter command: " nil
-                                    'bmkp-bmenu-define-command-history)))
+                                    bmkp-bmenu-define-command-history)))
          (def  `(defun ,fn ()
                  (interactive)
                  (setq
@@ -4045,7 +4113,7 @@ bookmarks, marked bookmarks, etc.).  For a lighter weight command, use
 the omit list and the sort & filter information."
   (interactive)
   (let* ((fn   (intern (read-string "Define restore-snapshot command: " nil
-                                    'bmkp-bmenu-define-command-history)))
+                                    bmkp-bmenu-define-command-history)))
          (def  `(defun ,fn ()
                  (interactive)
                  (setq
@@ -4829,14 +4897,14 @@ With a prefix argument, show the internal definition of the bookmark."
 
 ;;;###autoload (autoload 'bmkp-bmenu-describe-marked "bookmark+")
 (defun bmkp-bmenu-describe-marked (&optional defn) ; Bound to `C-h >' in bookmark list
-  "Describe the marked bookmarks.
+  "Describe the marked bookmarks, in the current sort order.
 With a prefix argument, show the internal definitions.
 If no bookmark is marked, act on the bookmark of the current line."
   (interactive "P")
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (help-setup-xref (list #'bmkp-describe-bookmark-marked) (interactive-p))
   (with-output-to-temp-buffer "*Help*"
-    (dolist (bmk  (bmkp-bmenu-marked-or-this-or-all))
+    (dolist (bmk  (bmkp-sort-omit (bmkp-bmenu-marked-or-this-or-all)))
       (if defn
           (let* ((bname      (bmkp-bookmark-name-from-record bmk))
                  (help-text  (format "%s\n%s\n\n%s" bname (make-string (length bname) ?-)
@@ -4948,11 +5016,15 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 (define-key bookmark-bmenu-mode-map "\M-I"                 nil) ; For Emacs 20
 (define-key bookmark-bmenu-mode-map "\M-I\M-M"             'bmkp-bmenu-mark-image-bookmarks)
 (define-key bookmark-bmenu-mode-map "\M-I\M-S"             'bmkp-bmenu-show-only-image-files)
+
+;; Prefix `j' and `J' bindings are made in `bookmark+-key.el', by binding `bmkp-jump(-other-window)-map'.
+
 (define-key bookmark-bmenu-mode-map "k"                    'bmkp-bmenu-flag-for-deletion)
 (define-key bookmark-bmenu-mode-map "K"                    nil) ; For Emacs 20
 (define-key bookmark-bmenu-mode-map "KM"                   'bmkp-bmenu-mark-desktop-bookmarks)
 (define-key bookmark-bmenu-mode-map "KS"                   'bmkp-bmenu-show-only-desktops)
 (define-key bookmark-bmenu-mode-map "L"                    'bmkp-switch-bookmark-file-create)
+(define-key bookmark-bmenu-mode-map [(control shift ?l)]   'bookmark-bmenu-locate) ; `C-L' (aka `C-S-l')
 (define-key bookmark-bmenu-mode-map "\M-l"
   'bmkp-bmenu-load-marked-bookmark-file-bookmarks)
 (define-key bookmark-bmenu-mode-map "\M-L"                 'bmkp-temporary-bookmarking-mode)
@@ -5007,6 +5079,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 (define-key bookmark-bmenu-mode-map "T>+"                  'bmkp-bmenu-add-tags-to-marked)
 (define-key bookmark-bmenu-mode-map "T>-"                  'bmkp-bmenu-remove-tags-from-marked)
 (define-key bookmark-bmenu-mode-map "T>e"                  'bmkp-bmenu-edit-marked)
+(define-key bookmark-bmenu-mode-map "T>l"                  'bmkp-bmenu-list-tags-of-marked)
 (define-key bookmark-bmenu-mode-map "T>p"                  'bmkp-bmenu-paste-add-tags-to-marked)
 (define-key bookmark-bmenu-mode-map "T>q"                  'bmkp-bmenu-paste-replace-tags-for-marked)
 (define-key bookmark-bmenu-mode-map "T>v"                  'bmkp-bmenu-set-tag-value-for-marked)
@@ -5083,21 +5156,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Current Status, Mode Help" bmkp-bmenu-mode-status-help :keys "?"
     :help "Describe `*Bookmark List*' and show its current status"))
 
-(define-key bmkp-bmenu-menubar-menu [top-sep5] '("--")) ; --------------------------------
-(define-key bmkp-bmenu-menubar-menu [bmkp-temporary-bookmarking-mode]
-  '(menu-item "Toggle Temporary Bookmarking Mode..." bmkp-temporary-bookmarking-mode
-    :help "Toggle temporary-only bookmarking (empty bookmark file *replaces* current bookmarks)"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-toggle-autotemp-on-set]
-  '(menu-item "Toggle Automatically Making Temporary" bmkp-toggle-autotemp-on-set
-    :help "Toggle automatically making any bookmark temporary whenever it is set"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-toggle-saving-menu-list-state]
-  '(menu-item "Toggle Autosaving Display State" bmkp-toggle-saving-menu-list-state
-    :help "Toggle the value of option `bmkp-bmenu-state-file'"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-toggle-saving-bookmark-file]
-  '(menu-item "Toggle Autosaving Bookmark File" bmkp-toggle-saving-bookmark-file
-    :help "Toggle the value of option `bookmark-save-flag'"))
-
-(define-key bmkp-bmenu-menubar-menu [top-sep4] '("--")) ; --------------------------------
+(define-key bmkp-bmenu-menubar-menu [top-sep4] '("--")) ; ------------
 (define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-load-marked-bookmark-file-bookmarks]
   '(menu-item "Load Marked Bookmark-File Bookmarks..." bmkp-bmenu-load-marked-bookmark-file-bookmarks
     :help "Load the marked bookmark-file bookmarks, in order"))
@@ -5111,7 +5170,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Switch to Bookmark File..." bmkp-switch-bookmark-file-create
     :help "Switch to a different bookmark file, *replacing* the current set of bookmarks"))
 
-(define-key bmkp-bmenu-menubar-menu [top-sep3] '("--")) ; --------------------------------
+(define-key bmkp-bmenu-menubar-menu [top-sep3] '("--")) ; ------------
 (define-key bmkp-bmenu-menubar-menu [bmkp-save-menu-list-state]
   '(menu-item "Save Display State..." bmkp-save-menu-list-state
     :help "Save the current bookmark-list display state to `bmkp-bmenu-state-file'"
@@ -5130,7 +5189,10 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Refresh to Current" bmkp-bmenu-refresh-menu-list
     :help "Update display to reflect current bookmark list (`C-u': revert from file)"))
 
-(define-key bmkp-bmenu-menubar-menu [top-sep2] '("--")) ; --------------------------------
+(define-key bmkp-bmenu-menubar-menu [top-sep2] '("--")) ; ----------
+(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-edit-marked]
+  '(menu-item "Edit Internal Records of Marked (Lisp)..." bmkp-bmenu-edit-marked
+    :help "Edit the internal records of the marked bookmarks" :keys "E"))
 (define-key bmkp-bmenu-menubar-menu [bmkp-make-function-bookmark]
   '(menu-item "New Function Bookmark..." bmkp-make-function-bookmark
     :help "Create a bookmark that will invoke FUNCTION when \"jumped\" to"))
@@ -5152,6 +5214,10 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 (define-key bmkp-bmenu-menubar-menu [define-command]
   (cons "Define Command" bmkp-bmenu-define-command-menu))
 
+(defvar bmkp-bmenu-toggle-menu (make-sparse-keymap "Toggle")
+    "`Toggle' submenu for menu-bar `Bookmark+' menu.")
+(define-key bmkp-bmenu-menubar-menu [toggle] (cons "Toggle" bmkp-bmenu-toggle-menu))
+
 (when (featurep 'bookmark+-lit)
   (defvar bmkp-bmenu-highlight-menu (make-sparse-keymap "Highlight")
     "`Highlight' submenu for menu-bar `Bookmark+' menu.")
@@ -5160,6 +5226,10 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 (defvar bmkp-bmenu-tags-menu (make-sparse-keymap "Tags")
     "`Tags' submenu for menu-bar `Bookmark+' menu.")
 (define-key bmkp-bmenu-menubar-menu [tags] (cons "Tags" bmkp-bmenu-tags-menu))
+
+(defvar bmkp-bmenu-search-menu (make-sparse-keymap "Search")
+    "`Search' submenu for menu-bar `Bookmark+' menu.")
+(define-key bmkp-bmenu-menubar-menu [search] (cons "Search" bmkp-bmenu-search-menu))
 
 (defvar bmkp-bmenu-sort-menu (make-sparse-keymap "Sort")
     "`Sort' submenu for menu-bar `Bookmark+' menu.")
@@ -5177,39 +5247,9 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
     "`Mark' submenu for menu-bar `Bookmark+' menu.")
 (define-key bmkp-bmenu-menubar-menu [marking] (cons "Mark" bmkp-bmenu-mark-menu))
 
-(define-key bmkp-bmenu-menubar-menu [bookmark-bmenu-execute-deletions]
-  '(menu-item "Delete Flagged (D)..." bookmark-bmenu-execute-deletions
-    :help "Delete the (visible) bookmarks flagged `D'"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-delete-marked]
-  '(menu-item "Delete Marked (>)..." bmkp-bmenu-delete-marked
-    :help "Delete all (visible) bookmarks marked `>', after confirmation"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-delete-all-temporary-bookmarks]
-  '(menu-item "Delete All Temporaries..." bmkp-delete-all-temporary-bookmarks
-    :help "Delete the temporary bookmarks, (`X') whether visible here or not"))
-
-(define-key bmkp-bmenu-menubar-menu [top-sep1] '("--")) ; --------------------------------
-(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-edit-marked]
-  '(menu-item "Edit Internal Records of Marked (Lisp)..." bmkp-bmenu-edit-marked
-    :help "Edit the internal records of the marked bookmarks" :keys "E"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-toggle-marked-temporary/savable]
-  '(menu-item "Toggle Temporary/Savable (X) for Marked" bmkp-bmenu-toggle-marked-temporary/savable
-    :help "Toggle the temporary (`X') vs. savable status of the marked bookmarks"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-query-replace-marked-bookmarks-regexp]
-  '(menu-item "Query-Replace Marked..." bmkp-bmenu-query-replace-marked-bookmarks-regexp
-    :help "`query-replace-regexp' over all files whose bookmarks are marked"))
-(when (fboundp 'bmkp-bmenu-isearch-marked-bookmarks)
-  (define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-isearch-marked-bookmarks-regexp]
-    '(menu-item "Regexp-Isearch Marked..." bmkp-bmenu-isearch-marked-bookmarks-regexp
-      :help "Regexp Isearch the marked bookmark locations, in their current order"))
-  (define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-isearch-marked-bookmarks]
-    '(menu-item "Isearch Marked..." bmkp-bmenu-isearch-marked-bookmarks
-      :help "Isearch the marked bookmark locations, in their current order")))
-(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-search-marked-bookmarks-regexp]
-  '(menu-item "Search Marked..." bmkp-bmenu-search-marked-bookmarks-regexp
-    :help "Regexp-search the files whose bookmarks are marked, in their current order"))
-(define-key bmkp-bmenu-menubar-menu [bmkp-bmenu-jump-to-marked]
-  '(menu-item "Jump to Marked" bmkp-bmenu-jump-to-marked
-    :help "Jump to each bookmark marked `>', in another window"))
+(defvar bmkp-bmenu-delete-menu (make-sparse-keymap "Delete")
+    "`Delete' submenu for menu-bar `Bookmark+' menu.")
+(define-key bmkp-bmenu-menubar-menu [delete] (cons "Delete" bmkp-bmenu-delete-menu))
 
 
 ;;; `Define Command' submenu -----------------------------------------
@@ -5226,6 +5266,32 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "To Jump to a Bookmark Now Marked..." bmkp-bmenu-define-jump-marked-command
     :help "Define a command to jump to one of the bookmarks that is now marked"
     :enable bmkp-bmenu-marked-bookmarks))
+
+
+;;; `Toggle' submenu -------------------------------------------------
+(define-key bmkp-bmenu-toggle-menu [bmkp-bmenu-toggle-marked-temporary/savable]
+  '(menu-item "Temporary/Savable (`X') for Marked" bmkp-bmenu-toggle-marked-temporary/savable
+    :help "Toggle the temporary (`X') vs. savable status of the marked bookmarks"))
+(define-key bmkp-bmenu-toggle-menu [bmkp-temporary-bookmarking-mode]
+  (bmkp-menu-bar-make-toggle bmkp-temporary-bookmarking-mode bmkp-temporary-bookmarking-mode
+                             "Temporary Bookmarking"
+                             "Temporary bookmarking mode is now %s"
+                             "Toggle automatically saving bookmark changes"))
+(define-key bmkp-bmenu-toggle-menu [bmkp-toggle-autotemp-on-set]
+  (bmkp-menu-bar-make-toggle bmkp-toggle-autotemp-on-set bmkp-autotemp-all-when-set-p
+                             "Automatically Make Bookmarks Temporary"
+                             "Automatically making bookmarks temporary when you set them is now %s"
+                             "Toggle automatically making a bookmark temporary when you set it"))
+(define-key bmkp-bmenu-toggle-menu [bmkp-toggle-saving-menu-list-state]
+  (bmkp-menu-bar-make-toggle bmkp-toggle-saving-menu-list-state bmkp-bmenu-state-file
+                             "Autosaving Display State"
+                             "Autosaving of bookmark list state is now %s"
+                             "Toggle the value of option `bmkp-bmenu-state-file'"))
+(define-key bmkp-bmenu-toggle-menu [bmkp-toggle-saving-bookmark-file]
+  (bmkp-menu-bar-make-toggle bmkp-toggle-saving-bookmark-file bookmark-save-flag
+                             "Autosaving Bookmark File"
+                             "Automatically saving the bookmark file (`bookmark-save-flag') is now %s"
+                             "Toggle the value of option `bookmark-save-flag'"))
 
 
 ;;; `Highlight' submenu ----------------------------------------------
@@ -5249,7 +5315,11 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 
 ;;; `Tags' submenu ---------------------------------------------------
 (define-key bmkp-bmenu-tags-menu [bmkp-list-all-tags]
-  '(menu-item "List All Tags" bmkp-list-all-tags :help "List all tags used for any bookmarks"))
+  '(menu-item "List All Tags" bmkp-list-all-tags
+    :help "List all tags used for any bookmarks (`C-u': show full, internal form)"))
+(define-key bmkp-bmenu-tags-menu [bmkp-bmenu-list-tags-of-marked]
+  '(menu-item "List Tags of Marked" bmkp-bmenu-list-tags-of-marked
+    :help "List all tags used in the marked bookmarks (`C-u': show full, internal form)"))
 (define-key bmkp-bmenu-tags-menu [bmkp-purge-notags-autofiles]
   '(menu-item "Purge Autofiles with No Tags..." bmkp-purge-notags-autofiles
     :help "Delete all autofile bookmarks that have no tags"))
@@ -5260,7 +5330,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Tag a File (Add Some)..." bmkp-tag-a-file
     :help "Add some tags to the autofile bookmark for a file"))
 
-(define-key bmkp-bmenu-tags-menu [tags-sep] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-tags-menu [tags-sep] '("--")) ; ---------------
 (define-key bmkp-bmenu-tags-menu [bmkp-rename-tag]
   '(menu-item "Rename Tag..." bmkp-rename-tag
     :help "Rename a tag in all bookmarks, even those not showing"))
@@ -5282,10 +5352,31 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
     :help "Add a set of tags to each of the marked bookmarks"))
 (define-key bmkp-bmenu-tags-menu [bmkp-bmenu-paste-replace-tags-for-marked]
   '(menu-item "Paste Tags to Marked (Replace)..." bmkp-bmenu-paste-replace-tags-for-marked
-    :help "Replace tags for the marked bookmarks with tags copied previously"))
+    :help "Replace tags for the marked bookmarks with set of tags copied previously"))
 (define-key bmkp-bmenu-tags-menu [bmkp-bmenu-paste-add-tags-to-marked]
   '(menu-item "Paste Tags to Marked (Add)..." bmkp-bmenu-paste-add-tags-to-marked
-    :help "Add tags copied from another bookmark to the marked bookmarks"))
+    :help "Add tags copied from another bookmark to the marked bookmarks"
+    :enable bmkp-copied-tags))
+(define-key bmkp-bmenu-tags-menu [bmkp-bmenu-copy-tags]
+  '(menu-item "Copy Tags from This Bookmark" bmkp-bmenu-copy-tags
+    :help "Copy tags from this bookmark, so you can paste them to other bookmarks"))
+
+
+;;; `Search' submenu -------------------------------------------------
+(define-key bmkp-bmenu-search-menu [bmkp-bmenu-query-replace-marked-bookmarks-regexp]
+  '(menu-item "Query-Replace Marked..." bmkp-bmenu-query-replace-marked-bookmarks-regexp
+    :help "`query-replace-regexp' over all files whose bookmarks are marked"))
+(when (fboundp 'bmkp-bmenu-isearch-marked-bookmarks)
+  (define-key bmkp-bmenu-search-menu [bmkp-bmenu-isearch-marked-bookmarks-regexp]
+    '(menu-item "Regexp-Isearch Marked..." bmkp-bmenu-isearch-marked-bookmarks-regexp
+      :help "Regexp Isearch the marked bookmark locations, in their current order"))
+  (define-key bmkp-bmenu-search-menu [bmkp-bmenu-isearch-marked-bookmarks]
+    '(menu-item "Isearch Marked..." bmkp-bmenu-isearch-marked-bookmarks
+      :help "Isearch the marked bookmark locations, in their current order")))
+(define-key bmkp-bmenu-search-menu [bmkp-bmenu-search-marked-bookmarks-regexp]
+  '(menu-item "Search Marked..." bmkp-bmenu-search-marked-bookmarks-regexp
+    :help "Regexp-search the files whose bookmarks are marked, in their current order"))
+
 
 ;;; `Sort' submenu ---------------------------------------------------
 (define-key bmkp-bmenu-sort-menu [bmkp-bmenu-sort-by-url]
@@ -5341,7 +5432,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Show/Hide File Names" bookmark-bmenu-toggle-filenames
     :help "Toggle whether filenames are shown in the bookmark list"))
 
-(define-key bmkp-bmenu-show-menu [show-sep5] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-show-menu [show-sep5] '("--")) ; --------------
 (define-key bmkp-bmenu-show-menu [bmkp-bmenu-filter-tags-incrementally]
   '(menu-item "Show Only Tag Matches..." bmkp-bmenu-filter-tags-incrementally
     :help "Incrementally filter bookmarks by tags using a regexp"))
@@ -5355,54 +5446,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Show Only Name Matches..." bmkp-bmenu-filter-bookmark-name-incrementally
     :help "Incrementally filter bookmarks by bookmark name using a regexp"))
 
-(define-key bmkp-bmenu-show-menu [show-sep4] '("--")) ; ----------------------------------
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-w3m-urls]
-  '(menu-item "Show Only W3M URLs" bmkp-bmenu-show-only-w3m-urls
-    :help "Display (only) the W3M URL bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-urls]
-  '(menu-item "Show Only URLs" bmkp-bmenu-show-only-urls
-    :help "Display (only) the URL bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-gnus]
-  '(menu-item "Show Only Gnus Messages" bmkp-bmenu-show-only-gnus
-    :help "Display (only) the Gnus bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-man-pages]
-  '(menu-item "Show Only UNIX Manual Pages" bmkp-bmenu-show-only-man-pages
-    :help "Display (only) the `man' page bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-info-nodes]
-  '(menu-item "Show Only Info Nodes" bmkp-bmenu-show-only-info-nodes
-    :help "Display (only) the Info bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-desktops]
-  '(menu-item "Show Only Desktops" bmkp-bmenu-show-only-desktops
-    :help "Display (only) the desktop bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-variable-lists]
-  '(menu-item "Show Only Variable Lists" bmkp-bmenu-show-only-variable-lists
-    :help "Display (only) the variable-list bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-snippets]
-  '(menu-item "Show Only Snippets" bmkp-bmenu-show-only-snippets
-    :help "Display (only) the snippet bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-bookmark-files]
-  '(menu-item "Show Only Bookmark Files" bmkp-bmenu-show-only-bookmark-files
-    :help "Display (only) the bookmark-file bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-regions]
-  '(menu-item "Show Only Regions" bmkp-bmenu-show-only-regions
-    :help "Display (only) the bookmarks that record a region"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-non-files]
-  '(menu-item "Show Only Non-Files (Buffers)" bmkp-bmenu-show-only-non-files
-    :help "Display (only) the non-file bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-orphaned-local-files]
-  '(menu-item "Show Only Orphaned Local Files" bmkp-bmenu-show-only-orphaned-local-files
-    :help "Display (only) orphaned local-file bookmarks (`C-u': show remote also)"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-image-files]
-  '(menu-item "Show Only Image Files" bmkp-bmenu-show-only-image-files
-    :help "Display (only) image-file bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-files]
-  '(menu-item "Show Only Files" bmkp-bmenu-show-only-files
-    :help "Display (only) the file and directory bookmarks"))
-(define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-dired]
-  '(menu-item "Show Only Dired Buffers" bmkp-bmenu-show-only-dired
-    :help "Display (only) the Dired bookmarks"))
-
-(define-key bmkp-bmenu-show-menu [show-sep3] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-show-menu [show-sep3] '("--")) ; --------------
 (define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-specific-file]
   '(menu-item "Show Only for Specific File" bmkp-bmenu-show-only-specific-file
     :help "Display (only) the bookmarks for a specific file"))
@@ -5410,7 +5454,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Show Only for Specific Buffer" bmkp-bmenu-show-only-specific-buffer
     :help "Display (only) the bookmarks for a specific buffer"))
 
-(define-key bmkp-bmenu-show-menu [show-sep2] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-show-menu [show-sep2] '("--")) ; --------------
 (when (featurep 'bookmark+-lit)
   (define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-only-lighted]
     '(menu-item "Show Only Highlighted" bmkp-bmenu-show-only-lighted
@@ -5425,7 +5469,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Show Only Autofiles" bmkp-bmenu-show-only-autofiles
     :help "Display (only) the autofile bookmarks: those named the same as their files"))
 
-(define-key bmkp-bmenu-show-menu [show-sep1] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-show-menu [show-sep1] '("--")) ; --------------
 (define-key bmkp-bmenu-show-menu [bmkp-bmenu-toggle-show-only-unmarked]
   '(menu-item "Show Only Unmarked" bmkp-bmenu-toggle-show-only-unmarked
     :help "Hide all marked bookmarks.  Repeat to toggle, showing all"))
@@ -5435,6 +5479,60 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 (define-key bmkp-bmenu-show-menu [bmkp-bmenu-show-all]
   '(menu-item "Show All" bmkp-bmenu-show-all
     :help "Show all bookmarks currently known to the bookmark list"))
+
+
+;;; `Show' > `Only Bookmarks of Type' submenu -----------------------------
+
+(defvar bmkp-bmenu-show-types-menu (make-sparse-keymap "Only Bookmarks of Type")
+    "`Only Bookmarks of Type' submenu for `Show' submenu of m`Bookmark+' menu.")
+(define-key bmkp-bmenu-show-menu [type] (cons "Only Bookmarks of Type" bmkp-bmenu-show-types-menu))
+
+(define-key bmkp-bmenu-show-types-menu [show-sep4] '("--")) ; --------------
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-w3m-urls]
+  '(menu-item "W3M URLs" bmkp-bmenu-show-only-w3m-urls
+    :help "Display (only) the W3M URL bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-urls]
+  '(menu-item "URLs" bmkp-bmenu-show-only-urls
+    :help "Display (only) the URL bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-gnus]
+  '(menu-item "Gnus Messages" bmkp-bmenu-show-only-gnus
+    :help "Display (only) the Gnus bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-man-pages]
+  '(menu-item "UNIX Manual Pages" bmkp-bmenu-show-only-man-pages
+    :help "Display (only) the `man' page bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-info-nodes]
+  '(menu-item "Info Nodes" bmkp-bmenu-show-only-info-nodes
+    :help "Display (only) the Info bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-desktops]
+  '(menu-item "Desktops" bmkp-bmenu-show-only-desktops
+    :help "Display (only) the desktop bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-variable-lists]
+  '(menu-item "Variable Lists" bmkp-bmenu-show-only-variable-lists
+    :help "Display (only) the variable-list bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-snippets]
+  '(menu-item "Snippets" bmkp-bmenu-show-only-snippets
+    :help "Display (only) the snippet bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-bookmark-files]
+  '(menu-item "Bookmark Files" bmkp-bmenu-show-only-bookmark-files
+    :help "Display (only) the bookmark-file bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-regions]
+  '(menu-item "Regions" bmkp-bmenu-show-only-regions
+    :help "Display (only) the bookmarks that record a region"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-non-files]
+  '(menu-item "Non-Files (Buffers)" bmkp-bmenu-show-only-non-files
+    :help "Display (only) the non-file bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-orphaned-local-files]
+  '(menu-item "Orphaned Local Files" bmkp-bmenu-show-only-orphaned-local-files
+    :help "Display (only) orphaned local-file bookmarks (`C-u': show remote also)"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-image-files]
+  '(menu-item "Image Files" bmkp-bmenu-show-only-image-files
+    :help "Display (only) image-file bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-files]
+  '(menu-item "Files" bmkp-bmenu-show-only-files
+    :help "Display (only) the file and directory bookmarks"))
+(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-dired]
+  '(menu-item "Dired Buffers" bmkp-bmenu-show-only-dired
+    :help "Display (only) the Dired bookmarks"))
 
 
 ;;; `Omit' submenu ---------------------------------------------------
@@ -5496,55 +5594,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Mark If Tagged Matching Regexp..." bmkp-bmenu-mark-bookmarks-tagged-regexp
     :help "Mark bookmarks any of whose tags match a regexp you enter"))
 
-(define-key bmkp-bmenu-mark-menu [mark-sep5] '("--")) ; ----------------------------------
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-w3m-bookmarks]
-  '(menu-item "Mark W3M URLs" bmkp-bmenu-mark-w3m-bookmarks :help "Mark W3M URL bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-url-bookmarks]
-  '(menu-item "Mark URLs" bmkp-bmenu-mark-url-bookmarks :help "Mark URL bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-gnus-bookmarks]
-  '(menu-item "Mark Gnus Messages" bmkp-bmenu-mark-gnus-bookmarks :help "Mark Gnus bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-man-bookmarks]
-  '(menu-item "Mark UNIX Manual Pages" bmkp-bmenu-mark-man-bookmarks
-    :help "Mark `man' page bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-info-bookmarks]
-  '(menu-item "Mark Info Nodes" bmkp-bmenu-mark-info-bookmarks :help "Mark Info bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-desktop-bookmarks]
-  '(menu-item "Mark Desktops" bmkp-bmenu-mark-desktop-bookmarks
-    :help "Mark desktop bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-variable-list-bookmarks]
-  '(menu-item "Mark Variable Lists" bmkp-bmenu-mark-variable-list-bookmarks
-    :help "Mark the variable-list bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-snippet-bookmarks]
-  '(menu-item "Mark Snippets" bmkp-bmenu-mark-snippet-bookmarks
-    :help "Mark snippet bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-bookmark-file-bookmarks]
-  '(menu-item "Mark Bookmark Files" bmkp-bmenu-mark-bookmark-file-bookmarks
-    :help "Mark the bookmark-file bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-region-bookmarks]
-  '(menu-item "Mark Regions" bmkp-bmenu-mark-region-bookmarks
-    :help "Mark bookmarks that record a region"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-non-file-bookmarks]
-  '(menu-item "Mark Non-Files (Buffers)" bmkp-bmenu-mark-non-file-bookmarks
-    :help "Mark non-file bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-orphaned-local-file-bookmarks]
-  '(menu-item "Mark Orphaned Local Files" bmkp-bmenu-mark-orphaned-local-file-bookmarks
-    :help "Mark orphaned local-file bookmarks (`C-u': remote also)"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-image-bookmarks]
-  '(menu-item "Mark Images" bmkp-bmenu-mark-image-bookmarks :help "Mark image-file bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-file-bookmarks]
-  '(menu-item "Mark Files" bmkp-bmenu-mark-file-bookmarks :help "Mark file bookmarks"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-dired-bookmarks]
-  '(menu-item "Mark Dired Buffers" bmkp-bmenu-mark-dired-bookmarks :help "Mark Dired bookmarks"))
-
-(define-key bmkp-bmenu-mark-menu [mark-sep4] '("--")) ; ----------------------------------
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-specific-file-bookmarks]
-  '(menu-item "Mark for Specific File" bmkp-bmenu-mark-specific-file-bookmarks
-    :help "Mark bookmarks for a specific file"))
-(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-specific-buffer-bookmarks]
-  '(menu-item "Mark for Specific Buffer" bmkp-bmenu-mark-specific-buffer-bookmarks
-    :help "Mark bookmarks for a specific buffer"))
-
-(define-key bmkp-bmenu-mark-menu [mark-sep3] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-mark-menu [mark-sep3] '("--")) ; --------------
 (when (featurep 'bookmark+-lit)
   (define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-lighted-bookmarks]
     '(menu-item "Mark Highlighted" bmkp-bmenu-mark-lighted-bookmarks
@@ -5559,7 +5609,7 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
   '(menu-item "Mark Autofiles" bmkp-bmenu-mark-autofile-bookmarks
     :help "Mark autofile bookmarks: those whose names are the same as their files"))
 
-(define-key bmkp-bmenu-mark-menu [mark-sep2] '("--")) ; ----------------------------------
+(define-key bmkp-bmenu-mark-menu [mark-sep2] '("--")) ; --------------
 (define-key bmkp-bmenu-mark-menu [bmkp-bmenu-unmark-all]
   '(menu-item "Unmark All" bmkp-bmenu-unmark-all
     :help "Remove a mark you specify (> or D) from each bookmark (RET to remove both kinds)"))
@@ -5571,6 +5621,71 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
 (define-key bmkp-bmenu-mark-menu [bmkp-bmenu-regexp-mark]
   '(menu-item "Mark Regexp Matches..." bmkp-bmenu-regexp-mark
     :help "Mark bookmarks that match a regexp that you enter"))
+
+(define-key bmkp-bmenu-mark-menu [mark-sep4] '("--")) ; --------------
+(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-specific-file-bookmarks]
+  '(menu-item "Mark for Specific File" bmkp-bmenu-mark-specific-file-bookmarks
+    :help "Mark bookmarks for a specific file"))
+(define-key bmkp-bmenu-mark-menu [bmkp-bmenu-mark-specific-buffer-bookmarks]
+  '(menu-item "Mark for Specific Buffer" bmkp-bmenu-mark-specific-buffer-bookmarks
+    :help "Mark bookmarks for a specific buffer"))
+
+
+;; `Mark' > `Bookmarks of Type' submenu ------------------------------
+(defvar bmkp-bmenu-mark-types-menu (make-sparse-keymap "Bookmarks of Type")
+  "`Bookmarks of Type' submenu for `Mark' submenu of m`Bookmark+' menu.")
+(define-key bmkp-bmenu-mark-menu [type] (cons "Bookmarks of Type" bmkp-bmenu-mark-types-menu))
+
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-w3m-bookmarks]
+  '(menu-item "W3M URLs" bmkp-bmenu-mark-w3m-bookmarks :help "Mark W3M URL bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-url-bookmarks]
+  '(menu-item "URLs" bmkp-bmenu-mark-url-bookmarks :help "Mark URL bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-gnus-bookmarks]
+  '(menu-item "Gnus Messages" bmkp-bmenu-mark-gnus-bookmarks :help "Mark Gnus bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-man-bookmarks]
+  '(menu-item "UNIX Manual Pages" bmkp-bmenu-mark-man-bookmarks
+    :help "Mark `man' page bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-info-bookmarks]
+  '(menu-item "Info Nodes" bmkp-bmenu-mark-info-bookmarks :help "Mark Info bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-desktop-bookmarks]
+  '(menu-item "Desktops" bmkp-bmenu-mark-desktop-bookmarks
+    :help "Mark desktop bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-variable-list-bookmarks]
+  '(menu-item "Variable Lists" bmkp-bmenu-mark-variable-list-bookmarks
+    :help "Mark the variable-list bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-snippet-bookmarks]
+  '(menu-item "Snippets" bmkp-bmenu-mark-snippet-bookmarks
+    :help "Mark snippet bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-bookmark-file-bookmarks]
+  '(menu-item "Bookmark Files" bmkp-bmenu-mark-bookmark-file-bookmarks
+    :help "Mark the bookmark-file bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-region-bookmarks]
+  '(menu-item "Regions" bmkp-bmenu-mark-region-bookmarks
+    :help "Mark bookmarks that record a region"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-non-file-bookmarks]
+  '(menu-item "Non-Files (Buffers)" bmkp-bmenu-mark-non-file-bookmarks
+    :help "Mark non-file bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-orphaned-local-file-bookmarks]
+  '(menu-item "Orphaned Local Files" bmkp-bmenu-mark-orphaned-local-file-bookmarks
+    :help "Mark orphaned local-file bookmarks (`C-u': remote also)"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-image-bookmarks]
+  '(menu-item "Images" bmkp-bmenu-mark-image-bookmarks :help "Mark image-file bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-file-bookmarks]
+  '(menu-item "Files" bmkp-bmenu-mark-file-bookmarks :help "Mark file bookmarks"))
+(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-dired-bookmarks]
+  '(menu-item "Dired Buffers" bmkp-bmenu-mark-dired-bookmarks :help "Mark Dired bookmarks"))
+
+
+;;; `Delete' submenu -------------------------------------------------
+(define-key bmkp-bmenu-delete-menu [bookmark-bmenu-execute-deletions]
+  '(menu-item "Delete Flagged (D)..." bookmark-bmenu-execute-deletions
+    :help "Delete the (visible) bookmarks flagged `D'"))
+(define-key bmkp-bmenu-delete-menu [bmkp-bmenu-delete-marked]
+  '(menu-item "Delete Marked (>)..." bmkp-bmenu-delete-marked
+    :help "Delete all (visible) bookmarks marked `>', after confirmation"))
+(define-key bmkp-bmenu-delete-menu [bmkp-delete-all-temporary-bookmarks]
+  '(menu-item "Delete All Temporaries..." bmkp-delete-all-temporary-bookmarks
+    :help "Delete the temporary bookmarks, (`X') whether visible here or not"))
 
 
 ;;; `Edit' menu-bar menu
@@ -5637,9 +5752,15 @@ Non-nil optional ALLP means return all bookmarks: `bookmark-alist'."
                                     ["Edit Tags..." bmkp-bmenu-edit-tags
                                      :active (bmkp-get-tags bmk-name)]
                                     ["Copy Tags" bmkp-bmenu-copy-tags
-                                     :active (bmkp-get-tags bmk-name)]
-                                    ["Paste Tags (Add)" bmkp-bmenu-paste-add-tags]
-                                    ["Paste Tags (Replace)" bmkp-bmenu-paste-replace-tags]
+                                     ;; You can copy an empty list of tags and paste-replace with it.
+                                     ;; :active (bmkp-get-tags bmk-name)
+                                     ]
+                                    ["Paste Tags (Add)" bmkp-bmenu-paste-add-tags
+                                     :active bmkp-copied-tags]
+                                    ["Paste Tags (Replace)" bmkp-bmenu-paste-replace-tags
+                                     ;; You can paste an empty list of tags to replace tags.
+                                     ;; :active bmkp-copied-tags
+                                     ]
                                     ["Add Some Tags..." bmkp-bmenu-add-tags]
                                     ["Remove Some Tags..." bmkp-bmenu-remove-tags
                                      :active (bmkp-get-tags bmk-name)]

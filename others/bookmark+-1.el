@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Mon Mar 10 11:01:01 2014 (-0700)
+;; Last-Updated: Sat Apr  5 16:41:03 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 7095
+;;     Update #: 7109
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -117,7 +117,6 @@
 ;;    `bmkp-choose-navlist-from-bookmark-list',
 ;;    `bmkp-choose-navlist-of-type', `bmkp-compilation-target-set',
 ;;    `bmkp-compilation-target-set-all', `bmkp-copy-tags',
-;;    `bmkp-create-dired-bookmarks-recursive',
 ;;    `bmkp-crosshairs-highlight', `bmkp-cycle',
 ;;    `bmkp-cycle-autonamed', `bmkp-cycle-autonamed-other-window',
 ;;    `bmkp-cycle-bookmark-list',
@@ -4851,7 +4850,14 @@ Non-interactively:
   "Replace tags for BOOKMARK with those copied from another bookmark.
 Return the number of tags for BOOKMARK.
 The tags are copied from `bmkp-copied-tags'.
-Any previously existing tags for BOOKMARK are lost.
+Any previously existing tags for BOOKMARK are *lost*.
+
+NOTE: It is by design that you can *remove all* tags from a bookmark
+by copying an empty set of tags and then pasting to that bookmark
+using this command.  So be careful using it.  If you want to be sure
+that you do not replace tags with an empty list of tags, you can check
+the value of variable `bmkp-copied-tags' before pasting.
+
 Non-interactively:
 * Non-nil NO-UPDATE-P means do not update `bmkp-tags-alist' and
   do not refresh/rebuild the bookmark-list display.
@@ -6838,16 +6844,16 @@ Non-interactively:
      (list (read-file-name "File: " nil
                            (or (if (boundp 'file-name-at-point-functions) ; In `files.el', Emacs 23.2+.
                                    (run-hook-with-args-until-success 'file-name-at-point-functions)
-                                 (ffap-guesser))
+                                 (and (require 'ffap nil t)  (ffap-guesser)))
                                (bmkp-thing-at-point 'filename)
-                               (buffer-file-name))))
-     prefix-only
-     (if prefix-only
-         (read-string "Prefix for bookmark name: ")
-       (bmkp-completing-read-lax "Bookmark name"))
-     no-overw
-     nil
-     'MSG))
+                               (buffer-file-name)))
+           prefix-only
+           (if prefix-only
+               (read-string "Prefix for bookmark name: ")
+             (bmkp-completing-read-lax "Bookmark name"))
+           no-overw
+           nil
+           'MSG)))
   (unless name/prefix (setq name/prefix  ""))
   (let ((bookmark-make-record-function  (bmkp-make-record-for-target-file file))
         bmk failure)
@@ -6882,7 +6888,7 @@ The bookmarked position will be the beginning of the file."
            ;; But don't use that directly, because it uses
            ;; `bookmark-make-record-default', which gets nil for `filename'.
 
-           ;; NEED to keep this code sync'd with `diredp-bookmark'.
+           ;; NEED TO KEEP THIS CODE SYNC'D WITH `diredp-bookmark'.
            `(lambda ()
              ',(append common `((image-type . ,(image-type file)) (handler . image-bookmark-jump)))))
           ((let ((case-fold-search  t))  (bmkp-string-match-p "\\([.]au$\\|[.]wav$\\)" file)) ; Sound
@@ -6950,7 +6956,8 @@ Non-interactively:
                                      def)
                                  (when (setq def  (buffer-file-name)) (push def deflts))
                                  (when (setq def  (bmkp-thing-at-point 'filename)) (push def deflts))
-                                 (when (setq def  (ffap-guesser)) (push def deflts))
+                                 (when (setq def  (and (require 'ffap nil t)  (ffap-guesser)))
+                                   (push def deflts))
                                  (when (and (boundp 'file-name-at-point-functions)
                                             (setq def  (run-hook-with-args-until-success
                                                         'file-name-at-point-functions)))
@@ -6958,7 +6965,7 @@ Non-interactively:
                                  deflts)
                              (or (if (boundp 'file-name-at-point-functions) ; In `files.el', Emacs 23.2+.
                                      (run-hook-with-args-until-success 'file-name-at-point-functions)
-                                   (ffap-guesser))
+                                   (and (require 'ffap nil t)  (ffap-guesser)))
                                  (bmkp-thing-at-point 'filename)
                                  (buffer-file-name)))))
          nil
@@ -7039,7 +7046,7 @@ Non-interactively:
            (read-file-name "File: " nil
                            (or (if (boundp 'file-name-at-point-functions) ; In `files.el', Emacs 23.2+.
                                    (run-hook-with-args-until-success 'file-name-at-point-functions)
-                                 (ffap-guesser))
+                                 (and (require 'ffap nil t)  (ffap-guesser)))
                                (bmkp-thing-at-point 'filename)
                                (buffer-file-name))))
          (bmkp-read-tags-completing nil nil (and current-prefix-arg
@@ -7093,7 +7100,7 @@ Non-interactively:
                               "File: " nil
                               (or (if (boundp 'file-name-at-point-functions) ; In `files.el', Emacs 23.2+.
                                       (run-hook-with-args-until-success 'file-name-at-point-functions)
-                                    (ffap-guesser))
+                                    (and (require 'ffap nil t)  (ffap-guesser)))
                                   (bmkp-thing-at-point 'filename)
                                   (buffer-file-name))
                               t nil (lambda (ff) ; PREDICATE - only for Emacs 22+.
@@ -7104,9 +7111,10 @@ Non-interactively:
                                                        (when (not (member tag btgs))
                                                          (throw 'bmkp-autofile-remove-tags-pred nil)))
                                                      t)))))
-                           (error (read-file-name "File: " nil (or (ffap-guesser)
-                                                                   (bmkp-thing-at-point 'filename)
-                                                                   (buffer-file-name)))))))
+                           (error (read-file-name "File: " nil
+                                                  (or (and (require 'ffap nil t)  (ffap-guesser))
+                                                      (bmkp-thing-at-point 'filename)
+                                                      (buffer-file-name)))))))
      (list fil tgs nil pref nil 'MSG)))
   (bmkp-remove-tags (bmkp-autofile-set file dir prefix no-update-p) tags no-update-p msg-p))
 
@@ -8716,53 +8724,6 @@ BOOKMARK is a bookmark name or a bookmark record."
                                      mfiles))
       (save-excursion (dolist (dir  hidden-dirs) (when (dired-goto-subdir dir) (dired-hide-subdir 1)))))
     (goto-char (bookmark-get-position bookmark))))
-
-;;;###autoload (autoload 'bmkp-create-dired-bookmarks-recursive "bookmark+")
-(defun bmkp-create-dired-bookmarks-recursive (ignore-marks-p &optional msg-p)
-  "Bookmark this Dired buffer and marked subdirectory Dired buffers, recursively.
-Create a Dired bookmark for this directory and for each of its marked
-subdirectories.  Handle each of the marked subdirectory similarly:
-bookmark it and its marked subdirectories, and so on, recursively.
-Name each of these Dired bookmarks with the Dired buffer name.
-
-After creating the Dired bookmarks, create a sequence bookmark, named
-`DIRBUF and subdirs', where DIRBUF is the name of the original buffer.
-This bookmark represents the whole Dired tree rooted in the directory
-where you invoked the command.  Jumping to this sequence bookmark
-restores all of the Dired buffers making up the tree, by jumping to
-each of their bookmarks.
-
-With a prefix arg, bookmark the marked and unmarked subdirectory Dired
-buffers, recursively, that is, ignore markings.
-
-Note:
-
-* If there is more than one Dired buffer for a given subdirectory then
-  only the first such is used.
-
-* This command creates new bookmarks.  It never updates or overwrites
-  an existing bookmark."
-  (interactive "P\np")
-  (unless (featurep 'dired+) (error "You need library `dired+.el' for this command"))
-  (diredp-ensure-mode)
-  (let ((sdirs   (diredp-get-subdirs ignore-marks-p))
-        (snames  ()))
-    (when (and msg-p  sdirs) (message "Checking descendent directories..."))
-    (dolist (dir  (cons default-directory sdirs))
-      (when (dired-buffers-for-dir (expand-file-name dir)) ; Dirs with Dired buffers only.
-        (with-current-buffer (car (dired-buffers-for-dir (expand-file-name dir)))
-          (let ((bname  (bookmark-buffer-name))
-                (count  2))
-            (while (and (bmkp-get-bookmark-in-alist bname 'NOERROR)
-                        (setq bname  (format "%s[%d]" bname count))))
-            (bookmark-set bname nil nil 'NO-UPDATE-P) ; Inhibit updating displayed list.
-            (push bname snames)))))
-    (let ((bname  (format "%s and subdirs" (bookmark-buffer-name)))
-          (count  2))
-      (while (and (bmkp-get-bookmark-in-alist bname 'NOERROR)
-                  (setq bname  (format "%s[%d]" bname count))))
-      (bmkp-set-sequence-bookmark bname (nreverse snames) -1 'MSGP))
-    (bmkp-refresh/rebuild-menu-list nil)))
 
 (defun bmkp-read-bookmark-for-type (type alist &optional other-win pred hist action)
   "Read the name of a bookmark of type TYPE, with completion.

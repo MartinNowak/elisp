@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Thu May 21 13:31:43 2009 (-0700)
-;; Last-Updated: Fri Mar  7 10:57:51 2014 (-0800)
+;; Last-Updated: Sat Apr  5 07:44:50 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 6766
+;;     Update #: 6811
 ;; URL: http://www.emacswiki.org/icicles-cmd2.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -60,6 +60,8 @@
 ;;
 ;;    (+)`a', (+)`any', (+)`buffer', (+)`file', (+)`icicle-anything',
 ;;    (+)`icicle-apply', (+)`icicle-bookmark-a-file',
+;;    (+)`icicle-bookmark-tagged',
+;;    (+)`icicle-bookmark-tagged-other-window',
 ;;    (+)`icicle-choose-faces', (+)`icicle-choose-invisible-faces',
 ;;    (+)`icicle-choose-visible-faces', (+)`icicle-comint-command',
 ;;    (+)`icicle-comint-search', (+)`icicle-compilation-search',
@@ -452,6 +454,210 @@
 (defun icicle-cmd2-after-load-bookmark+ ()
   "Things to do for `icicles-cmd2.el' after loading `bookmark+.el'."
 
+  (icicle-define-command icicle-bookmark-tagged ; `C-x j t j'
+    "Jump to one or more bookmarks with tags that match your input.
+Only tagged bookmarks are candidates.
+
+A prefix argument reverses the effect of option
+`icicle-bookmark-refresh-cache-flag'.  See the doc for that option.
+In particular, if the option value is nil and you try to jump to a
+bookmark that is not up to date or does not exist, then try invoking
+the command again with a prefix arg, to refresh the cache.
+
+Each completion candidate is a multi-completion composed of two
+fields: the bookmark name and the bookmark tags, separated by
+`icicle-list-join-string' \(\"^G^J\", by default).  As always, you can
+type `C-M-j' to insert this separator into the minibuffer.
+
+For this command, by default `.' in your input matches any character,
+including a newline.  As always, you can use `C-M-.' to toggle
+this (so `.' does not match newline).
+
+You can match your input against the bookmark name or tags or both.
+
+E.g., type:
+
+`red S-TAB'                  to match all bookmarks with the tag `red'
+`red S-SPC green S-SPC blue' to match all bookmarks with tags `red',
+                             `green', and `blue' (in any order)
+
+This assumes that these tags do not also match any bookmark names.
+
+If you need to match against a particular field (e.g. the bookmark
+name or a specific tag position), then use the field separator.
+Otherwise, just use progressive completion, as shown above.
+
+E.g., to match only tags and not the bookmark name, start with `C-M-j'
+to get past the bookmark-name field.  To match both bookmark name and
+tags, type something to match the bookmark name before hitting
+`C-M-j'.  E.g., type:
+
+`trips C-M-j red S-SPC blue' to match all bookmarks tagged `red' and
+                             `blue' that have `trips' in their names
+
+In other respects this command is like `icicle-bookmark'.  See its doc
+for more information, including about actions and keys available
+during completion.
+
+NOTE: You can get the same effect as this command using other
+`icicle-bookmark*' commands, by using two multi-completion separators,
+so that you match only bookmarks that have tags:
+
+.* C-M-j .* C-M-j
+
+In other words, this command is essentially just a convenience." ; Doc string
+    (lambda (cand) (icicle-bookmark-jump (icicle-transform-multi-completion cand))) ; Action
+    prompt icicle-candidates-alist      ; `completing-read' args
+    nil nil nil (if (boundp 'bookmark-history) 'bookmark-history 'icicle-bookmark-history)
+    (and (boundp 'bookmark-current-bookmark)  bookmark-current-bookmark) nil
+    ((enable-recursive-minibuffers           t) ; In case we read input, e.g. File changed on disk...
+     (completion-ignore-case                 bookmark-completion-ignore-case)
+     (prompt                                 "Bookmark `C-M-j' TAGS: ")
+     (icicle-list-use-nth-parts              '(1))
+     (icicle-dot-string                      (icicle-anychar-regexp))
+     (icicle-candidate-properties-alist      '((2 (face bookmark-menu-heading))))
+     (icicle-multi-completing-p              t)
+     (icicle-list-use-nth-parts              '(1))
+     (icicle-transform-function              (and (not (interactive-p))  icicle-transform-function))
+     (icicle-whole-candidate-as-text-prop-p  t)
+     (icicle-transform-before-sort-p         t)
+     (icicle-candidate-help-fn               (lambda (cand)
+                                               (setq cand  (caar (funcall icicle-get-alist-candidate-function
+                                                                          cand)))
+                                               (if current-prefix-arg
+                                                   (bmkp-describe-bookmark-internals cand)
+                                                 (bmkp-describe-bookmark cand))))
+     (icicle-candidate-alt-action-fn         (or icicle-candidate-alt-action-fn  'icicle-bookmark-act-on-prop))
+     (icicle-delete-candidate-object         'icicle-bookmark-delete-action)
+     (icicle-sort-orders-alist
+      (append '(("in *Bookmark List* order") ; Renamed from "turned OFF'.
+                ("by bookmark name" . icicle-alpha-p))
+              (and (featurep 'bookmark+)
+                   '(("by last bookmark access" (bmkp-bookmark-last-access-cp) icicle-alpha-p)
+                     ("by bookmark visit frequency" (bmkp-visited-more-cp) icicle-alpha-p)
+                     ("by last buffer or file access" (bmkp-buffer-last-access-cp
+                                                       bmkp-local-file-accessed-more-recently-cp)
+                      icicle-alpha-p)
+                     ("marked before unmarked (in *Bookmark List*)" (bmkp-marked-cp)
+                      icicle-alpha-p)
+                     ("by local file type" (bmkp-local-file-type-cp) icicle-alpha-p)
+                     ("by file name" (bmkp-file-alpha-cp) icicle-alpha-p)
+                     ("by local file size" (bmkp-local-file-size-cp) icicle-alpha-p)
+                     ("by last local file access" (bmkp-local-file-accessed-more-recently-cp)
+                      icicle-alpha-p)
+                     ("by last local file update" (bmkp-local-file-updated-more-recently-cp)
+                      icicle-alpha-p)
+                     ("by Info location" (bmkp-info-cp) icicle-alpha-p)
+                     ("by Gnus thread" (bmkp-gnus-cp) icicle-alpha-p)
+                     ("by URL" (bmkp-url-cp) icicle-alpha-p)
+                     ("by bookmark type" (bmkp-info-cp bmkp-url-cp bmkp-gnus-cp
+                                          bmkp-local-file-type-cp bmkp-handler-cp)
+                      icicle-alpha-p)))
+              '(("by previous use alphabetically" . icicle-historical-alphabetic-p)
+                ("case insensitive" . icicle-case-insensitive-string-less-p))))
+     (icicle-candidates-alist           ; An alist whose items are ((BOOKMARK-NAME TAG...)).
+      (let ((result  ()))
+        (bookmark-maybe-load-default-file) ; Loads bookmarks file, defining `bookmark-alist'.
+        (dolist (bmk  (or (and (or (and (not icicle-bookmark-refresh-cache-flag)
+                                        (not (consp current-prefix-arg)))
+                                   (and icicle-bookmark-refresh-cache-flag  (consp current-prefix-arg)))
+                               bmkp-sorted-alist)
+                          (setq bmkp-sorted-alist  (bmkp-sort-omit bookmark-alist))))
+          (icicle-condition-case-no-debug nil ; Ignore errors, e.g. from bad or stale bookmark records.
+              (let ((tags  (bmkp-get-tags bmk))
+                    bname)
+                (when tags
+                  (setq bname  (bmkp-bookmark-name-from-record bmk))
+                  (push `((,(icicle-candidate-short-help
+                             (icicle-bookmark-help-string bname)
+                             (icicle-bookmark-propertize-candidate bname))
+                           ,@(and tags  (list (format "%S" tags)))))
+                        result)))
+            (error nil)))
+        result)))
+    (progn                              ; First code
+      (put-text-property 0 1 'icicle-fancy-candidates t prompt)
+      (icicle-highlight-lighter)
+      (message "Gathering tagged bookmarks..."))
+    nil nil)                            ; Undo code, last code.
+
+  (icicle-define-command icicle-bookmark-tagged-other-window ; `C-x 4 j t j'
+    "Same as `icicle-bookmark-tagged', except uses another window." ; Doc string
+    (lambda (cand) (icicle-bookmark-jump-other-window (icicle-transform-multi-completion cand))) ; Action
+    prompt icicle-candidates-alist      ; `completing-read' args
+    nil nil nil (if (boundp 'bookmark-history) 'bookmark-history 'icicle-bookmark-history)
+    (and (boundp 'bookmark-current-bookmark)  bookmark-current-bookmark) nil
+    ((enable-recursive-minibuffers           t) ; In case we read input, e.g. File changed on disk...
+     (completion-ignore-case                 bookmark-completion-ignore-case)
+     (prompt                                 "Bookmark `C-M-j' TAGS: ")
+     (icicle-list-use-nth-parts              '(1))
+     (icicle-dot-string                      (icicle-anychar-regexp))
+     (icicle-candidate-properties-alist      '((2 (face icicle-msg-emphasis))))
+     (icicle-multi-completing-p              t)
+     (icicle-list-use-nth-parts              '(1))
+     (icicle-transform-function              (and (not (interactive-p))  icicle-transform-function))
+     (icicle-whole-candidate-as-text-prop-p  t)
+     (icicle-transform-before-sort-p         t)
+     (icicle-candidate-help-fn               (lambda (cand)
+                                               (setq cand  (caar (funcall icicle-get-alist-candidate-function
+                                                                          cand)))
+                                               (if current-prefix-arg
+                                                   (bmkp-describe-bookmark-internals cand)
+                                                 (bmkp-describe-bookmark cand))))
+     (icicle-candidate-alt-action-fn         (or icicle-candidate-alt-action-fn  'icicle-bookmark-act-on-prop))
+     (icicle-delete-candidate-object         'icicle-bookmark-delete-action)
+     (icicle-sort-orders-alist
+      (append '(("in *Bookmark List* order") ; Renamed from "turned OFF'.
+                ("by bookmark name" . icicle-alpha-p))
+              (and (featurep 'bookmark+)
+                   '(("by last bookmark access" (bmkp-bookmark-last-access-cp) icicle-alpha-p)
+                     ("by bookmark visit frequency" (bmkp-visited-more-cp) icicle-alpha-p)
+                     ("by last buffer or file access" (bmkp-buffer-last-access-cp
+                                                       bmkp-local-file-accessed-more-recently-cp)
+                      icicle-alpha-p)
+                     ("marked before unmarked (in *Bookmark List*)" (bmkp-marked-cp)
+                      icicle-alpha-p)
+                     ("by local file type" (bmkp-local-file-type-cp) icicle-alpha-p)
+                     ("by file name" (bmkp-file-alpha-cp) icicle-alpha-p)
+                     ("by local file size" (bmkp-local-file-size-cp) icicle-alpha-p)
+                     ("by last local file access" (bmkp-local-file-accessed-more-recently-cp)
+                      icicle-alpha-p)
+                     ("by last local file update" (bmkp-local-file-updated-more-recently-cp)
+                      icicle-alpha-p)
+                     ("by Info location" (bmkp-info-cp) icicle-alpha-p)
+                     ("by Gnus thread" (bmkp-gnus-cp) icicle-alpha-p)
+                     ("by URL" (bmkp-url-cp) icicle-alpha-p)
+                     ("by bookmark type" (bmkp-info-cp bmkp-url-cp bmkp-gnus-cp
+                                          bmkp-local-file-type-cp bmkp-handler-cp)
+                      icicle-alpha-p)))
+              '(("by previous use alphabetically" . icicle-historical-alphabetic-p)
+                ("case insensitive" . icicle-case-insensitive-string-less-p))))
+     (icicle-candidates-alist           ; An alist whose items are ((BOOKMARK-NAME TAG...)).
+      (let ((result  ()))
+        (bookmark-maybe-load-default-file) ; Loads bookmarks file, defining `bookmark-alist'.
+        (dolist (bmk  (or (and (or (and (not icicle-bookmark-refresh-cache-flag)
+                                        (not (consp current-prefix-arg)))
+                                   (and icicle-bookmark-refresh-cache-flag  (consp current-prefix-arg)))
+                               bmkp-sorted-alist)
+                          (setq bmkp-sorted-alist  (bmkp-sort-omit bookmark-alist))))
+          (icicle-condition-case-no-debug nil ; Ignore errors, e.g. from bad or stale bookmark records.
+              (let ((tags  (bmkp-get-tags bmk))
+                    bname)
+                (when tags
+                  (setq bname  (bmkp-bookmark-name-from-record bmk))
+                  (push `((,(icicle-candidate-short-help
+                             (icicle-bookmark-help-string bname)
+                             (icicle-bookmark-propertize-candidate bname))
+                           ,@(and tags  (list (format "%S" tags)))))
+                        result)))
+            (error nil)))
+        result)))
+    (progn                              ; First code
+      (put-text-property 0 1 'icicle-fancy-candidates t prompt)
+      (icicle-highlight-lighter)
+      (message "Gathering tagged bookmarks..."))
+    nil nil)                            ; Undo code, last code.
+
   (icicle-define-file-command icicle-bookmark-a-file ; `C-x p c a'
     "Bookmark a file (create an autofile bookmark).
 \(You need library `Bookmark+' for this command.)
@@ -591,7 +797,7 @@ can use the following keys:
     (lambda (f) (bmkp-find-file (icicle-transform-multi-completion f) 'WILDCARDS)) ; Action function
     prompt icicle-abs-file-candidates   ; `completing-read' args
     nil nil nil 'icicle-filetags-history nil nil
-    (icicle-file-bindings               ; Bindings
+    (icicle-file-bindings               ; Pre bindings
      ((prompt                             "FILE `C-M-j' TAGS: ")
       ;; This binding is for `icicle-autofile-action', in `icicle-bind-file-candidate-keys'.
       (icicle-full-cand-fn                    (lambda (file)
@@ -608,7 +814,12 @@ can use the following keys:
       (icicle-candidate-properties-alist      '((1 (face icicle-candidate-part))))
       (icicle-multi-completing-p              t)
       (icicle-list-use-nth-parts              '(1))
-      (icicle-whole-candidate-as-text-prop-p  t)))
+      (icicle-whole-candidate-as-text-prop-p  t))
+     ((icicle-candidate-help-fn               (lambda (cand) ; Post bindings
+                                                (setq cand  (icicle-transform-multi-completion cand))
+                                                (icicle-describe-file cand
+                                                                      current-prefix-arg
+                                                                      t)))))
     (progn                              ; First code
       (put-text-property 0 1 'icicle-fancy-candidates t prompt)
       (icicle-highlight-lighter)
@@ -622,7 +833,7 @@ can use the following keys:
     (lambda (f) (bmkp-find-file-other-window (icicle-transform-multi-completion f) 'WILDCARDS)) ; Action
     prompt icicle-abs-file-candidates   ; `completing-read' args
     nil nil nil 'icicle-filetags-history nil nil
-    (icicle-file-bindings               ; Bindings
+    (icicle-file-bindings               ; Pre bindings
      ((prompt                                 "FILE `C-M-j' TAGS: ")
       ;; This binding is for `icicle-autofile-action', in `icicle-bind-file-candidate-keys'.
       (icicle-full-cand-fn                    (lambda (file)
@@ -639,7 +850,10 @@ can use the following keys:
       (icicle-candidate-properties-alist      '((1 (face icicle-candidate-part))))
       (icicle-multi-completing-p              t)
       (icicle-list-use-nth-parts              '(1))
-      (icicle-whole-candidate-as-text-prop-p  t)))
+      (icicle-whole-candidate-as-text-prop-p  t))
+     ((icicle-candidate-help-fn               (lambda (cand) ; Post bindings
+                                                (setq cand  (icicle-transform-multi-completion cand))
+                                                (icicle-describe-file cand current-prefix-arg t)))))
     (progn                              ; First code
       (put-text-property 0 1 'icicle-fancy-candidates t prompt)
       (icicle-highlight-lighter)
@@ -4928,7 +5142,11 @@ You can alternatively choose to search, not the search contexts as
 defined by the context regexp, but the non-contexts, that is, the text
 in the bookmarked buffer that does not match the regexp.  To do this,
 use `C-M-~' during completion.  (This is a toggle, and it affects only
-future search commands, not the current one.)" ; Doc string
+future search commands, not the current one.)
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'."                       ; Doc string
   icicle-search-bookmark-action         ; Action function
   prompt icicle-candidates-alist nil (not icicle-show-multi-completion-flag) ; `completing-read' args
   nil (if (boundp 'bookmark-history) 'bookmark-history 'icicle-bookmark-history)
@@ -4942,10 +5160,8 @@ future search commands, not the current one.)" ; Doc string
    (icicle-list-use-nth-parts                '(1))
    (icicle-candidate-properties-alist        (if (not icicle-show-multi-completion-flag)
                                                  ()
-                                               (if (facep 'file-name-shadow)
-                                                   '((2 (face file-name-shadow))
-                                                     (3 (face bookmark-menu-heading)))
-                                                 '((3 (face bookmark-menu-heading))))))
+                                               '((2 (face icicle-annotation))
+                                                 (3 (face icicle-msg-emphasis)))))
    (icicle-transform-function                (and (not (interactive-p))  icicle-transform-function))
    (icicle-whole-candidate-as-text-prop-p    t)
    (icicle-transform-before-sort-p           t)
@@ -5133,7 +5349,11 @@ that is outside THINGs.  To do this, use `C-M-~' during completion.
 \(This is a toggle, and it affects only future search commands, not
 the current one.)
 
-This command is intended only for use in Icicle mode.
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, in particular for
+information about the arguments and the use of a prefix argument to
+search multiple regions, buffers, or files, see the doc for command
+`icicle-search'.
 
 NOTE:
 
@@ -5576,7 +5796,13 @@ search commands, not the current one.)
 
 You will no doubt need nXML for this command.  It is included in
 vanilla Emacs, starting with Emacs 23.  And you will need to load
-`thingatpt+.el', because of bugs in vanilla `thingatpt.el'."
+`thingatpt+.el', because of bugs in vanilla `thingatpt.el'.
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, in particular for
+information about the arguments and the use of a prefix argument to
+search multiple regions, buffers, or files, see the doc for command
+`icicle-search'."
   (interactive
    (let* ((where    (icicle-search-where-arg))
           (beg+end  (icicle-region-or-buffer-limits))
@@ -5613,7 +5839,13 @@ affects only future search commands, not the current one.)
 
 You will no doubt need nXML for this command.  It is included in
 vanilla Emacs, starting with Emacs 23.  And you will need to load
-`thingatpt+.el', because of bugs in vanilla `thingatpt.el'."
+`thingatpt+.el', because of bugs in vanilla `thingatpt.el'.
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, in particular for
+information about the arguments and the use of a prefix argument to
+search multiple regions, buffers, or files, see the doc for command
+`icicle-search'."
   (interactive
    (let* ((where    (icicle-search-where-arg))
           (beg+end  (icicle-region-or-buffer-limits))
@@ -5994,9 +6226,6 @@ end on a word boundary.
 At the prompt for a word, you can use completion against previous
 Icicles search inputs to choose the word, or you can enter a new word.
 
-Non-interactively, WORD-REGEXP should be a regexp that matches a word.
-The other arguments are the same as for `icicle-search'.
-
 You can alternatively choose to search, not the word search contexts
 you define, but the buffer text that is outside these contexts: the
 non-word text.  To do this, use `C-M-~' during completion.  \(This is
@@ -6007,7 +6236,10 @@ This command is intended only for use in Icicle mode.  It is defined
 using `icicle-search'.  For more information, in particular for
 information about the arguments and the use of a prefix argument to
 search multiple regions, buffers, or files, see the doc for command
-`icicle-search'."
+`icicle-search'.
+
+Non-interactively, WORD-REGEXP should be a regexp that matches a word.
+The other arguments are the same as for `icicle-search'."
   (interactive `(,@(icicle-region-or-buffer-limits)
                  ,(icicle-search-read-word)
                  ,(not icicle-show-multi-completion-flag)
@@ -6017,9 +6249,6 @@ search multiple regions, buffers, or files, see the doc for command
 (defun icicle-search-bookmarks-together (scan-fn-or-regexp require-match ; Bound to `M-s M-s J'.
                                          &rest args)
   "Search bookmarks, together.
-The arguments are the same as for `icicle-search', but without
-arguments BEG, END, and WHERE.
-
 This is the same as using a plain prefix arg, `C-u', with
 `icicle-search'.
 
@@ -6036,7 +6265,12 @@ use `C-M-~' during completion.  (This is a toggle, and it affects only
 future search commands, not the current one.)
 
 An alternative is multi-command `icicle-search-bookmark', which
-searches the bookmarked regions/buffers you choose one at a time."
+searches the bookmarked regions/buffers you choose one at a time.
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  The arguments here are the same as for
+`icicle-search', but without BEG, END, and WHERE."
   (interactive `(,(if icicle-search-whole-word-flag
                       (icicle-search-read-word)
                       (icicle-search-read-context-regexp))
@@ -6051,14 +6285,17 @@ searches the bookmarked regions/buffers you choose one at a time."
 Same as using a non-negative numeric prefix arg, such as `C-9', with
 `icicle-search'.  You are prompted for the buffers to search.  All of
 each buffer is searched.  Any existing buffers can be chosen.
-Arguments are the same as for `icicle-search', but without arguments
-BEG, END, and WHERE.
 
 You can alternatively choose to search, not the search contexts as
 defined by the context regexp you provide, but the non-contexts, that
 is, the text in the buffers that does not match the regexp.  To do
 this, use `C-M-~' during completion.  (This is a toggle, and it
-affects only future search commands, not the current one.)"
+affects only future search commands, not the current one.)
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  The arguments here are the same as for
+`icicle-search', but without BEG, END, and WHERE."
   (interactive `(,(if icicle-search-whole-word-flag
                       (icicle-search-read-word)
                       (icicle-search-read-context-regexp))
@@ -6078,14 +6315,18 @@ affects only future search commands, not the current one.)"
 Same as using a negative numeric prefix arg, such as `C--', with
 `icicle-search'.  You are prompted for the files to search.  All of
 each file is searched.  Any existing files in the current directory
-can be chosen.  Arguments are the same as for `icicle-search', but
-without arguments BEG, END, and WHERE.
+can be chosen.
 
 You can alternatively choose to search, not the search contexts as
 defined by the context regexp you provide, but the non-contexts, that
 is, the text in the files that does not match the regexp.  To do this,
 use `C-M-~' during completion.  (This is a toggle, and it affects only
-future search commands, not the current one.)"
+future search commands, not the current one.)
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  The arguments here are the same as for
+`icicle-search', but without BEG, END, and WHERE."
   (interactive `(,(if icicle-search-whole-word-flag
                       (icicle-search-read-word)
                       (icicle-search-read-context-regexp))
@@ -6102,8 +6343,11 @@ future search commands, not the current one.)"
                                         ; Bound also to `C-0 M-s M-s M-s', `C-0 C-`' in `*Bookmark List*'.
   "Search the files of the marked bookmarks in `*Bookmark List*'.
 Same as using `C-0' with `icicle-search' in `*Bookmark List*'.
-Arguments are the same as for `icicle-search', but without arguments
-BEG, END, and WHERE."
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  The arguments here are the same as for
+`icicle-search', but without BEG, END, and WHERE."
   (interactive `(,(if icicle-search-whole-word-flag
                       (icicle-search-read-word)
                       (icicle-search-read-context-regexp))
@@ -6198,9 +6442,11 @@ This is also bound by default to `M-+ C-S' in Dired.
 See also `icicle-occur-dired-marked-recursive', bound to `M-+ C-S-o',
 aka `M-+ C-O' (letter `O', not zero), in Dired.
 
-Non-interactively, the arguments other than IGNORE-MARKS-P are the
-same as for `icicle-search', but without arguments BEG, END, and
-WHERE.
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  Non-interactively, the arguments other than
+IGNORE-MARKS-P are the same as for `icicle-search', but without
+arguments BEG, END, and WHERE.
 
 You need library `Dired+' for this command."
   (interactive
@@ -6230,9 +6476,11 @@ This is bound by default to `C-S-s', aka `C-S', in Dired.  See also
 `icicle-search-dired-marked-recursive', bound to `M-+ C-S' (and other
 keys) in Dired.
 
-Non-interactively, the arguments other than IGNORE-MARKS-P are the
-same as for `icicle-search', but without arguments BEG, END, and
-WHERE.
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  Non-interactively, the arguments other than
+IGNORE-MARKS-P are the same as for `icicle-search', but without
+arguments BEG, END, and WHERE.
 
 You need library `Dired+' for this command."
   (interactive
@@ -6264,8 +6512,11 @@ You need library `Dired+' for this command."
                                         ; Bound also to `C-0 M-s M-s M-s', `C-0 C-`' in Ibuffer.
   "Search the marked buffers in Ibuffer, in order.
 Same as using `C-0' with `icicle-search' in Ibuffer.
-Arguments are the same as for `icicle-search', but without arguments
-BEG, END, and WHERE."
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  The arguments here are the same as for
+`icicle-search', but without BEG, END, and WHERE."
   (interactive `(,(if icicle-search-whole-word-flag
                       (icicle-search-read-word)
                       (icicle-search-read-context-regexp))
@@ -6281,8 +6532,11 @@ BEG, END, and WHERE."
                                         ; Bound also to `C-0 M-s M-s M-s', `C-0 C-`' in `*Buffer List*'.
   "Search the marked buffers in Buffer Menu, in order.
 Same as using `C-0' with `icicle-search' in `*Buffer List*'.
-Arguments are the same as for `icicle-search', but without arguments
-BEG, END, and WHERE."
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'.  The arguments here are the same as for
+`icicle-search', but without BEG, END, and WHERE."
   (interactive `(,(if icicle-search-whole-word-flag
                       (icicle-search-read-word)
                       (icicle-search-read-context-regexp))
@@ -6632,7 +6886,11 @@ then a prefix argument changes the behavior, as follows:
 2. You choose an Isearch string using completion.  It is copied to the
    `kill-ring'.
 3. You can yank that string anytime during Icicles search, to search
-   for it within the search contexts defined by the regexp matches."
+   for it within the search contexts defined by the regexp matches.
+
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information, see the doc for command
+`icicle-search'."
   (interactive "P")
   (isearch-done)
   (if (or (not use-context-p)  (not (boundp 'isearch-allow-scroll)))
@@ -7169,6 +7427,9 @@ If your TAGS file references source files that no longer exist, those
 files are listed.  In that case, you might want to update your TAGS
 file.
 
+This command is intended only for use in Icicle mode.  It is defined
+using `icicle-search'.  For more information see the doc for command
+`icicle-search'.
 
 You can alternatively choose to search, not the search contexts as
 defined by the context regexp you provide, but the non-contexts, that
