@@ -68,6 +68,11 @@ using a menu, which default to `completing-read."
         ((and (boundp 'edebug-active)
               edebug-active)
          (beginning-of-line-text 0))
+
+        ((or (eq major-mode 'help-mode)
+             (string-equal (buffer-name) "*Help*"))
+         (forward-button 1 t))
+
         (buffer-read-only               ;read-only buffer
          (cond ((eq major-mode 'Info-mode)
                 (Info-next-reference)
@@ -81,9 +86,10 @@ using a menu, which default to `completing-read."
                 (if (next-button 1)     ;navigate buttons
                     (forward-button 1 t)
                   (message "Buffer is read only and no next button") (ding)))))
-        ((memq major-mode '(gud-mode    ;GUD/GDB
+
+        ((memq major-mode '(gud-mode               ;GUD/GDB
                             inferior-octave-mode)) ;Octave
-         (completion-at-point))                ;Complete using comint
+         (completion-at-point))                    ;Complete using comint
         ((use-region-p)                        ;mark is active
          (indent-region (region-beginning)
                         (region-end))
