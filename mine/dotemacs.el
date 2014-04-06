@@ -986,6 +986,21 @@ save it in `ffap-file-at-point-line-number' variable."
 (add-to-list 'auto-mode-alist `(,(regexp-opt (list "Jamfile" "Jamfile.v2" "Jamrules" "Jambase" "Jamroot")) . bjam-mode))
 (add-to-list 'auto-mode-alist '("\.jam$" . bjam-mode))
 
+;; OpenGL Minor Mode:
+;; ToDo: Make this work the way hippie-expand wants
+;; it to and add it to the list `hippie-expand-try-functions-list'
+;; below.
+(add-hook 'c-mode-common-hook
+ 	  '(lambda ()
+ 	     (cond ((string-match "/\\([Oo]pen\\)?[Gg][Ll]/"  ;if OpenGL anywhere in directory path
+ 				  (buffer-file-name))
+ 		    (require 'OpenGL)
+		    (OpenGL-minor-mode 1)))))
+;;(autoload 'OpenGL-minor-mode "OpenGL" "OpenGL editing utilities." t)
+(defun try-complete-OpenGL-symbol (old)
+  (interactive)
+  (insert (ogl--try-completion old)))
+
 ;;; GLSL (OpenGL Shading Language)
 (when (append-to-load-path (elsub "glsl-mode"))
   (autoload 'glsl-mode "glsl-mode" nil t)
@@ -5036,16 +5051,6 @@ indent source code contained within HTML."
     (setq fj-journal-file (elsub "file-journal"))
     (setq fj-journal-size 365)
     (setq fj-save-timer-interval 60)
-    )
-
-  ;; OpenGL Minor Mode: ToDo: Make this work the way hippie-expand wants
-  ;; it to and add it to the list hippie-expand-try-functions-list
-  ;; below.
-  (when (eload 'OpenGL)
-    (defun try-complete-OpenGL-symbol (old)
-      (interactive)
-      (insert (ogl--try-completion old))
-      )
     )
 
   (eload 'indirect-region)           ;Edit the current region in another buffer.
