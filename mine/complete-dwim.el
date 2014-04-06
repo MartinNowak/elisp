@@ -54,83 +54,96 @@ using a menu, which default to `completing-read."
                                       this-command)
                                   (1+ complete-dwim-repeats)
                                 0))
-  (cond ((minibufferp)                  ;in minibuffer
-         (minibuffer-complete)
-         ;; (unless (inhibit-messages (minibuffer-complete)) ;TODO: Make this skip printing messages
-         ;;   (if buffer-read-only
-         ;;       (progn
-         ;;        (message "Can't complete, buffer is read-only!")
-         ;;        (sit-for 3)  ;make the original content show after a short while
-         ;;        )
-         ;;     (ndabbrev-expand)
-         ;;     ))
-         )
-        ((and (boundp 'edebug-active)
-              edebug-active)
-         (beginning-of-line-text 0))
+  (cond
+   ;; Minibuffer
+   ((minibufferp)                       ;in minibuffer
+    (minibuffer-complete)
+    ;; (unless (inhibit-messages (minibuffer-complete)) ;TODO: Make this skip printing messages
+    ;;   (if buffer-read-only
+    ;;       (progn
+    ;;        (message "Can't complete, buffer is read-only!")
+    ;;        (sit-for 3)  ;make the original content show after a short while
+    ;;        )
+    ;;     (ndabbrev-expand)
+    ;;     ))
+    )
 
-        ((or (eq major-mode 'help-mode)
-             (string-equal (buffer-name) "*Help*"))
-         (forward-button 1 t))
+   ;; EDebug
+   ((and (boundp 'edebug-active)
+         edebug-active)
+    (beginning-of-line-text 0))
 
-        (buffer-read-only               ;read-only buffer
-         (cond ((eq major-mode 'Info-mode)
-                (Info-next-reference)
-                )
-               ((eq major-mode 'help-mode)
-                (if (next-button 1)
-                    (forward-button 1 t)
-                  (message "Buffer is read only and no next button") (ding))
-                )
-               (t                       ;default to
-                (if (next-button 1)     ;navigate buttons
-                    (forward-button 1 t)
-                  (message "Buffer is read only and no next button") (ding)))))
+   ;; Help
+   ((or (eq major-mode 'help-mode)
+        (string-equal (buffer-name) "*Help*"))
+    (forward-button 1 t))
 
-        ((memq major-mode '(gud-mode               ;GUD/GDB
-                            inferior-octave-mode)) ;Octave
-         (completion-at-point))                    ;Complete using comint
+   ;; Info
+   (buffer-read-only                    ;read-only buffer
+    (cond ((eq major-mode 'Info-mode)
+           (Info-next-reference)
+           )
+          ((eq major-mode 'help-mode)
+           (if (next-button 1)
+               (forward-button 1 t)
+             (message "Buffer is read only and no next button") (ding))
+           )
+          (t                            ;default to
+           (if (next-button 1)          ;navigate buttons
+               (forward-button 1 t)
+             (message "Buffer is read only and no next button") (ding)))))
 
-        ((use-region-p)                        ;mark is active
-         (indent-region (region-beginning)
-                        (region-end))
-         (message "Region indented"))
-        ((looking-back "^[[:blank:]]*") ;standing after beginning of line plus whitespace
-         (if (fboundp 'indent-dwim)
-             (indent-dwim arg)
-           (indent-for-tab-command arg)))
-        ((and (at-syntax-code-p)        ;in code (not in comment nor string)
-              (unless (or (and (cc-derived-mode-p)
-                               (c-try-expand-stub-bfpt)))
-                (or
-                 (and (fboundp 'semantic-active-p)
-                      (semantic-active-p)
-                      (fboundp 'semantic-ia-completing-read-symbol-and-maybe-show-summary)
-                      (progn
-                        (ignore-errors
-                          (semantic-ia-completing-read-symbol-and-maybe-show-summary))
-                        ;;(semantic-complete-analyze-inline) ;and if any complete them
-                        )
-                      ;; (fboundp 'semantic-mode) ;if Semantic online
-                      ;; (fboundp 'semantic-analyze-possible-completions) ;if Semantic online
-                      ;; (semantic-analyze-possible-completions (point)) ;analyze completions
-                      )
-                 (cond ((eq major-mode 'emacs-lisp-mode)
-                        (complete-symbol-dwim))
-                       ((eq major-mode 'python-mode)
-                        (if (fboundp 'py-shell-complete)
-                            (py-shell-complete) ;python-mode
-                          (python-shell-completion-complete-at-point)))
-                       (t
-                        (call-interactively 'hippie-expand))
-                       )))))
-        (nil                            ;inserting a YASnippet
-         (yas/next-field-group))
-        ;; ((semantic-completion-inline-active-p)
-        ;;  (semantic-complete-inline-TAB))
-        (t
-         (unicomplete-hippie-expand nil))
-        ))
+   ;; GUD/GDB
+   ((memq major-mode '(gud-mode))
+    (completion-at-point))
+
+   ;; Octave
+   ((memq major-mode '(inferior-octave-mode))
+    (completion-at-point))
+
+   ;; Mark Active
+   ((use-region-p)                      ;mark is active
+    (indent-region (region-beginning)
+                   (region-end))
+    (message "Region indented"))
+
+   ((looking-back "^[[:blank:]]*") ;standing after beginning of line plus whitespace
+    (if (fboundp 'indent-dwim)
+        (indent-dwim arg)
+      (indent-for-tab-command arg)))
+
+   ((and (at-syntax-code-p)             ;in code (not in comment nor string)
+         (unless (or (and (cc-derived-mode-p)
+                          (c-try-expand-stub-bfpt)))
+           (or
+            (and (fboundp 'semantic-active-p)
+                 (semantic-active-p)
+                 (fboundp 'semantic-ia-completing-read-symbol-and-maybe-show-summary)
+                 (progn
+                   (ignore-errors
+                     (semantic-ia-completing-read-symbol-and-maybe-show-summary))
+                   ;;(semantic-complete-analyze-inline) ;and if any complete them
+                   )
+                 ;; (fboundp 'semantic-mode) ;if Semantic online
+                 ;; (fboundp 'semantic-analyze-possible-completions) ;if Semantic online
+                 ;; (semantic-analyze-possible-completions (point)) ;analyze completions
+                 )
+            (cond ((eq major-mode 'emacs-lisp-mode)
+                   (complete-symbol-dwim))
+                  ((eq major-mode 'python-mode)
+                   (if (fboundp 'py-shell-complete)
+                       (py-shell-complete) ;python-mode
+                     (python-shell-completion-complete-at-point)))
+                  (t
+                   (call-interactively 'hippie-expand))
+                  )))))
+   (nil                                 ;inserting a YASnippet
+    (yas/next-field-group))
+   ;; ((semantic-completion-inline-active-p)
+   ;;  (semantic-complete-inline-TAB))
+   (t
+    (unicomplete-hippie-expand nil))
+   ))
 (global-set-key [(tab)] 'complete-dwim)
 (add-hook 'python-mode-hook (lambda () (local-set-key [(tab)] 'complete-dwim)) t)
 
