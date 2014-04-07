@@ -1203,7 +1203,8 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-to-list 'magic-mode-alist `(,(rx buffer-start "#!"
                                         (| (? "/usr") "/bin/env" (* space)
                                            (? "/usr") "/bin/")
-                                        "rdmd") . d-mode)))
+                                        "rdmd") . d-mode))
+  (require 'dmd-query nil t))
 (defun dscanner-complete ()
   "Use Dscanner to complete at point."
   (interactive)
