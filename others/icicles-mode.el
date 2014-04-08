@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 10:21:10 2006
-;; Last-Updated: Sat Apr  5 10:06:35 2014 (-0700)
+;; Last-Updated: Sun Apr  6 07:27:55 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10135
+;;     Update #: 10136
 ;; URL: http://www.emacswiki.org/icicles-mode.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -105,7 +105,7 @@
 ;;    `icicle-options-toggle-menu-map', `icicle-search-menu-map'.
 ;;
 ;;  For descriptions of changes to this file, see `icicles-chg.el'.
-
+ 
 ;;(@> "Index")
 ;;
 ;;  If you have library `linkd.el' and Emacs 22 or later, load
@@ -119,7 +119,7 @@
 ;;  (@> "Internal variables (alphabetical)")
 ;;  (@> "Icicle mode command")
 ;;  (@> "Other Icicles functions that define Icicle mode")
-
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; This program is free software; you can redistribute it and/or modify
@@ -147,6 +147,12 @@
   ;; ad-activate, ad-copy-advice-info, ad-deactivate, ad-disable-advice, ad-enable-advice,
   ;; ad-find-some-advice, ad-get-arg, ad-is-active, ad-set-advice-info, defadvice
 
+(eval-when-compile
+ (or (condition-case nil
+         (load-library "icicles-mac")   ; Use load-library to ensure latest .elc.
+       (error nil))
+     (require 'icicles-mac)))           ; Require, so can load separately if not on `load-path'.
+  ;; icicle-menu-bar-make-toggle
 (require 'icicles-opt)                  ; (This is required anyway by `icicles-var.el'.)
   ;; icicle-buffer-configs, icicle-buffer-extras, icicle-change-region-background-flag,
   ;; icicle-default-cycling-mode, icicle-incremental-completion, icicle-default-value, icicle-kbd,
@@ -193,7 +199,6 @@
   ;; icicle-search-this-buffer-bookmark, icicle-search-url-bookmark, icicle-search-w3m-bookmark,
   ;; icicle-search-w-isearch-string, icicle-search-word, icicle-search-xml-element,
   ;; icicle-search-xml-element-text-node
-(require 'icicles-mac)
 
 ;; Use `condition-case' because if `mb-depth.el' can't be found, `mb-depth+.el' is not provided.
 (when (>= emacs-major-version 22) (condition-case nil (require 'mb-depth+ nil t) (error nil)))
@@ -245,7 +250,7 @@
 (defvar sh-mode-map)                    ; In `sh-script.el'.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+ 
 ;;(@* "User Options (alphabetical)")
 
 ;;; User Options (alphabetical) --------------------------------------
@@ -263,7 +268,7 @@ use either \\[customize] or command `icy-mode' (aka `icicle-mode')."
 (defcustom icicle-mode-hook nil
   "*Functions run after entering and exiting Icicle mode."
   :type 'hook :group 'Icicles-Miscellaneous)
-
+ 
 ;;(@* "Internal variables (alphabetical)")
 
 ;;; Internal variables (alphabetical) --------------------------------
@@ -272,7 +277,7 @@ use either \\[customize] or command `icy-mode' (aka `icicle-mode')."
   "Keymap for Icicle mode.  These are top-level key bindings.
 See also `icicle-define-minibuffer-maps' for minibuffer bindings and
 bindings in `*Completions*'.")
-
+ 
 ;;(@* "Icicle mode command")
 
 ;;; Icicle mode command ----------------------------------------------
@@ -295,7 +300,7 @@ bindings in `*Completions*'.")
                 (lambda () (setq savehist-minibuffer-history-variables
                                  (delq 'icicle-interactive-history
                                        savehist-minibuffer-history-variables)))))
-
+    
     ;; Just replace the original ESS definitions so that the new ones use Icicles completion.
     (defadvice ess-internal-complete-object-name (around icicle-ess-internal-complete-object-name
                                                          disable activate)
@@ -2543,7 +2548,7 @@ is unbound in all keymaps accessible from keymap MAP."
         (dolist (key  (or keys  icicle-key-complete-keys))
           (when (eq (lookup-key map key) 'icicle-complete-keys)
             (condition-case nil (define-key map key nil) (error nil))))))))
-
+ 
 ;;(@* "Other Icicles functions that define Icicle mode")
 
 ;;; Other Icicles functions that define Icicle mode ------------------

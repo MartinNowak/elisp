@@ -4,3 +4,6 @@
 [submodule "neotree"]
 	path = neotree
 	url = https://github.com/jaypei/emacs-neotree.git
+[submodule "iedit"]
+	path = iedit
+	url = git://github.com/victorhge/iedit.git
