@@ -31,7 +31,7 @@
              (timerp dmd-query-last))
     (cancel-timer dmd-query-last))
   (setq dmd-query-last
-        (run-with-idle-timer 0.5 nil 'dmd-query-message)))
+        (run-with-idle-timer dmd-query-timeout nil 'dmd-query-message)))
 
 (defun activate-dmd-query-mode ()
   (add-hook 'post-command-hook 'dmd-query-spawn-message t))
