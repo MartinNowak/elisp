@@ -2341,7 +2341,8 @@ save it in `ffap-file-at-point-line-number' variable."
 (when (append-to-load-path (elsub "logito")))
 (when (append-to-load-path (elsub "sigma-gh")))
 (when (append-to-load-path (elsub "magit-gh-pulls")))
-(when (append-to-load-path (elsub "magit-filenotify")))
+(when (append-to-load-path (elsub "magit-filenotify"))
+  (add-hook 'magit-mode 'magit-filenotify-mode))
 ;; (when (append-to-load-path (elsub "magit-tramp"));; NOTE: Disabled because it replaces magit.el
 ;;   )
 
