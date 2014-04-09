@@ -22,7 +22,7 @@
 
 (defvar dmd-query-last nil "Last DMD query made.")
 
-(defcustom dmd-query-timeout 0.5
+(defcustom dmd-query-timeout 0.15
   "Idle time before DMD query is made."
   :group 'dmd-query)
 
