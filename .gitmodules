@@ -22,3 +22,6 @@
 [submodule "smarttabs"]
 	path = smarttabs
 	url = https://github.com/jcsalomon/smarttabs.git
+[submodule "autopair"]
+	path = autopair
+	url = https://github.com/capitaomorte/autopair.git
