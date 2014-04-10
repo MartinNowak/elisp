@@ -54,6 +54,7 @@
        "--exclude=\"*\.elf\" "		;skip object files
        "--exclude=\"*\.o\" "		;skip object files
        "--exclude=\"*\.ko\" "		;skip kernel object files
+       "--exclude=\"*\.so\" "		;shared object files
        "--exclude=\"*\.Po\" "		;autotools dependency file
        "--exclude=\"*\.pdf\" "		;PDF
        "--exclude=\"*\.ali\" "		;Ada Library File
