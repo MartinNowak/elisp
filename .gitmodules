@@ -16,3 +16,6 @@
 [submodule "pdee"]
 	path = pdee
 	url = https://github.com/pdee/pdee.git
+[submodule "pretty-mode"]
+	path = pretty-mode
+	url = https://github.com/emacsmirror/pretty-mode.git
