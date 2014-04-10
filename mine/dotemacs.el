@@ -59,6 +59,8 @@
 ;;(prepend-to-load-path (elsub "emacswiki.org"))
 (append-to-load-path (elsub "mine"))
 
+(append-to-load-path (elsub "ecb"))
+
 (ignore-errors                          ;ignore error about revering .zsh_history
   (shell-command "ulimit -c 100000000"))      ;Emit core files smaller than 100 Megs
 
