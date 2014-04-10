@@ -10,3 +10,6 @@
 [submodule "nrepl.el"]
 	path = nrepl.el
 	url = http://github.com/kingtim/nrepl.el
+[submodule "undo-tree"]
+	path = undo-tree
+	url = https://github.com/emacsmirror/undo-tree.git
