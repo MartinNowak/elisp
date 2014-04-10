@@ -13,3 +13,6 @@
 [submodule "undo-tree"]
 	path = undo-tree
 	url = https://github.com/emacsmirror/undo-tree.git
+[submodule "pdee"]
+	path = pdee
+	url = https://github.com/pdee/pdee.git
