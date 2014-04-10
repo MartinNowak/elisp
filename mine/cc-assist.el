@@ -3811,6 +3811,9 @@ This command assumes point is not in a string or comment."
   )
 (add-hook 'c++-mode-hook 'c++-assist-hook t)
 
+(defun d-insert-ddoc-d ()
+  (interactive))
+
 (defun d-assist-hook ()
   "Common Assistance for D."
   (charedit-local-set-key ?_ 'd-insert-static-assert 'code)
@@ -3828,6 +3831,9 @@ This command assumes point is not in a string or comment."
   (charedit-local-set-key ?F 'd-insert-foreach-stub 'code)
   (charedit-local-set-key ?\( 'c-insert-type-cast 'code)
   (charedit-local-set-key ?c 'd-insert-conv-to 'code)
+
+  ;; DDoc Shortcuts
+  (charedit-local-set-key ?d 'd-insert-ddoc-d 'comment)
   )
 (add-hook 'd-mode-hook 'd-assist-hook t)
 
