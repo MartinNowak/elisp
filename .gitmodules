@@ -19,3 +19,6 @@
 [submodule "pretty-mode"]
 	path = pretty-mode
 	url = https://github.com/emacsmirror/pretty-mode.git
+[submodule "smarttabs"]
+	path = smarttabs
+	url = https://github.com/jcsalomon/smarttabs.git
