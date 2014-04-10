@@ -7,3 +7,6 @@
 [submodule "iedit"]
 	path = iedit
 	url = git://github.com/victorhge/iedit.git
+[submodule "nrepl.el"]
+	path = nrepl.el
+	url = http://github.com/kingtim/nrepl.el
