@@ -3897,12 +3897,13 @@ This command assumes point is not in a string or comment."
 
   "See also: http://dlang.org/ddoc.html")
 
-(defun d-insert-ddoc-macro ()
-  "Insert DDoc Macro."
+(defun d-insert-ddoc-macro (macro)
+  "Insert DDoc Macro MACRO."
   (interactive (list
                 ;; TODO: Support Icicles explanations using Control up-down
                 (completing-read "DDoc Macro: " d-ddoc-macros)
-                )))
+                ))
+  (insert macro))
 
 (defun d-assist-hook ()
   "Common Assistance for D."
