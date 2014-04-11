@@ -453,11 +453,38 @@ C-Style variant of `paredit-wrap-round'."
   (forward-sexp)
   (c-insert-close-hook))
 
+(defun d-get-ddoc-standard-sections (description)
+  "Get D DDoc Standard Sections.
+See also: http://dlang.org/ddoc.html"
+  (interactive (list (read-string "Description: ")))
+  (concat
+   "/** " (replace-regexp-in-string "[\. ]*$" "." description) "\n"
+   " * Params:" "\n"
+   " *      x = is ..." "\n"
+   " * Returns: ..." "\n"
+   " * Throws: ..." "\n"
+   " * Examples: ..." "\n"
+   " * Deprecated: Superseded by ... ." "\n"
+   " * Bugs: ..." "\n"
+   " * Authors: Per Nordlöw, per.nordlow@gmail.com" "\n"
+   " * Date: " display-time-string "\n" ;TODO: Use format: May 19, 1975
+   " * See_Also: foo, bar, http://www.digitalmars.com/d/phobos/index.html" "\n"
+   " * Standards: Conforms to ..." "\n"
+   " * Version: ..." "\n"
+   " * License: ..." "\n"
+   " * Copyright: ..." "\n"
+   "*/" "\n"
+   ))
+;; Use: (d-get-ddoc-standard-sections "sdfd")
+;; Use: (insert (d-get-ddoc-standard-sections "sdfd"))
+
 (defun d-insert-module-stub (basename)
   (interactive)
   (goto-char (point-min))
   (when (looking-at (car (car (coolock/hash-bang))))
     (forward-line 1))
+  (let ((description (read-string "Module Description: ")))
+    (insert-indented (d-get-ddoc-standard-sections description)))
   (insert "\nmodule " (c-file-name-as-indentifier basename) ";\n")
   ;; See: http://stackoverflow.com/questions/6210663/what-does-static-this-outside-of-a-class-mean?rq=1
   (when (y-or-n-p-defaults "Insert Module Constructor (run on the creation of each thread, including the main threadl)?" nil)
@@ -469,32 +496,10 @@ C-Style variant of `paredit-wrap-round'."
   (when (y-or-n-p-defaults "Insert Shared Module Destructor (run once at the end of the program)?" nil)
     (insert "\nshared static ~this() { \n}\n")))
 
-(defun d-get-struct-ddoc-standard-sections (description)
-  "Get D DDoc Standard Sections."
-  (interactive (list (read-string "Description: ")))
-  (concat
-   "/** " (replace-regexp-in-string "[\. ]*$" "." description) "\n"
-   " * Params:" "\n"
-   " *      x = is ..." "\n"
-   " * Authors: Per Nordlöw, per.nordlow@gmail.com" "\n"
-   " * Date: " display-time-string "\n" ;TODO: Use format: May 19, 1975
-   " * Bugs: ..." "\n"
-   " * Deprecated: Superseded by ... ." "\n"
-   " * Examples: ..." "\n"
-   " * Returns: ..." "\n"
-   " * See_Also: foo, bar, http://www.digitalmars.com/d/phobos/index.html" "\n"
-   " * Standards: Conforms to ..." "\n"
-   " * Throws: ..." "\n"
-   " * Version: ..." "\n"
-   "*/" "\n"
-   ))
-;; Use: (d-get-struct-ddoc-standard-sections "sdfd")
-;; Use: (insert (d-get-struct-ddoc-standard-sections "sdfd"))
-
 (defun d-insert-struct-ddoc-standard-sections-stub (description)
   "Insert D DDoc Standard Sections."
   (interactive (list (read-string "Description: ")))
-  (insert-indented (d-get-struct-ddoc-standard-sections description)))
+  (insert-indented (d-get-ddoc-standard-sections description)))
 
 (defun d-insert-struct-stub (typename description)
   "Insert D struct definition. Structs in D have value semantics."
@@ -503,7 +508,7 @@ C-Style variant of `paredit-wrap-round'."
   (let ((invariant (when (and (eq major-mode 'd-mode)
                               (y-or-n-p-defaults "Insert invariant" t))
                      "invariant() { assert(true); }\n")))
-    (insert-indented (concat (d-get-struct-ddoc-standard-sections description)
+    (insert-indented (concat (d-get-ddoc-standard-sections description)
                              "struct " typename " {
     int[] data;
     this(string s) {
@@ -537,7 +542,7 @@ See http://dlang.org/memory.html#newdelete."
                       "import std.c.stdlib;
 import core.exception;
 import core.memory : GC;\n\n"
-                      (d-get-struct-ddoc-standard-sections description)
+                      (d-get-ddoc-standard-sections description)
                       "class C {
     /// Default Constructor.
     this() {
@@ -3811,8 +3816,15 @@ This command assumes point is not in a string or comment."
   )
 (add-hook 'c++-mode-hook 'c++-assist-hook t)
 
-(defun d-insert-ddoc-d ()
-  (interactive))
+(defconst d-ddoc-macros '("B" "I" "U" "P" "DL" "DT" "DD" "TABLE")
+  "See also: http://dlang.org/ddoc.html")
+
+(defun d-insert-ddoc-macro ()
+  "Insert DDoc Macro."
+  (interactive (list
+                ;; TODO: Support Icicles explanations using Control up-down
+                (completing-read "DDoc Macro: " d-ddoc-macros)
+                )))
 
 (defun d-assist-hook ()
   "Common Assistance for D."
@@ -3833,7 +3845,7 @@ This command assumes point is not in a string or comment."
   (charedit-local-set-key ?c 'd-insert-conv-to 'code)
 
   ;; DDoc Shortcuts
-  (charedit-local-set-key ?d 'd-insert-ddoc-d 'comment)
+  (charedit-local-set-key ?\  'd-insert-ddoc-macro 'comment)
   )
 (add-hook 'd-mode-hook 'd-assist-hook t)
 
