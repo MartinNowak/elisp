@@ -3818,42 +3818,46 @@ This command assumes point is not in a string or comment."
 
 (defconst d-ddoc-macros
   '(
-    "B"
-    "I"
-    "U"
-    "P"
-    "DL"
-    "DT"
-    "DD"
-    "TABLE"
-    "TR"
-    "TH"
-    "TD"
-    "OL"
-    "UL"
-    "LI"
-    "BIG"
-    "SMALL"
-    "BR"
-    "LINK"
-    "LINK2"
-    "LPAREN="
+    "B"                           ;boldface the argument
+    "I"                           ;italicize the argument
+    "U"                           ;underline the argument
 
-    "RED"
-    "BLUE"
-    "GREEN"
-    "YELLOW"
-    "BLACK"
-    "WHITE"
+    "P"                           ;argument is a paragraph
 
-    "D_CODE"
-    "D_COMMENT"
-    "D_STRING"
-    "D_KEYWORD"
-    "D_PSYMBOL"
-    "D_PARAM"
+    "DL"                          ;argument is a definition list
+    "DT"                          ;argument is a definition in a definition list
+    "DD"                          ;argument is a description of a definition
 
-    "DDOC"
+    "TABLE"                             ;argument is a table
+    "TR"                          ;argument is a row in a table
+    "TH"                          ;argument is a header entry in a row
+    "TD"                          ;argument is a data entry in a row
+
+    "OL"                                ;argument is an ordered list
+    "UL"                          ;argument is an unordered list
+    "LI"                          ;argument is an item in a list
+
+    "BIG"                               ;argument is one font size bigger
+    "SMALL"                       ;argument is one font size smaller
+
+    "BR"                                ;start new line
+
+    "LINK"                        ;generate clickable link on argument
+    "LINK2"                       ;generate clickable link, first arg is address
+
+    "RED"                               ;argument is set to be red
+    "BLUE"                        ;argument is set to be blue
+    "GREEN"                       ;argument is set to be green
+    "YELLOW"                      ;argument is set to be yellow
+    "BLACK"                       ;argument is set to be black
+    "WHITE"                       ;argument is set to be white
+
+    "D_CODE"                            ;argument is D code
+    "D_COMMENT"                         ;argument is D comment
+    "D_STRING"                          ;argument is D string
+    "D_KEYWORD"                         ;argument is D keyword
+    "D_PSYMBOL"                         ;argument is D psybol
+    "D_PARAM"                           ;argument is D parameter
 
     "DDOC_COMMENT"
     "DDOC_DECL"
@@ -3893,6 +3897,8 @@ This command assumes point is not in a string or comment."
     "DDOC_PSYMBOL"
     "DDOC_KEYWORD"
     "DDOC_PARAM"
+
+    "DDOC"                              ;overall template for output
     )
 
   "See also: http://dlang.org/ddoc.html")
@@ -3903,7 +3909,8 @@ This command assumes point is not in a string or comment."
                 ;; TODO: Support Icicles explanations using Control up-down
                 (completing-read "DDoc Macro: " d-ddoc-macros)
                 ))
-  (insert macro))
+  (insert "$(" macro " )")
+  (backward-char))
 
 (defun d-assist-hook ()
   "Common Assistance for D."
