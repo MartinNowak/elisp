@@ -1,4 +1,5 @@
 ;;; dmd-query.el --- Query Information at point using DMD.
+;;; TODO: Add faces
 
 (require 'faze)
 (require 'relangs)
@@ -18,7 +19,15 @@
                   0))
            )
       (when (< off (length str))
-        (message (substring (string-strip str) off))))))
+        (let* ((part (substring (string-strip str) off))
+               (type (aref part (- (length part) 1)));last character
+               (face (cond ((= type ?K) 'font-lock-keyword-face)
+                           ((= type ?S) 'font-lock-string-face)
+                           ((= type ?N) 'font-lock-number-face)
+                           ((= type ?T) 'font-lock-type-face)
+                           (t 'default)))
+               )
+          (message (propertize part 'face face)))))))
 
 (defvar dmd-query-last nil "Last DMD query made.")
 
