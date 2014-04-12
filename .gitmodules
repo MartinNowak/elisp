@@ -25,3 +25,6 @@
 [submodule "autopair"]
 	path = autopair
 	url = https://github.com/capitaomorte/autopair.git
+[submodule "tuareg"]
+	path = tuareg
+	url = https://github.com/emacsmirror/tuareg.git
