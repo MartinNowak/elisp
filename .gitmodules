@@ -28,3 +28,6 @@
 [submodule "tuareg"]
 	path = tuareg
 	url = https://github.com/emacsmirror/tuareg.git
+[submodule "pymacs"]
+	path = pymacs
+	url = https://github.com/pinard/Pymacs.git
