@@ -580,7 +580,8 @@
 
     (message "Searching %s ..." tagname)
 
-    (message "(start-process \"gtags\" \"%s\" \"global\" \"%s\" \"%s\"  \"%s\")" buffer option context tagname)
+    (message "(start-process \"gtags\" \"%s\" \"global\" \"%s\" \"%s\"  \"%s\")"
+             buffer option context tagname)
     (setq process-result (if context
                              (start-process "gtags" buffer "global" option context tagname)
                            (start-process "gtags" buffer "global" option tagname)))

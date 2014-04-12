@@ -428,7 +428,8 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                                                                     ,buffer-name
                                                                     ,filename
                                                                     ,@args))))
-            (set-process-sentinel file-execute-last-process 'file-execute-completed)) ;set completion callback
+            (set-process-sentinel file-execute-last-process
+                                  'file-execute-completed)) ;set completion callback
           )
 
         (let ((split-height-threshold 1)) ;force vertical split
