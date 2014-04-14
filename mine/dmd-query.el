@@ -9,6 +9,11 @@
 
 (defvar dmd-query-buffer-name " *dmd-query*")
 
+(defconst ascii-fs #x1c)                ;file separator
+(defconst ascii-gs #x1d)                ;group separator
+(defconst ascii-rs #x1e)                ;record separator
+(defconst ascii-us #x1f)                ;unit separator
+
 (defun dmd-query-completed (process change)
   (when (string-equal change "finished\n") ;success
     (with-current-buffer dmd-query-buffer-name
@@ -20,7 +25,7 @@
         (when (< off (length str))
           (let* ((fields (split-string
                           (substring (string-strip str) off)
-                          "\t"))
+                          (char-to-string ascii-us)))
                  (description (first fields))
                  (value (second fields))
                  (type (car (last fields))) ;last character
