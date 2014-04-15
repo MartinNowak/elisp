@@ -312,14 +312,15 @@ X defaults to :related"
       (:lang Ada :expr "Interfaces.C.wchar_t")
       )) "Wide Character Type.")
 
-(defconst relangs-int
+(defconst relangs-integer-type
   (lambda ()
     `((:lang (C C++ Java C\# D) :expr "int")
       (:lang Ada :expr (| "Integer"
                           "Interfaces.C.C_int"))
+      (:lang Modelica :expr "Integer")
       )) "Integer Type with Default Machine Precision.")
 
-(defconst relangs-unsigned-int
+(defconst relangs-unsigned-integer-type
   (lambda ()
     `((:lang (C C++) :expr (| "unsigned"
                               "unsigned int"))
@@ -329,14 +330,14 @@ X defaults to :related"
                           "Interfaces.C.unsigned"))
       )) "Unsigned Integer Type with Default Machine Precision.")
 
-(defconst relangs-short
+(defconst relangs-short-integer-type
   (lambda ()
     `((:lang (C C++ Java C\# D) :expr "short")
       (:lang Ada :expr (| "Short_Integer"
                           "Interfaces.C.short"))
       )) "Short Integer Type.")
 
-(defconst relangs-unsigned-short
+(defconst relangs-unsigned-short-integer-type
   (lambda ()
     `((:lang (C C++ Java) :expr "unsigned short")
       (:lang (D C\#) :expr "ushort")
@@ -433,8 +434,9 @@ X defaults to :related"
       )) "Complex Floating Point Type")
 
 (defconst relangs-builtin-data-types
-  '(relangs-int
-    relangs-short
+  '(relangs-integer-type
+    relangs-unsigned-integer-type
+    relangs-short-integer-type
     relangs-long
     relangs-long-long
     relangs-single-precision-float
@@ -1163,6 +1165,14 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
                          "gcbo"
                          "gcbf"))
     ) "Current Graphics State")
+
+(defconst relangs-string-type
+  (lambda (x y)
+    `((:lang C :type "char* ")
+      (:lang C++ :expr "std::string ")
+      (:lang Java :expr "String")
+      (:lang Modelica :expr "String")
+      )) "String Type.")
 
 (defconst relangs-string-definition
   (lambda (x y)
