@@ -301,7 +301,7 @@ X defaults to :related"
 (defconst relangs-unsigned-char
   (lambda ()
     `((:lang (C C++) :expr (: "unsigned" "char"))
-      (:lang D :expr (: "ubyte"))
+      (:lang D :expr "ubyte")
       (:lang Ada :expr (| "Interfaces.C.unsigned_char"))
       )) "Unsigned Character Type.")
 
@@ -388,38 +388,34 @@ X defaults to :related"
       (:lang Matlab :expr "double")
       )) "Floating Point Type with 64-bits precision.")
 
-(defconst relangs-long-double
-  (lambda ()
-    `((:lang (C C++) :expr "long double")
-      (:lang D :expr "real")
-      )) "Floating Point Type with 80-bits precision.")
-
 (defconst relangs-utf8-string-type
   (lambda ()
     `((:lang D :expr "string")
-      )) "UTF-8 String Types.")
+      )) "UTF-8 String Type.")
 
 (defconst relangs-utf16-string-type
   (lambda ()
     `((:lang C\# :expr "string")
       (:lang D :expr "wstring")
-      )) "UTF-16 String Types.")
+      )) "UTF-16 String Type.")
 
 (defconst relangs-float-type
   (lambda ()
     `((:lang (Matlab) :expr "single")
       (:lang (C C++ C\# Java D) :expr "float")
-      )) "Single-Precision Floating Point Types.")
+      )) "Single-Precision Floating Point Type.")
 
 (defconst relangs-double-type
   (lambda ()
     `((:lang (C C++ C\# Java D Matlab) :expr "double")
-      )) "Double-Precision Floating Point Types.")
+      )) "Double-Precision Floating Point Type.")
 
-(defconst relangs-long-double-type
+(defconst relangs-long-double
   (lambda ()
-    `((:lang (C C++) :expr (: "long" "double"))
-      )) "Long-Double-Precision Floating Point Types.")
+    `((:lang (C C++) :expr ("long" "double"))
+      (:lang D :expr "real")
+      (:lang Modelica :expr "Real")
+      )) "Floating Point Type with 80-bits precision.")
 
 (defconst relangs-imaginary
   (lambda ()
@@ -630,53 +626,39 @@ See
 (defconst relangs-boolean
   (lambda ()
     `((:lang C99 :expr (| "bool" "_Bool") :import "stdbool.h")
-      (:lang C++ :expr (: "bool"))
-      (:lang C\# :expr (: "bool"))
+      (:lang C++ :expr "bool")
+      (:lang C\# :expr "bool")
       (:lang D :expr (| (: "bit")
                         (: "bool")))
       (:lang Java :expr (: "boolean"))
-      (:lang Haskell :expr (: "Bool"))
-      (:lang Matlab :expr (: "logical"))
-      (:lang Fortran-77 :expr (: "logical"))
+      (:lang Haskell :expr "Bool")
+      (:lang Matlab :expr "logical")
+      (:lang Fortran-77 :expr "logical")
       )) "Boolean Type")
 
 (defconst relangs-true
   (lambda ()
     `((:lang C :expr (| "1" "TRUE"))
-      (:lang C99 :expr (: "true"))
-      (:lang C++ :expr (: "true"))
-      (:lang C\# :expr (: "true"))
-      (:lang Java :expr (: "true"))
-      (:lang Lisp :expr (: "t"))
-      (:lang Ruby :expr (: "true"))
-      (:lang Python :expr (: "True"))
-      (:lang Haskell :expr (: "True"))
-      (:lang Matlab :expr (: "true"))
-      (:lang Ada :expr (: "True"))
-      (:lang Fortran-77 :expr (: ".TRUE."))
+      (:lang (C99 C++ C\# Java Ruby Matlab) :expr "true")
+      (:lang Lisp :expr "t")
+      (:lang (Python Haskell Ada) :expr "True")
+      (:lang Ada :expr "True")
+      (:lang Fortran-77 :expr ".TRUE.")
       )) "True Value")
 
 (defconst relangs-false
   (lambda ()
     `((:lang C :expr (| "0" "FALSE"))
-      (:lang C99 :expr (: "false"))
-      (:lang C++ :expr (: "false"))
-      (:lang C++11 :expr (: "false"))
-      (:lang C\# :expr (: "false"))
-      (:lang Java :expr (: "false"))
-      (:lang Lisp :expr (: "nil"))
-      (:lang Ruby :expr (: "false"))
-      (:lang Python :expr (: "False"))
-      (:lang Haskell :expr (: "False"))
-      (:lang Matlab :expr (: "false"))
-      (:lang Ada :expr (: "False"))
-      (:lang Fortran-77 :expr (: ".FALSE."))
+      (:lang (C99 C++ C\# Java Ruby Matlab) :expr "false")
+      (:lang Lisp :expr "nil")
+      (:lang (Python Haskell Ada) :expr "False")
+      (:lang Fortran-77 :expr ".FALSE.")
       )) "False Value")
 
 (defconst relangs-relational-less-than
   (lambda ()
-    `((:lang (C++) :expr (: "std::cmp"))
-      (:lang (Python) :expr (: "__cmp__"))
+    `((:lang (C++) :expr "std::cmp")
+      (:lang (Python) :expr "__cmp__")
       )) "Compare/Sig")
 
 (defconst relangs-to-string-conversion
@@ -689,23 +671,23 @@ See
 ;;; Relational
 (defconst relangs-relational-less-than
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr (: "<"))
-      (:lang Fortran-77 :expr (: ".LT."))
+    `((:lang (C C++ D Java C\# Ada) :expr "<")
+      (:lang Fortran-77 :expr ".LT.")
       )) "Relational Less-Than Operator")
 (defconst relangs-relational-greater-than
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr (: ">"))
-      (:lang Fortran-77 :expr (: ".GT."))
+    `((:lang (C C++ D Java C\# Ada) :expr ">")
+      (:lang Fortran-77 :expr ".GT.")
       )) "Relational Greater-Than Operator")
 (defconst relangs-relational-less-than-or-equal
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr (: "<="))
-      (:lang Fortran-77 :expr (: ".LE."))
+    `((:lang (C C++ D Java C\# Ada) :expr "<=")
+      (:lang Fortran-77 :expr ".LE.")
       )) "Relational Less-Than or Equal Operator")
 (defconst relangs-relational-greater-than-or-equal
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr (: ">="))
-      (:lang Fortran-77 :expr (: ".GE."))
+    `((:lang (C C++ D Java C\# Ada) :expr ">=")
+      (:lang Fortran-77 :expr ".GE.")
       )) "Relational Greater-Than or Equal Operator")
 
 ;;; Contents Equality
@@ -820,28 +802,28 @@ See
                                        ) "Logical Operations")
 
 (defconst relangs-bitwise-and
-  `((:lang (C C++) :expr (: "&"))
-    (:lang C++ :expr (: "bitand"))
-    (:lang Ada :expr (: "and"))
-    (:lang Emacs-Lisp :expr (: "logand"))
+  `((:lang (C C++) :expr "&")
+    (:lang C++ :expr "bitand")
+    (:lang Ada :expr "and")
+    (:lang Emacs-Lisp :expr "logand")
     ) "Bitwise And Operation")
 (defconst relangs-bitwise-or
-  `((:lang (C C++) :expr (: "&"))
-    (:lang C++ :expr (: "bitor"))
-    (:lang Ada :expr (: "or"))
-    (:lang Emacs-Lisp :expr (: "logior"))
+  `((:lang (C C++) :expr "&")
+    (:lang C++ :expr "bitor")
+    (:lang Ada :expr "or")
+    (:lang Emacs-Lisp :expr "logior")
     ) "Bitwise Or Operation")
 (defconst relangs-bitwise-xor
-  `((:lang (C C++) :expr (: "^"))
-    (:lang C++ :expr (: "bitxor"))
-    (:lang Ada :expr (: "xor"))
-    (:lang Emacs-Lisp :expr (: "logxor"))
+  `((:lang (C C++) :expr "^")
+    (:lang C++ :expr "bitxor")
+    (:lang Ada :expr "xor")
+    (:lang Emacs-Lisp :expr "logxor")
     ) "Bitwise XOr (Exclusive Or) Operation")
 (defconst relangs-bitwise-not
-  `((:lang (C C++) :expr (: "~"))
-    (:lang C++ :expr (: "bitnot"))
-    (:lang Ada :expr (: "not"))
-    (:lang Emacs-Lisp :expr (: "lognot"))
+  `((:lang (C C++) :expr "~")
+    (:lang C++ :expr "bitnot")
+    (:lang Ada :expr "not")
+    (:lang Emacs-Lisp :expr "lognot")
     ) "Bitwise Not Operation")
 (defconst relangs-bitwises '(relangs-bitwise-and
                                        relangs-bitwise-or
@@ -928,14 +910,14 @@ See
   (lambda ()
     `((:lang Emacs :expr (| "map"
                             "mapcar"))
-      (:lang Python :expr (: "map"))
-      (:lang C++ :expr (: "std::for_each"))
+      (:lang Python :expr "map")
+      (:lang C++ :expr "std::for_each")
       (:lang D :expr (: "foreach(index, element, range"))
       )) "Map (For Each) Algorithm.")
 
 (defconst relangs-reduce-algorithm
-  `((:lang Python :expr (: "reduce") :ref "http://docs.python.org/2/library/functions.html#reduce")
-    (:lang C++ :expr (: "std::accumulate") :ref "http://en.cppreference.com/w/cpp/algorithm/accumulate" :include "numeric")
+  `((:lang Python :expr "reduce" :ref "http://docs.python.org/2/library/functions.html#reduce")
+    (:lang C++ :expr "std::accumulate" :ref "http://en.cppreference.com/w/cpp/algorithm/accumulate" :include "numeric")
     ) "Reduce (Accumulate) Algorithm.")
 
 (defconst relangs-minimum-algorithm
@@ -969,6 +951,12 @@ See
       )) "Linear Interpolation Algorithm.
 That is return x ⋅ ( 1 − a ) + y ⋅ a")
 
+(defconst relangs-enumeration-type
+  (lambda (X)
+    `((:lang (C C++ D) :expr "enum")
+      (:lang Modelica :expr "Enumeration")
+      "Enumeration Type.")))
+
 (defconst relangs-string-type-predicate
   (lambda (X)
    `((:lang Matlab :expr ("ischar(" ,X ")" "isstr(" ,X ")"))
@@ -977,46 +965,45 @@ That is return x ⋅ ( 1 − a ) + y ⋅ a")
      "Vector Value Predicate.")))
 
 (defconst relangs-undefined-type-predicate
-  `((:lang Matlab :expr (: "isempty"))
-    (:lang Emacs :expr (: "null"))
-    (:lang Haskell :expr (: "null"))
+  `((:lang Matlab :expr "isempty")
+    (:lang (Emacs Haskell) :expr "null")
     ))
 
 (defconst relangs-directory-type-predicate
-  `((:lang Matlab :expr (: "isdir"))
-    (:lang Emacs :expr (: "file-directory-p"))
+  `((:lang Matlab :expr "isdir")
+    (:lang Emacs :expr "file-directory-p")
     )
   )
 
 (defconst relangs-vector-type-predicate
-  `((:lang Matlab :expr (: "isvector"))
-    (:lang Emacs :expr (: "vectorp"))
+  `((:lang Matlab :expr "isvector")
+    (:lang Emacs :expr "vectorp")
     )
   "Vector Value Predicate.")
 
 (defconst relangs-float-type-predicate
-  `((:lang Matlab :expr (: "isfloat"))
-    (:lang Emacs :expr (: "floatp"))
+  `((:lang Matlab :expr "isfloat")
+    (:lang Emacs :expr "floatp")
     )
   "Floating Point Type Value Predicate.")
 
 (defconst relangs-nan-value-predicate
-  `((:lang (C C++) :expr (: "isnan"))
-    (:lang Matlab :expr (: "isnan"))
-    (:lang Emacs :expr (: "isnan"))
-    (:lang Emacs :expr (: "isNaN"))
+  `((:lang (C C++) :expr "isnan")
+    (:lang Matlab :expr "isnan")
+    (:lang Emacs :expr "isnan")
+    (:lang Emacs :expr "isNaN")
     )
   "Non-A-Number (NaN) Value Predicate.")
 
 (defconst relangs-finite-value-predicate
-  `((:lang C :expr (: "isfinite"))
-    (:lang D :expr (: "isFinite"))
+  `((:lang C :expr "isfinite")
+    (:lang D :expr "isFinite")
     )
   "Finite Value Predicate.")
 
 (defconst relangs-finite-value-predicate
-  `((:lang C :expr (: "isinf"))
-    (:lang D :expr (: "isInfinity"))
+  `((:lang C :expr "isinf")
+    (:lang D :expr "isInfinity")
     )
   "Infinite Value Predicate.")
 
@@ -1027,8 +1014,8 @@ That is return x ⋅ ( 1 − a ) + y ⋅ a")
   "Return 1 if sign bit of X is set, 0 if not.")
 
 (defconst relangs-function-local
-  `((:lang Matlab :expr (: "persistent"))
-    (:lang C :expr (: "static"))
+  `((:lang Matlab :expr "persistent")
+    (:lang C :expr "static")
     ))
 
 (defconst relangs-function-definition
@@ -1039,8 +1026,8 @@ That is return x ⋅ ( 1 − a ) + y ⋅ a")
      )))
 
 (defconst relangs-function-call
-  `((:lang Matlab :expr (: "feval"))
-    (:lang Emacs-Lisp :expr (: "funcall"))
+  `((:lang Matlab :expr "feval")
+    (:lang Emacs-Lisp :expr "funcall")
     ))
 
 (defconst relangs-matlab-predicates
