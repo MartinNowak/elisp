@@ -588,6 +588,7 @@ See
       (:lang Shell :reuse relangs-variable-definition) ;TODO: Support `:reuse'
       (:lang Emacs-Lisp :expr (: "(" L* "defconst" L* name L+ value ")"))
       (:lang (C C+) :expr (: "const" type name "=" value ";"))
+      (:lang Modelica :expr (: "constant" type name "=" value ";"))
       (:lang D :expr (: "enum" name "=" value ";")) ;NOTE: Type inferred from VALUE
       )) "Definition of Constant Named NAME having Value VALUE.")
 
@@ -1106,6 +1107,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang C++ :expr (: "const" T "&" X))
       (:lang D :expr (| (: "ref" "const(" Y ")" X)
                         (: Y X)))
+      (:lang Modelica :expr "input")
       )) "Input Argument X of type T.")
 
 (defconst relangs-output-argument
@@ -1113,6 +1115,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     `((:lang Ada :expr (: "in" X) :ref "http://en.wikibooks.org/wiki/Ada_Programming/Keywords/out")
       (:lang C :expr (: (? "*") T X))
       (:lang C++ :expr (: T "&" X))
+      (:lang Modelica :expr "output")
       )) "Ouput Argument X of T.")
 
 (defconst relangs-structure-end
