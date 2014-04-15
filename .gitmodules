@@ -31,3 +31,6 @@
 [submodule "pymacs"]
 	path = pymacs
 	url = https://github.com/pinard/Pymacs.git
+[submodule "modelica-mode"]
+	path = modelica-mode
+	url = https://github.com/dietmarw/modelica-mode.git
