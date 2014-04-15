@@ -408,13 +408,13 @@ X defaults to :related"
 (defconst relangs-double-type
   (lambda ()
     `((:lang (C C++ C\# Java D Matlab) :expr "double")
+      (:lang Modelica :expr "Real")
       )) "Double-Precision Floating Point Type.")
 
-(defconst relangs-long-double
+(defconst relangs-real-type
   (lambda ()
     `((:lang (C C++) :expr ("long" "double"))
       (:lang D :expr "real")
-      (:lang Modelica :expr "Real")
       )) "Floating Point Type with 80-bits precision.")
 
 (defconst relangs-imaginary
@@ -437,7 +437,7 @@ X defaults to :related"
     relangs-long-long
     relangs-single-precision-float
     relangs-single-precision-double
-    relangs-long-double)
+    relangs-real-type)
   "Language Built-In Primitive Data Types.")
 
 (defun relangs-limits-minimum (type)
@@ -624,17 +624,16 @@ See
     `((:lang (Ada Fortran-77) :expr t)
       )) "Language Case Sensitivity")
 
-(defconst relangs-boolean
+(defconst relangs-boolean-type
   (lambda ()
     `((:lang C99 :expr (| "bool" "_Bool") :import "stdbool.h")
-      (:lang C++ :expr "bool")
-      (:lang C\# :expr "bool")
+      (:lang (C++ C\#) :expr "bool")
       (:lang D :expr (| (: "bit")
                         (: "bool")))
       (:lang Java :expr (: "boolean"))
       (:lang Haskell :expr "Bool")
-      (:lang Matlab :expr "logical")
-      (:lang Fortran-77 :expr "logical")
+      (:lang (Matlab Fortran-77) :expr "logical")
+      (:lang Modelica :expr "Boolean")
       )) "Boolean Type")
 
 (defconst relangs-true
