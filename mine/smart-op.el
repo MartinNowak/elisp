@@ -66,7 +66,8 @@
     (define-key keymap "+" 'smart-op-+)
     (define-key keymap "-" 'smart-op--)
     (define-key keymap "*" 'smart-op-*)
-    (define-key keymap "/" 'smart-op-self-insert-command)
+    (define-key keymap "/" 'smart-op-/)
+    ;; (define-key keymap "/" 'smart-op-self-insert-command)
     (define-key keymap "&" 'smart-op-&)
     (define-key keymap "|" 'smart-op-self-insert-command)
     ;; (define-key keymap "!" 'smart-op-self-insert-command)
@@ -214,16 +215,31 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode))
+      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
              ;;          (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
              ;;                  (bolp))
              ;;              (smart-op-insert "*")
              (insert "*"))
-            ((memq major-mode '(d-mode ada-mode python-mode)) ;handle exponentation
+            ((memq major-mode '(ada-mode python-mode)) ;handle exponentation
              (insert "*"))
             (t
              (smart-op-insert "*")))
     (insert "*")))
+
+(defun smart-op-/ ()
+  "See `smart-op-insert'."
+  (interactive)
+  (if (at-syntax-code-p)            ;only inside real code
+      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+             ;;          (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
+             ;;                  (bolp))
+             ;;              (smart-op-insert "/")
+             (insert "/"))
+            ((memq major-mode '(d-mode python-mode)) ;handle exponentation
+             (insert "/"))
+            (t
+             (smart-op-insert "/")))
+    (insert "/")))
 
 (defun smart-op-> ()
   "See `smart-op-insert'."
