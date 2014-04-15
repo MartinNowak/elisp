@@ -264,7 +264,7 @@
     (add-hook hook (lambda () (highlight-symbol-mode 1)) t)))
 
 ;;; Smileys
-(when (and nil (file-readable-p (elsub "autosmiley.el")))
+(when (and nil (file-readable-p (elsub "others/autosmiley.el")))
   (dolist (hook '(c-mode-common-hook ada-mode-hook d-mode-hook
                                      text-mode-hook outline-mode-hook
                                      lisp-mode-hook emacs-lisp-mode-hook
@@ -1094,7 +1094,7 @@ save it in `ffap-file-at-point-line-number' variable."
     (defvar prolog-program-name "gprolog"))
 
 ;;; Julia
-(when (file-regular-p (elsub "julia-mode.el"))
+(when (file-readable-p (elsub "others/julia-mode.el"))
   (autoload 'julia-mode "julia-mode" "Major mode for editing Julia code." t)
   (add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode)))
 
@@ -1428,7 +1428,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-to-list 'auto-mode-alist '("\\.scss\\'" . sass-mode)))
 
 ;;; C#
-(when (file-regular-p (elsub "csharp-mode.el"))
+(when (file-readable-p (elsub "others/csharp-mode.el"))
   (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# (Sharp) code." t)
   (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-mode))
   (defun my-csharp-mode-hook ()
@@ -1693,17 +1693,17 @@ save it in `ffap-file-at-point-line-number' variable."
   )
 
 ;;; Cobol
-(when (file-regular-p (elsub "cobol-mode.el"))
+(when (file-readable-p (elsub "others/cobol-mode.el"))
   (autoload 'cobol-mode "cobol-mode" "Major mode for Tandem COBOL files." t nil)
   (add-to-list 'auto-mode-alist '("\\.cob\\(?:ol\\)?\\'" . cobol-mode)))
 
 ;;; Eiffel
-(when (file-regular-p (elsub "eiffel.el"))
+(when (file-readable-p (elsub "others/eiffel.el"))
   (autoload 'eiffel-mode "eiffel" "Major mode for Eiffel programs" t)
   (add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode)))
 
 ;;; Visual Basic
-(when (file-regular-p (elsub "visual-basic-mode.el"))
+(when (file-readable-p (elsub "others/visual-basic-mode.el"))
   (autoload 'visual-basic-mode "visual-basic-mode" "Visual Basic mode." t) ;Visual Basic Mode
   ;; If you are doing Rhino scripts, add
   (add-to-list 'auto-mode-alist '("\\.\\(frm\\|bas\\|rvb\\|vbs\\)$" . visual-basic-mode))) ;TODO: Enable cls (conflicts LaTeX-mode)
