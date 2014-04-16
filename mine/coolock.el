@@ -102,8 +102,8 @@
 
 (defun coolock/d-dollar ()
   (list
-   (cons (concat $< "$" $>)
-         '((1 'font-lock-constant-face keep)
+   (cons (concat $< (regexp-quote "$") $>)
+         '((1 'font-lock-constant-face t)
            ))))
 (defun coolock/d-operators ()
   (list
