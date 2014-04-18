@@ -302,6 +302,8 @@ contains the sub-directory
 (setq-default ediff-highlight-all-diffs nil)
 ;;(setq ediff-use-last-dir t)
 ;;(setq ediff-diff-options "-w")         ; turn off whitespace checking:
+
+;;; https://stackoverflow.com/questions/1680750/is-there-any-way-to-get-ediff-to-not-open-its-navigation-interface-in-an-externa
 (setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (provide 'vc-and-ediff)

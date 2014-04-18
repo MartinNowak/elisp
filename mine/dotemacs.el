@@ -263,6 +263,51 @@
                   ))
     (add-hook hook (lambda () (highlight-symbol-mode 1)) t)))
 
+;;; Hide C Preprocessor ifdef regions
+;;; See: https://stackoverflow.com/questions/641045/how-can-i-fold-ifdef-ifndef-blocks-in-emacs
+(defface hide-ifdef-shadow-face '((t (:inherit shadow)))
+  "Face for shadowing ifdef blocks."
+  :group 'hide-ifdef)
+(setq hide-ifdef-initially t)
+
+(defun update-hide-ifdefs ()
+  "Update hide-ifdefs."
+  (when (and (boundp 'hide-ifdef-mode)
+             hide-ifdef-mode)
+    (hide-ifdef-mode -1))
+  (hide-ifdef-mode 1))
+
+(defun setup-hide-ifdef ()
+  "Setup hideif."
+  ;; TODO: `hide-ifdef-env'
+  (when (boundp 'hide-ifdef-shadow)
+    (setq hide-ifdef-shadow t))
+  (add-hook 'after-save-hook 'update-hide-ifdefs)
+  (hide-ifdef-mode 1))
+(dolist (hook '(c-mode-hook
+                c++-mode-hook
+                objc-mode-hook))
+  (add-hook hook 'setup-hide-ifdef t))
+(when nil                               ;TODO: What does this do?
+  (defun hide-ifdef-region-internal (start end)
+    (remove-overlays start end 'face 'hide-ifdef-shadow-face)
+    (let ((o (make-overlay start end)))
+      (overlay-put o 'face 'hide-ifdef-shadow-face)))
+  (defun hif-show-ifdef-region (start end)
+    "Everything between START and END is made visible."
+    (remove-overlays start end 'face 'pnw/hide-ifdef-region-face))
+  ;; NOTE: Deactivated because it does not dynamically update when I
+  ;; change #if 0 statments to say #if 1.
+  (if 0
+      (add-hook 'hide-ifdef-mode-hook
+                (lambda ()
+                  (unless hide-ifdef-define-alist
+                    (setq hide-ifdef-define-alist
+                          '((list1 0)
+                            (list2 DEBUG_CHECK_ALL))))
+                  (hide-ifdef-use-define-alist 'list1))) ; use list2 by default
+    ))
+
 ;;; Smileys
 (when (and nil (file-readable-p (elsub "others/autosmiley.el")))
   (dolist (hook '(c-mode-common-hook ada-mode-hook d-mode-hook
@@ -405,13 +450,13 @@
   )
 
 ;;; Structal (Parenthesises) Editing
-(prepend-to-load-path (elsub "smartparens"))
-(when (fboundp 'smartparens-mode)
+(when (and (prepend-to-load-path (elsub "smartparens"))
+           (fboundp 'smartparens-mode))
   (smartparens-global-mode 1))
 ;;; http://www.emacswiki.org/emacs/AutoPairs
 ;;; https://github.com/capitaomorte/autopair
 ;;; http://stackoverflow.com/questions/7718975/intelligent-auto-closing-matching-characters
-(when nil
+(when nil                               ;TODO: All these disabled in favour of smartparens
   (when (fboundp 'electric-indent-mode) (electric-indent-mode 1))
   (when (fboundp 'electric-pair-mode) (electric-pair-mode -1)) ;disable in favor of autopair
   (when (fboundp 'electric-layout-mode) (electric-layout-mode -1))
@@ -1169,7 +1214,7 @@ save it in `ffap-file-at-point-line-number' variable."
 (require 'yank-indent nil t)
 (require 'indent-dwim nil t)
 (require 'gindent nil t)                 ;Emacs Interface to external command GNU indent
-;;(eload 'casi)                    ;C-like Automatic Style Input: See also smart-operator.el and py-smart-operator.el
+;;(eload 'casi)                    ;C-like Automatic Style Input: See: smart-operator.el and py-smart-operator.el
 ;;(eload 'pgo-indent)                     ;Indentation
 
 (defun open-line-and-indent (n)
@@ -2194,17 +2239,6 @@ save it in `ffap-file-at-point-line-number' variable."
   (yas-global-mode -1)                  ;disable for now because steals completion key
   )
 ;; (eload 'pgo-yasnippet)
-
-;;; Hide C Preprocessor ifdef regions
-(defun setup-cc-ifdef-mode ()
-  (hide-ifdef-mode -1)                  ;NOTE: Disabled because it doesn't work
-  ;; TODO: `hide-ifdef-env'
-  (when (boundp 'hide-ifdef-shadow)
-    (setq hide-ifdef-shadow t)))
-(dolist (hook '(c-mode-hook
-                c++-mode-hook
-                objc-mode-hook))
-  (add-hook hook 'setup-cc-ifdef-mode t))
 
 ;;; Process Management
 ;;(eload 'etop)                ;run "top" to display information about processes
