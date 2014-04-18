@@ -294,7 +294,8 @@ X defaults to :related"
 
 (defconst relangs-wchar-16
   (lambda ()
-    `((:lang (C++ D) :expr "wchar")
+    `((:lang C++ :expr "wchar_t")
+      (:lang D :expr "wchar")
       (:lang C++11 :expr "char16_t")
       )) "UTF-16 Character Type.")
 
