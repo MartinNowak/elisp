@@ -15,6 +15,8 @@ Tested on Emacs 24.3 and later.
 
 Goodies loaded from `mine/dotemacs.el` include
 
+- CEDET: Collection of Emacs Development Tools <https://github.com/emacsmirror/cedet>
+- smartparens: https://github.com/Fuco1/smartparens
 - FlyCheck: <https://github.com/flycheck/flycheck>
 - Magit: <https://github.com/magit/magit>
 - `smart-mode-line`: <https://github.com/Bruce-Connor/smart-mode-line>
