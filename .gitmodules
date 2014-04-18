@@ -37,3 +37,6 @@
 [submodule "smartparens"]
 	path = smartparens
 	url = https://github.com/Fuco1/smartparens.git
+[submodule "cedet"]
+	path = cedet
+	url = https://github.com/emacsmirror/cedet.git
