@@ -287,10 +287,22 @@ X defaults to :related"
       (:lang Ada :expr (| "Interfaces.C.char_array"))
       )) "Character Array Type.")
 
-(defconst relangs-char
+(defconst relangs-char-8
   (lambda ()
     `((:lang (C C++ D) :expr "char")
-      )) "Character Type.")
+      )) "UTF-8 Character Type.")
+
+(defconst relangs-wchar-16
+  (lambda ()
+    `((:lang (C++ D) :expr "wchar")
+      (:lang C++11 :expr "char16_t")
+      )) "UTF-16 Character Type.")
+
+(defconst relangs-dchar-32
+  (lambda ()
+    `((:lang D :expr "dchar")
+      (:lang C++11 :expr "char32_t")
+      )) "UTF-32 Character Type.")
 
 (defconst relangs-signed-char
   (lambda ()
