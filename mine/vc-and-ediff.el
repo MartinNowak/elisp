@@ -302,5 +302,6 @@ contains the sub-directory
 (setq-default ediff-highlight-all-diffs nil)
 ;;(setq ediff-use-last-dir t)
 ;;(setq ediff-diff-options "-w")         ; turn off whitespace checking:
+(setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (provide 'vc-and-ediff)
