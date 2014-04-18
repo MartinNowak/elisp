@@ -133,9 +133,16 @@ X defaults to :related"
 (defconst relangs-convert-to-string
   (lambda (expr)
     `((:lang C++ :expr (: "boost:lexical_cast<std::string>(" expr ")"))
+      (:lang C++11 :expr (: "std::to_string(" expr ")"))
       (:lang D :expr (: "to!string(" expr ")"))
       (:lang Python-2 :expr (: "str(" expr ")"))
       )) "Convert EXPR to a string.")
+
+(defconst relangs-convert-to-wstring
+  (lambda (expr)
+    `((:lang C++11 :expr (: "std::to_wstring(" expr ")"))
+      (:lang D :expr (: "to!wstring(" expr ")"))
+      )) "Convert EXPR to a UTF-16 wide string.")
 
 (defconst relangs-print
   (lambda (expr)
@@ -390,14 +397,23 @@ X defaults to :related"
 
 (defconst relangs-utf8-string-type
   (lambda ()
-    `((:lang D :expr "string")
+    `((:lang C++ :expr "std::string")
+      (:lang D :expr "string")
       )) "UTF-8 String Type.")
 
 (defconst relangs-utf16-string-type
   (lambda ()
     `((:lang C\# :expr "string")
+      (:lang C++ :expr "std::wstring")
+      (:lang C++11 :expr "std::u16string")
       (:lang D :expr "wstring")
       )) "UTF-16 String Type.")
+
+(defconst relangs-utf32-string-type
+  (lambda ()
+    `((:lang C++11 :expr "std::u32string")
+      (:lang D :expr "dstring")
+      )) "UTF-32 String Type.")
 
 (defconst relangs-float-type
   (lambda ()
