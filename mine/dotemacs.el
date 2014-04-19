@@ -929,7 +929,8 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;: smart-op.el --- Insert operators with surrounding spaces smartly.
 ;;; Previously smart-operator.el by William Xu.
 ;;; Smart Operator: http://www.emacswiki.org/emacs/SmartOperator
-(when (file-exists-p (elsub "mine/smart-op.el"))
+(when (and (file-exists-p (elsub "mine/smart-op.el"))
+           (load-file (elsub "mine/smart-op.elc")))
   (add-hook 'c-mode-common-hook 'smart-op-mode t)
   (add-hook 'ada-mode-hook 'smart-op-mode t)
   (add-hook 'python-mode-hook 'smart-op-mode t)
