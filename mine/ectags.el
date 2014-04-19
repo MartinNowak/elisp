@@ -809,7 +809,9 @@ Inspired by `icicle-find-tag-action'."
         (progn
           (ectags-goto-tag cand t)
           (widen)
-          (hictx-line)
+          (hictx-symbol-at-point nil 'next-error (if (numberp next-error-highlight)
+                                                     next-error-highlight
+                                                   0.5))
           (select-window (minibuffer-window))
           (select-frame-set-input-focus (selected-frame)))
       (message "Warning: File %s not present." (faze file 'file)))))
