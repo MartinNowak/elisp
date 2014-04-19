@@ -263,19 +263,27 @@
                   ))
     (add-hook hook (lambda () (highlight-symbol-mode 1)) t)))
 
+;;; =================================
 ;;; Hide C Preprocessor ifdef regions
 ;;; See: https://stackoverflow.com/questions/641045/how-can-i-fold-ifdef-ifndef-blocks-in-emacs
+
 (defface hide-ifdef-shadow-face '((t (:inherit shadow)))
   "Face for shadowing ifdef blocks."
   :group 'hide-ifdef)
 (setq hide-ifdef-initially t)
 
+(defconst hide-ifdef-modes '(c-mode-hook
+                             c++-mode-hook
+                             objc-mode-hook)
+  "Modes to activate hide-ifdef inside.")
+
 (defun update-hide-ifdefs ()
   "Update hide-ifdefs."
-  (when (and (boundp 'hide-ifdef-mode)
-             hide-ifdef-mode)
-    (hide-ifdef-mode -1))
-  (hide-ifdef-mode 1))
+  (when (memq major-mode hide-ifdef-modes)
+    (when (and (boundp 'hide-ifdef-mode)
+               hide-ifdef-mode)
+      (hide-ifdef-mode -1))
+    (hide-ifdef-mode 1)))
 
 (defun setup-hide-ifdef ()
   "Setup hideif."
@@ -284,10 +292,10 @@
     (setq hide-ifdef-shadow t))
   (add-hook 'after-save-hook 'update-hide-ifdefs)
   (hide-ifdef-mode 1))
-(dolist (hook '(c-mode-hook
-                c++-mode-hook
-                objc-mode-hook))
+
+(dolist (hook hide-ifdef-modes)
   (add-hook hook 'setup-hide-ifdef t))
+
 (when nil                               ;TODO: What does this do?
   (defun hide-ifdef-region-internal (start end)
     (remove-overlays start end 'face 'hide-ifdef-shadow-face)
@@ -334,6 +342,7 @@
   (require 'pcre2el)
   (rxt-global-mode 1))
 
+;;; ==========================================================
 ;; winner.el --- Restore Old (Undo/Redo) Window Configurations
 ;; WinnerMode - http://www.emacswiki.org/cgi-bin/wiki/WinnerMode
 ;; '((kbd "C-x C-<return>")
