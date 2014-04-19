@@ -1682,8 +1682,8 @@ and set the focus back to Emacs frame."
 ;; (global-set-key [(control f9)] 'uproj-rebuild-target)
 ;; (global-set-key [(shift f9)] 'eproj-abort-build)
 
-(global-set-key [(f11)] 'uproj-build-and-maybe-debug-target)
-(global-set-key [(control f11)] 'uproj-redebug-target)
+;; (global-set-key [(f11)] 'uproj-build-and-maybe-debug-target)
+;; (global-set-key [(control f11)] 'uproj-redebug-target)
 
 ;; ---------------------------------------------------------------------------
 
