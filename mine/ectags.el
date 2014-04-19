@@ -809,6 +809,7 @@ Inspired by `icicle-find-tag-action'."
         (progn
           (ectags-goto-tag cand t)
           (widen)
+          (hictx-line)
 
           ;; TODO: Disabled for now in favour of hictx
           ;; (when (require 'hl-line+ nil t) ;if available
