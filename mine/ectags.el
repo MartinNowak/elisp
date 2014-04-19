@@ -809,6 +809,7 @@ Inspired by `icicle-find-tag-action'."
         (progn
           (ectags-goto-tag cand t)
           (widen)
+          ;; inherits behaviour of `previous-error' and `next-error'
           (hictx-symbol-at-point nil 'next-error (if (numberp next-error-highlight)
                                                      next-error-highlight
                                                    0.5))
