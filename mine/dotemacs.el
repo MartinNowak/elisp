@@ -408,7 +408,8 @@
   ;;  (when (file-exists-p tmpfile)
   ;;    (shell-command (concat "chmod 700 " tmpfile))))                                        ;https://groups.google.com/forum/?fromgroups=#!topic/gnu.emacs.bug/5Ge23R7WSMQ
   (setq server-host (getenv "HOSTNAME")
-        server-use-tcp t)
+        server-use-tcp t                ;make it possible to reach Emacs from other hosts
+        )
   (server-force-delete)
   (server-start)
   (when (functionp 'server-edit)
@@ -427,7 +428,7 @@
 (when (eload 'structed nil "structed.el") ;Structured Navigation and Operation.
   (cc-structed-add-key-bindings))
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'delete-trailing-whitespace) ;delete the bastards
 (add-hook 'after-save-hook
           (lambda () (when (fboundp 'semantic-force-refresh)
                        (semantic-force-refresh))))
