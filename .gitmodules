@@ -40,3 +40,6 @@
 [submodule "cedet"]
 	path = cedet
 	url = https://github.com/emacsmirror/cedet.git
+[submodule "multiple-cursors"]
+	path = multiple-cursors
+	url = git://github.com/magnars/multiple-cursors.el.git
