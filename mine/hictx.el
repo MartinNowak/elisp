@@ -21,7 +21,7 @@
 (defface hictx-kill-face '((t (:background "red" :foreground "black"))) "Face used to highlight kill context.")
 (defface hictx-delete-face '((t (:background "red" :foreground "black"))) "Face used to highlight delete context.")
 
-(defcustom hictx-timeout      0.10 "Default time period to display the highlighted context." :group 'hictx)
+(defcustom hictx-timeout      0.15 "Default time period to display the highlighted context." :group 'hictx)
 (defcustom hictx-eval-timeout 0.20 "Default time period to display the evaluated context." :group 'hictx)
 (defcustom hictx-kill-timeout 0.05 "Default time period to display the killed context." :group 'hictx)
 (defcustom hictx-new-window-timeout 0.16 "Default time period to display cross-window navigated content." :group 'hictx)
@@ -505,11 +505,11 @@ Suitables choices are `hictx-buffer' line `hictx-buffer'."
     (defadvice icicle-find-first-tag (after pulse-advice activate)
       "After going to a tag, pulse the line the cursor lands on."
       (when (and pulse-command-advice-flag (interactive-p))
-        (pulse-momentary-highlight-one-line (point)))) (ad-activate 'icicle-find-first-tag)
+        (pulse-momentary-highlight-one-line (point)))) (ad-deactivate 'icicle-find-first-tag)
     (defadvice icicle-pop-tag-mark (after pulse-advice activate)
       "After going to a hit, pulse the line the cursor lands on."
       (when (and pulse-command-advice-flag (interactive-p))
-        (pulse-momentary-highlight-one-line (point)))) (ad-activate 'icicle-pop-tag-mark)
+        (pulse-momentary-highlight-one-line (point)))) (ad-deactivate 'icicle-pop-tag-mark)
     )
 
   ;; (defadvice add-name-to-file (around reuse-fcache (file newname &optional ok-if-already-exists))
