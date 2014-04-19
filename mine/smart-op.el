@@ -76,8 +76,8 @@
     (define-key keymap "," 'smart-op-\,)
     (define-key keymap "." 'smart-op-.)
     (define-key keymap "~" 'smart-op-~)
-    (define-key keymap "{" 'smart-op-lbrace)
-    (define-key keymap "}" 'smart-op-rbrace)
+    ;; (define-key keymap "{" 'smart-op-lbrace)
+    ;; (define-key keymap "}" 'smart-op-rbrace)
     keymap)
   "Keymap used my `smart-op-mode'.")
 
@@ -314,7 +314,8 @@ When ONLY-AFTER, insert space at back only."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
       (cond ((and (memq major-mode '(c-mode c++-mode objc-mode d-mode)))
-             (insert " {"))
+             (insert " {")
+             (indent-according-to-mode))
             (t
              (smart-op-insert "{")))
     (insert "{")))
@@ -324,7 +325,8 @@ When ONLY-AFTER, insert space at back only."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
       (cond ((and (memq major-mode '(c-mode c++-mode objc-mode d-mode)))
-             (insert "} "))
+             (insert "} ")
+             (indent-according-to-mode))
             (t
              (smart-op-insert "}")))
     (insert "}")))
