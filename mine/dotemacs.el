@@ -926,11 +926,15 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;; Edit Filename At Point
 
+;;: smart-op.el --- Insert operators with surrounding spaces smartly.
+;;; Previously smart-operator.el by William Xu.
 ;;; Smart Operator: http://www.emacswiki.org/emacs/SmartOperator
-(when (load-file-if-exist (elsub "mine/smart-op.elc"))
+(when (file-exists-p (elsub "mine/smart-op.el"))
   (add-hook 'c-mode-common-hook 'smart-op-mode t)
   (add-hook 'ada-mode-hook 'smart-op-mode t)
-  (add-hook 'python-mode-hook 'smart-op-mode t))
+  (add-hook 'python-mode-hook 'smart-op-mode t)
+  (add-hook 'ruby-mode-hook 'smart-op-mode t)
+  )
 
 ;;; Unit-Test. May collide with package `test-simple'.
 (let* ((elk (elsub "elk-test/elk-test.elc")))
@@ -6556,12 +6560,6 @@ With prefix arg, force case-sensitivity"
     "Flags whether or not to load and pretty-greek." :type 'boolean :group 'pnw-options)
   (when pnw/use-pretty-greek
     (eload 'pnw-pretty-greek)
-    )
-
-  ;; smart-op.el --- Insert operators with surrounding spaces smartly.
-  ;; Previously smart-operator.el by William Xu.
-  (when (eload 'smart-op)
-    (add-hook 'c-mode-common-hook (lambda () (smart-op-mode 1)))
     )
 
   ;; emoticons.el --- Replace text with emoticons
