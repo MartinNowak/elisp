@@ -810,11 +810,6 @@ Inspired by `icicle-find-tag-action'."
           (ectags-goto-tag cand t)
           (widen)
           (hictx-line)
-
-          ;; TODO: Disabled for now in favour of hictx
-          ;; (when (require 'hl-line+ nil t) ;if available
-          ;;   (hl-line-highlight-now))
-                                        ;use it
           (select-window (minibuffer-window))
           (select-frame-set-input-focus (selected-frame)))
       (message "Warning: File %s not present." (faze file 'file)))))
