@@ -31,7 +31,7 @@
 
 (defvar hictx-overlays nil
   "Last overlay created by `hictx-generic'.")
-(make-variable-buffer-local 'hictx-overlays)
+(make-variable-buffer-local 'hictx-overlays) ;we need one for each buffer
 
 (defun hictx-log (overlay)
   "Log OVERLAY in `hictx-overlays'."
@@ -43,34 +43,31 @@ If OVERLAY is `t' delete all hictx overlays in BUFFER, if nil
 default to last overlay.  If BUFFER-OR-NAME is `t' delete in all
 buffers and if nil default to `current-buffer'."
   (interactive)
-  (cond ((overlayp overlay)             ;single specific overlay
+  (cond ((eq overlay 't)                ;all overlays
+         (mapc 'delete-overlay hictx-overlays)
+         (setq hictx-overlays nil)
+         ;; (setq hictx-overlays
+         ;;       (delq nil
+         ;;             (mapcar (lambda (overlay)
+         ;;                       (if (or (not buffer-or-name) ;all overlays regardless of window
+         ;;                               (eq (overlay-get overlay 'window)
+         ;;                                   (buffer-window buffer-or-name)))
+         ;;                           (progn (delete-overlay overlay) nil)
+         ;;                         overlay))
+         ;;                     hictx-overlays)))
+         )
+        ((overlayp overlay)             ;single specific overlay
          (delete-overlay overlay)
-         (delete overlay hictx-overlays)
+         (setq hictx-overlays (delete overlay hictx-overlays))
          )
         ((null overlay)                 ;last overlay
          (let ((overlay (car hictx-overlays)))
            (when overlay
              (delete-overlay overlay)
-             (delete overlay hictx-overlays)
+             (setq hictx-overlays (delete overlay hictx-overlays))
              ;;(error "No last overlay in %s" buffer-or-name)
              )))
-        ((eq overlay 't)                ;all overlays
-         (setq hictx-overlays
-               (delq nil
-                     (mapcar (lambda (overlay)
-                               (if (or (not buffer-or-name) ;all overlays regardless of window
-                                       (eq (overlay-get overlay 'window)
-                                           (buffer-window buffer-or-name)))
-                                   (progn (delete-overlay overlay) nil)
-                                 overlay))
-                             hictx-overlays)))
-         (when nil
-           (message "Deleted all hictx overlays in %s"
-                    (if buffer-or-name
-                        (concat (format "buffer %s"
-                                        buffer-or-name))
-                      "all buffers")))
-         )))
+        ))
 (defun hictx-delete-all (&optional buffer-or-name)
   "Delete all hictx overlays."
   (interactive)
