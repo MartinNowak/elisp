@@ -4,6 +4,7 @@
 ;;; TODO: http://draketo.de/light/english/emacs/babcore#sec-3-2
 ;;; Code:
 
+;;; ===========================================================================
 ;;; Package Management
 (when (require 'package nil t)
   (add-to-list 'package-archives
@@ -44,6 +45,7 @@
   (defmacro Xlaunch (&rest x) (list 'if (eq window-system 'x) (cons 'progn x)))
   )
 
+;;; ===========================================================================
 ;;; CEDET
 ;;(load-file (elsub "mine/pgo-cedet.elc")) ;WARNING: Need this first!
 ;;(load-file (elsub "minimal-cedet-config/minimial-cedet-config-pnw.el")) ;WARNING: Need this first!
@@ -70,6 +72,7 @@
 (setq gc-cons-threshold (max 3000000 gc-cons-threshold))
 (setq initial-major-mode 'text-mode) ;prevent *scratch* buffer from requring CEDET
 
+;;; ===========================================================================
 ;;; Auto-Reverting
 ;; It's nice to have Visual Studio C++ behave the same way, so you don't get the
 ;; annoying "This file has been modified outside of the source editor. Do you
@@ -93,6 +96,7 @@
 ;; Toggle display of time, load level, and mail flag in mode line.
 (when nil (fset 'yes-or-no-p 'y-or-n-p)) ;replace "yes" and RET with just typing 'y'.  Several emacs actions
 
+;;; ===========================================================================
 ;;; Visual Regexp
 (when (and (append-to-load-path (elsub "visual-regexp"))
            (require 'visual-regexp nil t))
@@ -156,6 +160,7 @@
 (put 'scroll-left 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
+;;; ===========================================================================
 ;;; Minibuffer
 ;;(setq enable-recursive-minibuffers pnw-me?)   ;Recursive Minibuffers
 ;; Show minibuffer recursion depth.
@@ -165,6 +170,7 @@
   ;;   (minibuffer-depth-indicate-mode 99))
   )
 
+;;; ===========================================================================
 ;;; Change Font Type and Size.
 ;; Control + Scroll changes font size.
 (global-set-key [C-mouse-4] 'text-scale-increase)
@@ -225,6 +231,7 @@
     (when window
       (hictx-buffer window 'hictx-delete-face hictx-kill-timeout nil nil t))))
 
+;;; ===========================================================================
 ;;; Highlight Current Symbol
 (when (and (append-to-load-path (elsub "highlight-symbol"))
            (require 'highlight-symbol nil t))
@@ -263,7 +270,7 @@
                   ))
     (add-hook hook (lambda () (highlight-symbol-mode 1)) t)))
 
-;;; =================================
+;;; ===========================================================================
 ;;; Hide C Preprocessor ifdef regions
 ;;; See: https://stackoverflow.com/questions/641045/how-can-i-fold-ifdef-ifndef-blocks-in-emacs
 
@@ -316,6 +323,7 @@
                   (hide-ifdef-use-define-alist 'list1))) ; use list2 by default
     ))
 
+;;; ===========================================================================
 ;;; Smileys
 (when (and nil (file-readable-p (elsub "others/autosmiley.el")))
   (dolist (hook '(c-mode-common-hook ada-mode-hook d-mode-hook
@@ -342,7 +350,7 @@
   (require 'pcre2el)
   (rxt-global-mode 1))
 
-;;; ==========================================================
+;;; ===========================================================================
 ;; winner.el --- Restore Old (Undo/Redo) Window Configurations
 ;; WinnerMode - http://www.emacswiki.org/cgi-bin/wiki/WinnerMode
 ;; '((kbd "C-x C-<return>")
@@ -355,6 +363,7 @@
     (message "At first window layout") ;; (sit-for 1)
     (ding)))
 
+;;; ===========================================================================
 ;;; TODO: Ugly to copy this here...
 (defun winner-redo ()			; If you change your mind.
   "Restore a more recent window configuration saved by Winner mode."
@@ -421,6 +430,7 @@
   (when (fboundp 'edit-server-start)
     (edit-server-start)))
 
+;;; ===========================================================================
 ;;; My Stuff
 (require 'power-utils nil t)
 (require 'hash-table-utils nil t)
@@ -433,6 +443,7 @@
           (lambda () (when (fboundp 'semantic-force-refresh)
                        (semantic-force-refresh))))
 
+;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
 ;; http://www.emacswiki.org/emacs-en/ParEdit
 (autoload 'paredit-mode "paredit" "Minor mode for pseudo-structurally editing Lisp code." t)
@@ -447,6 +458,7 @@
 		   (define-key paredit-mode-map [(shift meta up)] 'paredit-splice-sexp) ;NOTE: M-s is now a command prefix for advanced search commands
 		   )))
 
+;;; ===========================================================================
 ;;; SubWord
 (when (and (require 'subword nil t)
            (fboundp 'subword-mode))
@@ -459,6 +471,7 @@
   (eload 'paredit-extension)            ;Simple extension base on paredit.el
   )
 
+;;; ===========================================================================
 ;;: smart-op.el --- Insert operators with surrounding spaces smartly.
 ;;; Previously smart-operator.el by William Xu.
 ;;; Smart Operator: http://www.emacswiki.org/emacs/SmartOperator
@@ -470,6 +483,7 @@
   (add-hook 'ruby-mode-hook 'smart-op-mode t)
   )
 
+;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
 (when (and (prepend-to-load-path (elsub "smartparens"))
            (fboundp 'smartparens-mode))
@@ -570,6 +584,7 @@
     (when (== (1+ buf-n) win-n)
       (enlarge-window 1))))
 
+;;; ===========================================================================
 ;;; Buffers
 (eload 'kill-buffer-ext)
 (global-set-key [f5] 'kill-buffer)
@@ -590,6 +605,7 @@
 (eload 'help-fns+)
 (eload 'finder+)
 
+;;; ===========================================================================
 ;;; TODO: Disabled because of error: ls-lisp--insert-directory: Symbol's value as variable is void: original-insert-directory
 ;; (eload 'ls-lisp+)
 
@@ -619,10 +635,13 @@
                                     (count-lines (mark t) (point))))
   (size-indication-mode 1))
 
+;;; ===========================================================================
 ;;; I-Search
 (eval-after-load "isearch" '(eload 'isearch+)) ;Extensions to `isearch.el'
 (eload 'replace-from-region)
- ;;; Make it less likely to enable `set-region' logic by accident.
+
+;;; ===========================================================================
+;;; Make it less likely to enable `set-region' logic by accident.
 (add-hook 'isearch-mode-hook
 	  (lambda ()
 	    (define-key isearch-mode-map [(control ? )] nil) ;undefine it
@@ -658,6 +677,7 @@
   ;;(eval-after-load "cc-mode" '(progn (eload 'cc-mode+))) ;Extensions to `c-mode.el' & `cc-mode.el'.
   )
 
+;;; ===========================================================================
 ;;; Diff
 (when nil              ;Note: fonts such for dark backgrounds so disable for now
   (when (require 'diff-mode- nil t)))
@@ -667,6 +687,7 @@
                                          "+++ " (* nonl) "\n"
                                          "@@" (* nonl) "@@" "\n")) . diff-mode))
 
+;;; ===========================================================================
 ;;; ELP: Emacs Lisp Profiler
 (when (require 'elp nil t)
   (defalias 'elp-profile-function 'elp-instrument-function)
@@ -684,6 +705,7 @@
   (global-set-key [(control c) (shift p) (s)] 'elp-results)
   )
 
+;;; ===========================================================================
 ;;; Auto-Highlight Interactive `rx' evals. (rx "@@")
 (defun rx-flash-eval-last-sexp-helper ()
   (let* ((exp (preceding-sexp)))
@@ -717,6 +739,7 @@
   (when (called-interactively-p 'any)
     (rx-flash-eval-last-sexp-helper)))
 
+;;; ===========================================================================
 ;;; My Extensions
 (eload 'replace-pairs)
 (eload 'replace-ext)                   ;My Replace Extensions
@@ -828,20 +851,24 @@
 (eload 'pgo-eshell)                   ;EShell
 (eload 'pgo-ansi-color)
 
+;;; ===========================================================================
 ;;; Tree
 (and (append-to-load-path (elsub "neotree"))
      (require 'neotree nil t))
 
+;;; ===========================================================================
 ;;; Shell-mode
 (defun sh-mode-setup-pnw ()
   ;; Disable imenu for now because it make editing of large shell scripts slow!
   (setq imenu-generic-expression nil))
 (add-hook 'sh-mode-hook 'sh-mode-setup-pnw t)
 
+;;; ===========================================================================
 ;;; Misc
 (autoload 'list-callers "list-callers" "List callers of an Elisp function ." t)
 ;; (global-set-key [(control c) (meta ?.)] 'list-callers)
 
+;;; ===========================================================================
 ;;; Dired
 
 ;; Async and Concurrency
@@ -899,11 +926,13 @@
   (define-key dired-mode-map [?!] 'dired-do-async-shell-command))
 (global-set-key [(meta ?!)] 'async-shell-command)
 
+;;; ===========================================================================
 ;;; FFAP
 ;; Steal back find-file-at-point
 (global-set-key [(control x) (control j)] 'ffap-other-window)
 (add-hook 'after-init-hook (lambda () (global-set-key [(control x) (control j)] 'ffap-other-window)))
 
+;;; ===========================================================================
 ;;; http://www.emacswiki.org/emacs/FindFileAtPoint#toc6
 (defvar ffap-file-at-point-line-number nil
   "Variable to hold line number from the last `ffap-file-at-point' call.")
@@ -938,6 +967,7 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;; Edit Filename At Point
 
+;;; ===========================================================================
 ;;; Unit-Test. May collide with package `test-simple'.
 (let* ((elk (elsub "elk-test/elk-test.elc")))
   (when (file-regular-p elk)
@@ -955,6 +985,7 @@ save it in `ffap-file-at-point-line-number' variable."
        '(1 'font-lock-warning-face keep)))))
   (add-hook 'emacs-lisp-mode-hook 'elk-test-assert-lock))
 
+;;; ===========================================================================
 ;;; CC-Mode
 (eload 'cc-patterns nil "cc-patterns.el") ;C,C++ Patterns
 (eload 'cc-assist nil "cc-assist.el") ;Coding Assistance for C,C++, and others.
@@ -982,6 +1013,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (move-line-region-activate-hictx-advice)
   )
 
+;;; ===========================================================================
 ;;; Hungry
 (when (eload 'hungry-delete (elsub "hungry-delete"))
   (global-hungry-delete-mode 1)
@@ -1006,6 +1038,7 @@ save it in `ffap-file-at-point-line-number' variable."
     )
   )
 
+;;; ===========================================================================
 ;;; Automation in C-like modes
 (defun c-enable-auto-modes ()
  (c-toggle-auto-hungry-state 1)
@@ -1013,6 +1046,7 @@ save it in `ffap-file-at-point-line-number' variable."
  (c-toggle-hungry-state 1))
 (add-hook 'c-mode-common-hook 'c-enable-auto-modes t)
 
+;;; ===========================================================================
 ;;; Markdown
 (defun setup-markdown-hook ()
   "Setup Markdown hook."
@@ -1022,6 +1056,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   (add-hook 'markdown-mode-hook 'setup-markdown-hook))
 
+;;; ===========================================================================
 ;;; OCaml
 (when (append-to-load-path (elsub "tuareg"))
   (autoload 'tuareg-mode "tuareg-mode" nil t)
@@ -1029,6 +1064,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-to-list 'auto-mode-alist '("\\.topml$" . tuareg-mode))
   )
 
+;;; ===========================================================================
 ;;; Makefile
 (setq auto-mode-alist (append '(("\\.mak\\'" . makefile-mode)
                                 ("mydefs.bsp\\'" . makefile-mode) ; VxWorks BSP Defines
@@ -1038,21 +1074,25 @@ save it in `ffap-file-at-point-line-number' variable."
                                 )
                               auto-mode-alist))
 
+;;; ===========================================================================
 ;;; CMake
 (autoload 'cmake-mode "cmake-mode" nil t)
 (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
 (add-to-list 'auto-mode-alist '("CMakeCache\\.txt\\'" . cmake-mode))
 (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
 
+;;; ===========================================================================
 ;;; Cook. See: http://miller.emu.id.au/pmiller/software/cook/
 (autoload 'cook-mode "cook-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.cook\\'" . cook-mode))
 
+;;; ===========================================================================
 ;;; Jam Build Tools
 (autoload 'bjam-mode "bjam-mode" nil t)
 (add-to-list 'auto-mode-alist `(,(regexp-opt (list "Jamfile" "Jamfile.v2" "Jamrules" "Jambase" "Jamroot")) . bjam-mode))
 (add-to-list 'auto-mode-alist '("\.jam$" . bjam-mode))
 
+;;; ===========================================================================
 ;; OpenGL Minor Mode:
 ;; ToDo: Make this work the way hippie-expand wants
 ;; it to and add it to the list `hippie-expand-try-functions-list'
@@ -1068,6 +1108,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (interactive)
   (insert (ogl--try-completion old)))
 
+;;; ===========================================================================
 ;;; GLSL (OpenGL Shading Language)
 (when (append-to-load-path (elsub "glsl-mode"))
   (autoload 'glsl-mode "glsl-mode" nil t)
@@ -1083,14 +1124,17 @@ save it in `ffap-file-at-point-line-number' variable."
   ;;(add-to-list 'auto-mode-alist '("\\.glsl.program\\'" . glsl-mode))
   )
 
+;;; ===========================================================================
 ;;; nVidia CUDA Programming Mode. See: http://www.emacswiki.org/emacs/CudaMode
 (autoload 'cuda-mode "cuda-mode" "Toggle `cuda-mode' mode in this buffer." t)
 (add-to-list 'auto-mode-alist '("\\.cu\\'" . cuda-mode))
 
+;;; ===========================================================================
 ;;; RTF
 (autoload 'rtf-mode "rtf-mode" "RTF mode" t)
 (add-to-list 'auto-mode-alist '("\\.rtf\\'" . rtf-mode))
 
+;;; ===========================================================================
 ;;; JavaScript source text. See: http://www.nongnu.org/espresso/
 ;; http://www.nongnu.org/espresso/
 (when nil                          ;moved to ~/ware/emacs/lisp/progmodes/js.el
@@ -1098,15 +1142,18 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-to-list 'auto-mode-alist '("\\.js\\'" . espresso-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . espresso-mode)))
 
+;;; ===========================================================================
 ;;; Identica
 (append-to-load-path (elsub "identica-mode"))
 (autoload 'identica "identica-mode" "Start Identica" t)
 
+;;; ===========================================================================
 ;;; http://www.emacswiki.org/cgi-bin/wiki/BefungeMode
 (autoload 'befunge "befunge-mode" "Befunge Interpreter/Debugger" t)
 (autoload 'befunge-mode "befunge-mode" "Befunge mode"   t)
 (add-to-list 'auto-mode-alist '( "\\.be?f\\'" . befunge-mode))
 
+;;; ===========================================================================
 ;;; SWIG
 (autoload 'swig-mode (elsub "ywb-codes/emacs/site-lisp/contrib/swig-mode.elc"))
 (when nil
@@ -1115,12 +1162,14 @@ save it in `ffap-file-at-point-line-number' variable."
     (autoload fn "swig-mode-ext" nil nil))
   (autoload 'swig-mode "swig-mode-ext" nil nil))
 
+;;; ===========================================================================
 ;; Perl
 (defun pnw-perl-mode-hook ()
   (when (boundp 'perl-indent-level)
     (setq perl-indent-level 4)))
 (add-hook 'perl-mode-hook 'pnw-perl-mode-hook t)
 
+;;; ===========================================================================
 ;; Scheme
 (add-to-list 'auto-mode-alist '("\\.ss\\'" . scheme-mode))
 ;; program invoked by the run-scheme command
@@ -1145,23 +1194,28 @@ save it in `ffap-file-at-point-line-number' variable."
                  (other-frame 1)))))))
 (add-hook 'scheme-mode-hook 'pnw-scheme-mode-hook t)
 
+;;; ===========================================================================
 ;; Lout text.
 (when (append-to-load-path (elsub "lout-mode"))
   (add-to-list 'auto-mode-alist '("\\.lt\\'" . lout-mode)))
 
+;;; ===========================================================================
 ;; Prolog
 (add-to-list 'auto-mode-alist '(".*gprolog.*/.*\\.pl\\'" . prolog-mode))
 (if (string-match "GNU Prolog" (shell-command-to-string "gprolog")) ;; Use GNU prolog if it exists.
     (defvar prolog-program-name "gprolog"))
 
+;;; ===========================================================================
 ;;; Julia
 (when (file-readable-p (elsub "others/julia-mode.el"))
   (autoload 'julia-mode "julia-mode" "Major mode for editing Julia code." t)
   (add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode)))
 
+;;; ===========================================================================
 ;;; Octave
 (add-to-list 'magic-mode-alist '("\\`[[:space:]]*function" . octave-mode))
 
+;;; ===========================================================================
 ;;; Modelica
 (when (append-to-load-path (elsub "modelica-mode"))
   (autoload 'modelica-mode "modelica-mode" "Modelica Editing Mode" t)
@@ -1170,6 +1224,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (autoload 'mdc-browse "mdc-browse" "Modelica Class Browsing" t)
   (autoload 'br-mdc "br-mdc" "Modelica Class Browsing" t))
 
+;;; ===========================================================================
 ;;; Android: http://www.emacswiki.org/emacs-en/GoogleAndroid. CEDET uses it
 (when (append-to-load-path (elsub "android-mode"))
   (autoload 'android-mode "android-mode" "Android Project Management mode." t)
@@ -1177,6 +1232,7 @@ save it in `ffap-file-at-point-line-number' variable."
   ;;(add-hook 'find-file-hook (lambda () (when (elsub "android-mode") (android-mode 1))))
   )
 
+;;; ===========================================================================
 ;;; GObject C
 (when (append-to-load-path (elsub "gobject-c-mode"))
   (autoload 'gobject-c-mode "gobject-c-mode" "GObject C source code mode." t)
@@ -1184,6 +1240,7 @@ save it in `ffap-file-at-point-line-number' variable."
     (add-hook 'c-mode-hook 'gobject-c-mode)
     (add-hook 'c++-mode-hook 'gobject-c-mode)))
 
+;;; ===========================================================================
 ;;; Ada
 (when t;; (append-to-load-path (elsub "ada-mode"))
   (autoload 'ada-mode "ada-mode" "Major mode for editing Ada code." t)
@@ -1217,6 +1274,7 @@ save it in `ffap-file-at-point-line-number' variable."
           (t
            (faze name 'fun)))))
 
+;;; ===========================================================================
 ;;; Indentation
 ;; Automatically indent yanked text if in programming-modes
 ;; See: http://www.emacswiki.org/emacs-en/AutoIndentation
@@ -1241,9 +1299,11 @@ save it in `ffap-file-at-point-line-number' variable."
 (global-set-key [(control ?o)] 'open-line-and-indent)
 (global-set-key [(control m)] 'newline-and-indent) ;; Automatically indent newline in all modes.
 
+;;; ===========================================================================
 ;;; http://www.emacswiki.org/emacs-en/SmartTabs
 ;; (require 'smarttab nil t)
 
+;;; ===========================================================================
 ;;; Fortran
 ;;; http://www.emacswiki.org/emacs/AutoIndentation
 (add-hook 'f90-mode-hook (lambda () (local-set-key (kbd "RET") 'reindent-then-newline-and-indent)))
@@ -1253,6 +1313,7 @@ save it in `ffap-file-at-point-line-number' variable."
                     (* space)
                     (+ (in digit))) . fortran-mode))
 
+;;; ===========================================================================
 ;;; D - http://www.prowiki.org/wiki4d/wiki.cgi?EditorSupport/EmacsDMode
 ;; Only this version works in latest Emacs: http://www.billbaxter.com/etc/d-mode.el
 
@@ -1320,10 +1381,12 @@ save it in `ffap-file-at-point-line-number' variable."
 (defun ffap-d-mode (name)
   (ffap-locate-file name t ffap-d-path))
 
+;;; ===========================================================================
 ;;; DMD C++ Source
 (add-to-list 'auto-mode-alist
              '("dmd/src/.*\\.[ch]\\'" . c++-mode))
 
+;;; ===========================================================================
 ;;; DMD Compilation Messages Patterns may be needed without having to load
 ;;; `d-mode' through make compilation for example.
 (add-to-list 'compilation-error-regexp-alist 'dmd)
@@ -1363,34 +1426,7 @@ save it in `ffap-file-at-point-line-number' variable."
                (8 'font-lock-comment-face)
                ))
 
-;;; FlyCheck
-(global-set-key [(control f7)] 'flycheck-previous-error)
-(global-set-key [(control f8)] 'flycheck-next-error)
-;; (repeatable-command-advice flycheck-previous-error)
-;; (repeatable-command-advice flycheck-next-error)
-
-;; (c-add-style "D" '((c++-indent-level . 4)
-;;                    (c-basic-offset . 4)
-;;                    (substatement-open . 0)
-;;                    (inline-open . 0)))
-(defun d-mode-setup-pnw ()
-  ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
-  (setq imenu-generic-expression nil)
-  (c-set-style "D")
-
-  ;; Flycheck D Unittest: https://github.com/tom-tan/flycheck-d-unittest/wiki/Start-D-with-Emacs
-  (when (require 'flycheck nil t)
-    (flycheck-mode 1))
-  (when (require 'flycheck-d-unittest nil t)
-    (setup-flycheck-d-unittest))
-
-  (when (require 'ffap nil t)
-    (setq ffap-alist
-          (append ffap-alist
-                  '((d-mode . ffap-d-mode)))))
-  )
-(add-hook 'd-mode-hook 'd-mode-setup-pnw t)
-
+;;; ===========================================================================
 ;;; Highlight Swedish and C++ template "required from" in non-error.
 (when nil                               ;TODO: Disturbs?
   (setcdr (assq 'gnu compilation-error-regexp-alist-alist)
@@ -1409,6 +1445,49 @@ save it in `ffap-file-at-point-line-number' variable."
                                                     "\\(" user-login-name "\\)")
                                            ":WS-\\1:")))
 
+;;; ===========================================================================
+;;; asciidoc
+(when (append-to-load-path (elsub "asciidoc-mode"))
+  (autoload 'asciidoc-mode "asciidoc-mode" "Major mode for editing D code." t)
+  (add-to-list 'auto-mode-alist '("\\.\\(asciidoc\\|txt\\)" . asciidoc-mode))
+  )
+
+;;; ===========================================================================
+;;; FlyCheck
+
+(global-set-key [(control f7)] 'flycheck-previous-error)
+(global-set-key [(control f8)] 'flycheck-next-error)
+;; (repeatable-command-advice flycheck-previous-error)
+;; (repeatable-command-advice flycheck-next-error)
+;; (c-add-style "D" '((c++-indent-level . 4)
+;;                    (c-basic-offset . 4)
+;;                    (substatement-open . 0)
+;;                    (inline-open . 0)))
+
+(defun d-mode-setup-pnw ()
+  ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
+  (setq imenu-generic-expression nil)
+  (c-set-style "D")
+  ;; Flycheck D Unittest: https://github.com/tom-tan/flycheck-d-unittest/wiki/Start-D-with-Emacs
+  (when (require 'flycheck nil t)
+    (flycheck-mode 1))
+  (when (require 'flycheck-d-unittest nil t)
+    (setup-flycheck-d-unittest))
+  (when (require 'ffap nil t)
+    (setq ffap-alist
+          (append ffap-alist
+                  '((d-mode . ffap-d-mode)))))
+  )
+(add-hook 'd-mode-hook 'd-mode-setup-pnw t)
+
+(defun setup-flycheck-mode ()
+  "Setup FlyCheck Clang Include Paths."
+  (when (string-match "/dmd/src/" (file-name-directory
+                                   (buffer-file-name)))
+    (setq flycheck-clang-include-path '("root" "tk" "backend"))))
+(add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
+
+;;; ===========================================================================
 ;;; Flycheck
 
 ;; https://github.com/flycheck/flycheck/issues/302
@@ -1420,13 +1499,6 @@ save it in `ffap-file-at-point-line-number' variable."
       #'flycheck-display-error-messages-unless-error-buffer)
 ;;(eval-after-load "flycheck" '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
-;;; asciidoc
-(when (append-to-load-path (elsub "asciidoc-mode"))
-  (autoload 'asciidoc-mode "asciidoc-mode" "Major mode for editing D code." t)
-  (add-to-list 'auto-mode-alist '("\\.\\(asciidoc\\|txt\\)" . asciidoc-mode))
-  )
-
-;;; FlyCheck
 (defun fix-flycheck-path ()
   (when (prepend-to-load-path (elsub "flycheck")) ;override flycheck
     (load-file (elsub "flycheck/flycheck.elc"))))
@@ -1477,6 +1549,7 @@ save it in `ffap-file-at-point-line-number' variable."
                   maxima-mode-hook
                   ielm-mode-hook))
     (add-hook hook (lambda () (flycheck-mode 1)))))
+
 ;;; Flycheck Coloring
 (when (require 'flycheck-color-mode-line nil t)
   (eval-after-load "flycheck"
