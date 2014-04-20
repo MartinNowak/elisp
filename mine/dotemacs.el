@@ -295,20 +295,21 @@
 (defun setup-hide-ifdef ()
   "Setup hideif."
   ;; TODO: `hide-ifdef-env'
-  (setq hide-ifdef-shadow t)
-  ;; For DMD Sources
-  (add-to-list 'hide-ifdef-define-alist
-               (cond ((string-equal system-type "gnu/linux")
-                      (cons "TARGET_LINUX" 1))
-                     ((string-equal system-type "windows-nt")
-                      (cons "TARGET_WINDOS" 1))
-                     ((string-equal system-type "darwin")
-                      (cons "TARGET_OSX" 1))
-                     ((string-equal system-type "gnu/kfreebsd")
-                      (cons "TARGET_FREEBSD" 1)))
-               t)
-  (add-hook 'after-save-hook 'update-hide-ifdefs)
-  (hide-ifdef-mode 1))
+  (when (require 'hideif nil t)
+    (setq hide-ifdef-shadow t)
+    ;; For DMD Sources
+    (setq hide-ifdef-define-alist
+          `((dmd-source-defines ,(cond ((string-equal system-type "gnu/linux")
+                                        "TARGET_LINUX")
+                                       ((string-equal system-type "windows-nt")
+                                        "TARGET_WINDOS")
+                                       ((string-equal system-type "darwin")
+                                        "TARGET_OSX")
+                                       ((string-equal system-type "gnu/kfreebsd")
+                                        "TARGET_FREEBSD")))))
+    (hide-ifdef-use-define-alist 'dmd-source-defines)
+    (add-hook 'after-save-hook 'update-hide-ifdefs)
+    (hide-ifdef-mode 1)))
 
 (dolist (hook hide-ifdef-modes)
   (add-hook hook 'setup-hide-ifdef t))
@@ -323,15 +324,7 @@
     (remove-overlays start end 'face 'pnw/hide-ifdef-region-face))
   ;; NOTE: Deactivated because it does not dynamically update when I
   ;; change #if 0 statments to say #if 1.
-  (if 0
-      (add-hook 'hide-ifdef-mode-hook
-                (lambda ()
-                  (unless hide-ifdef-define-alist
-                    (setq hide-ifdef-define-alist
-                          '((list1 0)
-                            (list2 DEBUG_CHECK_ALL))))
-                  (hide-ifdef-use-define-alist 'list1))) ; use list2 by default
-    ))
+  )
 
 ;;; ===========================================================================
 ;;; Smileys
@@ -351,7 +344,7 @@
                                      ))
     (add-hook hook 'autosmiley-mode t)))
 
-(require 'cl)
+(eval-when-compile (require 'cl))
 (require 'rx) ;See: http://www.emacswiki.org/emacs/rx on how to extend `rx'.
 (require 'repeatable nil t)
 (require 'list-fns nil t)
