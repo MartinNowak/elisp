@@ -299,14 +299,14 @@
   ;; For DMD Sources
   (add-to-list 'hide-ifdef-define-alist
                (cond ((string-equal system-type "gnu/linux")
-                      "TARGET_LINUX")
+                      (cons "TARGET_LINUX" 1))
                      ((string-equal system-type "windows-nt")
-                      "TARGET_WINDOS")
+                      (cons "TARGET_WINDOS" 1))
                      ((string-equal system-type "darwin")
-                      "TARGET_OSX")
+                      (cons "TARGET_OSX" 1))
                      ((string-equal system-type "gnu/kfreebsd")
-                      "TARGET_FREEBSD"))
-               t 'string-equal)
+                      (cons "TARGET_FREEBSD" 1)))
+               t)
   (add-hook 'after-save-hook 'update-hide-ifdefs)
   (hide-ifdef-mode 1))
 
