@@ -459,9 +459,21 @@
   (eload 'paredit-extension)            ;Simple extension base on paredit.el
   )
 
+;;: smart-op.el --- Insert operators with surrounding spaces smartly.
+;;; Previously smart-operator.el by William Xu.
+;;; Smart Operator: http://www.emacswiki.org/emacs/SmartOperator
+(when (and (file-exists-p (elsub "mine/smart-op.el"))
+           (load-file (elsub "mine/smart-op.elc")))
+  (add-hook 'c-mode-common-hook 'smart-op-mode t)
+  (add-hook 'ada-mode-hook 'smart-op-mode t)
+  (add-hook 'python-mode-hook 'smart-op-mode t)
+  (add-hook 'ruby-mode-hook 'smart-op-mode t)
+  )
+
 ;;; Structal (Parenthesises) Editing
 (when (and (prepend-to-load-path (elsub "smartparens"))
            (fboundp 'smartparens-mode))
+  (require 'smartparens-config)
   (smartparens-global-mode 1))
 ;;; http://www.emacswiki.org/emacs/AutoPairs
 ;;; https://github.com/capitaomorte/autopair
@@ -925,17 +937,6 @@ save it in `ffap-file-at-point-line-number' variable."
   (autoload 'bf-mode "bf-mode" "Browse file persistently on dired" t))
 
 ;; Edit Filename At Point
-
-;;: smart-op.el --- Insert operators with surrounding spaces smartly.
-;;; Previously smart-operator.el by William Xu.
-;;; Smart Operator: http://www.emacswiki.org/emacs/SmartOperator
-(when (and (file-exists-p (elsub "mine/smart-op.el"))
-           (load-file (elsub "mine/smart-op.elc")))
-  (add-hook 'c-mode-common-hook 'smart-op-mode t)
-  (add-hook 'ada-mode-hook 'smart-op-mode t)
-  (add-hook 'python-mode-hook 'smart-op-mode t)
-  (add-hook 'ruby-mode-hook 'smart-op-mode t)
-  )
 
 ;;; Unit-Test. May collide with package `test-simple'.
 (let* ((elk (elsub "elk-test/elk-test.elc")))
