@@ -295,8 +295,18 @@
 (defun setup-hide-ifdef ()
   "Setup hideif."
   ;; TODO: `hide-ifdef-env'
-  (when (boundp 'hide-ifdef-shadow)
-    (setq hide-ifdef-shadow t))
+  (setq hide-ifdef-shadow t)
+  ;; For DMD Sources
+  (add-to-list 'hide-ifdef-define-alist
+               (cond ((string-equal system-type "gnu/linux")
+                      "TARGET_LINUX")
+                     ((string-equal system-type "windows-nt")
+                      "TARGET_WINDOS")
+                     ((string-equal system-type "darwin")
+                      "TARGET_OSX")
+                     ((string-equal system-type "gnu/kfreebsd")
+                      "TARGET_FREEBSD"))
+               t 'string-equal)
   (add-hook 'after-save-hook 'update-hide-ifdefs)
   (hide-ifdef-mode 1))
 
