@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Sun Apr  6 07:33:24 2014 (-0700)
+;; Last-Updated: Mon Apr 21 09:10:29 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10810
+;;     Update #: 10864
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -85,6 +85,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
+;; 2014/04/20 dadams
+;;     icicle-describe-option-of-type: Use the function icicle-anychar-regexp, not the variable.
+;;     icicle-select-frame-by-name: Use frame-name-history if available.
+;;     Removed some old $$$$$ comments (cleanup).
 ;; 2014/04/01 dadams
 ;;     icicle-bookmark(-other-window|-list|-set):
 ;;       Faces icicle-annotation & icicle-msg-emphasis, not file-name-shadow & bookmark-menu-heading.
@@ -1070,6 +1074,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/04/20 dadams
+;;     icicle-synonyms: Use icicle-sort-comparer, not icicle-sort-function (typo).
+;;     Removed some old $$$$$ comments (cleanup).
 ;; 2014/04/01 dadams
 ;;     Added: icicle-bookmark-tagged, icicle-bookmark-tagged-other-window.
 ;;     icicle-search-bookmark:
@@ -1990,6 +1997,17 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/04/20 dadams
+;;     icicle-insert-candidates:
+;;       Automatic on/off of Icomplete mode and sorting: Turn on only if it was turned on here.
+;;                                                       When turn off, set flag icicle-auto-no-*-p.
+;;         Icomplete: Call icomplete-exhibit when turn on.  Update icicle-last-icomplete-mode-value.
+;;                    No Icomplete auto on/off for Emacs < 23.
+;;     Removed some old $$$$$ comments (cleanup).
+;; 2014/04/13 dadams
+;;     icicle-insert-candidates:
+;;       When toggling icomplete-mode automatically, ensure done in the minibuffer, not *Completions*.
+;;       When toggling sorting: Do not turn on unless it was automatically turned off for this cmd.
 ;; 2014/04/01 dadams
 ;;     icicle-display-candidates-in-Completions:
 ;;       For icicle-candidate-properties-alist, use \', not $, in regexp for string-match.
@@ -4165,6 +4183,14 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mcmd.el'")
 ;;
+;; 2014/04/20 dadams
+;;     icicle-(prefix|apropos)-complete-1:
+;;       Removed cond clause about not not expanding in minibuffer - it prevented cycling etc.
+;;     icicle-(prefix|apropos)-complete-2:
+;;       Moved the no-expand input logic here: Do nothing if not expanding input.
+;;       Added NO-DISPLAY-P arg: do nothing if non-nil.
+;;     icicle-toggle-icomplete-mode: Call icomplete-exhibit (unless < Emacs 23).
+;;     icicle-change-sort-order: Added note to doc string about auto on/off.
 ;; 2014/03/08 dadams
 ;;     Added: icicle-toggle-icomplete-mode.
 ;; 2014/03/06 dadams
@@ -5848,6 +5874,15 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mode.el'")
 ;;
+;; 2014/04/21 dadams
+;;     describe-face (defadvice): First arg depends on Emacs version.
+;; 2014/04/20 dadams
+;;     icicle-minibuffer-setup:
+;;       Do not set icicle-last-icomplete-mode-value here.  Done in icicle-insert-candidates now.
+;;       Reset icicle-auto-no-icomplete-mode-p to nil here.
+;;     icicle-options-choose-menu-map: Added icicle-cycle-expand-to-common-match entry.
+;; 2014/04/13 dadams
+;;     icicle-minibuffer-setup: Initialize/reset icicle-auto-no-sort-p to nil.
 ;; 2014/04/06 dadams
 ;;     Require icicles-mac.el, for icicle-menu-bar-make-toggle.
 ;; 2014/04/05 dadams
@@ -7122,6 +7157,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/04/20 dadams
+;;     Moved here from icicles-opt.el (this is loaded first):
+;;       icicle-current-TAB-method, icicle-delete-candidate-object.
+;;     Removed commented out icicle-list-end-string (cleanup).
 ;; 2014/04/01 dadams
 ;;     icicle-top-level-key-bindings: Bind icicle-bookmark-tagged(-other-window) to C-x (4) j t j.
 ;; 2014/03/08 dadams
@@ -8001,6 +8040,13 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-var.el'")
 ;;
+;; 2014/04/20 dadams
+;;     Added: icicle-auto-no-icomplete-mode-p.
+;;     Moved to icicles-opt.el (which is loaded first):
+;;       icicle-current-TAB-method, icicle-delete-candidate-object.
+;;     icicle-general-help-string: Added icicle-expand-input-to-common-match-alt.
+;; 2014/04/13 dadams
+;;     Added: icicle-auto-no-sort-p.
 ;; 2014/03/08 dadams
 ;;     icicle-last-icomplete-mode-value: Use (featurep 'icomplete), not (boundp 'icomplete-mode).
 ;; 2014/03/06 dadams
@@ -8117,7 +8163,7 @@
 ;;     icicle-general-help-string: Mention icicle-toggle-highlight-saved-candidates.
 ;; 2011/04/29 dadams
 ;;     Added: icicle-buffer-sort-first-time-p, icicle-file-sort-first-time-p, icicle-new-last-cmd,
-;;              icicle-orig-must-pass-after-match-pred.
+;;            icicle-orig-must-pass-after-match-pred.
 ;; 2011/04/02 dadams
 ;;     Added: icicle-bufflist, icicle-pref-arg, icicle-scan-fn-or-regexp.
 ;;     Moved to icicles-cmd2.el:

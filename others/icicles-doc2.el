@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Aug  1 14:21:16 1995
-;; Last-Updated: Wed Apr  2 10:55:47 2014 (-0700)
+;; Last-Updated: Sun Apr 20 10:21:31 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 29503
+;;     Update #: 29505
 ;; URL: http://www.emacswiki.org/icicles-doc2.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -5156,7 +5156,7 @@
 ;;    `icicle-expand-input-to-common-match' to a value other than 4 is
 ;;    if you want to always work with a regexp in the minibuffer when
 ;;    you use apropos completion.  (With a value of 4 the regexp is
-;;    replaced by the match expansion.)
+;;    replaced automatically by the match expansion.)
 ;;
 ;;    See Also:
 ;;
@@ -5224,7 +5224,8 @@
 ;;    toggles Icomplete mode off and on, depending on the current
 ;;    number of candidates.  Set it to `nil' to turn off such
 ;;    toggling.  Set it to a larger or smaller maximum number of
-;;    candidates to reduce or increase its effect.  See also
+;;    candidates to reduce or increase its effect.  This option has no
+;;    effect for Emacs versions prior to Emacs 23.  See also
 ;;    (@file :file-name "icicles-doc1.el" :to "Using Icicles with Icomplete Mode").
 ;;
 ;;  * User option `icicle-Completions-display-min-input-chars' is the

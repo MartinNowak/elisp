@@ -15,6 +15,7 @@
 ;;   (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-shell)        ;;
 ;;   (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-shell)          ;;
 ;;   (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-shell-and-step) ;;
+;;   (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-shell)      ;;
 ;;   (define-key sh-mode-map "\C-c\C-d" 'shell-cd-current-directory)) ;;
 ;; (add-hook 'sh-mode-hook 'essh-sh-hook)                             ;;
 ;; ------------------------------------------------------------------ ;;
@@ -62,7 +63,8 @@ On success, return 0.  Otherwise, go as far as possible and return -1."
 (if (eq shelln 0)
     (progn (shell)
 	   (switch-to-buffer cbuf)
-	   (setq outpr (get-process "shell"))))
+	   (setq outpr (get-process "shell"))
+	   (sleep-for 0.5)))
 (if (eq shelln 1)
     (setq outpr (get-process (elt shelllist 0))))
 (if (> shelln 1)
@@ -89,7 +91,7 @@ outpr)
   "Changes the shell working directory to the current buffer's one."
   (interactive)
   (setq sprocess (process-shell-choose))
-  (setq com (format "cd %s" (file-name-directory (buffer-file-name))))
+  (setq com (format "cd %s" (file-name-directory default-directory)))
   (shell-eval-line sprocess com))
 
 
@@ -133,5 +135,45 @@ outpr)
   (interactive)
   (pipe-region-to-shell (point-min) (point-max)))
 
+(defun pipe-function-to-shell ()
+"Evaluate function to the shell."
+(interactive)
+(setq beg-end (essh-beg-end-of-function))
+(if beg-end
+    (save-excursion
+      (setq beg (nth 0 beg-end))
+      (setq end (nth 1 beg-end))
+      (goto-line beg)
+      (setq origin (point-at-bol))
+      (goto-line end)
+      (setq terminal (point-at-eol))
+      (pipe-region-to-shell origin terminal))
+  (message "No function at current point.")))
+
+(defun essh-beg-end-of-function ()
+  "Returns the lines where the function starts and ends. If there is no function at current line, it returns nil."
+  (interactive)
+  (setq curline (line-number-at-pos))	;current line
+  (setq curcom (buffer-substring (point-at-bol) (point-at-eol)))
+  (setq pos (string-match "function" curcom))
+  (save-excursion 
+    (if pos 
+	(progn
+	  (setq beg curline))
+      (progn
+	(while (not pos)
+	  (setq curline (1- curline))	;current line
+	  (previous-line)			;go to previous line
+	  (setq curcom (buffer-substring (point-at-bol) (point-at-eol)))
+	  (setq pos (string-match "function" curcom)))
+      (setq beg curline)))
+    (beginning-of-line)
+    (forward-list)			; move pointer to first matching brace
+    (setq end (line-number-at-pos)))
+  ;; (message (format  "%d %d" beg end))
+  (if (and (<= (line-number-at-pos) end) (>= (line-number-at-pos) beg))
+      (list beg end)
+    nil))
   
+
 (provide 'essh)

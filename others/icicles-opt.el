@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:22:14 2006
-;; Last-Updated: Tue Apr  1 13:15:56 2014 (-0700)
+;; Last-Updated: Sun Apr 20 15:05:13 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 5942
+;;     Update #: 5968
 ;; URL: http://www.emacswiki.org/icicles-opt.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -220,6 +220,10 @@
 ;;    `icicle-edmacro-parse-keys', `icicle-image-file-p',
 ;;    `icicle-kbd', `icicle-remap', `icicle-thing-at-point',
 ;;    `icicle-widgetp'.
+;;
+;;  Internal variables defined here:
+;;
+;;    `icicle-current-TAB-method', `icicle-delete-candidate-object'.
 ;;
 ;;  For descriptions of changes to this file, see `icicles-chg.el'.
 ;;
@@ -544,6 +548,10 @@
        (set-boolean-to-t menu-item "+ Set Boolean Option to `t'..." icicle-set-option-to-t
         :visible (not current-prefix-arg))))
   "Submenu for toggling, cycling or changing a variable or a behavior.")
+
+(defvar icicle-current-TAB-method nil
+  "*Current completion method for \
+`\\<minibuffer-local-completion-map>\\[icicle-prefix-complete]'.")
 
 (defconst icicle-doremi-submenu
     '(doremi-menu
@@ -1553,6 +1561,24 @@ multi-command `icicle-increment-option' anytime to change the option
 value incrementally."
   :type 'integer :group 'Icicles-Miscellaneous)
 
+(defvar icicle-delete-candidate-object nil
+  "Defines deletion action for command `icicle-delete-candidate-object'.
+The value can be a function or a symbol bound to an alist.
+
+If the value is a function, then the function is called on the current
+completion candidate (a string) to delete some corresponding object.
+
+If the value is a symbol (variable) bound to an alist, then
+`icicle-delete-current-candidate-object' is called to delete the
+corresponding object from that alist.  If the variable is also a user
+option, then the option is saved after the candidate is deleted.
+
+Note that if the value is a variable and you use multi-completion
+candidates during completion, then the alist value of the variable
+must itself contain multi-completions.  Otherwise, no candidate will
+be deleted, because `icicle-delete-current-candidate-object' deletes
+the full candidate object.")
+
 (defcustom icicle-completion-key-bindings
   `((,(icicle-kbd "M-return")  icicle-candidate-read-fn-invoke t)                     ;`M-RET'
                                                                                       ; (`M-return')
@@ -2271,28 +2297,33 @@ This option controls when such expansion occurs.  You can cycle among
 the possible values using \\<minibuffer-local-completion-map>\
 `\\[icicle-cycle-expand-to-common-match]' in the minibuffer.
 
-0 Do not expand your input, except when you use `C-M-TAB' or
+0 Do not expand your input ever, except when you use `C-M-TAB' or
   `C-M-S-TAB', which does not display `*Completions*'.
 
 1 Do not expand your input automatically, during incremental
-  completion.  Expand it only when you use `TAB' or `S-TAB'.
+  completion.  Expand it only when you complete explictly, i.e., when
+  you use `TAB' or `S-TAB'.
 
-2 Expand your input when you use `TAB' or `S-TAB'.
-  Expand it also automatically whenever only one candidate matches it.
+2 Like 1, but expand your input also when it matches only one
+  completion candidate.
 
-3 Expand your input when you use `TAB' or `S-TAB'.
-  Expand it also whenever  only one candidate matches it.
-  Expand it also automatically, during incremental prefix completion.
+3 Like 2, but expand your input also during incremental prefix
+  completion.
 
-4 Expand your input always, including for incremental completion.
+4 Expand your input always.  Like 3, but expand it also during
+  incremental apropos completion.
+
+As the value increases there are thus more contexts in which your
+input can be expanded to the common match.  The expansion contexts for
+each value include those for all lower values.
 
 If you want to return to your original, unexpanded input, use \\<minibuffer-local-completion-map>\
 `\\[icicle-retrieve-previous-input]'.
 
 For apropos completion, your input is, in general, a regexp.  Setting
-the value to `never', `explicit', or `nil' lets you always work with a
-regexp in the minibuffer for apropos completion - your regexp is never
-replaced by the expanded common match.
+the option to a value other than four (4) lets you more easily work
+with a regexp in the minibuffer for apropos completion - your regexp
+is not replaced automatically by the expanded common match.
 
 If you want to just toggle between the current value of this option
 and one of the other values, then see also option
@@ -2315,7 +2346,7 @@ are the same.  You can use \\<minibuffer-local-completion-map>\
   :type '(choice
           (const :tag "Never expand (except for `C-M-TAB' and `C-M-S-TAB')"       0)
           (const :tag "No auto-expansion.  Expand only for explicit completion"   1)
-          (const :tag "Auto-expand when only one matching completion"             2)
+          (const :tag "Auto-expand when only one completion candidate matches"    2)
           (const :tag "Auto-expand for prefix completion or when only one match"  3)
           (const :tag "Auto-expand always: both prefix and apropos completion"    4))
   :group 'Icicles-Matching)
@@ -2749,11 +2780,13 @@ is reenabled when the number of candidates falls below the option
 value.  Icicles does not turn Icomplete mode on unless it was on when
 the minibuffer was activated.
 
-If the option value is not an integer, then it be nil.  In this case,
-Icicles does not turn Icomplete mode off and on.
+If the option value is not an integer, then it must be nil.  In this
+case, Icicles does not turn Icomplete mode off and on.
 
 \(Note that this is about Emacs `icomplete-mode', not Icicles
-incremental completion.)"
+incremental completion.)
+
+This option has no effect for Emacs versions prior to Emacs 23."
   :type '(choice
           (integer :tag "Max number of candidates before inhibiting Icomplete mode" :value 10)
           (const :tag "No maximum - do not automatically inhibit Icomplete mode"))
@@ -3027,29 +3060,6 @@ If you use Do Re Mi (library `doremi.el') then you can use
 multi-command `icicle-increment-option' anytime to change the option
 value incrementally."
   :type 'integer :group 'Icicles-Matching)
-
-;;; $$$$$$
-;;; (defcustom icicle-list-end-string "
-
-;;; "
-;;;   "*String appended to a completion candidate that is a list of strings.
-;;; When a completion candidate is a list of strings, they are joined
-;;; pairwise using `icicle-list-join-string', and `icicle-list-end-string'
-;;; is appended to the joined strings.  The result is what is displayed as
-;;; a completion candidate in buffer `*Completions*', and that is what is
-;;; matched by your minibuffer input.
-
-;;; The purpose of `icicle-list-end-string' is to allow some separation
-;;; between the displayed completion candidates.  Candidates that are
-;;; provided to input-reading functions such as `completing-read' as lists
-;;; of strings are often displayed using multiple lines of text.  If
-;;; `icicle-list-end-string' is \"\", then the candidates appear run
-;;; together, with no visual separation.
-
-;;; It is important to remember that `icicle-list-end-string' is part of
-;;; each completion candidate in such circumstances.  This matters if you
-;;; use a regexp that ends in `$', matching the end of the candidate."
-;;;   :type 'string :group 'Icicles-Completions-Display)
 
 ;; Note: If your copy of this file does not have the two-character string "^G^J"
 ;; (Control-G, Control-J) or, equivalently, \007\012, as the default value, you will want

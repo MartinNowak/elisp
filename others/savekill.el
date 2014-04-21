@@ -1,5 +1,7 @@
-;;;; savekill.el --- Save kill ring to disk
-;; Time-stamp: <2011-02-26 20:22:11 rubikitch>
+;;; savekill.el --- Save kill ring to disk
+;; Version: 20140418.2152
+
+;; Time-stamp: <2014-04-18 11:29:02 rubikitch>
 
 ;; Copyright (C) 2011  rubikitch
 
@@ -74,22 +76,45 @@
 
 (defcustom save-kill-file-name "~/.emacs.d/kill-ring-saved.el"
   "*Saved `kill-ring' filename."
-  :type 'string  
+  :type 'string
   :group 'savekill)
 
+(defcustom savekill-max-saved-items 300
+  "Maximum number of items of the kill ring list that will be saved.
+A nil value means to save the whole list.
+See the command `save-kill-internal'."
+  :group 'savekill
+  :type 'integer)
+
+(defsubst savekill-trunc-list (l n)
+  "Return from L the list of its first N elements."
+  (if n
+      (let (nl)
+        (while (and l (> n 0))
+          (setq nl (cons (car l) nl)
+                n  (1- n)
+                l  (cdr l)))
+        (nreverse nl))
+    l))
+
+(defvar save-kill-coding-system 'utf-8)
+
 (defun save-kill-internal ()
-  (write-region
-   (concat "(setq kill-ring '"
-           (prin1-to-string (mapcar 'substring-no-properties kill-ring))
-           ")\n")
-   nil save-kill-file-name nil 'silent))
+  (let ((coding-system-for-write save-kill-coding-system))
+    (write-region
+    (concat "(setq kill-ring '"
+            (prin1-to-string (savekill-trunc-list
+                              (mapcar 'substring-no-properties kill-ring)
+                              savekill-max-saved-items))
+            ")\n")
+    nil save-kill-file-name nil 'silent)))
 
 (defadvice kill-new (after savekill activate)
   "Save kill ring to `save-kill-file-name' everytime kill ring is updated."
   (save-kill-internal))
 ;; (progn (ad-disable-advice 'kill-new 'after 'savekill) (ad-update 'kill-new))
 
-(add-hook 'after-init-hook (lambda () (load save-kill-file-name)))
+(add-hook 'after-init-hook (lambda () (load save-kill-file-name t)))
 (provide 'savekill)
 
 ;; How to save (DO NOT REMOVE!!)
