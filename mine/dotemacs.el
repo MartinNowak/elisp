@@ -1491,9 +1491,6 @@ save it in `ffap-file-at-point-line-number' variable."
     (setq flycheck-clang-include-path '("root" "tk" "backend"))))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
 
-;;; ===========================================================================
-;;; Flycheck
-
 ;; https://github.com/flycheck/flycheck/issues/302
 (defun flycheck-display-error-messages-unless-error-buffer (errors)
   ;;(message "Here: %s" (get-buffer-window flycheck-error-list-buffer))
@@ -1554,6 +1551,7 @@ save it in `ffap-file-at-point-line-number' variable."
                   ielm-mode-hook))
     (add-hook hook (lambda () (flycheck-mode 1)))))
 
+;;; ===========================================================================
 ;;; Flycheck Coloring
 (when (require 'flycheck-color-mode-line nil t)
   (eval-after-load "flycheck"
@@ -1561,10 +1559,12 @@ save it in `ffap-file-at-point-line-number' variable."
 
 (require 'c-styles nil nil)
 
+;;; ===========================================================================
 ;;; SASS
 (when (append-to-load-path (elsub "scss-mode"))
   (add-to-list 'auto-mode-alist '("\\.scss\\'" . sass-mode)))
 
+;;; ===========================================================================
 ;;; C#
 (when (file-readable-p (elsub "others/csharp-mode.el"))
   (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# (Sharp) code." t)
@@ -1574,6 +1574,7 @@ save it in `ffap-file-at-point-line-number' variable."
     (setq tab-width 4))
   (add-hook 'csharp-mode-hook 'my-csharp-mode-hook t))
 
+;;; ===========================================================================
 ;;; LLVM
 ;;(custom-set-variables '(fill-column 80) '(c++-indent-level 2) '(c-basic-offset 2) '(indent-tabs-mode nil))
 ;; Alternative to setting the global style.  Only files with "llvm" in
@@ -1594,9 +1595,11 @@ save it in `ffap-file-at-point-line-number' variable."
 (add-to-list 'auto-mode-alist '("\\.ll\\'" . llvm-mode))
 (add-to-list 'auto-mode-alist '("\\.td\\'" . tablegen-mode))
 
-;; Google Go
+;;; ===========================================================================
+;;; Google Go
 (require 'go-mode-load nil t)
 
+;;; ===========================================================================
 ;;; Clojure: See: http://tapestryjava.blogspot.com/2008/11/getting-started-with-clojure.html
 (append-to-load-path (elsub "nrepl"))
 (when (append-to-load-path (elsub "clojure-mode"))
@@ -1665,6 +1668,7 @@ save it in `ffap-file-at-point-line-number' variable."
         (add-hook 'c-mode-common-hook 'ac-cc-setup)))
     ))
 
+;;; ===========================================================================
 ;;; DCD - D Completion Daemon
 (when (load-file (elsub "others/ac-dcd.elc"))
   (when (executable-find "dcd-server")
@@ -1675,6 +1679,7 @@ save it in `ffap-file-at-point-line-number' variable."
   ;;                  (concat "-I" (expand-file-name "~/justd"))))
   )
 
+;;; ===========================================================================
 ;;; Python
 ;; Use python-mode.el instead of python.el: https://launchpad.net/python-mode/
 ;; See: http://www.emacswiki.org/cgi-bin/wiki/PythonMode
@@ -1814,6 +1819,7 @@ save it in `ffap-file-at-point-line-number' variable."
 
   )
 
+;;; ===========================================================================
 ;;; SCons
 (add-to-list 'auto-mode-alist `(,(rx (| "SConstruct" "SConscript")) . python-mode))
 (add-to-list 'auto-mode-alist '("\\.scons\\'" . python-mode))
@@ -1831,28 +1837,33 @@ save it in `ffap-file-at-point-line-number' variable."
   ;;(setq compilation-parse-errors-filename-function 'process-error-filename)
   )
 
+;;; ===========================================================================
 ;;; Cobol
 (when (file-readable-p (elsub "others/cobol-mode.el"))
   (autoload 'cobol-mode "cobol-mode" "Major mode for Tandem COBOL files." t nil)
   (add-to-list 'auto-mode-alist '("\\.cob\\(?:ol\\)?\\'" . cobol-mode)))
 
+;;; ===========================================================================
 ;;; Eiffel
 (when (file-readable-p (elsub "others/eiffel.el"))
   (autoload 'eiffel-mode "eiffel" "Major mode for Eiffel programs" t)
   (add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode)))
 
+;;; ===========================================================================
 ;;; Visual Basic
 (when (file-readable-p (elsub "others/visual-basic-mode.el"))
   (autoload 'visual-basic-mode "visual-basic-mode" "Visual Basic mode." t) ;Visual Basic Mode
   ;; If you are doing Rhino scripts, add
   (add-to-list 'auto-mode-alist '("\\.\\(frm\\|bas\\|rvb\\|vbs\\)$" . visual-basic-mode))) ;TODO: Enable cls (conflicts LaTeX-mode)
 
+;;; ===========================================================================
 ;;; Lua
 (when (append-to-load-path (elsub "lua-mode"))
   (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
   (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
   (add-hook 'lua-mode-hook 'hs-minor-mode))
 
+;;; ===========================================================================
 ;;; Ruby
 (defun ruby-interpolate ()
   "In a double quoted string, interpolate."
@@ -1889,6 +1900,7 @@ save it in `ffap-file-at-point-line-number' variable."
                                 (modes . (ruby-mode)))
                               ))))
 
+;;; ===========================================================================
 ;;; NXML/XML
 ;;(eload 'nxml-mode)
 ;;(when (eload 'xquery-mode))
@@ -1907,8 +1919,10 @@ save it in `ffap-file-at-point-line-number' variable."
       (repeatable-command-advice rng-next-error)
       )))
 
+;;; ===========================================================================
 ;;; Haskell
-(prepend-to-load-path (elsub "haskell-mode"));;(prepend-to-load-path (elsub "fptools/CONTRIB/haskell-modes/emacs")
+
+(prepend-to-load-path (elsub "haskell-mode")) ;;(prepend-to-load-path (elsub "fptools/CONTRIB/haskell-modes/emacs")
 (defun haskell-setup-filladapt ()
   "Setup filladapt for Haskell mode."
   (interactive)
