@@ -268,7 +268,7 @@
                   haskell-mode-hook
                   comint-mode
                   ))
-    (add-hook hook (lambda () (highlight-symbol-mode 1)) t)))
+    (add-hook hook 'highlight-symbol-mode t)))
 
 ;;; ===========================================================================
 ;;; Hide C Preprocessor ifdef regions
@@ -2033,7 +2033,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (inferior-haskell-send-command (inferior-haskell-process)
                                  ":set -fwarn-incomplete-patterns") ;Warn incomplete patterns.
 
-  (add-hook 'haskell-mode-hook 'haskell-setup-defaults)
+  ;; (add-hook 'haskell-mode-hook 'haskell-setup-defaults)
   (when (load (elsub "haskell-mode/haskell-site-file"))
     ;; Editing literate Haskell with LaTeX convention
     (when nil
