@@ -1485,9 +1485,11 @@ save it in `ffap-file-at-point-line-number' variable."
 
 (defun setup-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths."
-  (when (string-match "/dmd/src/" (file-name-directory
-                                   (buffer-file-name)))
-    (setq flycheck-clang-include-path '("root" "tk" "backend"))))
+  (let ((file (buffer-file-name)))
+    (when (and file
+               (string-match "/dmd/src/" (file-name-directory
+                                          file)))
+      (setq flycheck-clang-include-path '("root" "tk" "backend")))))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
 
 ;;; ===========================================================================
