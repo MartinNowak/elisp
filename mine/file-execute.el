@@ -181,7 +181,7 @@
           (split-string
            (read-string (format "Execute %s with arguments: "
                                 (faze (file-name-sans-directory filename) 'file))
-                        nil history (car history)))
+                        nil 'history (car history)))
           ;; (multi-read-thing (format "Execute %s with arguments"
           ;;                           (faze (file-name-sans-directory filename) 'file))
           ;;                   nil nil nil nil history (car history))

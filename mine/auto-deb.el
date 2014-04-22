@@ -430,12 +430,8 @@ to `shell-command-history'."
                                             ;;args
                                             ))
            (args (when exec
-                   (read-strings (format "Arguments to %s: "
-                                         exec)))))
-      (mapconcat 'identity
-                 (append (list exec)
-                         args
-                         ) " "))))
+                   (read-strings (format "Arguments to %s: " exec)))))
+      (mapconcat 'identity (append (list exec) args) " "))))
 ;; Use: (read-shell-command)
 ;; (defadvice read-shell-command (around read-shell-command-ctx-flash (prompt &optional initial-contents hist &rest args))
 ;;   (completing-read-shell-command prompt initial-contents hist args))
