@@ -3328,7 +3328,7 @@ If FULL is non-nil, return absolute file names.  Otherwise return names
 (defun read-file-name-debuggable (prompt &optional dir tkeys)
   "Read a debuggable FILENAME."
   (let* ((tkeys (or tkeys '(GUD-Debuggable))) ;type keys
-         (buffer-file (buffer-file-name))
+         (buffer-file buffer-file-name)
          (buffer-debuggable (and buffer-file ;buffer-specific type-keys (if any)
                                  (car (file-match buffer-file tkeys)))) ;buffer type
          (filename (read-file-name-of-types (format (concat prompt " of type %s: ")
@@ -3975,7 +3975,7 @@ associated with FILENAME."
   (when (require 'gud nil t)
     (unless (and (boundp 'gud-minor-mode)
                  gud-minor-mode)        ;unless buffer is already being debugged
-      (let ((buffer-file (buffer-file-name)))
+      (let ((buffer-file buffer-file-name))
         (if (and buffer-file            ;buffer-specific type-keys (if any)
                  (car (file-match buffer-file 'GUD-Debuggable)))
             (progn (file-debug-single buffer-file)

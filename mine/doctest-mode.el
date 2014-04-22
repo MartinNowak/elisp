@@ -64,7 +64,7 @@
 	(funcall ok  ".")
 	(error (concat "Couldn't find a usable temp directory -- "
 		       "set `doctest-temp-directory'"))))
-	 
+
   "*Directory used for temporary files created when running doctest.
 By default, the first directory from this list that exists and that you
 can write into: the value (if any) of the environment variable TMPDIR,
@@ -73,7 +73,7 @@ can write into: the value (if any) of the environment variable TMPDIR,
   :group 'doctest)
 
 (defcustom hide-example-source t
-  "If true, then don't display the example source code for each 
+  "If true, then don't display the example source code for each
 failure in the results buffer."
   :type 'boolean
   :group 'doctest)
@@ -319,8 +319,8 @@ that matches `doctest-outdent-re', but does not follow a line matching
   "Expressions to highlight in Doctest mode.")
 
 (defun doctest-output-line-matcher (limit)
-  "A `font-lock-keyword' MATCHER that returns t if the current 
-line is the expected output for a doctest example, and if so, 
+  "A `font-lock-keyword' MATCHER that returns t if the current
+line is the expected output for a doctest example, and if so,
 sets `match-data' so that group 0 spans the current line."
   ;; The real work is done by find-doctest-output-line.
   (when (find-doctest-output-line limit)
@@ -331,7 +331,7 @@ sets `match-data' so that group 0 spans the current line."
 ;; [XX] Under construction.
 (defun doctest-selection-matcher (limit)
   (let (found-it)
-    (while (and (not found-it) 
+    (while (and (not found-it)
                 (search-forward-regexp "^[ \t]*\\(>>>\\|[.][.][.]\\)"
                                        limit t))
       (if (get-text-property (point) 'doctest-selected)
@@ -409,7 +409,7 @@ integer for a continuation lines, and nil for non-continuation lines."
                        (if prev-line-opens-block 4 0)
                        (if prev-line-closes-block -4 0))))
 	;; If dedent-only is true, then make sure we don't indent.
-	(when dedent-only 
+	(when dedent-only
 	  (setq indent (min indent curr-line-indent)))
 	;; If indent=0 and we're not outdented, then set indent to
 	;; nil (to signify the start of a new source example).
@@ -432,7 +432,7 @@ copied from the most recent source line, or set to
 
 (defun doctest-electric-backspace ()
   "Delete the preceeding character, level of indentation, or
-prompt.  
+prompt.
 
 If point is at the leftmost column, delete the preceding newline.
 
@@ -451,10 +451,10 @@ line, the delete the line's indentation.
 Otherwise, delete the preceeding character.
 "
   (interactive "*")
-  (cond 
+  (cond
    ;; Beginning of line: delete preceeding newline.
    ((bolp) (backward-delete-char 1))
-      
+
    ;; First non-ws char following prompt: dedent or remove prompt.
    ((and (looking-at "[^ \t\n]\\|$") (doctest-looking-back doctest-prompt-re))
     (let* ((prompt-beg (match-beginning 2))
@@ -505,8 +505,8 @@ whitespace to the left of the point before inserting a newline.
   (interactive "*")
   ;; If we're avoiding trailing spaces, then delete WS before point.
   (if doctest-avoid-trailing-whitespace
-      (delete-char (- (skip-chars-backward " \t"))))     
-  (cond 
+      (delete-char (- (skip-chars-backward " \t"))))
+  (cond
    ;; If we're on an empty prompt, delete it.
    ((on-empty-doctest-source-line)
     (delete-region (match-beginning 0) (match-end 0))
@@ -535,7 +535,7 @@ whitespace to the left of the point before inserting a newline.
 
 ;; Add support for options (eg diff!)
 (defun doctest-execute-buffer ()
-  "Run doctest on the current buffer, and display the results in the 
+  "Run doctest on the current buffer, and display the results in the
 *doctest-output* buffer."
   (interactive "*")
   (setq doctest-results-buffer (get-buffer-create "*doctest-output*"))
@@ -548,7 +548,7 @@ whitespace to the left of the point before inserting a newline.
 			 "doc = open('" tempfile "').read()\n"
 			 "test = DocTestParser().get_doctest("
 			         "doc, {}, '" (buffer-name) "', '"
-				 (buffer-file-name) "', 0)\n"
+				 buffer-file-name "', 0)\n"
 			 "r = DocTestRunner()\n"
 			 "r.run(test)\n"))
 	 (cmd (concat doctest-python-command " -c \"" script "\"")))
@@ -658,7 +658,7 @@ the example's failure description in *doctest-output*."
           (doctest-fontify-line old-selected-failure))))
   (doctest-next-failure -1))
 
-(defconst doctest-example-source-re 
+(defconst doctest-example-source-re
   "^Failed example:\n\\(\n\\|    [^\n]*\n\\)+")
 (defun hide-example-source ()
   "Delete the source code listings from the results buffer (since it's
@@ -690,13 +690,13 @@ easy enough to see them in the original buffer)"
   "^\\([a-zA-Z0-9 ]+:\\)$")
 
 (defconst doctest-results-font-lock-keywords
-  `((,doctest-results-divider-re 
+  `((,doctest-results-divider-re
      (0 'doctest-results-divider-face))
-    (,doctest-results-loc-re 
+    (,doctest-results-loc-re
      (0 'doctest-results-loc-face))
-    (,doctest-results-header-re 
+    (,doctest-results-header-re
      (0 'doctest-results-header-face))
-    (doctest-results-selection-matcher 
+    (doctest-results-selection-matcher
      (0 'doctest-results-selection-face t))))
 
 (defun doctest-results-selection-matcher (limit)
@@ -709,15 +709,15 @@ line.  This is used to highlight the currently selected failure."
     (search-forward-regexp "[^\n]+" limit)))
 
 ;; Register the font-lock keywords (xemacs)
-(put 'doctest-results-mode 'font-lock-defaults 
+(put 'doctest-results-mode 'font-lock-defaults
      '(doctest-results-font-lock-keywords))
 
 ;; Register the font-lock keywords (gnu emacs)
 (defvar font-lock-defaults-alist nil) ; in case we're in xemacs
 (setq font-lock-defaults-alist
       (append font-lock-defaults-alist
-              `((doctest-results-mode 
-		 doctest-results-font-lock-keywords 
+              `((doctest-results-mode
+		 doctest-results-font-lock-keywords
 		 nil nil nil nil))))
 
 ;; Define the mode
@@ -821,7 +821,7 @@ position."
         (let ((beg (progn (beginning-of-line) (point)))
               (end (progn (end-of-line) (point))))
           (font-lock-fontify-region beg end)))))
-  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Syntax Table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -845,7 +845,7 @@ position."
 ;; Key Bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defconst doctest-mode-map 
+(defconst doctest-mode-map
   (let ((map (make-keymap)))
     (define-key map [backspace] 'doctest-electric-backspace)
     (define-key map [return] 'doctest-newline-and-indent)
@@ -857,7 +857,7 @@ position."
     (define-key map "\C-c\C-p" 'doctest-prev-failure)
     (define-key map "\C-c\C-a" 'doctest-first-failure)
     (define-key map "\C-c\C-z" 'doctest-last-failure)
-    map) 
+    map)
   "Keymap for doctest-mode.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -906,9 +906,9 @@ treated differently:
 
   ;; Enable font-lock mode.
   (if (featurep 'font-lock) (font-lock-mode 1))
-  
+
   ;; Register our indentation function.
-  (set (make-local-variable 'indent-line-function) 
+  (set (make-local-variable 'indent-line-function)
        'doctest-indent-source-line)
 
   ;; Keep track of our results buffer.

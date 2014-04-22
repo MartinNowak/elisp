@@ -262,7 +262,7 @@ replaced by underscores."
                      (y-or-n-p-defaults "Insert C++ Guard?" t)
                      nil))
   (progn
-    (let ((file (buffer-file-name)))
+    (let ((file buffer-file-name))
       (let ((hdr (c-header-file-name-cpp-constant file local)))
         (let ((user-hdr (unless (eq guard-flag 'old)
                           (read-from-minibuffer "C/C++ CPP Header Guard Constant(#ifndef-#define ): "
@@ -594,7 +594,7 @@ import core.memory : GC;\n\n"
                   "#!rdmd\n\n")))
     (insert (concat
              (c-block-comment-start)
-             " \\file " (file-name-sans-directory (buffer-file-name)) "
+             " \\file " (file-name-sans-directory buffer-file-name) "
  * \\brief
  */"))
     (insert "\n\n")
@@ -941,7 +941,7 @@ current buffer. C++-FLAG is non-nil if we want a C++ header."
   (interactive "FC header file (.h): \nsAdd Doxygen header ([y]/n)?: ")
   (let ((c++-flag
          (file-match filepath 'C++-Header 'name-recog)))
-    (let* ((hdr (c-header-file-name-cpp-constant (buffer-file-name)))
+    (let* ((hdr (c-header-file-name-cpp-constant buffer-file-name))
            (user-hdr (when ifndef-guard
                        (read-from-minibuffer "CPP Header Constant (#ifndef): " hdr)))
            )
@@ -1145,7 +1145,7 @@ Deprecated in favor of `c-auto-insert-pragma-once'."
   (unless buffer-read-only
     (when (and (cc-derived-mode-p major-mode)
                (switch-to-buffer (current-buffer) t))
-      (let ((filepath (buffer-file-name)))
+      (let ((filepath buffer-file-name))
         (when (or (file-match filepath 'C-Header 'name-recog)
                   (file-match filepath 'C++-Header 'name-recog))
           (save-excursion
@@ -1177,7 +1177,7 @@ Deprecated in favor of `c-auto-insert-pragma-once'."
   (interactive)
   (unless buffer-read-only
     (when (switch-to-buffer (current-buffer) t)
-      (let ((filepath (buffer-file-name)))
+      (let ((filepath buffer-file-name))
         (when (and (file-regular-p filepath)
                    (or (file-match filepath 'C-Header 'name-recog)
                        (file-match filepath 'C++-Header 'name-recog)))

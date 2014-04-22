@@ -996,8 +996,8 @@ of jobs running with nicenessrity NICENESS."
                                                       (file-project-root-directory-p dir)
                                                       (or
                                                        (not use-buffer-name) ;either don't require match
-                                                       (buffer-file-name)
-                                                       (directory-makefile-target-of-buffer dir (buffer-file-name)))
+                                                       buffer-file-name
+                                                       (directory-makefile-target-of-buffer dir buffer-file-name))
                                                       ))
                                                    directory multi halt-dir))
                                              (car (trace-directory-upwards-r 'file-build-directory-p
@@ -1067,7 +1067,7 @@ require match, otherwise choose any target."
                                                    (makefile-targets efile))
                                                   ((file-match efile '(SConstruct SConscript))
                                                    (sconstruct-targets efile)))))))
-                        (let* ((path (buffer-file-name))
+                        (let* ((path buffer-file-name)
                                (fn (when path (file-name-sans-directory path)))
                                (base (when fn (file-name-sans-extension fn)))
                                (defaults (when base

@@ -559,7 +559,7 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
 (defun ectags-tags-file-directory (&optional file)
   "Find root (tags or project) directory of FILE."
   (let* ((dir (progn
-                (unless file (setq file (buffer-file-name)))
+                (unless file (setq file buffer-file-name))
                 (unless file (setq file default-directory))
                 (unless (file-directory-p file) (setq file (file-name-directory file)))
                 file))

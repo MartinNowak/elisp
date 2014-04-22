@@ -223,7 +223,7 @@
   (defun inform-revert-modified-file (&optional p1 p2)
     (let ((revert-buffer-function nil))
       (revert-buffer p1 p2)
-      (w32-msgbox (buffer-file-name) "Emacs: Modified file automatically reverted" 'vb-ok-only 'vb-information nil t)
+      (w32-msgbox buffer-file-name "Emacs: Modified file automatically reverted" 'vb-ok-only 'vb-information nil t)
       )
     )
   (setq revert-buffer-function 'inform-revert-modified-file)
@@ -1103,7 +1103,7 @@ save it in `ffap-file-at-point-line-number' variable."
 (add-hook 'c-mode-common-hook
  	  '(lambda ()
  	     (cond ((string-match "/\\([Oo]pen\\)?[Gg][Ll]/"  ;if OpenGL anywhere in directory path
- 				  (buffer-file-name))
+ 				  buffer-file-name)
  		    (require 'OpenGL)
 		    (OpenGL-minor-mode 1)))))
 ;;(autoload 'OpenGL-minor-mode "OpenGL" "OpenGL editing utilities." t)
@@ -1348,7 +1348,7 @@ save it in `ffap-file-at-point-line-number' variable."
                                            ((looking-back (eval `(rx (regexp ,ID) (* space) "(" (* space)))) "paren")
                                            (t "paren"))
                                      "Complete")
-                             (buffer-file-name)
+                             buffer-file-name
                              (number-to-string (position-bytes (point))))
                        " "))
            "\n"))
@@ -1485,11 +1485,10 @@ save it in `ffap-file-at-point-line-number' variable."
 
 (defun setup-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths."
-  (let ((file (buffer-file-name)))
-    (when (and file
-               (string-match "/dmd/src/" (file-name-directory
-                                          file)))
-      (setq flycheck-clang-include-path '("root" "tk" "backend")))))
+  (when (and buffer-file-name
+             (string-match "/dmd/src/" (file-name-directory
+                                        buffer-file-name)))
+    (setq flycheck-clang-include-path '("root" "tk" "backend"))))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
 
 ;;; ===========================================================================
@@ -3648,9 +3647,9 @@ PROMPT is as for `y-or-n-p'."
     "Htmlize FILE and then open it in Web Browser."
     (interactive (list (read-file-name
                         "HTML-ize file: "
-                        nil nil nil (and (buffer-file-name)
+                        nil nil nil (and buffer-file-name
                                          (file-name-nondirectory
-                                          (buffer-file-name))))))
+                                          buffer-file-name)))))
     (let ((target (or target
                       (concat (file-name-sans-extension file) ".html"))))
       (when (or (not (file-exists-p target))
@@ -4319,7 +4318,7 @@ depend on it being positive instead of the entry in `TeX-command-list'."
 FILENAME defaults to `buffer-file-name'."
       (let ((candidate nil)
 	    (filename (file-name-nondirectory (or filename
-						  (buffer-file-name)))))
+						  buffer-file-name))))
 	(save-excursion
 	  (dolist (buffer (buffer-list))
 	    (with-current-buffer buffer

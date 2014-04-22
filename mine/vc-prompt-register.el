@@ -16,7 +16,7 @@
 (defun prompt-vc-register-file (&optional file)
   "If FILE lies in a directory that is version controlled, then
 prompt whether or not we should register it there."
-  (unless file (setq file (buffer-file-name)))
+  (unless file (setq file buffer-file-name))
   (let ((dirname (file-name-directory file))
         (basename (file-name-nondirectory file)))
     (when (and

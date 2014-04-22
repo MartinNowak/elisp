@@ -221,7 +221,7 @@ HEADER-FILE). If DIRS is a list search those aswell."
   (defun query-insert-apt-file-if-not-found ()
     "Query auto-install of APT package that provides `buffer-file-name'."
     (interactive)
-    (let ((filename (buffer-file-name)))
+    (let ((filename buffer-file-name))
       (when (and filename                      ;buffer "has a file"
                  (not (file-exists-p filename)) ;that doesn't exist yet
                  (y-or-n-p (format "Install system package(s) providing file %s " (faze filename 'file))))

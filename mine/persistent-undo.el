@@ -24,7 +24,7 @@
                  (file-name-directory filename))))
     (make-directory dir t)
     (expand-file-name undofile dir)))
-;; (save-undo-filename (buffer-file-name) (buffer-undo-symbol))
+;; (save-undo-filename buffer-file-name (buffer-undo-symbol))
 
 (defun save-undo ()
   "Save the undo list to a file."
@@ -32,7 +32,7 @@
   (let* ((sym (buffer-undo-symbol))
          (val (symbol-value sym)))
     (when val                           ;only non-empty undo history
-      (let* ((filename (save-undo-filename (buffer-file-name) sym))
+      (let* ((filename (save-undo-filename buffer-file-name sym))
              (buffer (find-file-noselect filename)))
         (with-current-buffer buffer
           (setq buffer-read-only nil)
@@ -52,7 +52,7 @@
              (null buffer-undo-list)
              )
     (let* ((sym (buffer-undo-symbol))
-           (filename (save-undo-filename (buffer-file-name) sym)))
+           (filename (save-undo-filename buffer-file-name sym)))
       (when (file-exists-p filename)
         (let* ((handling-undo-saving t)
                (buffer (find-file-noselect filename))

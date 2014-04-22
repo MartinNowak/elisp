@@ -56,7 +56,7 @@
 
 (add-hook 'c-mode-hook (lambda ()
                          (dolist (path my-linux-style-path-alist)
-                           (if (string-match path (buffer-file-name))
+                           (if (string-match path buffer-file-name)
                                (c-set-style "linux")))))
 
 (when nil

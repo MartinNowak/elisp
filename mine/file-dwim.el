@@ -40,7 +40,7 @@ If op is `try-last' try getting the last cached.
 Optionally display output buffer if DISPLAY-OUTPUT is non-nil.
 Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
   (interactive (list (read-file-name (format "Do (default %s): "
-                                             (file-name-nondirectory (buffer-file-name)))
+                                             (file-name-nondirectory buffer-file-name))
                                      nil buffer-file-name t
                                      (file-name-nondirectory buffer-file-name))))
   (if (url-ops filename)

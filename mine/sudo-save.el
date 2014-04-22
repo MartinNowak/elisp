@@ -51,9 +51,9 @@
   "If we've chown'd this file then we should restore it's ownership."
   (when sudo-save-file-uid
     ;;restore original file access.
-    (sudo-save--chown (number-to-string sudo-save-file-uid) (buffer-file-name))
+    (sudo-save--chown (number-to-string sudo-save-file-uid) buffer-file-name)
     (setq sudo-save-file-uid nil)
-    (message "Wrote (with sudo) %s" (faze (buffer-file-name) 'file))))
+    (message "Wrote (with sudo) %s" (faze buffer-file-name 'file))))
 
 (defun sudo-save--chown(user file-name)
   (message "sudo chown %s %s" user (faze file-name 'file))
@@ -66,10 +66,10 @@
   "Take ownership of this file and later restore it."
   ;;take a snapshow of the owner of the file.
   ;;call sudo to change the file's modes
-  (unless (file-writable-p (buffer-file-name))
+  (unless (file-writable-p buffer-file-name)
     ;;preserve uid of file
-    (setq sudo-save-file-uid (nth 2 (file-attributes (buffer-file-name))))
-    (sudo-save--chown user-login-name (buffer-file-name)))
+    (setq sudo-save-file-uid (nth 2 (file-attributes buffer-file-name)))
+    (sudo-save--chown user-login-name buffer-file-name))
   nil)
 
 (defun sudo-save--find-file-hook()

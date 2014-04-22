@@ -68,7 +68,7 @@
                         (format "-query=%s:%s"
                                 (current-line)
                                 (1+ (current-column)))
-                        (buffer-file-name)))
+                        buffer-file-name))
    'dmd-query-completed))
 
 (defun dmd-query-message ()

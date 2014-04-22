@@ -134,7 +134,7 @@ otherwise default delete-file() on OLD."
   ;;        "New name: " (file-name-directory filename) nil nil
   ;;        (file-name-nondirectory filename)))
   (let ((name (buffer-name))
-        (filename (buffer-file-name))
+        (filename buffer-file-name)
         new-dir)
     (if filename
         (let ((newname
@@ -182,7 +182,7 @@ otherwise default delete-file() on OLD."
   "Delete current buffer and if available its visiting file."
   (interactive)
   (let ((name (buffer-name))
-        (filename (buffer-file-name)))
+        (filename buffer-file-name))
     (if filename
         (when (y-or-n-p (message "Kill buffer %s and delete its file %s "
                                  (faze name 'buffer)

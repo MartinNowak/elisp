@@ -9,7 +9,7 @@
 (defun query-execution-permission-on-script-buffer-file (&optional filename)
   "Query for Setting Execution Permission on buffer-file-name."
   (interactive)
-  (let ((filename (or filename (buffer-file-name)))) ;default filename to buffer name
+  (let ((filename (or filename buffer-file-name))) ;default filename to buffer name
     (when (and (not (file-under-directory-p filename "/tmp")) ;not temporary file
                (not (file-executable-p filename)) ;not (already) executable
                (file-script-code-p filename))     ;and script

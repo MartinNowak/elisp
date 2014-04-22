@@ -11,7 +11,7 @@
 (defun vc-ediff-current-buffer-with-head ()
   "Compare current buffer with its Version Control HEAD."
   (interactive)
-  (let ((file (buffer-file-name)))
+  (let ((file buffer-file-name))
     (if (not file)
         (message "Buffer has no file to diff")
       (when (and (require 'ediff nil t)

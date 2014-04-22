@@ -364,7 +364,7 @@ If CACHED-ONLY is non-nil don't check for file-system updates."
 (defun shell-command-scan-regexp (regexp &optional filename)
   (with-temp-buffer
     (let ((fn (expand-file-name (or filename
-                                    (buffer-file-name)))))
+                                    buffer-file-name))))
       (shell-command (concat "make -pn"
                              " -C " (file-name-directory fn)
                              " -f " fn)

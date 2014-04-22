@@ -44,8 +44,8 @@
 (defun vc-ensure-checked-in ()
   "Query for Version Control Update."
   (interactive)
-  (if (file-exists-p (format "%s,v" (buffer-file-name)))
-      (progn (vc-checkin (buffer-file-name) nil "")
+  (if (file-exists-p (format "%s,v" buffer-file-name))
+      (progn (vc-checkin buffer-file-name nil "")
              (setq buffer-read-only t)  ;replaces `vc-toggle-read-only'
              (message "Checked in"))
     (message "You need to check this in! M-x vc-use") (ding)))
@@ -84,7 +84,7 @@
 ;; colour for that few pixels is unnoticeably small anyway.
 (defun vc-buffer-status-image ()
   "Return an image indicating the vc status of the current buffer's file."
-  (let ((icon (if (vc-workfile-unchanged-p (buffer-file-name))
+  (let ((icon (if (vc-workfile-unchanged-p buffer-file-name)
                   (elsub "tortoise-svn-icons/NormalIcon.png")
                 (elsub "tortoise-svn-icons/ModifiedIcon.png")))
         (bg-colour (face-attribute 'mode-line :background)))

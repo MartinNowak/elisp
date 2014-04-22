@@ -58,9 +58,9 @@ file as root."
 
 (defun post-ro-edit-hook ()
   "Hook run when the user tries to modify a read-only buffer file owned by root."
-  (when (buffer-file-name)
+  (when buffer-file-name
     (if (y-or-n-p-with-timeout (format "Reopen the file %s of buffer %s as root to edit (defaulting to no in 1 seconds)? "
-                                       (faze (buffer-file-name) 'file)
+                                       (faze buffer-file-name 'file)
                                        (faze (buffer-name) 'buffer))
                                1 nil)
         (let ((p (point)))

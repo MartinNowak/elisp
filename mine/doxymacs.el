@@ -896,7 +896,7 @@ to comp-list."
 				"Tag file " xml " not found."))))))
 		(set-buffer currbuff))))
       ;; Couldn't find this file in doxymacs-doxygen-dirs
-      (error (concat "File " (buffer-file-name)
+      (error (concat "File " buffer-file-name
 		     " does not match any directories in"
 		     " doxymacs-doxygen-dirs.")))))
 
@@ -1075,7 +1075,7 @@ completion list."
 (defun doxymacs-lookup (symbol &optional filename)
   "Look up the symbol under the cursor in Doxygen generated documentation."
   (interactive
-   (let* ((f (buffer-file-name))
+   (let* ((f buffer-file-name)
 	  (completion-list (doxymacs-filename-to-completion-list f)))
      (if (eq f nil)
 	 (error "Current buffer has no file name associated with it.")
@@ -1158,7 +1158,7 @@ the completion or nil if canceled by the user."
 (defun doxymacs-rescan-tags ()
   "Rescan the Doxygen XML tags file in `doxymacs-doxygen-tags'."
   (interactive)
-  (let* ((f (buffer-file-name))
+  (let* ((f buffer-file-name)
 	 (tags-buffer (doxymacs-filename-to-buffer f)))
     (if (buffer-live-p tags-buffer)
 	(kill-buffer tags-buffer))
@@ -1228,8 +1228,8 @@ the completion or nil if canceled by the user."
 (defconst doxymacs-JavaDoc-file-comment-template
   '("/**" > n
     " * " (doxymacs-doxygen-command-char) "file   "
-    (if (buffer-file-name)
-	(file-name-nondirectory (buffer-file-name))
+    (if buffer-file-name
+	(file-name-nondirectory buffer-file-name)
       "") > n
     " * " (doxymacs-doxygen-command-char) "author " (user-full-name)
     (doxymacs-user-mail-address)
@@ -1245,8 +1245,8 @@ the completion or nil if canceled by the user."
 (defconst doxymacs-Qt-file-comment-template
   '("/*!" > n
     " " (doxymacs-doxygen-command-char) "file   "
-    (if (buffer-file-name)
-	(file-name-nondirectory (buffer-file-name))
+    (if buffer-file-name
+	(file-name-nondirectory buffer-file-name)
       "") > n
     " " (doxymacs-doxygen-command-char) "author " (user-full-name)
     (doxymacs-user-mail-address)
@@ -1262,8 +1262,8 @@ the completion or nil if canceled by the user."
 (defconst doxymacs-C++-file-comment-template
   '("///" > n
     "/// " (doxymacs-doxygen-command-char) "file   "
-    (if (buffer-file-name)
-	(file-name-nondirectory (buffer-file-name))
+    (if buffer-file-name
+	(file-name-nondirectory buffer-file-name)
       "") > n
     "/// " (doxymacs-doxygen-command-char) "author " (user-full-name)
     (doxymacs-user-mail-address)

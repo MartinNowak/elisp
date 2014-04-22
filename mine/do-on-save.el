@@ -12,7 +12,7 @@
 (defun query-byte-compile (&optional prompt)
   "Ask the user whether to byte-compile the current buffer
 if its name ends in `.el' and the `.elc' file also exists."
-  (let ((name (buffer-file-name)))
+  (let ((name buffer-file-name))
     (and name
          (string-match "\\.el$" name)
          (not (or (and custom-file      ;if custom-file is set
@@ -30,7 +30,7 @@ if its name ends in `.el' and the `.elc' file also exists."
 (defun query-load-buffer (&optional prompt)
   "Ask the user whether to load byte-compiled version of current
 buffer if its name ends in `.el'."
-  (let ((name (buffer-file-name)))
+  (let ((name buffer-file-name))
     (and name
          (string-match "\\.el$" name)
          (not (or (string-match "dotemacs.el$" name)
@@ -45,7 +45,7 @@ buffer if its name ends in `.el'."
 (defun query-test-buffer (&optional prompt)
   "Ask the user to run all Unit Tests related to the current
 buffer."
-  (let ((name (buffer-file-name)))
+  (let ((name buffer-file-name))
     (and name
          (string-match "\\.el$" name)
          (when (fboundp 'elk-test-run-buffer)
@@ -73,7 +73,7 @@ buffer."
 
 (defun do-on-save-elisp ()
   "Unless current buffer is the `custom-file' do stuff with it."
-  (let ((name (buffer-file-name)))
+  (let ((name buffer-file-name))
     (when (and (or (not custom-file)
                    (not (equal (expand-file-name name)
                                (expand-file-name custom-file)))) ;unless we are (auto-) saving custom-file
@@ -93,51 +93,51 @@ buffer."
         ))))
 
 (defun do-on-save-x-resource-generic ()
-  (when (and (string-equal (file-name-sans-directory (buffer-file-name))
+  (when (and (string-equal (file-name-sans-directory buffer-file-name)
                            ".Xdefaults")
              (executable-find-auto-install-on-demand "xrdb"))
     (let ((ch ?u))
       (case (read-char-spec "Do on save" `((,ch ,ch "Update X State (xrdb))")
                                            (?q nil "Quit")))
         (ch
-         (call-process "xrdb" nil nil nil (buffer-file-name))
+         (call-process "xrdb" nil nil nil buffer-file-name)
          )))))
 
 (defun do-on-save-xmodmap-generic ()
-  (when (and (string-equal (downcase (file-name-sans-directory (buffer-file-name)))
+  (when (and (string-equal (downcase (file-name-sans-directory buffer-file-name))
                            ".xmodmap")
              (executable-find-auto-install-on-demand "xmodmap"))
     (let ((ch ?u))
       (case (read-char-spec "Do on save" `((,ch ,ch "Update X Keyboard State (xmodmap))")
                                            (?q nil "Quit")))
         (?u
-         (call-process "xmodmap" nil nil nil (buffer-file-name))
+         (call-process "xmodmap" nil nil nil buffer-file-name)
          )))))
 
 (defun do-on-save-xml ()
   (when (and (or (eq major-mode 'xml-mode)
-                 (string-has-end (downcase (file-name-sans-directory (buffer-file-name))) ".xml"))
+                 (string-has-end (downcase (file-name-sans-directory buffer-file-name)) ".xml"))
              (executable-find-auto-install-on-demand "xmllint"))
     (let ((ch ?l))
       (case (read-char-spec "Do on save" `((,ch ,ch "Run xmllint on buffer)")
                                            (?q nil "Quit")))
         (?l
-         (call-process "xmllint" nil nil nil (buffer-file-name))
+         (call-process "xmllint" nil nil nil buffer-file-name)
          )))))
 
 (defun do-on-save-python ()
   (when (and (or (eq major-mode 'python-mode)
-                 (string-has-end (downcase (file-name-sans-directory (buffer-file-name))) ".py"))
+                 (string-has-end (downcase (file-name-sans-directory buffer-file-name)) ".py"))
              (executable-find-auto-install-on-demand "pyflakes"))
     ;; TODO: Call it and only show it if exit status is non-zero.
     (case (read-char-spec "Do on save" `((?f ?f "Run pyflakes on buffer)")
                                          (?l ?l "Run pylint on buffer)")
                                          (?q nil "Quit")))
       (?f
-       (compile (concat "pyflakes " (buffer-file-name)) t)
+       (compile (concat "pyflakes " buffer-file-name) t)
        )
       (?l
-       (compile (concat "pylint -f parseable " (buffer-file-name)) t)
+       (compile (concat "pylint -f parseable " buffer-file-name) t)
        ))
     ))
 

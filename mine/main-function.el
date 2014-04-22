@@ -11,7 +11,7 @@
 (defun file-c-main-function (&optional filename)
   "Return position (BEG END) of main function in FILENAME or nil if none present."
   (let ((filename (or filename
-                      (buffer-file-name))))
+                      buffer-file-name)))
     (and (file-match filename '(C C++ Objective-C D) 'name-recog)
          (cscan-file filename c-like-main-function-regexp nil t)))) ;TODO: Set `cscan-file' argument `ctx' to `code' when this logic in cscan is fixed
 ;; (file-c-main-function "~/cognia/tests/t_semnet.cpp")
@@ -25,7 +25,7 @@
 (defun file-haskell-main-function (filename)
   "Return position (BEG END) of main function in FILENAME or nil if none present."
   (let ((filename (or filename
-                      (buffer-file-name))))
+                      buffer-file-name)))
     (and (file-match filename '(Haskell) 'name-recog)
          (cscan-file filename haskell-main-function-regexp 'code t))))
 ;; (file-haskell-main-function "~/bin/hello.hs")
@@ -37,7 +37,7 @@
 (defun file-go-main-function (filename)
   "Return position (BEG END) of main function in FILENAME or nil if none present."
   (let ((filename (or filename
-                      (buffer-file-name))))
+                      buffer-file-name)))
     (and (file-match filename '(Go) 'name-recog)
          (cscan-file filename go-main-function-regexp 'code t))))
 ;; (file-go-main-function (elsub "mine/tscan-tests/utf16.go"))
