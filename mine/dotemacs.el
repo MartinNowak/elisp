@@ -309,6 +309,8 @@
                                         "TARGET_FREEBSD")))
             (c-c++-defines ,(cond ((string-equal system-type "gnu/linux")
                                    "__linux__")
+                                  ((string-equal system-type "windows-nt")
+                                   "_WIN32")
                                   ((string-equal system-type "darwin")
                                    "__APPLE__")
                                   ((string-equal system-type "gnu/kfreebsd")
