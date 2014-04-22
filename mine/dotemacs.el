@@ -1586,7 +1586,8 @@ save it in `ffap-file-at-point-line-number' variable."
                           (c-offsets-alist . ((innamespace 0)))))
 (defun setup-llvm-c-mode ()
   "Setup LLVM C Settings."
-  (when (and buffer-file-name (string-match "llvm" buffer-file-name))
+  (when (and buffer-file-name
+             (string-match "llvm" buffer-file-name))
     (c-set-style "llvm.org")))
 (add-hook 'c-mode-common-hook 'setup-llvm-c-mode)
 (autoload 'llvm-mode "llvm-mode" "LLVM Mode" t)
