@@ -43,3 +43,9 @@
 [submodule "multiple-cursors"]
 	path = multiple-cursors
 	url = git://github.com/magnars/multiple-cursors.el.git
+[submodule "haskell-mode"]
+	path = haskell-mode
+	url = https://github.com/haskell/haskell-mode.git
+[submodule "structured-haskell-mode"]
+	path = structured-haskell-mode
+	url = https://github.com/chrisdone/structured-haskell-mode.git
