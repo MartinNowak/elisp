@@ -26,9 +26,9 @@
           (let* ((fields (split-string
                           (substring (string-strip str) off)
                           (char-to-string ascii-us)))
-                 (description (first fields))
+                 (doc (first fields))
                  (value (second fields))
-                 (type (car (last fields))) ;last character
+                 (type (sixth fields)) ;last character
                  (face (cond ((string-equal type "K") 'font-lock-keyword-face)
                              ((string-equal type "S") 'font-lock-string-face)
                              ((string-equal type "N") 'font-lock-number-face)
@@ -36,7 +36,7 @@
                              (t 'default)))
                  )
             (message "%s: %s"
-                     (propertize description 'face font-lock-comment-face)
+                     (propertize doc 'face font-lock-comment-face)
                      (propertize value 'face face)
                      ;; (propertize  'face face)
                      ))))))
