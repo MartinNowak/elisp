@@ -72,6 +72,10 @@
 (setq gc-cons-threshold (max 3000000 gc-cons-threshold))
 (setq initial-major-mode 'text-mode) ;prevent *scratch* buffer from requring CEDET
 
+(when pnw-me?                           ;I don't need this
+  (menu-bar-mode -1)
+  (tool-bar-mode -1))
+
 ;;; ===========================================================================
 ;;; Auto-Reverting
 ;; It's nice to have Visual Studio C++ behave the same way, so you don't get the
@@ -2734,10 +2738,6 @@ And make sure that it really shows up!"
 (set-frame-font "6x13")
 
 (uniquify-environment-variable "PATH")
-
-(when pnw-me?                           ;I don't need this
-  (menu-bar-mode -1)
-  (tool-bar-mode -1))
 
 ;; =========================================== Inactives =====================================
 ;; =========================================== Inactives =====================================
