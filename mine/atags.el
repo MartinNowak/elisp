@@ -106,7 +106,14 @@ default (shallowest)."
   (let ((entry (assoc dir atags-schedule)))
     (when entry
       (setcdr entry '(nil))))            ;remove timer but keep directory
-  (let ((hits (trace-directory-upwards-r 'file-tags-root-directory-p
+  (let ((hits (trace-directory-upwards-r (cond ((memq tags-type '(ectags
+                                                                  Exuberant-Ctags))
+                                                'file-ectags-root-directory-p)
+                                               ((memq tags-type '(etags
+                                                                  Emacs-Ctags))
+                                                'file-etags-root-directory-p)
+                                               (t
+                                                'file-tags-root-directory-p))
                                          (expand-file-name dir) multi)))
     (tags-update-at
      (if multi                          ;if multiple hits
@@ -115,7 +122,7 @@ default (shallowest)."
      tags-type sync-flag)))
 ;; Use: (progn (atags-update "~/cognia/" 'ectags) atags-schedule)
 ;; Use: (progn (atags-update (elsub "mine/") 'ectags) atags-schedule)
-;; Use: (atags-update "~/elisp/mine/tags" 'ectags nil t)
+;; Use: (atags-update "~/elisp/mine" 'ectags nil t)
 
 (defun atags-schedule-update-above-directory (&optional dir tags-type multi sync-flag)
   "Update all kinds of tags databases above directory DIR."
