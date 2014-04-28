@@ -202,7 +202,6 @@
 (tool-bar-mode -1)                        ;tool-bar
 (display-time-mode -1)                    ;don't display time in menubar
 (temp-buffer-resize-mode 1)               ;Show everything in minibuffer.
-(when pnw-me? (menu-bar-mode -1))
 
 (set-scroll-bar-mode 'right)            ;scrollbar position
 (toggle-scroll-bar t)                   ;show scrollbar
@@ -2735,6 +2734,10 @@ And make sure that it really shows up!"
 (set-frame-font "6x13")
 
 (uniquify-environment-variable "PATH")
+
+(when pnw-me?                           ;I don't need this
+  (menu-bar-mode -1)
+  (tool-bar-mode -1))
 
 ;; =========================================== Inactives =====================================
 ;; =========================================== Inactives =====================================
