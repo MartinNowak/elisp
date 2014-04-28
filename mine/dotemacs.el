@@ -1935,6 +1935,8 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;; ===========================================================================
 ;;; Haskell
 
+(append-to-load-path (elsub "structured-haskell-mode/elisp"))
+
 (prepend-to-load-path (elsub "haskell-mode")) ;;(prepend-to-load-path (elsub "fptools/CONTRIB/haskell-modes/emacs")
 (defun haskell-setup-filladapt ()
   "Setup filladapt for Haskell mode."
@@ -2034,12 +2036,13 @@ save it in `ffap-file-at-point-line-number' variable."
                                  ":set -fwarn-incomplete-patterns") ;Warn incomplete patterns.
 
   ;; (add-hook 'haskell-mode-hook 'haskell-setup-defaults)
-  (when (load (elsub "haskell-mode/haskell-site-file"))
-    ;; Editing literate Haskell with LaTeX convention
-    (when nil
-      (autoload 'haskell-latex-mode "haskell-latex")
-      (add-to-list 'auto-mode-alist '("\\.l[gh]s\\'" . haskell-latex-mode))
-      ))
+  (when nil
+    (when (load (elsub "haskell-mode/haskell-site-file")) ;note there
+      ;; Editing literate Haskell with LaTeX convention
+      (when nil
+        (autoload 'haskell-latex-mode "haskell-latex")
+        (add-to-list 'auto-mode-alist '("\\.l[gh]s\\'" . haskell-latex-mode))
+        )))
   ;; Use `mmm-mode' in literal haskell
   ;; \see http://haskell.org/haskellwiki/Literate_programming#Multi-mode_support_in_Emacs
   (when (require 'mmm-mode nil t)
