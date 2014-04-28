@@ -115,6 +115,7 @@ default (shallowest)."
      tags-type sync-flag)))
 ;; Use: (progn (atags-update "~/cognia/" 'ectags) atags-schedule)
 ;; Use: (progn (atags-update (elsub "mine/") 'ectags) atags-schedule)
+;; Use: (atags-update "~/elisp/mine/tags" 'ectags nil t)
 
 (defun atags-schedule-update-above-directory (&optional dir tags-type multi sync-flag)
   "Update all kinds of tags databases above directory DIR."
