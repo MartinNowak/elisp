@@ -28,17 +28,20 @@
                           (char-to-string ascii-us)))
                  (doc (first fields))
                  (value (second fields))
-                 (type (sixth fields)) ;last character
+                 (type (sixth fields))
+                 (stype (seventh fields)) ;semantic type
+                 (comment (eighth fields)) ;semantic type
                  (face (cond ((string-equal type "K") 'font-lock-keyword-face)
                              ((string-equal type "S") 'font-lock-string-face)
                              ((string-equal type "N") 'font-lock-number-face)
                              ((string-equal type "T") 'font-lock-type-face)
                              (t 'default)))
                  )
-            (message "%s: %s"
+            (message "%s: %s (semantic: type:%s comment:%s)"
                      (propertize doc 'face font-lock-comment-face)
                      (propertize value 'face face)
-                     ;; (propertize  'face face)
+                     (propertize stype 'face font-lock-type-face)
+                     (propertize comment 'face font-lock-comment-face)
                      ))))))
   ;; cleanup
   (when dmd-query-process
