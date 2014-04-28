@@ -586,7 +586,7 @@ context."
       (if dir-flag
           (ectags-scan-directory root 'ectags-format-vi-full-raw *ectags*)
         (unless (file-regular-p (expand-file-name "tags" root)) ;if no tags yet
-          (atags-update root 'ectags nil t)                     ;create it. TODO: sync-flag doesn't work when I delete (elsub "mine/tags").
+          (atags-update root 'Exuberant-Ctags nil t)                     ;create it. TODO: sync-flag doesn't work when I delete (elsub "mine/tags").
           )
         (visit-ectags-table root))
       *ectags*)))

@@ -63,6 +63,7 @@
                   (cmd (case tags-type
                          ('etags etags-update-command)
                          ('ectags ectags-update-command)
+                         ('Exuberant-Ctags ectags-update-command)
                          ('gtags gtags-update-command)
                          ('idutils idutils-update-command)
                          ('cscope cscope-update-command)
