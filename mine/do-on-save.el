@@ -158,11 +158,11 @@ current buffer's major mode.  To be put in `after-save-buffer-hooks'."
 (setq mode-specific-after-save-buffer-hooks
       '((emacs-lisp-mode . do-on-save-elisp)
         (lisp-mode . do-on-save-elisp)
-        (x-resource-generic-mode . do-on-save-x-resource-generic)
-        (xmodmap-generic-mode . do-on-save-xmodmap-generic)
-        (xml-mode . do-on-save-xml)
-        (nxml-mode . do-on-save-xml)
-        (python-mode . do-on-save-python)
+        ;; (x-resource-generic-mode . do-on-save-x-resource-generic)
+        ;; (xmodmap-generic-mode . do-on-save-xmodmap-generic)
+        ;; (xml-mode . do-on-save-xml)
+        ;; (nxml-mode . do-on-save-xml)
+        ;; (python-mode . do-on-save-python)
         ))
 
 (add-hook 'after-save-hook 'run-mode-specific-after-save-buffer-hooks t)
