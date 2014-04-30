@@ -35,31 +35,39 @@
     (require 'font-lock)
     (list
      ;; Function Names
-     (list (concat
-	    "^ "			;line begins with a space
-	    ".*" " "
-	    "\\(" "[[:alnum:]_]+" "\\)" "$")
-	   1 'font-lock-function-name-face)
-     (list (concat
-	    "^ "			;line begins with a space
-	    ".*" " "
-	    "\\(" "[[:alnum:]_]+" "\\)" " "
-	    "\\[" "self" "\\]" "$")
-	   1 'font-lock-function-name-face)
+     ;; (list (concat
+     ;;        "^ "			;line begins with a space
+     ;;        ".*" " "
+     ;;        "\\(" "[[:alnum:]_]+" "\\)" "$")
+     ;;       1 'font-lock-function-name-face)
+     ;; (list (concat
+     ;;        "^ "			;line begins with a space
+     ;;        ".*" " "
+     ;;        "\\(" "[[:alnum:]_]+" "\\)" " "
+     ;;        "\\[" "self" "\\]" "$")
+     ;;       1 'font-lock-function-name-face)
      (list (concat
             (rx symbol-start (group (| "Environment"
+                                       "Export"
+                                       "Import"
+                                       "Default"
+                                       "Alias"
                                        "Object"
                                        "File"
+                                       "Dir"
                                        "StaticLibrary"
                                        "SharedLibrary"
+                                       "Builder"
+                                       "Action"
+                                       "SConscript"
                                        "Program")) symbol-end)
 	    )
 	   1 'font-lock-builtin-face)
-     (list (concat
-	    "^[[:digit:]]"			;line begins with a number
-	    ".*" " "
-	    "\\(" "[[:alnum:]_]+" "\\)" "$")
-	   1 'scons-mode-main-face)
+     ;; (list (concat
+     ;;        "^[[:digit:]]"			;line begins with a number
+     ;;        ".*" " "
+     ;;        "\\(" "[[:alnum:]_]+" "\\)" "$")
+     ;;       1 'scons-mode-main-face)
      ))
   "Expressions to font-lock in Operators mode.")
 
