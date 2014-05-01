@@ -2438,7 +2438,8 @@ functions, and some types.  It also provides indentation that is
 (add-to-list 'auto-mode-alist '("$config.h.in\\'" . c-mode)) ;C Mode for config.h.in
 
 ;;; Rust
-(when (require 'rust-mode nil t))
+(autoload 'rust-mode "rust-mode" "Major mode for Rust code." t)
+(add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
 
 ;;; Auto-(De)Compression
 (when (require 'jka-compr nil t)      ;Handle compressed files transparently
