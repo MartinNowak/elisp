@@ -2140,8 +2140,8 @@ functions, and some types.  It also provides indentation that is
   (add-to-list 'auto-mode-alist '("\\.gitconfig" . gitconfig-mode)))
 
 ;;; Alignment
-(autoload 'align-regexp "align" nil t)
-(autoload 'align-entire "align" nil t)
+(autoload 'align-regexp "align" "Align the current region using an ad-hoc rule read from the minibuffer." t)
+(autoload 'align-entire "align" "Align the selected region as if it were one alignment section." t)
 (global-set-key [(control meta \;)] 'align-regexp)
 (global-set-key [(control tab)] 'align-entire)
 
@@ -2164,11 +2164,10 @@ functions, and some types.  It also provides indentation that is
                     (modes . align-c++-modes))))
 
 ;;; iBuffer: http://www.emacswiki.org/emacs/IbufferMode
-(when (require 'ibuffer nil t)          ;IBuffer
-  ;; (add-to-list 'ibuffer-never-show-regexps "^\\*")
-  ;; (when (require 'ibuf-ext nil t)
-  ;;   (add-to-list 'ibuffer-never-show-predicates "^\\*"))
-  (global-set-key [(control x) (control b)] 'ibuffer))
+;; (add-to-list 'ibuffer-never-show-regexps "^\\*")
+;; (when (require 'ibuf-ext nil t)
+;;   (add-to-list 'ibuffer-never-show-predicates "^\\*"))
+(global-set-key [(control x) (control b)] 'ibuffer)
 
 ;;; Regular Expression Builder: http://www.masteringemacs.org/articles/2011/04/12/re-builder-interactive-regexp-builder/
 (setq-default reb-re-syntax 'string)
