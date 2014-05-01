@@ -102,8 +102,9 @@
 
 ;;; ===========================================================================
 ;;; Visual Regexp
-(when (and (append-to-load-path (elsub "visual-regexp"))
-           (require 'visual-regexp nil t))
+(when (append-to-load-path (elsub "visual-regexp"))
+  (autoload 'vr/replace "visual-regexp" "Visual Regexp Replace" t)
+  (autoload 'vr/query-replace "visual-regexp" "Visual Regexp Query Replace" t)
   (define-key global-map (kbd "C-c r") 'vr/replace)
   (define-key global-map (kbd "C-c q") 'vr/query-replace))
 
