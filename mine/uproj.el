@@ -726,17 +726,18 @@ Picks completions from `exec-path'."
   "Versions of Compilers")
 
 (defun get-compiler-version (compiler)
-  "Ask COMPILER for its version."
-  (cond ((string-match "gcc" compiler)
-         (string-trim (shell-command-to-string (concat compiler " -dumpversion"))))
-        ((string-match "clang" compiler)
-         (let ((str (shell-command-to-string (concat compiler " --version"))))
-           (progn (string-match "clang version \\([0-9-\.]+\\)" str)
-                  (match-string 1 str))))
-        ((string-match "dmd" compiler)
-         (let ((str (shell-command-to-string compiler)))
-           (progn (string-match "DMD\\(32\\|64\\) D Compiler v\\([0-9\.]+\\)" str)
-                  (match-string 2 str))))))
+  "Ask COMPILER for its version or nil if COMPILER executable is missing."
+  (when (executable-find compiler)
+    (cond ((string-match "gcc" compiler)
+           (string-trim (shell-command-to-string (concat compiler " -dumpversion"))))
+          ((string-match "clang" compiler)
+           (let ((str (shell-command-to-string (concat compiler " --version"))))
+             (progn (string-match "clang version \\([0-9-\.]+\\)" str)
+                    (match-string 1 str))))
+          ((string-match "dmd" compiler)
+           (let ((str (shell-command-to-string compiler)))
+             (progn (string-match "DMD\\(32\\|64\\) D Compiler v\\([0-9\.]+\\)" str)
+                    (match-string 2 str)))))))
 
 (defun compiler-version (compiler)
   "Cached version of `get-compiler-version'."
