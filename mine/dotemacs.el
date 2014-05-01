@@ -1637,7 +1637,7 @@ functions, and some types.  It also provides indentation that is
 
 \(fn)" t nil)
 
-(add-to-list 'auto-mode-alist (cons "\\.go$" (function go-mode)))
+(add-to-list 'auto-mode-alist (cons "\\.go\\'" (function go-mode)))
 
 ;;; ===========================================================================
 ;;; Clojure: See: http://tapestryjava.blogspot.com/2008/11/getting-started-with-clojure.html
