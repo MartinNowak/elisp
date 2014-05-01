@@ -1447,8 +1447,8 @@ save it in `ffap-file-at-point-line-number' variable."
                (0 'default)
                (1 'error)
                (2 'font-lock-file-name-face)
-               (3 'compilation-line-face)
-               (4 'compilation-column-face)
+               (3 'compilation-line-number)
+               (4 'compilation-column-number)
                (5 'compilation-error)
                (6 'compilation-warning)
                (7 'compilation-info)
@@ -1568,7 +1568,7 @@ save it in `ffap-file-at-point-line-number' variable."
                   c++-mode-hook
                   d-mode-hook
                   asciidoc-mode-hook
-                  ;;sh-mode-hook
+                  sh-mode-hook
                   makefile-mode-hook
                   haskell-mode-hook
                   emacs-lisp-mode-hook
