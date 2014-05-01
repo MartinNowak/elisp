@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Fri Apr 25 10:22:05 2014 (-0700)
+;; Last-Updated: Tue Apr 29 18:00:42 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10877
+;;     Update #: 10887
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -1999,6 +1999,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/04/29 dadams
+;;     Added: icicle-mouseover-help, icicle-create-thumb.
+;;     icicle-display-candidates-in-Completions: Provide mouseover tooltip image preview.
+;;                                               Hide mouse-face highlighting when image-only.
 ;; 2014/04/20 dadams
 ;;     icicle-insert-candidates:
 ;;       Automatic on/off of Icomplete mode and sorting: Turn on only if it was turned on here.
@@ -3950,12 +3954,14 @@
 ;;       macros needs to be byte-compiled anew after loading the updated macros.
 ;; ****************************************************************************************************
 ;;
+;; 2014/04/28 dadams
+;;     icicle(-file)-define-command: Fix pb introduced 2013-12-01: If icicle-top-level not called...
 ;; 2014/04/05 dadams
 ;;     Added: icicle-menu-bar-make-toggle - same as bmkp-menu-bar-make-toggle in bookmark+-mac.el.
 ;; 2014/04/01 dadams
 ;;     icicle-define-bookmark-command-1:
 ;;       Faces icicle-annotation & icicle-msg-emphasis, not file-name-shadow & bookmark-menu-heading.
-;; 2013/03/08 dadams
+;; 2014/03/08 dadams
 ;;     icicle(-file)-define-command:
 ;;       Use generated let-var CHOICE for (CMD|FILE)-CHOICE.
 ;;       Handle hiding common match, incremental completion and icomplete mode per command properties.
@@ -7164,6 +7170,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/04/29 dadams
+;;     Added: icicle-image-preview-in-tooltip.
 ;; 2014/04/25 dadams
 ;;     icicle-top-level-key-bindings:
 ;;       Added binding for apropos-user-option (Emacs 24.4).  Adjust condition for apropos-variable.
