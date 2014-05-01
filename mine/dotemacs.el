@@ -384,6 +384,7 @@
 
 ;;; ===========================================================================
 ;;; TODO: Ugly to copy this here...
+
 (defun winner-redo ()			; If you change your mind.
   "Restore a more recent window configuration saved by Winner mode."
   (interactive)
@@ -871,9 +872,9 @@
 (eload 'pgo-ansi-color)
 
 ;;; ===========================================================================
-;;; Tree
-(and (append-to-load-path (elsub "neotree"))
-     (require 'neotree nil t))
+;;; NeoTree
+(when (append-to-load-path (elsub "neotree"))
+  (autoload 'neotree "neotree" "File Tree Mode"))
 
 ;;; ===========================================================================
 ;;; Shell-mode
