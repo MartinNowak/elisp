@@ -181,7 +181,9 @@ and Replace)."
 	(if npatt
 	    (let* ((dir (read-directory-name "Starting at: "))
                    (glob (read-string "Files (wildcard) to search in (default is any file): "))
-                   (ws-relax-flag 'space) ;; (y-or-n-p "Relax whitespace? ")
+                   (ws-relax-flag (if (y-or-n-p-defaults "Relax whitespace? ")
+                                      'space
+                                    nil))
                    (major-mode-string (car (rassoc major-mode grep-language-syntax-modes))) ;try to lookup major-mode description. TODO: Reuse fmd or some other structure here!
                    (mode (cdr (assoc (completing-read (format "Syntax Language (default %s): "
                                                               (faze (if major-mode-string major-mode-string "C") 'type)) ;default to C syntax
@@ -199,7 +201,8 @@ and Replace)."
               ;; handle relaxing of whitespace
               (when ws-relax-flag
 
-                (if regexp-flag (setq ws-relax-flag 'space)) ;if regexp are not yet parsed to to default to `space'
+                (when regexp-flag
+                  (setq ws-relax-flag 'space)) ;if regexp are not yet parsed to to default to `space'
 
                 (if (eq ws-relax-flag 'lex)
                     (setq npatt (relax-lexical-whitespace-in-string npatt mode t 'grep))
@@ -236,7 +239,7 @@ and Replace)."
                                                 )
                                 "-F ")  ;fixed string(s)
                               "\"" npatt "\" "
-                              "."  ;compacter representation: (file-relative-name dir)
+                              "." ;compacter representation: (file-relative-name dir)
                               (if (and glob
                                        (not (equal glob "")))
                                   (concat " --include=" glob)))
@@ -249,7 +252,7 @@ and Replace)."
                       (default-directory dir))
                   (grep command))       ;during this grep
 
-                (with-current-buffer grep-last-buffer    ;in last grep buffer
+                (with-current-buffer grep-last-buffer ;in last grep buffer
                   (setq )
                   (setq-default tgrep-input-string patt) ;store input globally
                   (setq-default tgrep-command command)   ;store command globally
@@ -265,17 +268,17 @@ and Replace)."
           )))))
 
 (defun tgrep-string ()
-  "Search files recursively for a string using grep."
+  "Search files recursively for an exact string using GNU Grep."
   (interactive)
   (tgrep-any nil t))
 
 (defun tgrep-regexp ()
-  "Search files recursively for a regexp using grep."
+  "Search files recursively for a regexp using GNU Grep."
   (interactive)
   (tgrep-any 'extended t))
 
 (defun tgrep-repeat ()
-  "Repeat last grep using local variables."
+  "Repeat last GNU Grep using local variables."
   (interactive)
   (let ((last-buffer (or (next-error-find-buffer)
                          grep-last-buffer)))
