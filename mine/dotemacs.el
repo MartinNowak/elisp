@@ -2268,11 +2268,9 @@ functions, and some types.  It also provides indentation that is
 (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
 ;;; Debugging
-(when (and (require 'gud nil t)
-           (fboundp 'gdb-script-mode))
-  (add-to-list 'auto-mode-alist '("\\.gdb\\'" . gdb-script-mode)))
-(setq gdb-use-separate-io-buffer t)
-(setq gdb-many-windows t)
+(add-to-list 'auto-mode-alist '("\\.gdb\\'" . gdb-script-mode))
+(setq-default gdb-use-separate-io-buffer t)
+(setq-default gdb-many-windows t)
 ;; BashDB
 ;; TODO: How do I guide bashdb to search the current directory for
 ;; source files. I thought "-L ." did it, but this is for something
