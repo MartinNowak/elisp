@@ -299,30 +299,30 @@
   "Setup hideif."
   ;; TODO: `hide-ifdef-env'
   (when (require 'hideif nil t)
-    (setq hide-ifdef-shadow t)
+    (setq-default hide-ifdef-shadow t)
     ;; For DMD Sources
-    (setq hide-ifdef-define-alist
-          `((dmd-source-defines ,(cond ((string-equal system-type "gnu/linux")
-                                        "TARGET_LINUX")
-                                       ((string-equal system-type "windows-nt")
-                                        "TARGET_WINDOS")
-                                       ((string-equal system-type "darwin")
-                                        "TARGET_OSX")
-                                       ((string-equal system-type "gnu/kfreebsd")
-                                        "TARGET_FREEBSD")))
-            (c-c++-defines ,(cond ((string-equal system-type "gnu/linux")
-                                   "__linux__")
-                                  ((string-equal system-type "windows-nt")
-                                   "_WIN32")
-                                  ((string-equal system-type "darwin")
-                                   "__APPLE__")
-                                  ((string-equal system-type "gnu/kfreebsd")
-                                   "__FreeBSD__")
-                                  ((string-equal system-type "openbsd")
-                                   "__OpenBSD__")
-                                  ((or (string-match "sun" (symbol-name system-type))
-                                       (string-equal "solaris" (symbol-name system-type)))
-                                   "__sun")))))
+    (setq-default hide-ifdef-define-alist
+                  `((dmd-source-defines ,(cond ((string-equal system-type "gnu/linux")
+                                                "TARGET_LINUX")
+                                               ((string-equal system-type "windows-nt")
+                                                "TARGET_WINDOS")
+                                               ((string-equal system-type "darwin")
+                                                "TARGET_OSX")
+                                               ((string-equal system-type "gnu/kfreebsd")
+                                                "TARGET_FREEBSD")))
+                    (c-c++-defines ,(cond ((string-equal system-type "gnu/linux")
+                                           "__linux__")
+                                          ((string-equal system-type "windows-nt")
+                                           "_WIN32")
+                                          ((string-equal system-type "darwin")
+                                           "__APPLE__")
+                                          ((string-equal system-type "gnu/kfreebsd")
+                                           "__FreeBSD__")
+                                          ((string-equal system-type "openbsd")
+                                           "__OpenBSD__")
+                                          ((or (string-match "sun" (symbol-name system-type))
+                                               (string-equal "solaris" (symbol-name system-type)))
+                                           "__sun")))))
     (hide-ifdef-use-define-alist 'dmd-source-defines)
     (add-hook 'after-save-hook 'update-hide-ifdefs)
     (hide-ifdef-mode 1)))
@@ -1753,92 +1753,90 @@ save it in `ffap-file-at-point-line-number' variable."
   (when (and (append-to-load-path (elsub "pdee"))
              (require 'pdee nil t))))
 
-;;; Python
-(when (require 'python nil t)
-  (defun pnw-setup-python-mode ()
-    (defvar py-mode-map python-mode-map)
-    ;;(set-variable 'py-python-command "/usr/bin/python2.5")
-    ;;(set-variable 'py-indent-offset 4)
-    ;;(set-variable 'py-smart-indentation nil)
-    (set-variable 'indent-tabs-mode nil)
-    (when (and (append-to-load-path (elsub "~/elisp/python/extensions"))
-               (require 'highlight-indentation nil t)
-               (fboundp' highlight-indentation))
-      (highlight-indentation))
+;;; Pymacs
+(when (append-to-load-path (elsub "pymacs"))
+  (let ((pymacs-root (elsub "pymacs")))
+    (when (append-to-load-path pymacs-root)
+      (setq pymacs-load-path `(,pymacs-root))
+      (add-to-PATH (expand-file-name pymacs-root) "PYTHONPATH")))
+  ;;(progn (eload 'pycomplete) (eload 'pycomplete+))
+  (autoload 'pymacs-load "pymacs" nil t)
+  (autoload 'pymacs-eval "pymacs" nil t)
+  (autoload 'pymacs-apply "pymacs")
+  (autoload 'pymacs-call "pymacs"))
 
-    (defun py-next-block ()
-      "Go to the next block. Cf. `forward-sexp' for lisp-mode."
-      (interactive)
-      (when (fboundp 'py-mark-block)
-        ;; (py-mark-block nil 't)
-        (py-mark-block)
-        (back-to-indentation)))
-    ;; Pymacs: http://pymacs.progiciels-bpi.ca/
+(defun pnw-setup-python-mode ()
+  (defvar py-mode-map python-mode-map)
+  ;;(set-variable 'py-python-command "/usr/bin/python2.5")
+  ;;(set-variable 'py-indent-offset 4)
+  ;;(set-variable 'py-smart-indentation nil)
+  (set-variable 'indent-tabs-mode nil)
+  (when (and (append-to-load-path (elsub "~/elisp/python/extensions"))
+             (require 'highlight-indentation nil t)
+             (fboundp' highlight-indentation))
+    (highlight-indentation))
 
-    (when (boundp 'python-mode-map)
-      (define-key python-mode-map [(control c) (control x)] 'py-execute-buffer)
-      (define-key python-mode-map [(control meta shift ?f)] 'py-next-block)) ;for python-mode.el
-    (when (boundp 'python-mode-map)
-      (define-key python-mode-map [(control meta shift ?f)] 'py-next-block)) ;for python.el
-    (repeatable-command-advice python-indent-shift-right)
-    (repeatable-command-advice python-indent-shift-left)
-    )
-  (add-hook 'python-mode-hook 'pnw-setup-python-mode t)
+  (defun py-next-block ()
+    "Go to the next block. Cf. `forward-sexp' for lisp-mode."
+    (interactive)
+    (when (fboundp 'py-mark-block)
+      ;; (py-mark-block nil 't)
+      (py-mark-block)
+      (back-to-indentation)))
+  ;; Pymacs: http://pymacs.progiciels-bpi.ca/
 
-  ;;(add-hook 'python-mode-hook 'turn-on-eldoc-mode)
-
-  (when nil
-    (append-to-load-path (elsub "python"))
-    (defvar py-buffer-name 'nil "Python Buffer name.") ;NOTE: Needed by python-mode.
-    (autoload 'python-mode "python-mode" "Python Mode." t)
-    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-    (add-to-list 'interpreter-mode-alist '("python" . python-mode))
-
-    ;; Function
-    (defadvice py-beginning-of-def-or-class (after py-beginning-of-def-or-class-ctx-flash activate) (when (called-interactively-p 'any) (hictx-defun-afpt))) (ad-activate 'py-beginning-of-def-or-class)
-    (defadvice py-end-of-def-or-class (after py-end-of-def-or-class-ctx-flash activate) (when (called-interactively-p 'any) (hictx-defun-bfpt))) (ad-activate 'py-end-of-def-or-class)
-)
-
-  (when nil
-    (let ((pymacs-root (elsub "pymacs")))
-      (when (append-to-load-path pymacs-root)
-        (setq pymacs-load-path `(,pymacs-root))
-        (add-to-PATH (expand-file-name pymacs-root) "PYTHONPATH")))
-    ;;(progn (eload 'pycomplete) (eload 'pycomplete+))
-    (when (require 'pymacs nil t)
-      (autoload 'pymacs-load "pymacs" nil t)
-      (autoload 'pymacs-eval "pymacs" nil t)
-      (autoload 'pymacs-apply "pymacs")
-      (autoload 'pymacs-call "pymacs")))
-
-  (when nil
-    (when (boundp 'python-shell-map)
-      (defvar py-shell-map python-shell-map))
-    (setf py-shell-map python-shell-map)
-    (when (append-to-load-path (elsub "ipython/"))
-      (eload 'ipython)
-      (eload 'anything-ipython)))
-
-
-  (add-hook 'python-mode-hook 'python-mode-add-charedits t)
-
-  (defun python-mode-setup-keys ()
-    (when (fboundp 'pymacs-eval)
-      (define-key python-mode-map "\M-:" 'pymacs-eval))
-    ;; In python-mode.el RET is bound to py-newline-and-indent, which
-    ;; indents the next line if necessary. In python.el this is bound to
-    ;; C-j instead. You can get the previous behavior with this in your
-    ;; InitFile:
-    (define-key python-mode-map "\C-m" 'newline-and-indent)
-    ;;(modify-syntax-entry ?_ "." python-mode-syntax-table)
-    (abbrev-mode 1)
-    (turn-off-auto-fill))
-
-  (add-hook 'python-mode-hook 'python-mode-setup-keys t)
-
-  (uniquify-environment-variable "PYTHONPATH")
-
+  (when (boundp 'python-mode-map)
+    (define-key python-mode-map [(control c) (control x)] 'py-execute-buffer)
+    (define-key python-mode-map [(control meta shift ?f)] 'py-next-block)) ;for python-mode.el
+  (when (boundp 'python-mode-map)
+    (define-key python-mode-map [(control meta shift ?f)] 'py-next-block)) ;for python.el
+  (repeatable-command-advice python-indent-shift-right)
+  (repeatable-command-advice python-indent-shift-left)
   )
+(add-hook 'python-mode-hook 'pnw-setup-python-mode t)
+
+;;(add-hook 'python-mode-hook 'turn-on-eldoc-mode)
+
+(defun python-mode-setup-keys ()
+  (when (and (require 'pymacs nil t)
+             (fboundp 'pymacs-eval))
+    (define-key python-mode-map "\M-:" 'pymacs-eval))
+  ;; In python-mode.el RET is bound to py-newline-and-indent, which
+  ;; indents the next line if necessary. In python.el this is bound to
+  ;; C-j instead. You can get the previous behavior with this in your
+  ;; InitFile:
+  (define-key python-mode-map "\C-m" 'newline-and-indent)
+  ;;(modify-syntax-entry ?_ "." python-mode-syntax-table)
+  (abbrev-mode 1)
+  (turn-off-auto-fill))
+(add-hook 'python-mode-hook 'python-mode-setup-keys t)
+
+(uniquify-environment-variable "PYTHONPATH")
+
+(when nil
+  (append-to-load-path (elsub "python"))
+  (defvar py-buffer-name 'nil "Python Buffer name.") ;NOTE: Needed by python-mode.
+  (autoload 'python-mode "python-mode" "Python Mode." t)
+  (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+  (add-to-list 'interpreter-mode-alist '("python" . python-mode))
+
+  ;; Function
+  (defadvice py-beginning-of-def-or-class (after py-beginning-of-def-or-class-ctx-flash activate) (when (called-interactively-p 'any) (hictx-defun-afpt))) (ad-activate 'py-beginning-of-def-or-class)
+  (defadvice py-end-of-def-or-class (after py-end-of-def-or-class-ctx-flash activate) (when (called-interactively-p 'any) (hictx-defun-bfpt))) (ad-activate 'py-end-of-def-or-class)
+  )
+
+(when nil
+  (when (boundp 'python-shell-map)
+    (defvar py-shell-map python-shell-map))
+  (setf py-shell-map python-shell-map)
+  (when (append-to-load-path (elsub "ipython/"))
+    (eload 'ipython)
+    (eload 'anything-ipython)))
+
+
+(add-hook 'python-mode-hook 'python-mode-add-charedits t)
+
+
 
 ;;; ===========================================================================
 ;;; SCons
