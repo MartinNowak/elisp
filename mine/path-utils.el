@@ -58,7 +58,9 @@ SEPARATOR default \":\""
 ;; Use: (uniquify-environment-path-string " /a : /b : c : ")
 (eval-when-compile
   (when (require 'elk-test nil t)
-    (assert-equal "/x:/y:/z" (uniquify-environment-path-string "   :  /x  :  /y :  /x : /y : /z  : "))))
+    (assert-equal "/x:/y:/z"
+                  (uniquify-environment-path-string
+                   "   :  /x  :  /y :  /x : /y : /z  : "))))
 (defun uniquify-environment-variable (env-var)
   (let ((value (getenv env-var)))
     (when value
