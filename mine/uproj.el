@@ -732,7 +732,12 @@ Picks completions from `exec-path'."
         ((string-match "clang" compiler)
          (let ((str (shell-command-to-string (concat compiler " --version"))))
            (progn (string-match "clang version \\([0-9-\.]+\\)" str)
-                  (substring str (match-beginning 1) (match-end 1)))))))
+                  (match-string 1 str))))
+        ((string-match "dmd" compiler)
+         (let ((str (shell-command-to-string compiler)))
+           (progn (string-match "DMD\\(32\\|64\\) D Compiler v\\([0-9\.]+\\)" str)
+                  (match-string 2 str))))))
+
 (defun compiler-version (compiler)
   "Cached version of `get-compiler-version'."
   (or (gethash compiler cached-compiler-versions)
@@ -741,10 +746,13 @@ Picks completions from `exec-path'."
                cached-compiler-versions)))
 ;; Use: (compiler-version "gcc")
 ;; Use: (compiler-version "clang")
+;; Use: (compiler-version "dmd")
 (defun gcc-version (&optional compiler) (compiler-version (or compiler "gcc")))
 (defun clang-version (&optional compiler) (compiler-version (or compiler "clang")))
+(defun dmd-version (&optional compiler) (compiler-version (or compiler "dmd")))
 ;; Use: (gcc-version)
 ;; Use: (clang-version)
+;; Use: (dmd-version)
 (defun compiler-version-at-least (version &optional compiler)
   "Return non-nil if GCC COMPILER has at least version VERSION-STRING."
   (inversion->= (version-to-list (compiler-version compiler))
