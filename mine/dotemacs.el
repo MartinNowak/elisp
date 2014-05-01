@@ -2139,11 +2139,12 @@ functions, and some types.  It also provides indentation that is
 (when (append-to-load-path (elsub "gitconfig-mode"))
   (add-to-list 'auto-mode-alist '("\\.gitconfig" . gitconfig-mode)))
 
-;; Alignment
-;; align expressions in a lisp "let"-
-(when (require 'align nil t)
-  (global-set-key [(control meta \;)] 'align-regexp)
-  (global-set-key [(control tab)] 'align-entire))
+;;; Alignment
+(autoload 'align-regexp "align" nil t)
+(autoload 'align-entire "align" nil t)
+(global-set-key [(control meta \;)] 'align-regexp)
+(global-set-key [(control tab)] 'align-entire)
+
 (when nil
   (autoload 'align-let "align-let" nil t)
   (autoload 'align-let-keybinding "align-let" nil t)
