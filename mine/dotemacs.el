@@ -1628,7 +1628,16 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;;; ===========================================================================
 ;;; Google Go
-(require 'go-mode-load nil t)
+(autoload 'go-mode "go-mode" "\
+Major mode for editing Go source text.
+
+This provides basic syntax highlighting for keywords, built-ins,
+functions, and some types.  It also provides indentation that is
+\(almost) identical to gofmt.
+
+\(fn)" t nil)
+
+(add-to-list 'auto-mode-alist (cons "\\.go$" (function go-mode)))
 
 ;;; ===========================================================================
 ;;; Clojure: See: http://tapestryjava.blogspot.com/2008/11/getting-started-with-clojure.html
