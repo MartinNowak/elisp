@@ -2443,8 +2443,8 @@ functions, and some types.  It also provides indentation that is
 
 ;;; Auto-(De)Compression
 (when (require 'jka-compr nil t)      ;Handle compressed files transparently
-  (auto-compression-mode 1)
-  )
+  (auto-compression-mode 1))
+
 ;; arc-lzh-exe.el --- archive-mode support for LHa self-extracting .exe's.
 ;; See: http://user42.tuxfamily.org/arc-lzh-exe/index.html
 (when (autoload 'archive-lzh-exe-mode-maybe "arc-lzh-exe" nil t)
@@ -2628,38 +2628,38 @@ And make sure that it really shows up!"
   (global-set-key [(control c) (j)] 'webjump)
   (global-set-key [(control x) (w)] 'webjump)
   (setq webjump-sites
-        (append '(
-                  ("Reddit Search" .
-                   [simple-query "www.reddit.com" "http://www.reddit.com/search?q=" ""])
-                  ("Google Image Search" .
-                   [simple-query "images.google.com" "images.google.com/images?hl=en&q=" ""])
-                  ("Flickr Search" .
-                   [simple-query "www.flickr.com" "flickr.com/search/?q=" ""])
-                  ("Astar algorithm" .
-                   "http://www.heyes-jones.com/astar")
-                  ("stackoverflow" .
-                   [simple-query "stackoverflow.com" "http://stackoverflow.com/search?q=" ""])
-                  ("eHow" .
-                   [simple-query "ehow.com" "http://ehow.com/search.html?q=" ""])
-                  ("Personal Packages Archives (PPAs)" .
-                   [simple-query "launchpad.net" "https://launchpad.net/ubuntu/+ppas?name_filter=" ""])
-                  ("Wikibooks" .
-                   [simple-query "en.wikibooks.org" "http://en.wikibooks.org/w/index.php?search=" ""])
-                  ("Videolectures" .
-                   [simple-query "videolectures.net" "http://videolectures.net/site/search/?q=" ""])
-                  ("Ask Ubuntu" .
-                   [simple-query "askubuntu.com" "http://askubuntu.com/search?q=" ""])
-                  ("Mathematics" .
-                   [simple-query "math.stackexchange.com/" "http://math.stackexchange.com/search?q=" ""])
-                  ("Facebook" .
-                   [simple-query "facebook.com" "http://www.facebook.com/search.php?q=" ""])
-                  ("Super User" .
-                   [simple-query "superuser.com" "http://superuser.com/search?q=" ""])
-                  ("TeX - LaTeX" .
-                   [simple-query "tex.stackexchange.com" "http://tex.stackexchange.com/search?q=" ""])
-                  )
-                webjump-sample-sites))
-  (delete-dups webjump-sample-sites))
+        (delete-dups
+         (append '(
+                   ("Reddit Search" .
+                    [simple-query "www.reddit.com" "http://www.reddit.com/search?q=" ""])
+                   ("Google Image Search" .
+                    [simple-query "images.google.com" "images.google.com/images?hl=en&q=" ""])
+                   ("Flickr Search" .
+                    [simple-query "www.flickr.com" "flickr.com/search/?q=" ""])
+                   ("Astar algorithm" .
+                    "http://www.heyes-jones.com/astar")
+                   ("stackoverflow" .
+                    [simple-query "stackoverflow.com" "http://stackoverflow.com/search?q=" ""])
+                   ("eHow" .
+                    [simple-query "ehow.com" "http://ehow.com/search.html?q=" ""])
+                   ("Personal Packages Archives (PPAs)" .
+                    [simple-query "launchpad.net" "https://launchpad.net/ubuntu/+ppas?name_filter=" ""])
+                   ("Wikibooks" .
+                    [simple-query "en.wikibooks.org" "http://en.wikibooks.org/w/index.php?search=" ""])
+                   ("Videolectures" .
+                    [simple-query "videolectures.net" "http://videolectures.net/site/search/?q=" ""])
+                   ("Ask Ubuntu" .
+                    [simple-query "askubuntu.com" "http://askubuntu.com/search?q=" ""])
+                   ("Mathematics" .
+                    [simple-query "math.stackexchange.com/" "http://math.stackexchange.com/search?q=" ""])
+                   ("Facebook" .
+                    [simple-query "facebook.com" "http://www.facebook.com/search.php?q=" ""])
+                   ("Super User" .
+                    [simple-query "superuser.com" "http://superuser.com/search?q=" ""])
+                   ("TeX - LaTeX" .
+                    [simple-query "tex.stackexchange.com" "http://tex.stackexchange.com/search?q=" ""])
+                   )
+                 webjump-sample-sites))))
 
 ;;; Saving
 (when (require 'saveplace nil t) (setq-default save-place nil save-place-file "~/.emacs.d/places")) ;TODO: Disabled in favor of `desktop'.
