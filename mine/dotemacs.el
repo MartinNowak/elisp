@@ -367,8 +367,7 @@
 (require 'list-fns nil t)
 
 (when (append-to-load-path (elsub "pcre2el"))
-  (require 'pcre2el)
-  (rxt-global-mode 1))
+  (autoload 'rxt-global-mode "pcre2el" "Toggle Rxt mode in all buffers." t))
 
 ;;; ===========================================================================
 ;; winner.el --- Restore Old (Undo/Redo) Window Configurations
