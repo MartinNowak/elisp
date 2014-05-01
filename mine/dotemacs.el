@@ -1422,8 +1422,8 @@ save it in `ffap-file-at-point-line-number' variable."
 (add-to-list 'compilation-error-regexp-alist-alist
              `(dmd
                ,(concat "^ *"
-                        "\\(\\(?:[^@]+@\\)?\\)"  ;1: Exception Name: core.exception.AssertError@
-                        "\\([^(]+?\\)" ;2: File/Path
+                        "\\(\\(?:[^@]+@\\)?\\)" ;1: Exception Name: core.exception.AssertError@
+                        "\\([^(]+?\\)"          ;2: File/Path
                         "\\(?:-mixin-[0-9]+\\)?"
                         "("
                         "\\([0-9]+\\)" ;3: Line
@@ -1437,10 +1437,10 @@ save it in `ffap-file-at-point-line-number' variable."
                         "\\s-*"
                         ":?"
                         "\\s-*"
-                        "\\(.*\\)$")  ;REGEXP
-               2                    ;FILE'th subexpression
-               3                    ;LINE'th subexpression
-               4                  ;COLUMN'th subexpression
+                        "\\(.*\\)$")   ;REGEXP
+               2                       ;FILE'th subexpression
+               3                       ;LINE'th subexpression
+               4                       ;COLUMN'th subexpression
                1 ;TYPE code: 0 means info, 1 means warning, 2 or nil means error
                nil                  ;HYPERLINK/TYPELINK'th named_subexpressions
                ;; HIGHLIGHT...
