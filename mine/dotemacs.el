@@ -1498,9 +1498,9 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;                    (substatement-open . 0)
 ;;                    (inline-open . 0)))
 
-(defvar dmd-support-columns
-  (compiler-version-at-least "2.066" "dmd")
-  "DMD 2.066+ has -vcolumns flag.")
+(defun dmd-support-columns (&optional dmd-compiler)
+  "DMD 2.066+ has -vcolumns flag."
+  (compiler-version-at-least "2.066" (or dmd-compiler "dmd")))
 
 (defun d-mode-setup-pnw ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
@@ -1510,8 +1510,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (when (require 'flycheck nil t)
     (flycheck-mode 1))
 
-  ;; Override with column support for DMD 2.066+
-  (when dmd-support-columns
+  (when (dmd-support-columns)
     (flycheck-define-checker d-dmd
       "A D syntax checker using the DMD compiler.
 
