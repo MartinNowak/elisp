@@ -1506,7 +1506,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (when (require 'flycheck nil t)
     (flycheck-mode 1))
 
-  ;; Override with column support for DMD
+  ;; Override with column support for DMD 2.066+
   (flycheck-define-checker d-dmd
     "A D syntax checker using the DMD compiler.
 
