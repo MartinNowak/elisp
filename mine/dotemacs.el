@@ -1511,20 +1511,23 @@ save it in `ffap-file-at-point-line-number' variable."
     "A D syntax checker using the DMD compiler.
 
 See URL `http://dlang.org/'."
-    :command ("dmd" "-debug" "-o-"
-              "-wi" ; Compilation will continue even if there are warnings
-              (eval (unless (file-main-function buffer-file-name) "-main"))
+    :command ("dmd" "-vcolumns" "-debug" "-o-"
+              "-wi"       ; Compilation will continue even if there are warnings
               (eval (s-concat "-I" (flycheck-d-base-directory)))
               (option-list "-I" flycheck-dmd-include-path s-prepend)
               source)
     :error-patterns
-    ((error line-start (file-name) "(" line "): Error: " (message) line-end)
-     (warning line-start (file-name) "(" line "): "
-              (or "Warning" "Deprecation") ": " (message) line-end))
+    ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
+     (warning line-start (file-name) "(" line "," column "): "
+              (or "Warning"
+                  "Deprecation") ": " (message) line-end))
     :modes d-mode)
 
-  (when (require 'flycheck-d-unittest nil t)
-    (setup-flycheck-d-unittest))
+  ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
+  ;;            (require 'flycheck-d-unittest nil t))
+  ;;   (setup-flycheck-d-unittest))
+  (setq flycheck-checkers
+        (delq 'd-dmd-unittest flycheck-checkers))
 
   (when (require 'ffap nil t)
     (setq ffap-alist
