@@ -1296,6 +1296,7 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;;; ===========================================================================
 ;;; Indentation
+
 ;; Automatically indent yanked text if in programming-modes
 ;; See: http://www.emacswiki.org/emacs-en/AutoIndentation
 ;; Google Groups: "auto-indent yanks"
@@ -1305,9 +1306,15 @@ save it in `ffap-file-at-point-line-number' variable."
              (elsub "auto-indent-mode"))
   ;; (auto-indent-mode -1)
   )
+
 (require 'yank-indent nil t)
 (require 'indent-dwim nil t)
-(require 'gindent nil t)                 ;Emacs Interface to external command GNU indent
+
+(when (require 'gindent nil t)   ;Emacs Interface to external command GNU indent
+  (autoload 'gindent-buffer "gindent" nil t)
+  (autoload 'gindent-file "gindent" nil t)
+  (autoload 'gindent-region "gindent" nil t))
+
 ;;(eload 'casi)                    ;C-like Automatic Style Input: See: smart-operator.el and py-smart-operator.el
 ;;(eload 'pgo-indent)                     ;Indentation
 
@@ -1316,6 +1323,7 @@ save it in `ffap-file-at-point-line-number' variable."
   (delete-horizontal-space t)
   (open-line n)
   (indent-according-to-mode))
+
 (global-set-key [(control ?o)] 'open-line-and-indent)
 (global-set-key [(control m)] 'newline-and-indent) ;; Automatically indent newline in all modes.
 
@@ -1348,7 +1356,8 @@ save it in `ffap-file-at-point-line-number' variable."
                                         (| (? "/usr") "/bin/env" (* space)
                                            (? "/usr") "/bin/")
                                         "rdmd") . d-mode))
-  (require 'dmd-query nil t))
+  (add-hook 'd-mode-hook (lambda ()
+                           (require 'dmd-query nil t))))
 (defun dscanner-complete ()
   "Use Dscanner to complete at point."
   (interactive)
