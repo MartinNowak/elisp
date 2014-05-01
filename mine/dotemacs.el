@@ -1511,17 +1511,15 @@ save it in `ffap-file-at-point-line-number' variable."
     "A D syntax checker using the DMD compiler.
 
 See URL `http://dlang.org/'."
-    :command ("dmd" "-vcolumns" "-debug" "-o-"
+    :command ("dmd" "-debug" "-o-"
               "-wi" ; Compilation will continue even if there are warnings
-              ;; (eval (if (file-main-function buffer-file-name)
-              ;;           ""
-              ;;           "-main"))
+              (eval (unless (file-main-function buffer-file-name) "-main"))
               (eval (s-concat "-I" (flycheck-d-base-directory)))
               (option-list "-I" flycheck-dmd-include-path s-prepend)
               source)
     :error-patterns
-    ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
-     (warning line-start (file-name) "(" line "," column "): "
+    ((error line-start (file-name) "(" line "): Error: " (message) line-end)
+     (warning line-start (file-name) "(" line "): "
               (or "Warning" "Deprecation") ": " (message) line-end))
     :modes d-mode)
 
