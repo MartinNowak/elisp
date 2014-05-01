@@ -49,3 +49,6 @@
 [submodule "structured-haskell-mode"]
 	path = structured-haskell-mode
 	url = https://github.com/chrisdone/structured-haskell-mode.git
+[submodule "flycheck-d-unittest"]
+	path = flycheck-d-unittest
+	url = https://github.com/flycheck/flycheck-d-unittest.git

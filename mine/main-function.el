@@ -15,8 +15,8 @@
     (and (file-match filename '(C C++ Objective-C D) 'name-recog)
          (cscan-file filename c-like-main-function-regexp nil t)))) ;TODO: Set `cscan-file' argument `ctx' to `code' when this logic in cscan is fixed
 ;; (file-c-main-function "~/cognia/tests/t_semnet.cpp")
-;; Use: (file-c-main-function "~/cognia/drep.d")
-;; Use: (file-c-main-function "~/cognia/t_array.d")
+;; Use: (file-c-main-function "~/justd/fs.d")
+;; Use: (file-c-main-function "~/justd/test/t_array.d")
 
 ;;; Haskell
 (defconst haskell-main-function-regexp "^[[:space:]]*main[[:space:]]*="

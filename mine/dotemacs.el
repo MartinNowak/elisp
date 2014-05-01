@@ -19,10 +19,10 @@
   (package-install 'realgud)
   (package-install 'dash)
   (package-install 'flycheck)
-  (package-install 'flycheck-d-unittest)
+  ;; (package-install 'flycheck-d-unittest)
   (package-install 'flycheck-haskell)
   (package-install 'flycheck-color-mode-line)
-  (package-install 'smartparens)
+  ;; (package-install 'smartparens)
   )
 
 (defvar pnw-me? (string-equal user-full-name "Per Nordlöw"))
@@ -1505,13 +1505,33 @@ save it in `ffap-file-at-point-line-number' variable."
   ;; Flycheck D Unittest: https://github.com/tom-tan/flycheck-d-unittest/wiki/Start-D-with-Emacs
   (when (require 'flycheck nil t)
     (flycheck-mode 1))
+
+  ;; Override with column support for DMD
+  (flycheck-define-checker d-dmd
+    "A D syntax checker using the DMD compiler.
+
+See URL `http://dlang.org/'."
+    :command ("dmd" "-vcolumns" "-debug" "-o-"
+              "-wi" ; Compilation will continue even if there are warnings
+              ;; (eval (if (file-main-function buffer-file-name)
+              ;;           ""
+              ;;           "-main"))
+              (eval (s-concat "-I" (flycheck-d-base-directory)))
+              (option-list "-I" flycheck-dmd-include-path s-prepend)
+              source)
+    :error-patterns
+    ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
+     (warning line-start (file-name) "(" line "," column "): "
+              (or "Warning" "Deprecation") ": " (message) line-end))
+    :modes d-mode)
+
   (when (require 'flycheck-d-unittest nil t)
     (setup-flycheck-d-unittest))
+
   (when (require 'ffap nil t)
     (setq ffap-alist
           (append ffap-alist
-                  '((d-mode . ffap-d-mode)))))
-  )
+                  '((d-mode . ffap-d-mode))))))
 (add-hook 'd-mode-hook 'd-mode-setup-pnw t)
 
 (defun setup-flycheck-mode ()
@@ -1519,7 +1539,10 @@ save it in `ffap-file-at-point-line-number' variable."
   (when (and buffer-file-name
              (string-match "/dmd/src/" (file-name-directory
                                         buffer-file-name)))
-    (setq flycheck-clang-include-path '("root" "tk" "backend"))))
+    (setq flycheck-clang-include-path '("root" "tk" "backend"))
+
+
+    ))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
