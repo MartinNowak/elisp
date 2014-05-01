@@ -1500,7 +1500,7 @@ save it in `ffap-file-at-point-line-number' variable."
 
 (defvar dmd-support-columns
   (compiler-version-at-least "2.066" "dmd")
-  "DMD Supports -vcolumns flag.")
+  "DMD 2.066+ has -vcolumns flag.")
 
 (defun d-mode-setup-pnw ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
