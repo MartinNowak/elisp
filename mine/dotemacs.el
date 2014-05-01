@@ -1498,6 +1498,10 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;                    (substatement-open . 0)
 ;;                    (inline-open . 0)))
 
+(defvar dmd-support-columns
+  (compiler-version-at-least "2.066" "dmd")
+  "DMD Supports -vcolumns flag.")
+
 (defun d-mode-setup-pnw ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
   (setq imenu-generic-expression nil)
@@ -1507,21 +1511,22 @@ save it in `ffap-file-at-point-line-number' variable."
     (flycheck-mode 1))
 
   ;; Override with column support for DMD 2.066+
-  (flycheck-define-checker d-dmd
-    "A D syntax checker using the DMD compiler.
+  (when dmd-support-columns
+    (flycheck-define-checker d-dmd
+      "A D syntax checker using the DMD compiler.
 
 See URL `http://dlang.org/'."
-    :command ("dmd" "-vcolumns" "-debug" "-o-"
-              "-wi"       ; Compilation will continue even if there are warnings
-              (eval (s-concat "-I" (flycheck-d-base-directory)))
-              (option-list "-I" flycheck-dmd-include-path s-prepend)
-              source)
-    :error-patterns
-    ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
-     (warning line-start (file-name) "(" line "," column "): "
-              (or "Warning"
-                  "Deprecation") ": " (message) line-end))
-    :modes d-mode)
+      :command ("dmd" "-vcolumns" "-debug" "-o-"
+                "-wi"     ; Compilation will continue even if there are warnings
+                (eval (s-concat "-I" (flycheck-d-base-directory)))
+                (option-list "-I" flycheck-dmd-include-path s-prepend)
+                source)
+      :error-patterns
+      ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
+       (warning line-start (file-name) "(" line "," column "): "
+                (or "Warning"
+                    "Deprecation") ": " (message) line-end))
+      :modes d-mode))
 
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
   ;;            (require 'flycheck-d-unittest nil t))
