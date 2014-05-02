@@ -472,8 +472,6 @@ Suitables choices are `hictx-buffer' line `hictx-buffer'."
   (defadvice edebug-next-mode (after ctx-flash-edebug-next-mode activate) (progn (message "current-window: %s" (selected-window)) (hictx-sexp-bfpt nil 'hictx-eval-face hictx-eval-timeout))) (ad-activate 'edebug-next-mode)
 
   ;; Tex/LaTeX
-  (defadvice flyspell-goto-next-error (after ctx-flash-flyspell-goto-next-error activate) (hictx-word-afpt nil nil hictx-new-window-timeout)) (ad-activate 'flyspell-goto-next-error)
-
   (when (and (require 'rng-valid nil t)
              (fboundp 'rng-next-error))
     (defadvice rng-previous-error (after ctx-flash-rng-previous-error activate) (hictx-line nil nil hictx-new-window-timeout)) (ad-activate 'rng-previous-error)
