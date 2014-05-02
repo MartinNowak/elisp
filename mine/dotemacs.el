@@ -1610,12 +1610,29 @@ See URL `http://dlang.org/'."
                   ielm-mode-hook))
     (add-hook hook (lambda () (flycheck-mode 1)))))
 
-;;; ===========================================================================
 ;;; Flycheck Coloring
 (when (require 'flycheck-color-mode-line nil t)
   (eval-after-load "flycheck"
     '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)))
 
+;;; Flycheck Flashing
+(when (require 'hictx nil t)
+  (defadvice flycheck-previous-error (after ctx-flash-flycheck-previous-error activate)
+    (hictx-line nil nil hictx-new-window-timeout))
+  (ad-activate 'flycheck-previous-error)
+  (defadvice flycheck-next-error (after ctx-flash-flycheck-next-error activate)
+    (hictx-line nil nil hictx-new-window-timeout))
+  (ad-activate 'flycheck-next-error))
+
+;;; ===========================================================================
+;;; FlySpell
+(when (require 'hictx nil t)
+  (defadvice flyspell-goto-next-error (after ctx-flash-flyspell-goto-next-error activate)
+    (hictx-line nil nil hictx-new-window-timeout))
+  (ad-activate 'flyspell-goto-next-error))
+
+;;; ===========================================================================
+;;; C Style
 (require 'c-styles nil nil)
 
 ;;; ===========================================================================
