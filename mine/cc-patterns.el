@@ -60,30 +60,35 @@
                     "~=")))))
 
 (defconst c-op-inc-dec
-  (list "++"                            ;Increase
-        "--"                            ;Decrease
-	)
+  '("++"                            ;Increase
+    "--"                            ;Decrease
+    )
   "C Language Assignment Operators Inc Dec.")
 
 (defun c-op-assignment-regexp (&optional mode paren)
   "C-Like Language Assignment Operators."
   (let ((mode (or mode major-mode)))
     (concat
+     "[^=<>]"                 ;dont' match ==, <=, >=
      (when paren "\\(")
-     (rx (| (: (not (any ?= ?! ?> ?<))
-               "="
-               (not (any ?> ?=)))       ;Assignment
-            "++" "--"
-            "+=" "-="                   ;Assignment Additive
-            "*=" "/=" "%="              ;Assignment Multiplicative
-            "^=" "&="                   ;Assignment Bitwise Logic
-            "<<=" ">>="                 ;Assignment Bitwise Shift
-            ))
-     (cond ((eq mode 'd-mode)
-            (rx (| "^^="
-                   "~=")))
-           (t ""))
-     (when paren "\\)"))))
+     (rx (| ;; (: (not (any ?= ?! ?> ?<))
+          ;;    (group "=")
+          ;;    (not (any ?> ?=)))
+          "++" "--"
+          "+=" "-="                     ;Assignment Additive
+          "*=" "/=" "%="                ;Assignment Multiplicative
+          "^=" "&="                     ;Assignment Bitwise Logic
+          "<<=" ">>="                   ;Assignment Bitwise Shift
+          "^^=" "~="                    ;d-mode only
+          "="
+          ;; (: (regexp "\\(?<![=!<>]\\)") ;negative look-behind
+          ;;    "="
+          ;;    (regexp "\\(?![=>]\\)") ;negative look-ahead
+          ;;    )
+          ))
+     (when paren "\\)")
+     "[^=<>]"                 ;dont' match ==, <=, >=
+     )))
 ;; Use: (c-op-assignment-regexp)
 ;; Use: (c-op-assignment-regexp 'd-mode)
 ;; Use: (c-op-assignment-regexp 'd-mode t)

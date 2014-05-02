@@ -609,13 +609,7 @@ See: http://dlang.org/property.html")
 (defun coolock/variable-assignment (&optional mode)
   "C-Style Variable Name and Operator in Assignment."
   (list
-   (cons (concat
-          ;; Y< $< "[[:word:]_]+" $> L*
-          ;; "\\(?:" (regexp-quote "[]") "\\)?" L*
-          ;; L*                     ;blanks and newlines
-          (c-op-assignment-regexp mode t)
-          "[^=]"                 ;dont' match ==
-          )
+   (cons (c-op-assignment-regexp mode t)
          '(;; (1 'font-lock-variable-alteration-face keep)
            (1 'font-lock-operator-assignment-face keep)
            ))))
