@@ -13,6 +13,13 @@
 (global-set-key [(meta g) (meta c)] 'goto-char)
 (global-set-key [(meta g) (meta l)] 'goto-line)
 
+(defun display-byte-offset-at-point ()
+  "Show Buffer Byte Offset of point."
+  (interactive)
+  (message "Buffer Byte Offset: %s" (position-bytes (point))))
+(defalias 'show-byte-offset-at-point 'display-byte-offset-at-point)
+(defalias 'byte-offset-at-point 'display-byte-offset-at-point)
+
 ;; Note: Replaced by goto-chg.el
 ;; Set point to the position of the last change.
 ;; Note: See also session-jump-to-last-change().
