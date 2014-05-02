@@ -14,7 +14,8 @@
 (global-set-key [(meta g) (meta l)] 'goto-line)
 
 (defun display-byte-offset-at-point ()
-  "Show Buffer Byte Offset of point."
+  "Show Buffer Byte Offset of point.
+See https://unix.stackexchange.com/questions/39786/in-emacs-or-other-editor-how-to-display-the-byte-offset-of-the-cursor"
   (interactive)
   (message "Buffer Byte Offset: %s" (position-bytes (point))))
 (defalias 'show-byte-offset-at-point 'display-byte-offset-at-point)
