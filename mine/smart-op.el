@@ -98,6 +98,10 @@
 (defconst smart-op-list
   '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" "!" ":" "?" "," "." "~"))
 
+(defconst smart-op-modes
+  '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode)
+  "Common modes where `smart-op' should have special behaviour.")
+
 (defun smart-op-insert (op &optional only-after)
   "Insert operator OP with surrounding spaces.
 e.g., `=' will become ` = ', `+=' will become ` += '.
@@ -166,7 +170,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((memq major-mode smart-op-modes)
              (if (looking-back "\\?.+" (smart-op-bol))
                  (smart-op-insert ":")
                (insert ":")))
@@ -205,7 +209,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((memq major-mode smart-op-modes)
              (insert "&"))
             (t
              (smart-op-insert "&")))
@@ -215,7 +219,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((memq major-mode smart-op-modes)
              ;;          (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
              ;;                  (bolp))
              ;;              (smart-op-insert "*")
@@ -230,7 +234,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((memq major-mode smart-op-modes)
              ;;          (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
              ;;                  (bolp))
              ;;              (smart-op-insert "/")
@@ -245,7 +249,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((and (memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((and (memq major-mode smart-op-modes)
                   (looking-back " - " (- (point) 3)))
              (delete-char -3)
              (insert "->"))
@@ -257,13 +261,17 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((and (memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((and (memq major-mode smart-op-modes)
+                  (looking-at "="))
+             (insert "+")
+             (indent-according-to-mode))
+            ((and (memq major-mode smart-op-modes)
                   (looking-back "+ " (- (point) 2)))
              (delete-char -2)
              (delete-horizontal-space)
              (insert "++")
              (indent-according-to-mode))
-            ((and (memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+            ((and (memq major-mode smart-op-modes)
                   (looking-at (rx digit)))
              (insert "+")
              (indent-according-to-mode))
@@ -275,13 +283,17 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((and (memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((and (memq major-mode smart-op-modes)
+                  (looking-at "="))
+             (insert "-")
+             (indent-according-to-mode))
+            ((and (memq major-mode smart-op-modes)
                   (looking-back "- " (- (point) 2)))
              (delete-char -2)
              (delete-horizontal-space)
              (insert "--")
              (indent-according-to-mode))
-            ((and (memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+            ((and (memq major-mode smart-op-modes)
                   (looking-at (rx digit)))
              (insert "-")
              (indent-according-to-mode))
@@ -293,7 +305,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)            ;only inside real code
-      (cond ((memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode))
+      (cond ((memq major-mode smart-op-modes)
              (smart-op-insert "?"))
             (t
              (smart-op-insert "?" t)))

@@ -306,14 +306,15 @@
     (setq hide-ifdef-define-alist
           `(
             ;; For DMD Sources
-            (dmd-source-defines . ,(cond ((eq system-type 'gnu/linux)
-                                          '(TARGET_LINUX __GNUC__))
-                                         ((eq system-type 'windows-nt)
-                                          '(TARGET_WINDOS NTEXCEPTIONS))
-                                         ((eq system-type 'darwin)
-                                          '(TARGET_OSX))
-                                         ((eq system-type 'gnu/kfreebsd)
-                                          '(TARGET_FREEBSD))))
+            (dmd-source-defines . ,(append '(CCASTSYNTAX CARRAYDECL) ;in parse.c
+                                           (cond ((eq system-type 'gnu/linux)
+                                                  '(TARGET_LINUX __GNUC__))
+                                                 ((eq system-type 'windows-nt)
+                                                  '(TARGET_WINDOS NTEXCEPTIONS))
+                                                 ((eq system-type 'darwin)
+                                                  '(TARGET_OSX))
+                                                 ((eq system-type 'gnu/kfreebsd)
+                                                  '(TARGET_FREEBSD)))))
             ;; For C/C++ Sources
             (platform-defines . ,(cond ((eq system-type 'gnu/linux)
                                         '(__linux__ HAVE_X_WINDOWS GNU_LINUX))
@@ -331,11 +332,12 @@
             (architecture-defines . ,(cond ((eq system-type 'gnu/linux)
                                             '(__linux__))
                                            ))))
+    (add-hook 'after-save-hook 'update-hide-ifdefs)
+    (hide-ifdef-mode 1)
     (hide-ifdef-use-define-alist 'dmd-source-defines)
     (hide-ifdef-use-define-alist 'platform-defines)
     (hide-ifdef-use-define-alist 'architecture-defines)
-    (add-hook 'after-save-hook 'update-hide-ifdefs)
-    (hide-ifdef-mode 1)))
+    ))
 
 (dolist (hook hide-ifdef-modes)
   (add-hook hook 'setup-hide-ifdef t))
