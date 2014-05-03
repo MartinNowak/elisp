@@ -1204,7 +1204,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-wide-string-type
   (lambda (x y)
     `((:lang D :expr "wstring")
-      (:lang C\# :expr "string")
+      (:lang C\# :expr "string" :comment "In C# all strings are UTF-16.")
       )) "Wide UTF-16 String Type.")
 
 (defconst relangs-string-definition
