@@ -69,7 +69,7 @@
   "C-Like Language Assignment Operators."
   (let ((mode (or mode major-mode)))
     (concat
-     "[^=<>]"                 ;dont' match ==, <=, >=
+     "[^!=<>]"                 ;dont' match ==, <=, >=
      (when paren "\\(")
      (rx (| ;; (: (not (any ?= ?! ?> ?<))
           ;;    (group "=")
