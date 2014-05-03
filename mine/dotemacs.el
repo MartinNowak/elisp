@@ -301,9 +301,11 @@
   ;; TODO: `hide-ifdef-env'
   (when (require 'hideif nil t)
     (setq-default hide-ifdef-shadow t)
-    ;; For DMD Sources
+    ;; TODO: Can we support defines with specific constants such as __WORDSIZE being 32 or 64?
     (setq-default hide-ifdef-define-alist
-                  `((dmd-source-defines ,(cond ((string-equal system-type "gnu/linux")
+                  `(
+                    ;; For DMD Sources
+                    (dmd-source-defines ,(cond ((string-equal system-type "gnu/linux")
                                                 "TARGET_LINUX")
                                                ((string-equal system-type "windows-nt")
                                                 "TARGET_WINDOS")
@@ -311,20 +313,25 @@
                                                 "TARGET_OSX")
                                                ((string-equal system-type "gnu/kfreebsd")
                                                 "TARGET_FREEBSD")))
-                    (c-c++-defines ,(cond ((string-equal system-type "gnu/linux")
-                                           "__linux__")
-                                          ((string-equal system-type "windows-nt")
-                                           "_WIN32")
-                                          ((string-equal system-type "darwin")
-                                           "__APPLE__")
-                                          ((string-equal system-type "gnu/kfreebsd")
-                                           "__FreeBSD__")
-                                          ((string-equal system-type "openbsd")
-                                           "__OpenBSD__")
-                                          ((or (string-match "sun" (symbol-name system-type))
-                                               (string-equal "solaris" (symbol-name system-type)))
-                                           "__sun")))))
+                    ;; For C/C++ Sources
+                    (platform-defines ,(cond ((string-equal system-type "gnu/linux")
+                                              "__linux__")
+                                             ((string-equal system-type "windows-nt")
+                                              "_WIN32" "WINDOWSNT")
+                                             ((string-equal system-type "darwin")
+                                              "__APPLE__" "DARWIN_OS")
+                                             ((string-equal system-type "gnu/kfreebsd")
+                                              "__FreeBSD__")
+                                             ((string-equal system-type "openbsd")
+                                              "__OpenBSD__")
+                                             ((or (string-match "sun" (symbol-name system-type))
+                                                  (string-equal "solaris" (symbol-name system-type)))
+                                              "__sun")))
+                    (architecture-defines ,(cond ((string-equal system-type "gnu/linux")
+                                                  "__linux__")
+                                                 ))))
     (hide-ifdef-use-define-alist 'dmd-source-defines)
+    (hide-ifdef-use-define-alist 'platform-defines)
     (add-hook 'after-save-hook 'update-hide-ifdefs)
     (hide-ifdef-mode 1)))
 
