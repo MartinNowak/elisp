@@ -301,7 +301,8 @@
   ;; TODO: `hide-ifdef-env'
   (when (require 'hideif nil t)
     (setq-default hide-ifdef-shadow t)
-    ;; TODO: Can we support defines with specific constants such as __WORDSIZE being 32 or 64?
+    (setq hide-ifdef-env '((__linux__ . t)
+                           (__WORDSIZE . "32")))
     (setq hide-ifdef-define-alist
           `(
             ;; For DMD Sources
