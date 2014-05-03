@@ -469,23 +469,30 @@ X defaults to :related"
     relangs-real-type)
   "Language Built-In Primitive Data Types.")
 
-(defun relangs-limits-minimum (type)
-  "Minimum Value of TYPE."
-  (lambda ()
-    `((:lang C :expr (cond ((equal type "char") "CHAR_MIN")
-                           ((equal type "short") "SHORT_MIN")
-                           ((equal type "int") "INT_MIN")
-                           ((equal type "long") "LONG_MIN")
-                           ((equal type "float") "FLT_MIN")
-                           ((equal type "double") "DBL_MIN")) :import "limits.h")
-      (:lang C++ :expr (: "std::numeric_limits<" type ">::min()") :import "limits")
-      (:lang D :expr (: type ".min")))))
-;; Use: (relangs-limits-minimum "int")
-;; Use: (relangs-limits-minimum "float")
+(defun relangs-default-initialization-value ()
+  "Default Initialization Value of TYPE."
+  (lambda (type)
+    `((:lang D :expr (: ,type ".init"))
+      (:lang C\# :expr (: "default(" type ")")))))
+;; Use: (funcall (relangs-default-initialization-value) "double")
 
-(defun relangs-limits-maximum (type)
+(defun relangs-limits-minimum ()
+  "Minimum Value of TYPE."
+  (lambda (type)
+    `((:lang C :expr ,(cond ((equal type "char") "CHAR_MIN")
+                            ((equal type "short") "SHORT_MIN")
+                            ((equal type "int") "INT_MIN")
+                            ((equal type "long") "LONG_MIN")
+                            ((equal type "float") "FLT_MIN")
+                            ((equal type "double") "DBL_MIN")) :import "limits.h")
+      (:lang C++ :expr (: "std::numeric_limits<" ,type ">::min()") :import "limits")
+      (:lang D :expr (: ,type ".min")))))
+;; Use: (funcall (relangs-limits-minimum) "int")
+;; Use: (funcall (relangs-limits-minimum) "float")
+
+(defun relangs-limits-maximum ()
   "Maximum Value of TYPE."
-  (lambda ()
+  (lambda (type)
     `((:lang C :expr (cond ((equal type "char") "CHAR_MAX")
                            ((equal type "short") "SHORT_MAX")
                            ((equal type "int") "INT_MAX")
@@ -501,12 +508,12 @@ X defaults to :related"
 ;; Use: (relangs-limits-maximum "int")
 ;; Use: (relangs-limits-maximum "float")
 
-(defun relangs-byte-sizeof-type (expr)
+(defun relangs-byte-sizeof-type ()
   "Byte Size of EXPR."
-  (lambda ()
+  (lambda (expr)
     `((:lang (C C++ D) :expr (: "sizeof" "(" expr ")"))
       (:lang D :expr (: expr ".sizeof"))))) ;TODO: Automatically brace around char*
-;; Use: (relangs-byte-sizeof-type "float")
+;; Use: (relangs-byte-sizeof-type)
 ;; Use: (relangs-byte-sizeof-type "double")
 
 (defconst relangs-limits-maximum
@@ -789,15 +796,16 @@ See
                         "(" base "," exponent ")"))
       )) "Arithmetic Power (Exponentation) Operator of to the power of exponent")
 
-(defun relangs-arithmetic-floating-point-remainder (type x y)
+(defun relangs-arithmetic-floating-point-remainder ()
   "Floating Point Division Remainder."
-  `((:lang (Matlab Ada) :expr "rem" :arity 2)
-    (:lang (C C++) :expr ,(cond ((equal type "float") (list "fmodf(" x "," y))
-                                ((equal type "double") (list "fmod(" x "," y))
-                                ((equal type "long double") (list "fmodl(" x "," y))))
-    (:lang (D) :expr ,(list x "%" y))))
-;; Use: (relangs-arithmetic-floating-point-remainder "float" 'alpha 'beta)
-;; Use: (relangs-arithmetic-floating-point-remainder "double" 'alpha 'beta)
+  (lambda (type x y)
+    `((:lang (Matlab Ada) :expr "rem" :arity 2)
+      (:lang (C C++) :expr ,(cond ((equal type "float") (list "fmodf(" x "," y))
+                                  ((equal type "double") (list "fmod(" x "," y))
+                                  ((equal type "long double") (list "fmodl(" x "," y))))
+      (:lang (D) :expr ,(list x "%" y)))))
+;; Use: (funcall (relangs-arithmetic-floating-point-remainder) "float" 'alpha 'beta)
+;; Use: (funcall (relangs-arithmetic-floating-point-remainder) "double" 'alpha 'beta)
 
 ;;; Logical
 (defconst relangs-logical-and
