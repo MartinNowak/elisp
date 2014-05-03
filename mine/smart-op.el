@@ -59,7 +59,7 @@
 
 (defvar smart-op-mode-map
   (let ((keymap (make-sparse-keymap)))
-    (define-key keymap "=" 'smart-op-self-insert-command)
+    (define-key keymap "=" 'smart-op-=)
     (define-key keymap "<" 'smart-op-<)
     (define-key keymap ">" 'smart-op->)
     (define-key keymap "%" 'smart-op-%)
@@ -141,6 +141,18 @@ When ONLY-AFTER, insert space at back only."
 
 
 ;;; Fine Tunings
+
+(defun smart-op-= ()
+  "See `smart-op-insert'."
+  (interactive)
+  (if (at-syntax-code-p)                ;only inside real code
+      (cond ((and (memq major-mode smart-op-modes)
+                  (or (looking-back "=")
+                      (looking-forward "=")))
+             (insert "="))
+            (t
+             (smart-op-insert "=")))
+    (insert "=")))
 
 (defun smart-op-< ()
   "See `smart-op-insert'."
