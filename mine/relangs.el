@@ -1194,11 +1194,18 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 
 (defconst relangs-string-type
   (lambda (x y)
-    `((:lang C :type "char* ")
-      (:lang C++ :expr "std::string ")
+    `((:lang C :type "char*")
+      (:lang C++ :expr "std::string")
+      (:lang D :expr "string")
       (:lang Java :expr "String")
       (:lang Modelica :expr "String")
       )) "String Type.")
+
+(defconst relangs-wide-string-type
+  (lambda (x y)
+    `((:lang D :expr "wstring")
+      (:lang C\# :expr "string")
+      )) "Wide UTF-16 String Type.")
 
 (defconst relangs-string-definition
   (lambda (x y)
