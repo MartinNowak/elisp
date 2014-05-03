@@ -146,10 +146,15 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-op-insert'."
   (interactive)
   (if (at-syntax-code-p)                ;only inside real code
-      (cond ((and (memq major-mode smart-op-modes)
-                  (or (looking-back "=")
-                      (looking-forward "=")))
-             (insert "="))
+      (cond ((memq major-mode smart-op-modes)
+             (cond ((looking-forward "=")
+                    (insert "="))
+                   (t
+                    (when (looking-back "[^[:space:]]!")
+                      (save-excursion
+                        (backward-char 1)
+                        (insert " ")))
+                    (smart-op-insert "="))))
             (t
              (smart-op-insert "=")))
     (insert "=")))
