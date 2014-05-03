@@ -1673,6 +1673,10 @@ and set the focus back to Emacs frame."
 (global-set-key [(f7)] 'previous-error-safe)
 (global-set-key [(f8)] 'next-error-safe)
 
+;;; Eclipse Style bindings
+(global-set-key [(control ?,)] 'previous-error-safe)
+(global-set-key [(control ?.)] 'next-error-safe)
+
 (global-set-key [(meta g) (meta p)] 'previous-error-safe)
 (global-set-key [(meta g) (meta n)] 'next-error-safe)
 

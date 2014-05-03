@@ -1495,10 +1495,6 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;; ===========================================================================
 ;;; FlyCheck
 
-;;; Eclipse Style bindings
-(global-set-key [(control ?,)] 'previous-error)
-(global-set-key [(control ?.)] 'next-error)
-
 (global-set-key [(control f7)] 'flycheck-previous-error)
 (global-set-key [(control f8)] 'flycheck-next-error)
 
