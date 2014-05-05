@@ -129,9 +129,13 @@ Currently supported through GCC's flags -MD."
                                       (let ((imported-file (expand-file-name
                                                             ;; import name to imported-file
                                                             (concat (replace-regexp-in-string "\\." "/" module) ".d")
-                                                            dirname)))
-                                        (when (file-readable-p imported-file)
-                                          imported-file))))
+                                                            dirname))
+                                            (package-file (file-readable-p (expand-file-name "package.d" module))))
+                                        (cond ((file-readable-p imported-file)
+                                               imported-file)
+                                              ((and (file-directory-p module)
+                                                    package-file)
+                                               )))))
                                   (let ((regexp (eval `(rx bol (* space) "import" space (group (+ (| "." (regexp ,ID))))))))
                                     (cscan-file current
                                                 regexp
@@ -149,6 +153,7 @@ Currently supported through GCC's flags -MD."
          (flatten
           files))))))
 ;; Use: (d-file-imports "~/justd/fs.d")
+;; Use: (d-file-imports "~/justd/t_elf.d")
 ;; Use: (d-file-imports "~/justd/algorithm_ex.d")
 ;; Use: (d-file-imports "~/justd/geometry.d")
 ;; Use: (d-file-imports "~/justd/ngram.d")
