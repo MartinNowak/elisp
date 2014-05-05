@@ -126,18 +126,22 @@ Currently supported through GCC's flags -MD."
                                   (lambda (module)
                                     (when (not (string-has-beginnings module '("std." "core.")))
                                       ;; TODO: Split module name into parts and search for them in subdirs of filename
-                                      (let ((imported-file (expand-file-name
-                                                            ;; import name to imported-file
-                                                            (concat (replace-regexp-in-string "\\." "/" module) ".d")
-                                                            dirname))
-                                            (package-file (expand-file-name "package.d"
-                                                                            (expand-file-name module
-                                                                                              dirname))))
+                                      (let* (
+                                             ;; strip "elf." if inside directory with basename "elf"
+                                             (module (string-strip-prefix module
+                                                                          (concat (file-name-sans-directory
+                                                                                   (directory-file-name dirname)) ".")))
+                                             (imported-file (expand-file-name
+                                                             ;; import name to imported-file
+                                                             (concat (replace-regexp-in-string "\\." "/" module) ".d")
+                                                             dirname))
+                                             (package-file (expand-file-name "package.d"
+                                                                             (expand-file-name module
+                                                                                               dirname))))
                                         (cond ((file-readable-p imported-file)
                                                imported-file)
                                               ((file-readable-p package-file)
-                                               package-file
-                                               )))))
+                                               package-file)))))
                                   (let ((regexp (eval `(rx bol (* space) "import" space (group (+ (| "." (regexp ,ID))))))))
                                     (cscan-file current
                                                 regexp
