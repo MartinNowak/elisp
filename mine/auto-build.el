@@ -142,7 +142,13 @@ Currently supported through GCC's flags -MD."
                                                imported-file)
                                               ((file-readable-p package-file)
                                                package-file)))))
-                                  (let ((regexp (eval `(rx bol (* space) "import" space (group (+ (| "." (regexp ,ID))))))))
+                                  (let ((regexp (eval `(rx bol
+                                                           (* space)
+                                                           (? (| "public"
+                                                                 "private") (+ space))
+                                                           "import"
+                                                           (+ space)
+                                                           (group (+ (| "." (regexp ,ID))))))))
                                     (cscan-file current
                                                 regexp
                                                 'code t t nil t nil 'string)))))

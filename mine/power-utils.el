@@ -648,6 +648,13 @@ Comparison is done with `eq'."
 
 ;;; -------- Querying Sub-Content of Strings --------
 
+(defun string-strip-prefix (whole beg)
+  (if (string-has-beginning whole beg)
+      (substring whole (length beg))
+    whole))
+(eval-when-compile (assert-equal (string-strip-prefix "elf.low" "elf.") "low"))
+(eval-when-compile (assert-equal (string-strip-prefix "elf.low" "felf.") "elf.low"))
+
 (defun strip-file-extension (filename extension)
   "Extract the final filename (without extension) from its full path."
   (let ((idx (string-match (concat "\\(.*\\)\\." extension "\\'")
