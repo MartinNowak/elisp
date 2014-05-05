@@ -124,7 +124,7 @@ Currently supported through GCC's flags -MD."
                                  (mapcar
                                   ;; converts module name to filename
                                   (lambda (module)
-                                    (when (not (string-has-beginnings module '("std" "core")))
+                                    (when (not (string-has-beginnings module '("std." "core.")))
                                       ;; TODO: Split module name into parts and search for them in subdirs of filename
                                       (let ((imported-file (expand-file-name
                                                             ;; import name to imported-file
