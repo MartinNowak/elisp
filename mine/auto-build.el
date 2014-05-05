@@ -130,11 +130,13 @@ Currently supported through GCC's flags -MD."
                                                             ;; import name to imported-file
                                                             (concat (replace-regexp-in-string "\\." "/" module) ".d")
                                                             dirname))
-                                            (package-file (file-readable-p (expand-file-name "package.d" module))))
+                                            (package-file (expand-file-name "package.d"
+                                                                            (expand-file-name module
+                                                                                              dirname))))
                                         (cond ((file-readable-p imported-file)
                                                imported-file)
-                                              ((and (file-directory-p module)
-                                                    package-file)
+                                              ((file-readable-p package-file)
+                                               package-file
                                                )))))
                                   (let ((regexp (eval `(rx bol (* space) "import" space (group (+ (| "." (regexp ,ID))))))))
                                     (cscan-file current
