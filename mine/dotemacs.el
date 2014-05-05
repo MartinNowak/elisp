@@ -71,6 +71,7 @@
 ;; second on startup.
 (setq gc-cons-threshold (max 3000000 gc-cons-threshold))
 (setq initial-major-mode 'text-mode) ;prevent *scratch* buffer from requring CEDET
+;; (iswitchb-mode 1)
 
 (when pnw-me?                           ;I don't need this
   (menu-bar-mode -1)
@@ -517,6 +518,7 @@
 ;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
 (when (and (prepend-to-load-path (elsub "smartparens"))
+           (require 'smartparens nil t)
            (fboundp 'smartparens-mode))
   (require 'smartparens-config)
   (smartparens-global-mode 1))
@@ -5811,8 +5813,8 @@ Pass it BUFFER as first arg, and (cdr ARGS) gives the rest of the args."
   ;; iswitchb - IswitchBuffer
   (when (and pnw/use-iswitchb
              (eload 'iswitchb))
-    (iswitchb-mode 1)
-    (global-set-key [(f6)] 'iswitchb-buffer)
+
+
     )
 
   (setq iswitchb-default-method 'samewindow) ;stay in current frame
