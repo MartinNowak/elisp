@@ -113,7 +113,7 @@ Currently supported through GCC's flags -MD."
 
 (require 'misc-fns)
 
-(defun d-file-imports (current &optional found-files)
+(defun d-file-imports (current &optional recursive-flag found-files)
   "Return files references by D Source File named FILENAME."
   (setq current (expand-file-name current))
   (unless found-files
@@ -153,26 +153,22 @@ Currently supported through GCC's flags -MD."
                                                 regexp
                                                 'code t t nil t nil 'string)))))
            (files (append imported-files
-                          (delq nil
-                                (mapcar (lambda (imported-file)
-                                          (when (not (member imported-file found-files))
-                                            (d-file-imports imported-file (append imported-files
-                                                                                  found-files))))
-                                        imported-files)))))
+                          (when recursive-flag
+                            (delq nil
+                                  (mapcar (lambda (imported-file)
+                                            (when (not (member imported-file found-files))
+                                              (d-file-imports imported-file
+                                                              recursive-flag
+                                                              (append imported-files
+                                                                      found-files))))
+                                          imported-files))))))
       (if (not found-files)
           files
         (delete-dups
          (flatten
           files))))))
 ;; Use: (d-file-imports "~/justd/fs.d")
-;; Use: (d-file-imports "~/justd/t_elf.d")
-;; Use: (d-file-imports "~/justd/algorithm_ex.d")
-;; Use: (d-file-imports "~/justd/geometry.d")
-;; Use: (d-file-imports "~/justd/ngram.d")
-;; Use: (d-file-imports "~/justd/digest_ex.d")
-;; Use: (d-file-imports "~/justd/bitset.d")
-;; Use: (d-file-imports "~/justd/module1.d")
-;; Use: (d-file-imports "~/justd/t_parallelism.d")
+;; Use: (d-file-imports "~/justd/fs.d" t)
 
 ;; TODO: Make use of argument ON-SUCCESS or merge with `auto-build-file-finished-callback' logic.
 (defun auto-build-c-common-file (compiler lang filename
@@ -301,7 +297,7 @@ Currently supported through GCC's flags -MD."
 
                                ;; Imported Local Files
                                (let ((local-imports (delete (expand-file-name filename)
-                                                            (d-file-imports filename))))
+                                                            (d-file-imports filename t))))
                                  (when local-imports
                                    (concat " " (mapconcat 'identity local-imports " "))))
 
