@@ -60,7 +60,12 @@
                                        "Builder"
                                        "Action"
                                        "SConscript"
-                                       "Program")) symbol-end)
+                                       "Program"
+                                       "Return"
+                                       "NodeList"
+                                       "ListAction"
+                                       "Entry"
+                                       "RootDir")) symbol-end)
 	    )
 	   1 'font-lock-builtin-face)
      ;; (list (concat
