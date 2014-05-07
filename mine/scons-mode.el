@@ -49,6 +49,10 @@
      (list (concat
             (rx symbol-start (group (| "Environment"
                                        "Export"
+
+                                       "Clone"
+                                       "Append"
+
                                        "Import"
                                        "Default"
                                        "Alias"
