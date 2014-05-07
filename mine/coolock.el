@@ -581,7 +581,10 @@ See: http://dlang.org/property.html")
 (defun coolock/d-special-constants ()
   (list
    (cons (rx (group (| "__FILE__"
-                       "__LINE__")))
+                       "__MODULE__"
+                       "__LINE__"
+                       "__FUNCTION__"
+                       "__PRETTY_FUNCTION__")))
          '((1 'font-lock-constant-face prepend)
            ))))
 
