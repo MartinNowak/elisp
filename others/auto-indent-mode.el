@@ -5,7 +5,7 @@
 ;; Author: Matthew L. Fidler, Le Wang & Others
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Sat Nov  6 11:02:07 2010 (-0500)
-;; Version: 0.123
+;; Version: 0.126
 ;; Last-Updated: Tue Aug 21 13:08:42 2012 (-0500)
 ;;           By: Matthew L. Fidler
 ;;     Update #: 1467
@@ -359,6 +359,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change Log:
+;; 5-May-2014    Matthew L. Fidler  
+;;    Last-Updated: Tue Aug 21 13:08:42 2012 (-0500) #1467 (Matthew L. Fidler)
+;;    Marmalade version bump.
+;; 5-May-2014    Matthew L. Fidler  
+;;    Last-Updated: Tue Aug 21 13:08:42 2012 (-0500) #1467 (Matthew L. Fidler)
+;;    Take out narrowing (Issue #41)
+;; 5-May-2014    Matthew L. Fidler  
+;;    Last-Updated: Tue Aug 21 13:08:42 2012 (-0500) #1467 (Matthew L. Fidler)
+;;    Fix Issue #40
 ;; 20-Dec-2013    Matthew L. Fidler  
 ;;    Last-Updated: Tue Aug 21 13:08:42 2012 (-0500) #1467 (Matthew L. Fidler)
 ;;    Documentation about fixing #37.
@@ -1406,7 +1415,7 @@ indentation is may not specified for the current mode."
   :type '(repeat (symbol :tag "Ignored indent-function"))
   :group 'auto-indent)
 
-(defcustom auto-indent-newline-function 'reindent-newline-and-indent
+(defcustom auto-indent-newline-function 'reindent-then-newline-and-indent
   "Auto indentation function for the return key."
   :type '(choice
           (const :tag "Reindent the current line, insert the newline then indent the current line."
@@ -1848,22 +1857,18 @@ mode."
       (setq p1 (mark t))
       (setq p2 (point)))
     (save-excursion
-      (save-restriction
-        (narrow-to-region p1 p2)
-        (condition-case err
-            (run-hook-with-args 'auto-indent-after-yank-hook (point-min) (point-max))
-          (error
-           (message "[Auto-Indent Mode] Ignoring error when running hook `auto-indent-after-yank-hook': %s" (error-message-string err)))))
+      (condition-case err
+          (run-hook-with-args 'auto-indent-after-yank-hook p1 p2)
+        (error
+         (message "[Auto-Indent Mode] Ignoring error when running hook `auto-indent-after-yank-hook': %s" (error-message-string err))))
       (cond
        (auto-indent-on-yank-or-paste
         (indent-region p1 p2)))
-      (save-restriction
-        (narrow-to-region p1 p2)
-        (cond
-         ((eq auto-indent-mode-untabify-on-yank-or-paste 'tabify)
-          (tabify (point-min) (point-max)))
-         (auto-indent-mode-untabify-on-yank-or-paste
-          (untabify (point-min) (point-max))))))))
+      (cond
+       ((eq auto-indent-mode-untabify-on-yank-or-paste 'tabify)
+        (tabify p1 p2))
+       (auto-indent-mode-untabify-on-yank-or-paste
+        (untabify p1 p2))))))
 
 (defun auto-indent-according-to-mode ()
   "Indent according to mode.
@@ -1961,7 +1966,8 @@ buffer."
         (tabify (point-min) (point-max)))
        ((or (and (not save) auto-indent-untabify-on-visit-file)
             (and save auto-indent-untabify-on-save-file))
-        (untabify (point-min) (point-max)))))))
+        (untabify (point-min) (point-max))))
+      nil)))
 
 (defun auto-indent-file-when-save ()
   "Auto-indent file when save."
@@ -2592,7 +2598,8 @@ around and the whitespace was deleted from the line."
                              (or (not yap) (and yap (= 0 (length yap)))))))
               (save-excursion
                 (when (and auto-indent-last-pre-command-hook-point
-                           (eq auto-indent-newline-function 'reindent-then-newline-and-indent))
+                           (or (eq auto-indent-newline-function 'reindent-then-newline-and-indent)
+                               (eq auto-indent-newline-function 'reindent-newline-and-indent)))
                   (goto-char auto-indent-last-pre-command-hook-point)
                   ;; Use more conservative indent for prior line
                   (auto-indent-according-to-mode))
