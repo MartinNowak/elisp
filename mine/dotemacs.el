@@ -1491,7 +1491,7 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;; asciidoc
 (when (append-to-load-path (elsub "asciidoc-mode"))
   (autoload 'asciidoc-mode "asciidoc-mode" "Major mode for editing D code." t)
-  (add-to-list 'auto-mode-alist '("\\.\\(asciidoc\\|txt\\)" . asciidoc-mode))
+  (add-to-list 'auto-mode-alist '("\\.\\(asciidoc\\)" . asciidoc-mode))
   )
 
 ;;; ===========================================================================
