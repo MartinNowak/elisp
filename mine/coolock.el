@@ -579,6 +579,8 @@ See: http://dlang.org/property.html")
 ;; Use: (coolock/d-template-builtin-operators)
 
 (defun coolock/d-special-constants ()
+  "D special keywords used in debugging.
+See also: http://dlang.org/traits.html"
   (list
    (cons (rx (group (| "__FILE__"
                        "__MODULE__"
