@@ -84,6 +84,7 @@
 ;; want to reload it?" message. Choose Tools->Options->Editor and select
 ;; "Automatic reload of externally modified files".
 (global-auto-revert-mode 1)
+(setq-default auto-revert-interval 1)
 ;; Autorevert Some Buffers
 (add-to-list 'revert-without-query "tags" "TAGS") ;Auto-Revert the Auto-Generated files
 (add-to-list 'auto-mode-alist '("\\/var/log/messages\\'" . auto-revert-tail-mode))
@@ -92,7 +93,7 @@
 (add-to-list 'auto-mode-alist '("\\/var/log/Xorg.0.log\\'" . auto-revert-tail-mode))
 (when (file-exists-p (elsub "syslog-mode.el"))
   (add-to-list 'auto-mode-alist
-   '("\\(messages\\(\\.[0-9]\\)?\\|SYSLOG\\)\\'" . syslog-mode)))
+               '("\\(messages\\(\\.[0-9]\\)?\\|SYSLOG\\)\\'" . syslog-mode)))
 
 (add-to-list 'debug-ignored-errors "^No further undo information")
 
