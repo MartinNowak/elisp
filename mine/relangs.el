@@ -1558,12 +1558,27 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang D :expr (: "uniq(" ,X ")") :import "std.algorithm")
       )) "Uniquify/Delete Elements in X")
 
-(defconst relangs-unique-pointer
+(defconst relangs-unsafe-pointer-type
+  (lambda (T)
+    `(
+      (:lang C++ :expr (: "std::unique_ptr<" ,T))
+      (:lang D :expr (: "shared " ,T))
+      (:lang Rust :expr (: "*" ,T))
+      )) "Unsafe Pointer to Type T.")
+
+(defconst relangs-safe-pointer-type
+  (lambda (T)
+    `(
+      (:lang Rust :expr (: "@" ,T))
+      )) "Safe Pointer to Type T.")
+
+(defconst relangs-unique-pointer-type
   (lambda (T V)
     `(
       (:lang C++ :expr (: "std::unique_ptr<" ,T "> " ,V " = std::make_unique<" T ">();") :import "memory")
       (:lang D :expr (: "shared " ,T " " ,V " = new " ,T ";") :ref ("http://forum.dlang.org/thread/mailman.1191.1368248719.4724.digitalmars-d@puremagic.com?page=3"
-                                                                 "http://wiki.dlang.org/DIP29"))
+                                                                    "http://wiki.dlang.org/DIP29"))
+      (:lang Rust :expr (: "~" ,T "> " ,V))
       )) "Allocate Unique Pointer of Type T stored in variable V.")
 
 (defconst relangs-containing-directory-of-filename
