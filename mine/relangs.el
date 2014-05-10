@@ -149,6 +149,7 @@ X defaults to :related"
     `((:lang C :expr (: "puts(" expr ")") :if ("isstring(expr)"))
       (:lang C++ :expr (: "std::cout << " expr))
       (:lang D :expr (: "write(" (+ expr) ")"))
+      (:lang Rust :expr (: "std::io::print(" (+ expr) ")"))
       (:lang Python-2 :expr (: "print" _ expr))
       (:lang Python-2.6 :expr (: "PrettyPrinter(indent=1, depth=None, with=80).pprint(" expr ")") :import "pprint")
       (:lang Python :expr (: "print(" expr ")") ) ;to make it easier to redirect prints in servers
@@ -162,6 +163,7 @@ X defaults to :related"
 (defconst relangs-print-line
   (lambda (expr)
     `((:lang C++ :expr (: "std::cout << " expr " << std::endl"))
+      (:lang Rust :expr (: "std::io::println(" (+ expr) ")"))
       (:lang D :expr (: "writeln(" (+ expr) ")"))
       )) "Print EXPR on a separate line.")
 
@@ -915,6 +917,7 @@ See
       )) "List Append Operation")
 
 (defconst relangs-list-cons
+
   (lambda (X Y)
     `((:lang Lisp :expr ("(cons" _ ,X _ ,Y _ ")"))
       (:lang Haskell :expr (,X _ ":" _ ,Y))
