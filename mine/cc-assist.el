@@ -435,8 +435,8 @@ C-Style variant of `paredit-wrap-round'."
       (c-wrap-region)
     (paredit-wrap-sexp 1 ?\( ?\))
     (when (require 'hictx nil t)
-      (hictx-sexp-afpt
-       )))
+      (hictx-sexp-afpt))
+    (backward-up-list))
   ;; (c-insert-open-paren)
   ;; (forward-sexp)
   ;; (c-insert-close-paren)
