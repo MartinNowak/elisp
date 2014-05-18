@@ -431,12 +431,12 @@ TOKEN can be either a character or a string."
   "Insert C-Style Pair of Opening and Closing Paren.
 C-Style variant of `paredit-wrap-round'."
   (interactive)
-  (if (region-active-p)
-      (c-wrap-region)
-    (paredit-wrap-sexp 1 ?\( ?\))
-    (when (require 'hictx nil t)
-      (hictx-sexp-afpt))
-    (backward-up-list))
+  (save-excursion
+    (if (region-active-p)
+        (c-wrap-region)
+      (paredit-wrap-sexp 1 ?\( ?\))
+      (when (require 'hictx nil t)
+        (hictx-sexp-afpt))))
   ;; (c-insert-open-paren)
   ;; (forward-sexp)
   ;; (c-insert-close-paren)
