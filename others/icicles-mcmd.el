@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:25:04 2006
-;; Last-Updated: Wed Apr 23 10:49:31 2014 (-0700)
+;; Last-Updated: Fri May 16 23:29:18 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 19508
+;;     Update #: 19512
 ;; URL: http://www.emacswiki.org/icicles-mcmd.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -2076,7 +2076,7 @@ If ALTERNATIVEP is non-nil, the alternative sort order is returned."
   (interactive)
   (let ((cur-buf        (current-buffer))
         (icicles-cmd-p  (or icicle-candidate-action-fn icicle-multi-completing-p)))
-    (with-output-to-temp-buffer "*Help*"
+    (icicle-with-help-window "*Help*"
       (help-setup-xref (list #'icicle-minibuffer-help) (interactive-p))
       (when (icicle-completing-p)
         (princ (format "You are completing input%s.%s"
@@ -3845,9 +3845,10 @@ Optional argument WORD-P non-nil means complete only a word at a time."
           ;; beyond a complete candidate - e.g. `forwar-char' to `forward-char-'.
           (setq word-complete-input   (icicle-input-from-minibuffer)
                 return-value
-                (let ((temp-buffer-show-hook       nil) ; Don't let it fit frame here.
-                      (completion-auto-help        nil) ; Don't show `*Completions*'.
-                      (minibuffer-message-timeout  0)) ; No timeout.
+                (let ((temp-buffer-show-hook         nil) ; Don't let it fit frame here.
+                      (temp-buffer-window-show-hook  nil) ; Don't let it fit frame here (Emacs 24.4+).
+                      (completion-auto-help          nil) ; Don't show `*Completions*'.
+                      (minibuffer-message-timeout    0)) ; No timeout.
                   (icicle-clear-minibuffer)
                   (insert icicle-current-input)
                   (save-selected-window (minibuffer-complete-word)))
@@ -4966,7 +4967,7 @@ ALTP is passed to `icicle-candidate-action-1'."
           (when error-msg (setq failures  (cons (cons (car candidates) error-msg) failures)))
           (setq candidates  (cdr candidates))))
       (when failures
-        (with-output-to-temp-buffer "*Help*"
+        (icicle-with-help-window "*Help*"
           (princ "Action failures:")(terpri)(terpri)
           (mapcar (lambda (entry)
                     (princ (car entry)) (princ ":") (terpri) (princ "  ")
@@ -5801,7 +5802,7 @@ Non-nil optional arg NO-ERROR-P prints an error message but does not
                  (format "Inode:                      %S\n" inode)
                  (format "Device number:              %s\n" device)
                  image-info)))
-          (with-output-to-temp-buffer "*Help*"
+          (icicle-with-help-window "*Help*"
             (when bmk
               (if internal-form-p
                   (let* ((bname     (bookmark-name-from-full-record bmk))
