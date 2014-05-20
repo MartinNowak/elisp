@@ -82,6 +82,7 @@
 (require 'thingatpt-pnw)
 (require 'charedit)
 (require 'structed)
+(require 'semantic/ctxt nil t)
 
 (defun insert-indented (&rest args)
   "Insert arguments ARGS and indent region afterwards."
@@ -3914,6 +3915,7 @@ This command assumes point is not in a string or comment."
 
 (defun d-assist-hook ()
   "Common Assistance for D."
+
   (charedit-local-set-key ?_ 'd-insert-static-assert 'code)
   (charedit-local-set-key ?a 'd-insert-alias-stub 'code)
   (charedit-local-set-key ?! 'd-insert-pragma-msg 'code)
