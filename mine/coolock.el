@@ -489,7 +489,10 @@
 
 (defun coolock/d-template-instance ()
   (list
-   (cons (concat Y< $< "[[:word:]_]+" $> L* "!" L* "(?" L* $< ID $>)
+   (cons (concat Y< $< "[[:word:]_]+" $> L*
+                 "!" L*
+                 "(?" L*
+                 $< "\"?" ID $>)
          '((1 'font-lock-template-instance-face append)
            (2 'font-lock-type-face append)))))
 
