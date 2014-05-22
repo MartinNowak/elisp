@@ -1,12 +1,18 @@
 ;; Version Control (VC) ediff-revision automation
 ;; See: http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/a9f811fbdcbe809a
 
+;;; Code:
+
 (require 'power-utils)
 (require 'faze)
 
 ;; (defun ediff-vc-hide-rev1buf ()
 ;;   (delete-window (get-buffer-window rev1buf)))
 ;; (add-hook ediff-quit-hook 'ediff-vc-hide-rev1buf)
+
+(defun vc-ediff-current-buffer-with-other-version (version)
+  "Compare current buffer with its Version Control HEAD."
+  (interactive "sVersion: "))
 
 (defun vc-ediff-current-buffer-with-head ()
   "Compare current buffer with its Version Control HEAD."
