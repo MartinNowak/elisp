@@ -633,6 +633,7 @@
 
 (eload 'highlight-chars)                  ;Highlight whitespace of various kinds.
 (eload 'naked)
+(eload 'subr+)
 (eload 'facemenu+)
 (eload 'font-lock-menus)
 (eload 'emacs-lock+)             ;extensions to standard library `emacs-lock.el'
