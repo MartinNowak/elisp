@@ -52,3 +52,6 @@
 [submodule "flycheck-d-unittest"]
 	path = flycheck-d-unittest
 	url = https://github.com/flycheck/flycheck-d-unittest.git
+[submodule "cask"]
+	path = cask
+	url = https://github.com/cask/cask.git
