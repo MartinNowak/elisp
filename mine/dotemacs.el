@@ -1789,6 +1789,8 @@ functions, and some types.  It also provides indentation that is
       (when (fboundp fn)
         (charedit-local-set-key key fn 'code)))))
 
+(when (append-to-load-path (elsub "pdee")))
+
 (defun python-mode-add-charedits ()
   (ignore-errors                        ;TODO: Fix this!
     (when (require 'charedit nil t)
@@ -1824,9 +1826,7 @@ functions, and some types.  It also provides indentation that is
       (setq py-load-pymacs-p t)
       (require 'auto-complete-config)
       (ac-config-default)
-      ))
-  (when (and (append-to-load-path (elsub "pdee"))
-             (require 'pdee nil t))))
+      )))
 
 ;;; Pymacs
 (when (append-to-load-path (elsub "pymacs"))
