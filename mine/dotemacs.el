@@ -1933,6 +1933,14 @@ functions, and some types.  It also provides indentation that is
   )
 
 ;;; ===========================================================================
+;;; Tup
+(when (file-readable-p (elsub "tup-mode"))
+  (autoload 'tup-mode "tup-mode" "Major mode for tup." t nil)
+  (add-to-list 'auto-mode-alist '("\\.tup$" . tup-mode))
+  (add-to-list 'auto-mode-alist '("Tupfile" . tup-mode))
+  (add-to-list 'auto-mode-alist '("tup.config" . tup-mode)))
+
+;;; ===========================================================================
 ;;; Cobol
 (when (file-readable-p (elsub "others/cobol-mode.el"))
   (autoload 'cobol-mode "cobol-mode" "Major mode for Tandem COBOL files." t nil)
