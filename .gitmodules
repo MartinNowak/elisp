@@ -55,3 +55,6 @@
 [submodule "cask"]
 	path = cask
 	url = https://github.com/cask/cask.git
+[submodule "tup-mode"]
+	path = tup-mode
+	url = https://github.com/ejmr/tup-mode.git

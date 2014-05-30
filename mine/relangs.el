@@ -337,7 +337,7 @@ X defaults to :related"
 
 (defconst relangs-integer-type
   (lambda ()
-    `((:lang (C C++ Java C\# D) :expr "int")
+    `((:lang (C C++ Java C\# D Lua) :expr "int")
       (:lang Ada :expr (| "Integer"
                           "Interfaces.C.C_int"))
       (:lang Modelica :expr "Integer")
@@ -396,7 +396,7 @@ X defaults to :related"
 
 (defconst relangs-single-precision-float
   (lambda ()
-    `((:lang (C C++ Java C\# D) :expr "float")
+    `((:lang (C C++ Java C\# D Lua) :expr "float")
       (:lang Ada :expr (| "Float"
                           "Interfaces.C.C_float"))
       (:lang Matlab :expr "single")
@@ -404,7 +404,7 @@ X defaults to :related"
 
 (defconst relangs-single-precision-double
   (lambda ()
-    `((:lang (C C++ Java C\# D) :expr "double")
+    `((:lang (C C++ Java C\# D Lua) :expr "double")
       (:lang Ada :expr (| "Long_Float"
                           "Interfaces.C.double"
                           "Interfaces.C.long_double"))
@@ -1687,6 +1687,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang Ruby :expr (| (: ,X ".length")
                            (: ,X ".size")))
       (:lang D :expr (: ,X ".length"))
+      (:lang Lua :expr (: "#" ,X))
       )) "Length of String X")
 
 (defconst relangs-string-concatenation
@@ -1697,6 +1698,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang C++ :bin-op (: ,x "+" ,y))
       (:lang Ada :bin-op (: ,x "&" ,y))
       (:lang D :bin-op (: ,x "~" ,y))
+      (:lang Lua :bin-op (: ,x ".." ,y))
       (:lang Haskell :binop (: ,x "++" ,y))
       (:lang Emacs-Lisp :nary-fun (: "(" "concat" _ ,x _ ,y ")"))
       (:lang Python :bin-op (: ,x "+" ,y))

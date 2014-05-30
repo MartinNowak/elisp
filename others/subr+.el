@@ -8,9 +8,9 @@
 ;; Created: Sat May 24 19:24:18 2014 (-0700)
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Sun May 25 07:28:07 2014 (-0700)
+;; Last-Updated: Wed May 28 17:55:40 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 27
+;;     Update #: 125
 ;; URL: http://www.emacswiki.org/simple%2b.el
 ;; Doc URL: http://www.emacswiki.org/SplittingStrings
 ;; Keywords: strings, text
@@ -26,21 +26,40 @@
 ;;
 ;;    Extensions to standard library `subr.el'.
 ;;
+;;  This library extends `split-string' so that you can split a string
+;;  based on text properties or a character predicate, not just just
+;;  regexp matching.
+;;
+;;  To take advantage of this, your code can conditionally test
+;;  whether this library is loaded, or just test whether (fboundp
+;;  'subr+-split-string).  That function is an alias for `split-string'.
+;;
+;;
 ;;  Functions defined here:
 ;;
 ;;    `next-char-predicate-change', `split-string-by-predicate',
-;;    `split-string-by-regexp', `split-string-trim-omit-push',
+;;    `split-string-by-property', `split-string-by-regexp',
+;;    `split-string-trim-omit-push', `subr+-split-string'.
 ;;
 ;;
 ;;  ***** NOTE: The following functions defined in `simple.el' have
 ;;              been REDEFINED HERE:
 ;;
-;;    `split-string' - Can also split by predicate.
+;;    `split-string' - Can also split by char property or predicate.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change Log:
 ;;
+;; 2014/05/28 dadams
+;;     Removed: next-single-char-prop-val-change.
+;;     split-string-by-property: Rewrote.
+;;     split-string: Added optional arg TEST, for property splitting.
+;; 2014/05/27 dadams
+;;     Added subr+-split-string as alias for new split-string.
+;; 2014/05/26 dadams
+;;     Added: next-single-char-prop-val-change.
+;;     split-string-by-property: Handle change in VAL, not just PROP.
 ;; 2014/05/24 dadams
 ;;     Created.
 ;;
@@ -75,23 +94,31 @@
 
 ;; REPLACES ORIGINAL in `simple.el':
 ;;
-;; 1. Second arg can be a predicate, in addition to a regexp.
+;; 1. Second arg can be a character property list or a predicate, in
+;;    addition to a regexp.
 ;; 2. Addtional optional arg FLIP: to complement set of returned substrings.
 ;;
-(defun split-string (string &optional how omit-nulls trim flip)
+(defun split-string (string &optional how omit-nulls trim flip test)
   "Split STRING into substrings.
 Arg HOW determines how splitting is done.  it is one of the following:
 * a regexp (a string) - see function `split-string-by-regexp'
+* a list whose first element is a text property (a symbol) and whose
+  second element is the property value - see function
+  `split-string-by-property'
 * a predicate that accepts a character as its first argument - see
   function `split-string-by-predicate'
 
 If optional arg OMIT-NULLS is t, then empty substrings are omitted
-from the returned list.  If nil, all zero-length substrings are
-retained, which correctly parses CSV format, for example.
+from the returned list.  If nil, zero-length substrings are retained,
+which correctly parses CSV format, for example.
 
 If TRIM is non-nil, it should be a regular expression to match text to
 trim from the beginning and end of each substring.  If trimming makes
 a substring empty, it is treated according to OMIT-NULLS.
+
+Optional arg TEST is used only if HOW is a (PROPERTY VALUE) list, in
+which case it is passed to function `split-string-by-property' (which
+see).  Otherwise, it is ignored.
 
 Modifies the match data; use `save-match-data' if necessary."
   (unless how (setq how  split-string-default-separators))
@@ -99,9 +126,13 @@ Modifies the match data; use `save-match-data' if necessary."
          (split-string-by-regexp string how omit-nulls trim flip))
         ((functionp how)
          (split-string-by-predicate string how omit-nulls trim flip))
-;;;         ((and (consp how)  (car how)  (symbolp (car how)))
-;;;          (split-string-by-property string how omit-nulls trim flip))
+        ((and (consp how)  (car how)  (symbolp (car how)))
+         (split-string-by-property string how omit-nulls trim flip test))
         (t (error "`split-string', bad HOW arg: `%S'" how))))
+
+;; Do this so code can test (fboundp 'subr+-split-string) to see if this version is
+;; available, e.g., to use property or predicate splitting.
+(defalias 'subr+-split-string 'split-string)
 
 (defun split-string-trim-omit-push (string how omit-nulls trim start end parts)
   "Push the substring of STRING from START to END to list PARTS.
@@ -185,52 +216,89 @@ Modifies the match data; use `save-match-data' if necessary."
                                                  this-beg this-end s-parts))
     (nreverse s-parts)))
 
-;;; (FUTURE)
-;;;
-;;; (defun split-string-by-property (string prop+val &optional omit-nulls trim flip)
-;;;   "Split STRING into substrings determined by a text or overlay property.
-;;; Return the list of substrings.
+(defun split-string-by-property (string prop+val &optional omit-nulls trim flip test)
+  "Split STRING into substrings determined by a text property.
+Return the list of substrings.
 
-;;; By default, the substrings that have the property are removed, and the
-;;; substrings between these are collected as a list, which is returned.
-;;; With non-nil optional argument FLIP this is reversed: the list of
-;;; substrings that have the property is returned.
+By default, the substrings that have the given property with the given
+value are removed, and the substrings between these are collected as a
+list, which is returned.
 
-;;; PROP+VAL is a property list whose first element is the property (a
-;;; symbol) and whose second is the property value.  Arguments OMIT-NULLS
-;;; and TRIM are as for function `split-string-by-regexp'.
+With non-nil optional argument FLIP this behavior is reversed: The
+list of substrings that have the given property and value is returned,
+and the substrings that do not are removed.
 
-;;; Modifies the match data; use `save-match-data' if necessary.
+PROP+VAL is a list (PROPERTY VALUE), where PROPERTY is the text
+property (a symbol) and VALUE is the property value to match.
 
-;;; \(This function requires Emacs 22 or later.)"
-;;;   (unless (fboundp 'next-single-char-property-change)
-;;;     (error "`split-string-by-property' requires Emacs 22 or later"))
-;;;   (let ((prop      (car prop+val))
-;;;         (val       (cadr prop+val))
-;;;         (s-len     (length string))
-;;;         (start     0)
-;;;         (notfirst  nil)
-;;;         (this-beg  nil)
-;;;         (this-end  nil)
-;;;         (has-prop  nil)
-;;;         (s-parts   ()))
-;;;     (while (and (< start s-len)
-;;;                 (setq this-end  (next-single-char-property-change
-;;;                                  start prop string)))
-;;;       (setq notfirst  t
-;;;             this-beg  start
-;;;             start     (next-single-char-property-change start prop string)
-;;;             has-prop  (get-char-property this-beg prop string))
-;;;       (when (if flip has-prop (not has-prop))
-;;;         (setq s-parts  (split-string-trim-omit-push string prop+val omit-nulls trim
-;;;                                                     this-beg this-end s-parts))))
-;;;     (setq this-beg  start ; Handle the substring at the end of STRING.
-;;;           this-end  s-len
-;;;           has-prop  (get-char-property this-beg prop string))
-;;;     (when (if flip has-prop (not has-prop))
-;;;       (setq s-parts  (split-string-trim-omit-push string prop+val omit-nulls trim
-;;;                                                   this-beg this-end s-parts)))
-;;;     (nreverse s-parts)))
+Arguments OMIT-NULLS and TRIM are as for function
+`split-string-by-regexp'.
+
+Optional arg TEST is a binary predicate that accepts the actual value
+of PROPERTY for a given string position as its first arg and VALUE as
+its second.  It returns non-null if the char is part of an excluded
+substring (or an included one, if FLIP is non-nil).
+
+If TEST is omitted or nil (the default) then:
+
+* If VALUE is not `nil' then TEST is `eq'.  That is, if you provide
+  VALUE and no TEST then the actual value must match exactly.
+
+* If VALUE is `nil' then TEST checks only for a non-null value, that
+  is, for the presence of PROPERTY.
+
+By providing a TEST argument you can get fairly flexible behavior.
+For example:
+
+* You might want to test for an actual property value that belongs to
+  a given list of values.  E.g., test whether the actual value of
+  PROPERTY `invisible' belongs to the current
+  `buffer-invisibility-spec'.
+
+* You might want to test for an actual value that is a list that has
+  VALUE as a member.  E.g., test membership of a particular face
+  (VALUE) in a list of faces that is the value of PROPERTY `face').
+
+Modifies the match data; use `save-match-data' if necessary.
+
+\(This function requires Emacs 22 or later.)"
+  (unless (fboundp 'next-single-char-property-change)
+    (error "`split-string-by-property' requires Emacs 22 or later"))
+  (let* ((prop      (car prop+val))
+         (val       (cadr prop+val))
+         (s-len     (length string))
+         (start     0)
+         (ostart    0)
+         (this-beg  nil)
+         (this-end  nil)
+         (s-parts   ())
+         has-val-b  has-val-e)
+    (unless test
+      (setq test  (if val #'eq (lambda (actual-prop-val _ignore) actual-prop-val))))
+    (while (and (< start s-len)
+                (setq this-end  (next-single-char-property-change start prop string)))
+      (setq this-beg   start)
+      (setq start      this-end)
+      (setq has-val-b  (funcall test (get-char-property this-beg prop string) val))
+      (setq has-val-e  (funcall test (get-char-property this-end prop string) val))
+
+      (cond ((and has-val-b  (not has-val-e))
+             (when flip
+               (setq s-parts  (split-string-trim-omit-push string prop+val omit-nulls trim
+                                                           this-beg this-end s-parts)))
+             (setq ostart  start))
+            ((and (not flip)  has-val-e  (not has-val-b))
+             (when (funcall test (get-char-property ostart prop string) val)
+               (setq ostart  this-beg))
+             (setq s-parts  (split-string-trim-omit-push string prop+val omit-nulls trim
+                                                         ostart this-end s-parts))
+             (setq ostart  start))))
+    (setq this-beg  start) ; Handle the substring at the end of STRING.
+    (setq this-end  s-len)
+    (unless (or flip  has-val-b)
+      (setq s-parts  (split-string-trim-omit-push string prop+val omit-nulls trim
+                                                  ostart this-end s-parts)))
+    (nreverse s-parts)))
 
 (defun split-string-by-predicate (string predicate &optional omit-nulls trim flip)
   "Split STRING into substrings determined by a character predicate.
@@ -248,16 +316,13 @@ argument.  Arguments OMIT-NULLS and TRIM are as for function
 Modifies the match data; use `save-match-data' if necessary."
   (let ((s-len     (length string))
         (start     0)
-        (notfirst  nil)
         (this-beg  nil)
         (this-end  nil)
         (is-true   nil)
         (s-parts   ()))
     (while (and (< start s-len)
-                (setq this-end  (next-char-predicate-change
-                                 start predicate string)))
-      (setq notfirst  t
-            this-beg  start
+                (setq this-end  (next-char-predicate-change start predicate string)))
+      (setq this-beg  start
             start     (next-char-predicate-change start predicate string)
             is-true   (funcall predicate (aref string this-beg)))
       (when (if flip is-true (not is-true))
