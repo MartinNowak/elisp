@@ -252,6 +252,7 @@ X defaults to :related"
       (:lang Python :expr "None")
       (:lang Haskell :expr "Nothing")
       (:lang Matlab :expr (| "[]" "{}") :comment "Empty Matrix or Cell Array")
+      (:lang Lua :expr (: "nil"))
       )) "Empty/Undefined/Null Literal Constant Value")
 
 (defconst relangs-nonnull
@@ -677,7 +678,7 @@ See
 (defconst relangs-true
   (lambda ()
     `((:lang C :expr (| "1" "TRUE"))
-      (:lang (C99 C++ C\# Java Ruby Matlab) :expr "true")
+      (:lang (C99 C++ C\# Java Ruby Matlab Lua) :expr "true")
       (:lang Lisp :expr "t")
       (:lang (Python Haskell Ada) :expr "True")
       (:lang Ada :expr "True")
@@ -687,7 +688,7 @@ See
 (defconst relangs-false
   (lambda ()
     `((:lang C :expr (| "0" "FALSE"))
-      (:lang (C99 C++ C\# Java Ruby Matlab) :expr "false")
+      (:lang (C99 C++ C\# Java Ruby Matlab Lua) :expr "false")
       (:lang Lisp :expr "nil")
       (:lang (Python Haskell Ada) :expr "False")
       (:lang Fortran-77 :expr ".FALSE.")
@@ -709,30 +710,30 @@ See
 ;;; Relational
 (defconst relangs-relational-less-than
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr "<")
+    `((:lang (C C++ D Java C\# Ada Lua) :expr "<")
       (:lang Fortran-77 :expr ".LT.")
       )) "Relational Less-Than Operator")
 (defconst relangs-relational-greater-than
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr ">")
+    `((:lang (C C++ D Java C\# Ada Lua) :expr ">")
       (:lang Fortran-77 :expr ".GT.")
       )) "Relational Greater-Than Operator")
 (defconst relangs-relational-less-than-or-equal
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr "<=")
+    `((:lang (C C++ D Java C\# Ada Lua) :expr "<=")
       (:lang Fortran-77 :expr ".LE.")
       )) "Relational Less-Than or Equal Operator")
 (defconst relangs-relational-greater-than-or-equal
   (lambda ()
-    `((:lang (C C++ D Java C\# Ada) :expr ">=")
+    `((:lang (C C++ D Java C\# Ada Lua) :expr ">=")
       (:lang Fortran-77 :expr ".GE.")
       )) "Relational Greater-Than or Equal Operator")
 
 ;;; Contents Equality
 (defconst relangs-content-equality-operator
   (lambda (x y)
-    `((:lang (C C++ D Java C\# Python Ruby) :expr (: x "==" y))
-      (:lang Fortran-77 :expr (: x (| ".EQV." ".EQ.") y)) ;TODO: Prefer EQV
+    `((:lang (C C++ D Java C\# Python Ruby Lua) :expr (: x "==" y))
+      (:lang Fortran-77 :expr (: x (| ".EQV." ".EQ.") y) :prefer (: x ".EQV." y))
       (:lang Matlab :expr (| (: x "==" y)
                              (: "eq(" x "," y ")")))
       (:lang Emacs-Lisp :expr (: "(equal" x y ")"))
@@ -741,11 +742,12 @@ See
 (defconst relangs-content-not-equality-operator
   (lambda (x y)
     `((:lang (C C++ D Java C\# Python Ruby) :expr (: "!="))
-      (:lang Fortran-77 :expr (| ".NEQV." ".NE.")) ;TODO: Prefer NEQV
+      (:lang Fortran-77 :expr (| ".NEQV." ".NE.") :prefer (: x ".NEQV." y))
       (:lang Matlab :expr (| "~="
                              "ne(X,Y)"))
       (:lang Emacs-Lisp :expr (: "(not (equal" x y ")" ")"))
-      (:lang (Ada) :expr "/=")
+      (:lang Ada :expr "/=")
+      (:lang Lua :expr "~=")
       )) "Contents Non-Equality Operator")
 (define-opposites
   relangs-content-equality-operator
@@ -762,22 +764,27 @@ See
 ;;; Arithmetic
 (defconst relangs-arithmetic-addition
   (lambda ()
-    `((:lang (C C++ D Java C\#) :expr "+")
+    `((:lang (C C++ D Java C\# Lua) :expr "+")
       (:lang Matlab :expr (| ".+" "+"))
       )) "Arithmetic Addition Operator")
 (defconst relangs-arithmetic-subtraction
   (lambda ()
-    `((:lang (C C++ D Java C\#) :expr "-")
+    `((:lang (C C++ D Java C\# Lua) :expr "-")
       (:lang Matlab :expr (| ".+" "-"))
       )) "Arithmetic Subtraction Operator")
 (defconst relangs-arithmetic-division
   (lambda ()
-    `((:lang (C C++ D Java C\#) :expr "/")
+    `((:lang (C C++ D Java C\# Lua) :expr "/")
       (:lang Matlab :expr (| "./" "/"))
       )) "Arithmetic Division Operator")
+(defconst relangs-arithmetic-multiplication
+  (lambda ()
+    `((:lang (C C++ D Java C\# Lua) :expr "*")
+      (:lang Matlab :expr (| ".*" "*"))
+      )) "Arithmetic Multiplication Operator")
 (defconst relangs-arithmetic-modulus-or-remainder
   (lambda ()
-    `((:lang (C C++ D Java C\#) :expr "%" :arity 2 :kind operator)
+    `((:lang (C C++ D Java C\# Lua) :expr "%" :arity 2 :kind operator)
       (:lang (Matlab Ada) :expr "mod" :arity 2 :kind function)
       )) "Arithmetic Division Remainder (Modulus) Operator")
 (defconst relangs-arithmetic-absolute
@@ -790,6 +797,7 @@ See
     `((:lang (Fortran Python Ruby Ada) :expr (: base "**" exponent))
       (:lang Matlab :expr (: base (| ".^" "^")  exponent))
       (:lang D :expr (: base "^^" exponent))
+      (:lang Lua :expr (: base "^" exponent))
       (:lang Pascal :expr (: "Exp(" base "," exponent ")"))
       (:lang C :expr (: (opt "c") (| ("pow")
                                      ("powf")
@@ -813,21 +821,21 @@ See
 (defconst relangs-logical-and
   `((:lang C :expr (: "&&"))
     (:lang C++ :expr (| "&&" "and"))
-    (:lang Ada :expr (: "and"))
+    (:lang (Ada Python Lua) :expr (: "and"))
     (:lang Lisp :expr (: "(and X..."))
     (:lang Fortran-77 :expr (: ".AND."))
     ) "Logical And Operation")
 (defconst relangs-logical-or
   `((:lang C :expr (: "||"))
     (:lang C++ :expr (| "||" "or"))
-    (:lang Ada :expr (: "or"))
+    (:lang (Ada Python Lua) :expr (: "or"))
     (:lang Lisp :expr (: "(| X..."))
     (:lang Fortran-77 :expr (: ".OR."))
     ) "Logical Or Operation")
 (defconst relangs-logical-not
   `((:lang C :expr (: "!"))
     (:lang C++ :expr (| "!" "not"))
-    (:lang Ada :expr (: "not"))
+    (:lang (Ada Python Lua) :expr (: "not"))
     (:lang C\# :expr (: "!"))
     (:lang Java :expr (: "!"))
     (:lang Lisp :expr (: "null"))
