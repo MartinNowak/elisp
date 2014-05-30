@@ -1769,7 +1769,8 @@ functions, and some types.  It also provides indentation that is
 (when (load-file (elsub "others/ac-dcd.elc"))
   (when (executable-find "dcd-server")
     (start-process "DCD" nil "dcd-server"
-                   (concat "-I" (expand-file-name "~/justd"))))
+                   (concat "-I" (expand-file-name "~/justd"))
+                   (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))
   ;; (when (executable-find "dcd-client")
   ;;   (start-process "dcd-set-paths" nil "dcd-client"
   ;;                  (concat "-I" (expand-file-name "~/justd"))))
