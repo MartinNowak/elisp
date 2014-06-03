@@ -14,35 +14,42 @@
 (defconst ascii-rs #x1e)                ;record separator
 (defconst ascii-us #x1f)                ;unit separator
 
+(defun dmd-query-active ()
+  "Return non-nil when `dmd-query' should be performed."
+  (and (eq major-mode 'd-mode)
+       (not (or isearch-mode
+                (minibufferp)))))
+
 (defun dmd-query-completed (process change)
-  (when (string-equal change "finished\n") ;success
-    (with-current-buffer dmd-query-buffer-name
-      (let* ((str (buffer-substring-no-properties (point-min)
-                                                  (point-max)))
-             (off (if (string-has-beginning str "DMD v") ;skip DMD devel build tag
-                      (1+ (string-find-string "\n" str))
-                    0)))
-        (when (< off (length str))
-          (let* ((fields (split-string
-                          (substring (string-strip str) off)
-                          (char-to-string ascii-us)))
-                 (doc (first fields))
-                 (value (second fields))
-                 (type (sixth fields))
-                 (stype (seventh fields)) ;semantic type
-                 (comment (eighth fields)) ;semantic type
-                 (face (cond ((string-equal type "K") 'font-lock-keyword-face)
-                             ((string-equal type "S") 'font-lock-string-face)
-                             ((string-equal type "N") 'font-lock-number-face)
-                             ((string-equal type "T") 'font-lock-type-face)
-                             (t 'default)))
-                 )
-            (message "%s: %s (semantic: type:%s comment:%s)"
-                     (propertize doc 'face font-lock-comment-face)
-                     (propertize value 'face face)
-                     (propertize stype 'face font-lock-type-face)
-                     (propertize comment 'face font-lock-comment-face)
-                     ))))))
+  (when (dmd-query-active)
+    (when (string-equal change "finished\n") ;success
+      (with-current-buffer dmd-query-buffer-name
+        (let* ((str (buffer-substring-no-properties (point-min)
+                                                    (point-max)))
+               (off (if (string-has-beginning str "DMD v") ;skip DMD devel build tag
+                        (1+ (string-find-string "\n" str))
+                      0)))
+          (when (< off (length str))
+            (let* ((fields (split-string
+                            (substring (string-strip str) off)
+                            (char-to-string ascii-us)))
+                   (doc (first fields))
+                   (value (second fields))
+                   (type (sixth fields))
+                   (stype (seventh fields))  ;semantic type
+                   (comment (eighth fields)) ;semantic type
+                   (face (cond ((string-equal type "K") 'font-lock-keyword-face)
+                               ((string-equal type "S") 'font-lock-string-face)
+                               ((string-equal type "N") 'font-lock-number-face)
+                               ((string-equal type "T") 'font-lock-type-face)
+                               (t 'default)))
+                   )
+              (message "%s: %s (semantic: type:%s comment:%s)"
+                       (propertize doc 'face font-lock-comment-face)
+                       (propertize value 'face face)
+                       (propertize stype 'face font-lock-type-face)
+                       (propertize comment 'face font-lock-comment-face)
+                       )))))))
   ;; cleanup
   (when dmd-query-process
     (delete-process dmd-query-process)
@@ -75,9 +82,8 @@
    'dmd-query-completed))
 
 (defun dmd-query-message ()
-  (unless isearch-mode
-    (when (eq major-mode 'd-mode)
-      (dmd-query-message-helper))))
+  (when (dmd-query-active)
+    (dmd-query-message-helper)))
 
 (defvar dmd-query-timer nil "Last DMD query made.")
 
@@ -86,7 +92,7 @@
   :group 'dmd-query)
 
 (defun dmd-query-spawn-message ()
-  (unless isearch-mode
+  (when (dmd-query-active)
     (when (and dmd-query-timer
                (timerp dmd-query-timer))
       (cancel-timer dmd-query-timer))

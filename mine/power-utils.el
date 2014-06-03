@@ -1767,4 +1767,6 @@ TODO: Why is this function slower than `sublist'?"
 
 (defalias 'host-name 'system-name)
 
+(defalias 'minibuffer-active 'minibufferp)
+
 (provide 'power-utils)
