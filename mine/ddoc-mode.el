@@ -1,7 +1,7 @@
 ;;; ddoc-mode.el --- D Documentation (DDoc) mode.
 
 ;; Author: Per Nordlöw (per.nordlow@gmail.com)
-;; Keywords: languages, file(1), magic/magic
+;; Keywords: languages, D
 ;; See also: http://dlang.org/ddoc.html
 
 ;;; Code:
