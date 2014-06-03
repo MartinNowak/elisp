@@ -292,7 +292,7 @@ Non-nil optional arg ADD-HELP-BUTTONS does that, adding buttons to key
 descriptions, which link to the key's command help."
     (let ((raw-doc  (documentation function 'RAW)))
       (if raw  raw-doc  (help-substitute-command-keys raw-doc add-help-buttons))))
-    
+
   (defun help-documentation-property (symbol prop &optional raw add-help-buttons)
     "Same as `documentation-property', but optionally adds buttons for help.
 Non-nil optional arg ADD-HELP-BUTTONS does that, adding buttons to key
@@ -537,7 +537,7 @@ MANUALS has the form of `help-cross-reference-manuals'."
         (push (list nodename string (Info-index-occurrences string manuals)) Info-indexed-nodes)
         (Info-find-node Info-indexed-file nodename))))
 
-  ;; Similar to `Info-apropos-matches', but using exact matches (ignoring case). 
+  ;; Similar to `Info-apropos-matches', but using exact matches (ignoring case).
   (defun Info-index-occurrences (index-entry &optional manuals)
     "Collect occurrences of INDEX-ENTRY in MANUALS.
 MANUALS has the form of `help-cross-reference-manuals'.
@@ -2169,7 +2169,7 @@ Completion is available for the keymap name."
   (defun describe-package (package)
     "Display the full documentation of PACKAGE (a symbol)."
     (interactive
-     (let* ((guess  (function-called-at-point))
+     (let* ((guess (function-called-at-point))
             packages val)
        (require 'finder-inf nil t)
        ;; Load the package list if necessary (but don't activate them).

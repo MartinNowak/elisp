@@ -1042,6 +1042,10 @@ save it in `ffap-file-at-point-line-number' variable."
           )
         t)))
   (add-to-list 'magic-mode-alist '(recognize-c-mode . c-mode)))
+(add-hook 'c-mode-common-hook 'c-guess 1)
+(when (and nil
+           (require 'guess-offset nil t))
+  (add-hook 'c-mode-common-hook 'guess-offset 1))
 
 (when (eload 'move-line-region)
   (move-line-region-setup-keybindings)
