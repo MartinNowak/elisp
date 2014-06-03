@@ -75,8 +75,9 @@
    'dmd-query-completed))
 
 (defun dmd-query-message ()
-  (when (eq major-mode 'd-mode)
-    (dmd-query-message-helper)))
+  (unless isearch-mode
+    (when (eq major-mode 'd-mode)
+      (dmd-query-message-helper))))
 
 (defvar dmd-query-timer nil "Last DMD query made.")
 
@@ -85,11 +86,12 @@
   :group 'dmd-query)
 
 (defun dmd-query-spawn-message ()
-  (when (and dmd-query-timer
-             (timerp dmd-query-timer))
-    (cancel-timer dmd-query-timer))
-  (setq dmd-query-timer
-        (run-with-idle-timer dmd-query-timeout nil 'dmd-query-message)))
+  (unless isearch-mode
+    (when (and dmd-query-timer
+               (timerp dmd-query-timer))
+      (cancel-timer dmd-query-timer))
+    (setq dmd-query-timer
+          (run-with-idle-timer dmd-query-timeout nil 'dmd-query-message))))
 
 (defun activate-dmd-query-mode ()
   (add-hook 'post-command-hook 'dmd-query-spawn-message t))
