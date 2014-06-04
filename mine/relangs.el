@@ -651,6 +651,13 @@ See
       (:lang (Ada) :expr "Access Type")
       )))
 
+(defconst relangs-function-definition
+  (lambda (name)
+    `((:lang Python :expr (: "def" ,name))
+      (:lang Swift :expr (: "func" ,name))
+      (:lang Emacs-Lisp :expr (: "(" "defun" ,name))
+      )) "Definition of Function Named NAME.")
+
 (defconst relangs-variable-reference
   (lambda (type)
     `((:lang C :expr (,type "&"))
