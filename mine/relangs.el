@@ -169,6 +169,18 @@ X defaults to :related"
       (:lang Swift :expr (: "println(" (+ expr) ")"))
       )) "Print EXPR on a separate line.")
 
+(defconst relangs-begins-with
+  (lambda (expr prefix)
+    `((:lang Python :expr (: expr ".beginswith(" prefix ")"))
+      (:lang Swift :expr (: expr ".hasPrefix(" prefix ")"))
+      )) "Check if EXPR begins with PREFIX.")
+
+(defconst relangs-ends-with
+  (lambda (expr suffix)
+    `((:lang Python :expr (: expr ".endswith(" suffix ")"))
+      (:lang Swift :expr (: expr ".hasSuffix(" suffix ")"))
+      )) "Check if EXPR ends with SUFFIX.")
+
 (defconst relangs-get-current-time
   (lambda (x)
     `((:lang C :expr (: (| (| "gmtime"
