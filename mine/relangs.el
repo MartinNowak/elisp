@@ -338,24 +338,30 @@ X defaults to :related"
 (defconst relangs-integer-type
   (lambda ()
     `((:lang (C C++ Java C\# D Lua) :expr "int")
+      (:lang Swift :expr "Int" :bits (or 32
+                                         64))
       (:lang Ada :expr (| "Integer"
-                          "Interfaces.C.C_int"))
+                          "Interfaces.C.C_int") :bits 32)
       (:lang Modelica :expr "Integer")
       )) "Integer Type with Default Machine Precision.")
 
 (defconst relangs-unsigned-integer-type
   (lambda ()
     `((:lang (C C++) :expr (| "unsigned"
-                              "unsigned int"))
+                              "unsigned int") :bits (or 32
+                                                        64))
+      (:lang Swift :expr "UInt" :bits (or 32
+                                          64))
       (:lang (Java) :expr nil)          ;not supported
-      (:lang (C\# D) :expr "uint")
+      (:lang (C\# D) :expr "uint" :bits 32)
       (:lang Ada :expr (| "Integer"
-                          "Interfaces.C.unsigned"))
+                          "Interfaces.C.unsigned") :bits 32)
       )) "Unsigned Integer Type with Default Machine Precision.")
 
 (defconst relangs-short-integer-type
   (lambda ()
     `((:lang (C C++ Java C\# D) :expr "short")
+      (:lang Swift :expr "Short")
       (:lang Ada :expr (| "Short_Integer"
                           "Interfaces.C.short"))
       )) "Short Integer Type.")
@@ -370,6 +376,7 @@ X defaults to :related"
 (defconst relangs-long
   (lambda ()
     `((:lang (C C++) :expr "long")    ;TODO: case on architecure type
+      (:lang Swift :expr "Long")
       (:lang D :expr "int")
       (:lang Ada :expr (| "Long_Integer"
                           "Interfaces.C.long"))
@@ -378,6 +385,7 @@ X defaults to :related"
 (defconst relangs-unsigned-long
   (lambda ()
     `((:lang (C C++ Java) :expr "unsigned long") ;TODO: case on architecure type
+      (:lang Swift :expr "ULong")
       (:lang (D C\#) :expr "uint")
       (:lang Ada :expr "Interfaces.C.unsigned_long")
       )) "Unsigned 32-bit Integer Type.")
@@ -397,6 +405,7 @@ X defaults to :related"
 (defconst relangs-single-precision-float
   (lambda ()
     `((:lang (C C++ Java C\# D Lua) :expr "float")
+      (:lang Swift :expr "Float")
       (:lang Ada :expr (| "Float"
                           "Interfaces.C.C_float"))
       (:lang Matlab :expr "single")
@@ -405,6 +414,7 @@ X defaults to :related"
 (defconst relangs-single-precision-double
   (lambda ()
     `((:lang (C C++ Java C\# D Lua) :expr "double")
+      (:lang Swift :expr "Double")
       (:lang Ada :expr (| "Long_Float"
                           "Interfaces.C.double"
                           "Interfaces.C.long_double"))
@@ -489,7 +499,7 @@ X defaults to :related"
                             ((equal type "float") "FLT_MIN")
                             ((equal type "double") "DBL_MIN")) :import "limits.h")
       (:lang C++ :expr (: "std::numeric_limits<" ,type ">::min()") :import "limits")
-      (:lang D :expr (: ,type ".min")))))
+      (:lang (D Swift) :expr (: ,type ".min")))))
 ;; Use: (funcall (relangs-limits-minimum) "int")
 ;; Use: (funcall (relangs-limits-minimum) "float")
 
@@ -507,7 +517,7 @@ X defaults to :related"
                            ((equal type "float") "FLT_MAX")
                            ((equal type "double") "DBL_MAX")) :import "limits.h")
       (:lang C++ :expr (: "std::numeric_limits<" type ">::max()") :import "limits")
-      (:lang D :expr (: type ".max")))))
+      (:lang (D Swift) :expr (: type ".max")))))
 ;; Use: (relangs-limits-maximum "int")
 ;; Use: (relangs-limits-maximum "float")
 
