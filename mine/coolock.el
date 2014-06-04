@@ -488,13 +488,29 @@
          '((1 'font-lock-operator-dots-face append)))))
 
 (defun coolock/d-template-instance ()
+  ;; (when nil
+  ;;   (list
+  ;;    `( ;; MATCHER: (LET
+  ;;      ,(concat Y< $< "[[:word:]_]+" $> L*
+  ;;               $< "!" $> L*)
+  ;;      ;; SUBEXP-HIGHLIGHTER
+  ;;      (1 'font-lock-keyword-face keep)
+  ;;      ;; ANCHORED-HIGHLIGHTER: (let VARLIST)
+  ;;      ( ;; ANCHORED-MATCHER
+  ;;       coolock/d-template-instance-args-matcher
+  ;;       nil                                       ; PRE-FORM
+  ;;       nil                                       ; POST-FORM
+  ;;       (1 'font-lock-variable-name-face prepend) ; SUBEXP-HIGHLIGHTERS
+  ;;       ))
+  ;;    ))
   (list
    (cons (concat Y< $< "[[:word:]_]+" $> L*
-                 "!" L*
+                 $< "!" $> L*
                  "(?" L*
                  $< "\"?" ID $>)
          '((1 'font-lock-template-instance-face append)
-           (2 'font-lock-type-face append)))))
+           (2 'font-lock-operator-face append)
+           (3 'font-lock-type-face append)))))
 
 (defconst d-builtin-type-properties
   '("init" "sizeof" "alignof" "stringof" "mangleof" ;all

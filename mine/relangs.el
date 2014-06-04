@@ -158,6 +158,7 @@ X defaults to :related"
                            ("(error " expr ")")))
       (:lang Matlab :expr (: "display(" expr ")"))
       (:lang Shell :expr (: "echo " expr))
+      (:lang Swift :expr (: "print(" (+ expr) ")"))
       )) "Print Expression EXPR.")
 
 (defconst relangs-print-line
@@ -165,6 +166,7 @@ X defaults to :related"
     `((:lang C++ :expr (: "std::cout << " expr " << std::endl"))
       (:lang Rust :expr (: "std::io::println(" (+ expr) ")"))
       (:lang D :expr (: "writeln(" (+ expr) ")"))
+      (:lang Swift :expr (: "println(" (+ expr) ")"))
       )) "Print EXPR on a separate line.")
 
 (defconst relangs-get-current-time
@@ -190,14 +192,14 @@ X defaults to :related"
   (lambda ()
     `((:lang (Ada) :regexp "[^[:digit:]]2#[[01]]+#")
       (:lang (D) :regexp "binary![:digit:]")
-      (:lang (D Java Python C++14) :pre-regexp "[^0-9a-zA-Z]" :regexp "0[bB][01_]+" :post-regexp "[^2-9a-zA-Z]" :see "https://en.wikipedia.org/wiki/C%2B%2B14#Binary_literals")
+      (:lang (D Swift Java Python C++14) :pre-regexp "[^0-9a-zA-Z]" :regexp "0[bB][01_]+" :post-regexp "[^2-9a-zA-Z]" :see "https://en.wikipedia.org/wiki/C%2B%2B14#Binary_literals")
       (:lang (Emacs-Lisp) :regexp "#b[[01]]+")
       ))
   "Binary Number")
 
 (defconst relangs-octal-number
   (lambda ()
-    `((:lang (C C++ D) :regexp "[^[:digit:]]0[0-7]+")
+    `((:lang (C C++ D Swift) :regexp "[^[:digit:]]0[0-7]+")
       (:lang (Ada) :regexp "[^[:digit:]]8#[[:xdigit:]]+#")
       (:lang (D) :regexp "octal![:digit:]")
       ))
@@ -205,8 +207,8 @@ X defaults to :related"
 
 (defconst relangs-hexadecimal-number
   (lambda ()
-    `((:lang (C C++ D) :regexp "[^[:digit:]]0x[[:xdigit:]]+")
-      (:lang (Ada) :regexp "[^[:digit:]]16#[[:xdigit:]]+#")
+    `((:lang (C C++ D Swift) :regexp "0x[[:xdigit:]]+" :not-before-regexp "[^[:digit:]]")
+      (:lang (Ada) :regexp "16#[[:xdigit:]]+#" :not-before-regexp [^[:digit:]])
       (:lang (Emacs-Lisp) :regexp "#x[[:xdigit:]]+")
       ))
   "Hexadecimal Number")
@@ -471,6 +473,25 @@ X defaults to :related"
       (:lang D :expr (: "i" relangs-float-type))
       )) "Complex Floating Point Type")
 
+(defconst relangs-block-comment-begin
+  (lambda ()
+    `((:lang (C C++ D Swift) :expr "/*")
+      (:lang D :expr "/+")
+      )) "Comment Beginner.")
+
+(defconst relangs-block-comment-end
+  (lambda ()
+    `((:lang (C C++ D Swift) :expr "*/")
+      (:lang D :expr "+/")
+      )) "Comment Ender.")
+
+(defconst relangs-line-comment-begin
+  (lambda ()
+    `((:lang (GCC-C C++ D Swift) :expr "//")
+      (:lang Ada :expr "--")
+      (:lang Python :expr "#")
+      )) "Line Comment Beginner.")
+
 (defconst relangs-builtin-data-types
   '(relangs-integer-type
     relangs-unsigned-integer-type
@@ -626,7 +647,8 @@ See
 
 (defconst relangs-variable-definition
   (lambda (name type value)
-    `((:lang Shell :expr (: ,name "=" ,value)) ;TODO; Express that whitespace is not allowed around =
+    `((:lang Shell :expr (: ,name "=" ,value))
+      (:lang Swift :expr (: "var" ,name "=" ,value))
       (:lang Emacs-Lisp :expr (: "(" L* "def" (| "var" "custom") L* ,name L+ ,value ")"))
       (:lang (C C++) :expr (: ""))
       )) "Definition of Variable Named NAME having Value VALUE.")
@@ -634,6 +656,7 @@ See
 (defconst relangs-constant-definition
   (lambda (name type value)
     `(
+      (:lang Swift :expr (: "let" ,name "=" ,value))
       (:lang Shell :reuse relangs-variable-definition) ;TODO: Support `:reuse'
       (:lang Emacs-Lisp :expr (: "(" L* "defconst" L* name L+ value ")"))
       (:lang (C C+) :expr (: "const" type name "=" value ";"))
@@ -1218,9 +1241,23 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     `((:lang C :type "char*")
       (:lang C++ :expr "std::string")
       (:lang D :expr "string")
+      (:lang Swift :expr "String")
       (:lang Java :expr "String")
       (:lang Modelica :expr "String")
       )) "String Type.")
+
+(defconst relangs-alias
+  (lambda (x y)
+    `((:lang D :expr (| (: "alias" y "=" x)
+                        (: "alias" x y)))
+      )) "Symbol Alias Y = X.")
+
+(defconst relangs-type-alias
+  (lambda (x y)
+    `((:lang (C C++) :expr "typedef")
+      (:lang D :reuse relangs-alias)    ;TODO
+      (:lang D :expr (: "typealias" y "=" x))
+      )) "Type Alias Y = X.")
 
 (defconst relangs-wide-string-type
   (lambda (x y)
