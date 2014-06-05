@@ -518,27 +518,31 @@
 
 ;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
+
+;;; smartparens
 (when (and (prepend-to-load-path (elsub "smartparens"))
            (require 'smartparens nil t)
            (fboundp 'smartparens-mode))
   (require 'smartparens-config)
-  (smartparens-global-mode 1))
+  (smartparens-global-mode -1))
+
 ;;; http://www.emacswiki.org/emacs/AutoPairs
 ;;; https://github.com/capitaomorte/autopair
 ;;; http://stackoverflow.com/questions/7718975/intelligent-auto-closing-matching-characters
 (when nil                               ;TODO: All these disabled in favour of smartparens
   (when (fboundp 'electric-indent-mode) (electric-indent-mode 1))
-  (when (fboundp 'electric-pair-mode) (electric-pair-mode -1)) ;disable in favor of autopair
   (when (fboundp 'electric-layout-mode) (electric-layout-mode -1))
   (when (eload 'parenthesis)      ;Insert pair of parenthesis
     (add-hook 'c-mode-common-hook
               (lambda()
                 (parenthesis-init)
                 (parenthesis-register-keys "{('\"[")))
-    )
+    ))
+(when t
   (append-to-load-path (elsub "autopair")) ;better than `electric-pair-mode'
+  (when (fboundp 'electric-pair-mode) (electric-pair-mode -1)) ;disable in favor of autopair
   (when (eload 'autopair)
-    (autopair-global-mode -1)           ;to enable in all buffers
+    (autopair-global-mode 1)           ;to enable in all buffers
     (when nil
       (eload 'auto-pair+)
       ;; use paredit instead
