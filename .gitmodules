@@ -58,3 +58,6 @@
 [submodule "tup-mode"]
 	path = tup-mode
 	url = https://github.com/ejmr/tup-mode.git
+[submodule "swift-mode"]
+	path = swift-mode
+	url = https://github.com/iamleeg/swift-mode.git
