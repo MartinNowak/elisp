@@ -901,25 +901,25 @@ See
                                        ) "Logical Operations")
 
 (defconst relangs-bitwise-and
-  `((:lang (C C++) :expr "&")
+  `((:lang (C C++ D Python) :expr "&")
     (:lang C++ :expr "bitand")
     (:lang Ada :expr "and")
     (:lang Emacs-Lisp :expr "logand")
     ) "Bitwise And Operation")
 (defconst relangs-bitwise-or
-  `((:lang (C C++) :expr "&")
+  `((:lang (C C++ D Python) :expr "&")
     (:lang C++ :expr "bitor")
     (:lang Ada :expr "or")
     (:lang Emacs-Lisp :expr "logior")
     ) "Bitwise Or Operation")
 (defconst relangs-bitwise-xor
-  `((:lang (C C++) :expr "^")
+  `((:lang (C C++ D Python) :expr "^")
     (:lang C++ :expr "bitxor")
     (:lang Ada :expr "xor")
     (:lang Emacs-Lisp :expr "logxor")
     ) "Bitwise XOr (Exclusive Or) Operation")
 (defconst relangs-bitwise-not
-  `((:lang (C C++) :expr "~")
+  `((:lang (C C++ Python) :expr "~")
     (:lang C++ :expr "bitnot")
     (:lang Ada :expr "not")
     (:lang Emacs-Lisp :expr "lognot")
