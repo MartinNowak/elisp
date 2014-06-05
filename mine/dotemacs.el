@@ -1297,11 +1297,20 @@ save it in `ffap-file-at-point-line-number' variable."
       ))
   (add-hook 'ada-mode-hook 'ada-mode-charedit t))
 
+;;; ===========================================================================
 ;; Objective-C mode
 ;;(add-to-list 'auto-mode-alist '("\\.mm?$" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
+
+;;; ===========================================================================
+;; Swift
+(when (append-to-load-path (elsub "swift-mode"))
+  (autoload 'swift-mode "swift-mode" "Major mode for editing Apple Mac OS X Swift Code." t)
+  (add-to-list 'auto-mode-alist '("\\.swift\\'" . swift-mode)))
+
+;;; ===========================================================================
 
 (defun dscanner-faze (str)
   "Colorize Completion Candidate STR."
