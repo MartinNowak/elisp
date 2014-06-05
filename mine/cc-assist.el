@@ -423,11 +423,9 @@ TOKEN can be either a character or a string."
   (let ((begin (region-beginning))
         (end (region-end)))
     (goto-char end)
-    (c-insert-close-paren)
+    (insert ")")
     (goto-char begin)
-    (c-insert-open-paren)
-    (end-of-list)
-    ))
+    (insert "(")))
 (defun c-insert-parens ()
   "Insert C-Style Pair of Opening and Closing Paren.
 C-Style variant of `paredit-wrap-round'."
@@ -437,13 +435,7 @@ C-Style variant of `paredit-wrap-round'."
         (c-wrap-region)
       (paredit-wrap-sexp 1 ?\( ?\))
       (when (require 'hictx nil t)
-        (hictx-sexp-afpt))))
-  ;; (c-insert-open-paren)
-  ;; (forward-sexp)
-  ;; (c-insert-close-paren)
-  ;; (backward-sexp)
-  ;; (down-list)
-  )
+        (hictx-sexp-afpt)))))
 (defalias 'c-wrap-round 'c-insert-parens)
 
 (defun c-insert-open-hook () "Insert C-Style Opening Hook." (interactive) (c-insert-token ?\[))
