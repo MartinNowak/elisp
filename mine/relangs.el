@@ -655,6 +655,7 @@ See
   (lambda (name)
     `((:lang Python :expr (: "def" ,name))
       (:lang Swift :expr (: "func" ,name))
+      (:lang Rust :expr (: "fn" ,name))
       (:lang Emacs-Lisp :expr (: "(" "defun" ,name))
       )) "Definition of Function Named NAME.")
 
