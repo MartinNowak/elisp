@@ -301,7 +301,8 @@
 (defun setup-hide-ifdef ()
   "Setup hideif."
   ;; TODO: `hide-ifdef-env'
-  (when (require 'hideif nil t)
+  (when (or (load-file (elsub "mine/hideif.elc"))
+            (require 'hideif nil t))
     (setq-default hide-ifdef-shadow t)
     (setq hide-ifdef-env '((__linux__ . t)
                            (__WORDSIZE . "32")))
