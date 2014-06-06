@@ -1047,7 +1047,9 @@ save it in `ffap-file-at-point-line-number' variable."
           )
         t)))
   (add-to-list 'magic-mode-alist '(recognize-c-mode . c-mode)))
-(add-hook 'c-mode-common-hook 'c-guess 1)
+(when nil
+  (add-hook 'c-mode-common-hook 'c-guess 1) ;NOTE: Disabled because it fails when replacing regexp in dired
+  )
 (when (and nil
            (require 'guess-offset nil t))
   (add-hook 'c-mode-common-hook 'guess-offset 1))
