@@ -1573,13 +1573,15 @@ See URL `http://dlang.org/'."
 
 (defun setup-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths."
-  (when (and buffer-file-name
-             (string-match "/dmd/src/" (file-name-directory
-                                        buffer-file-name)))
-    (setq flycheck-clang-include-path '("root" "tk" "backend"))
-
-
-    ))
+  (when nil                            ;NOTE: Disabled because this causes error
+    (when (and buffer-file-name
+               (string-match "/dmd/src/" (file-name-directory
+                                          buffer-file-name)))
+      (dolist (dir '("root"
+                     "tk"
+                     "backend"))
+        (add-to-list 'flycheck-clang-include-path dir))
+      )))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
