@@ -2847,6 +2847,35 @@ And make sure that it really shows up!"
 (eload 'pgo-keys)			;Lastly Override Key Bindings
 (set-frame-font "6x13")
 
+;;; ===========================================================================
+;;; Pretty save message
+(defun d-file-logical-lines-count (&optional filename)
+  "Return number of logical lines in D file FILENAME."
+  (let ((filename (or filename
+                      (buffer-file-name))))
+    (string-to-number
+     (second (split-string
+              (first (split-string (shell-command-to-string
+                                    (concat "dscanner " "-l " filename))
+                                   "\n")))))))
+(d-file-logical-lines-count)
+
+(defun message-pretty-save ()
+  "Advanced message() function.
+See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-for-save-buffer/24116386#24116386"
+  (let ((filename buffer-file-name))
+    (message "Wrote %s [%s%s]"
+             filename
+             (format "%d lines"
+                     (count-lines (point-min)
+                                  (point-max)))
+             (when (and (eq major-mode 'd-mode)
+                        (executable-find "dscanner"))
+               (format ", %d logical lines"
+                       (d-file-logical-lines-count filename))))))
+(add-hook 'after-save-hook
+          'message-pretty-save t)
+
 (uniquify-environment-variable "PATH")
 
 ;; =========================================== Inactives =====================================
