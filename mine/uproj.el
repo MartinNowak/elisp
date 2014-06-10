@@ -505,27 +505,29 @@ VERSION default to version of gdb"
   `(("Debug-Boundscheck-Unittest"
      ("-debug" "-g" "-gs" "-unittest")) ;-gc
     ("Debug"
-     ("-debug" "-g" "-gs" "-noboundscheck")) ;-gc
+     ("-debug" "-g" "-gs")) ;-gc
     ("Debug-Show-Thread-Locals"
-     ("-vtls" "-debug" "-g" "-gs" "-noboundscheck")) ;-gc
+     ("-vtls" "-debug" "-g" "-gs")) ;-gc
     ("Debug-Bounds-Check"
      ("-debug" "-g" "-gs"));-gc
     ("Unittest"
-     ("-unittest" "-noboundscheck"))
+     ("-unittest"))
     ("Debug-Unittest"
-     ("-debug" "-g" "-gs" "-unittest" "-noboundscheck")) ;-gc
+     ("-debug" "-g" "-gs" "-unittest")) ;-gc
     ("Profile"
      ("-profile"))
     ("Debug-Profile"
      ("-debug" "-g" "-gs" "-profile"))       ;-gc
     ("Release-Profile"
-     ("-release" "-noboundscheck" "-O" "-inline" "-w" "-wi"))
+     ("-release" "-O" "-inline" "-w" "-wi"))
     ("Release"
-     ("-release" "-noboundscheck" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+    ("Release-NoBoundscheck"
+     ("-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Debug-Release"
-     ("-debug" "-release" "-noboundscheck" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-debug" "-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Unittest"
-     ("-release" "-noboundscheck" "-O" "-inline" "-w" "-wi" "-unittest"))
+     ("-release" "-O" "-inline" "-w" "-wi" "-unittest"))
     )
   "DMD Build Types.")
 (defconst dmd-default-build-type

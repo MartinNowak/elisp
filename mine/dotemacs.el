@@ -2869,10 +2869,11 @@ See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-fo
              (format "%d lines"
                      (count-lines (point-min)
                                   (point-max)))
-             (when (and (eq major-mode 'd-mode)
-                        (executable-find "dscanner"))
-               (format ", %d logical lines"
-                       (d-file-logical-lines-count filename))))))
+             (if (and (eq major-mode 'd-mode)
+                      (executable-find "dscanner"))
+                 (format ", %d logical lines"
+                         (d-file-logical-lines-count filename))
+               ""))))
 (add-hook 'after-save-hook
           'message-pretty-save t)
 
