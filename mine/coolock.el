@@ -463,6 +463,11 @@
    (cons (concat Y< "template" L* $< ID $>)
          '((1 'font-lock-template-definition-face t)))))
 
+(defun coolock/d-traits-call ()
+  (list
+   (cons (concat Y< "__traits" L* "(" L* $< ID $>)
+         '((1 'font-lock-builtin-ref-face append)))))
+
 (defun coolock/d-variadic-argument ()
   (list
    (cons (eval `(rx (group (regexp ,ID)) (* space) (group "...")))
@@ -1953,6 +1958,7 @@ Return t if `forward-sexp' otherwise nil."
           (coolock/d-operators)
           (coolock/hash-bang)
           (coolock/d-template-definition)
+          (coolock/d-traits-call)
           (coolock/d-template-instance)
           (coolock/d-template-builtin-operators)
           (coolock/d-builtin-properties)
