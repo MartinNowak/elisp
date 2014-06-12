@@ -19,6 +19,7 @@
 ;; TODO: Extend eldoc to provide mark-sensitive documentation for code.
 ;; TODO: Last Element: C++ *x.rbegin(), D x[$-1]
 ;; TODO: http://wiki.glfw.org/wiki/Moving_from_GLFW_2_to_3
+;; TODO: http://www.adaic.org/resources/add_content/standards/05rm/html/RM-B-3.html
 
 (defconst relangs-Shell-to-D-regexp-replacements
   '(
