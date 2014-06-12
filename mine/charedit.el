@@ -166,21 +166,15 @@ END defaults to BEG."
     )
 
   ;; most modes use double-quotes for strings
-  (unless (memq major-mode '(paredit-mode ;paredit already does this for us
-                             tex-mode latex-mode LaTeX-mode ;AUCTEX has its own
-                             matlab-mode))
-    (local-set-key [?\"] 'charedit-double-quote-region)
-    )
+  (unless (memq major-mode (append '(paredit-mode ;paredit already does this for us
+                                     tex-mode latex-mode LaTeX-mode ;AUCTEX has its own
+                                     matlab-mode)
+                                   cc-derived-modes))
+    (local-set-key [?\"] 'charedit-double-quote-region))
 
   (when (memq major-mode '(octave-mode matlab-mode matlab-shell-mode))
     (local-set-key [?\'] 'charedit-single-quote-region)
     (local-set-key [?\"] 'charedit-matlab-double-quote-region) ;Matlab doesn't support double-quotes at all so insert pairs of single quotes instead.
-    )
-
-  (when (memq major-mode cc-derived-modes)
-    ;; NOTE: Disabled in favor of smartparens
-    ;; (local-set-key [?\'] 'charedit-single-quote-region)
-    ;; (local-set-key [?\"] 'charedit-double-quote-region)
     )
 
   (when (memq major-mode '(org-mode))
