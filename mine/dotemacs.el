@@ -532,8 +532,6 @@
 ;;; https://github.com/capitaomorte/autopair
 ;;; http://stackoverflow.com/questions/7718975/intelligent-auto-closing-matching-characters
 (when nil                               ;TODO: All these disabled in favour of smartparens
-  (when (fboundp 'electric-indent-mode) (electric-indent-mode 1))
-  (when (fboundp 'electric-layout-mode) (electric-layout-mode -1))
   (when (eload 'parenthesis)      ;Insert pair of parenthesis
     (add-hook 'c-mode-common-hook
               (lambda()
@@ -542,9 +540,10 @@
     ))
 (when t
   (append-to-load-path (elsub "autopair")) ;better than `electric-pair-mode'
-  (when (fboundp 'electric-pair-mode) (electric-pair-mode -1)) ;disable in favor of autopair
+  (when (fboundp 'electric-pair-mode)
+    (electric-pair-mode -1))            ;disable in favor of autopair
   (when (eload 'autopair)
-    (autopair-global-mode 1)           ;to enable in all buffers
+    (autopair-global-mode -1)           ;to enable in all buffers
     (when nil
       (eload 'auto-pair+)
       ;; use paredit instead
@@ -580,7 +579,9 @@
         (put 'autopair-backspace 'delete-selection 'supersede)
         (put 'autopair-newline 'delete-selection t)))
     ))
-
+(when (fboundp 'electric-indent-mode) (electric-indent-mode 1))
+(when (fboundp 'electric-layout-mode) (electric-layout-mode -1))
+(when (fboundp 'electric-pair-mode) (electric-pair-mode 1))
 ;; See: http://www.emacswiki.org/emacs-en/AutoPairs
 
 (when (append-to-load-path (elsub "Sublain"))

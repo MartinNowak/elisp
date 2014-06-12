@@ -2199,7 +2199,7 @@ Example std::function<R(T1,T2,...)>"
   "Insert C++/D-style type cast."
   (interactive)
   (let ((mode (or mode major-mode)))
-    (if (use-region-p)                ;if region given
+    (if (use-region-p)                  ;if region given
         (progn
           (goto-char (region-beginning))
           (unless (region-parenthesized-p)
@@ -3822,7 +3822,6 @@ This command assumes point is not in a string or comment."
 
 (defun d-assist-hook ()
   "Common Assistance for D."
-
   (charedit-local-set-key ?_ 'd-insert-static-assert 'code)
   (charedit-local-set-key ?a 'd-insert-alias-stub 'code)
   (charedit-local-set-key ?! 'd-insert-pragma-msg 'code)
@@ -3836,9 +3835,8 @@ This command assumes point is not in a string or comment."
   (charedit-local-set-key ?m 'd-insert-module-stub 'code)
   (charedit-local-set-key ?T 'd-insert-unittest-stub 'code)
   (charedit-local-set-key ?F 'd-insert-foreach-stub 'code)
-  (charedit-local-set-key ?\( 'c-insert-type-cast 'code)
+  (charedit-local-set-key ?y 'c-insert-type-cast 'code)
   (charedit-local-set-key ?c 'd-insert-conv-to 'code)
-
   ;; DDoc Shortcuts
   (charedit-local-set-key ?\  'd-insert-ddoc-macro 'comment)
   )

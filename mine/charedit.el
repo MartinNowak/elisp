@@ -46,10 +46,18 @@ END defaults to BEG."
   "Describes how first character should be paired (with second)
   and its symbolic naming.")
 
+(defun quoty-command-activate ()
+  "Return non-nil if some other mode handles smart quoting."
+  (or (and (fboundp 'electric-pair-mode)
+           electric-pair-mode)
+      (and (fboundp 'autopair-mode)
+           autopair-mode)
+      (and (fboundp 'smartparens-mode)
+           smartparens-mode)))
+
 (defun charedit-single-quote-region ()
   (interactive)
-  (if (and (fboundp 'electric-pair-mode)
-           electric-pair-mode t)
+  (if (quoty-command-activate)
       (self-insert-command 1)
     (if (use-region-p) (char-wrap-region ?\') (self-insert-command 1))))
 (defun charedit-matlab-double-quote-region ()
@@ -61,8 +69,7 @@ END defaults to BEG."
 
 (defun charedit-double-quote-region ()
   (interactive)
-  (if (and (fboundp 'electric-pair-mode)
-           (electric-pair-mode t))
+  (if (quoty-command-activate)
       (self-insert-command 1)
     (if (use-region-p) (char-wrap-region ?\") (self-insert-command 1))))
 
@@ -171,8 +178,9 @@ END defaults to BEG."
     )
 
   (when (memq major-mode cc-derived-modes)
-    (local-set-key [?\'] 'charedit-single-quote-region)
-    (local-set-key [?\"] 'charedit-double-quote-region)
+    ;; NOTE: Disabled in favor of smartparens
+    ;; (local-set-key [?\'] 'charedit-single-quote-region)
+    ;; (local-set-key [?\"] 'charedit-double-quote-region)
     )
 
   (when (memq major-mode '(org-mode))
