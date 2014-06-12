@@ -134,22 +134,25 @@ any of the searched expression contains an uppercase character
 perform a case-sensitive search otherwise perform a
 case-insensitive search (mimicing the behaviour of Emacs Search
 and Replace)."
-  (let ((case-fold-flag t)
-        (suppress-flag t)
-        (thing (if (use-region-p)
-                   (buffer-substring-no-properties
-                    (region-beginning)
-                    (region-end))
-                 (let ((sym (ignore-errors (and (require 'semantic-ctxt nil t)
-						(semantic-ctxt-current-symbol)))))
-                   (if sym
-                       (mapconcat 'identity sym "::")
-                     (or (when (fboundp 'symbol-name-next-to-point)
-                           (symbol-name-next-to-point))
-                         (when (and (require 'thingatpt+ nil t)
-                                    (fboundp 'symbol-name-at-point))
-                           (symbol-name-at-point)))))))
-        (history (if regexp-flag grep-regexp-history grep-history)))
+  (let* ((case-fold-flag t)
+         (suppress-flag t)
+         (symbol-flag nil)
+         (thing (if (use-region-p)
+                    (buffer-substring-no-properties
+                     (region-beginning)
+                     (region-end))
+                  (let ((sym (ignore-errors (and (require 'semantic-ctxt nil t)
+                                                 (semantic-ctxt-current-symbol)))))
+                    (if sym
+                        (mapconcat 'identity sym "::")
+                      (or (when (fboundp 'symbol-name-next-to-point)
+                            (setq symbol-flag t)
+                            (symbol-name-next-to-point))
+                          (when (and (require 'thingatpt+ nil t)
+                                     (fboundp 'symbol-name-at-point))
+                            (setq symbol-flag t)
+                            (symbol-name-at-point)))))))
+         (history (if regexp-flag grep-regexp-history grep-history)))
     (let ((patt
            (if multi-flag
                (let* ((keys (multi-read-thing (format "Search for %s %s"
@@ -192,8 +195,7 @@ and Replace)."
                                      grep-language-syntax-modes)))
                    (flags (read-from-minibuffer
                            (concat "Search for \"" npatt "\" with grep flags: ")
-                           nil nil nil 'tgrep-flags-history))
-                   )
+                           nil nil nil 'tgrep-flags-history)))
 
               ;; make double-quotes work for greps regexp syntax
               (setq npatt (replace-regexp-in-string "\"" "\\\\\"" npatt))
@@ -213,8 +215,11 @@ and Replace)."
                 (setq regexp-flag 'extended) ;for this we need extended regular expressions
                 )
 
-              (unless (string-regexp-p npatt) ;if string is not a regexp
-                (setq regexp-flag nil))       ;skip whitespace flag
+              (unless (string-regexp-p npatt) ;if string contains no regexp special characters
+                (setq regexp-flag nil))       ;dont' treat it as such
+
+              (when symbol-flag
+                (setq regexp-flag t))
 
               (case regexp-flag
                 ('extended
@@ -238,7 +243,11 @@ and Replace)."
                                                 ('t "-e ")        ;basic regexp
                                                 )
                                 "-F ")  ;fixed string(s)
-                              "\"" npatt "\" "
+                              "\""
+                              (if symbol-flag
+                                  (concat "\\<" npatt "\\>")
+                                  npatt)
+                              "\" "
                               "." ;compacter representation: (file-relative-name dir)
                               (if (and glob
                                        (not (equal glob "")))
