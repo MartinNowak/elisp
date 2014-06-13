@@ -513,7 +513,7 @@
                  $< "!" $> L*
                  "(?" L*
                  $< "\"?" ID $>)
-         '((1 'font-lock-template-instance-face append)
+         '((1 'font-lock-template-instance-face prepend)
            (2 'font-lock-operator-face append)
            (3 'font-lock-type-face append)))))
 
@@ -1949,6 +1949,7 @@ Return t if `forward-sexp' otherwise nil."
 (defun coolock/d-mode (&optional mode)
   (append (coolock/c-number mode)
           (coolock/d-number mode)
+          (coolock/d-template-instance)
           (coolock/d-asm)
           (coolock/d-private-member-variable)
           (coolock/d-scope-or-version-constant)
@@ -1959,13 +1960,11 @@ Return t if `forward-sexp' otherwise nil."
           (coolock/hash-bang)
           (coolock/d-template-definition)
           (coolock/d-traits-call)
-          (coolock/d-template-instance)
           (coolock/d-template-builtin-operators)
           (coolock/d-builtin-properties)
           (coolock/d-common-function-call)
           (coolock/d-lambda)
           (coolock/d-variadic-argument)
-          ;; (coolock/d-member-base)
           (coolock/d-range-dots)
           (coolock/d-special-constants)
           (coolock/d-foreach)
