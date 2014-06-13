@@ -61,3 +61,6 @@
 [submodule "swift-mode"]
 	path = swift-mode
 	url = https://github.com/iamleeg/swift-mode.git
+[submodule "spray"]
+	path = spray
+	url = https://github.com/zk-phi/spray.git
