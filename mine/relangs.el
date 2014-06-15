@@ -947,17 +947,23 @@ See
       (:lang (D Ada) :expr (,x _ ".." _ ,y))
       )) "Range Operator")
 
-(defconst relangs-membership-operator
+(defconst relangs-membership
   (lambda (x y)
     `((:lang Ada :expr (: x "in" y))
       (:lang Java :expr (: x ".isinstance(" y ")"))
-      )) "Membership")
+      (:lang D :expr (: x "in" y)
+             :time-complexity "O(c)")  ;TODO: if y is an associative array.
+      (:lang D :expr (| (: "find" "(" y "," x ")"))
+             :include "std.algorithm"
+             :time-complexity "O(y.length)")
+      (:lang C++ :expr "std::find_if" :include "<algorithm>")
+      )) "X Membership X of Y.")
 
-(defconst relangs-negated-membership-operator
+(defconst relangs-negated-membership
   (lambda (x y)
     `((:lang Ada :expr (: x "not" "in" y))
       (:lang D :expr (: "!" "(" x "in" y ")"))
-      )) "Negated Membership")
+      )) "X Negated Membership of Y.")
 
 (defconst relangs-lambda-expression
   (lambda (x)
