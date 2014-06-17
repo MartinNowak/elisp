@@ -1643,8 +1643,10 @@ See URL `http://dlang.org/'."
                   haskell-mode-hook
                   python-mode-hook
                   maxima-mode-hook
-                  ielm-mode-hook))
-    (add-hook hook (lambda () (flycheck-mode 1)))))
+                  ielm-mode-hook
+                  nxml-mode-hook))
+    (add-hook hook (lambda () (flycheck-mode 1))))
+  )
 
 ;;; Flycheck Coloring
 (when (require 'flycheck-color-mode-line nil t)
