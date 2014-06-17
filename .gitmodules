@@ -64,3 +64,6 @@
 [submodule "spray"]
 	path = spray
 	url = https://github.com/zk-phi/spray.git
+[submodule "flycheck-nordlow"]
+	path = flycheck-nordlow
+	url = https://github.com/nordlow/flycheck.git
