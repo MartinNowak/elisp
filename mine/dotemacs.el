@@ -1604,14 +1604,14 @@ See URL `http://dlang.org/'."
   (executable-find-auto-install-on-demand '("pyflakes" "pylint")) ;python-mode-hook
   (executable-find-auto-install-on-demand '("chktex" "lacheck")) ;LaTeX-mode-hook
   (executable-find-auto-install-on-demand "xmllint" '("libxml2-utils")) ;nxml-mode-hook
-  (executable-find-auto-install-on-demand "make") ;makefile-mode-hook
-  (executable-find-auto-install-on-demand "markdown") ;markdown-mode-hook
-  (executable-find-auto-install-on-demand "bash") ;sh-mode-hook
+  (executable-find-auto-install-on-demand "make")           ;makefile-mode-hook
+  (executable-find-auto-install-on-demand "markdown")       ;markdown-mode-hook
+  (executable-find-auto-install-on-demand "bash")           ;sh-mode-hook
   (executable-find-auto-install-on-demand '("ghc" "hlint")) ;haskell-mode-hook
   (executable-find-auto-install-on-demand '("clang" "g++")) ;c-mode-hook c++-mode-hook
-  (executable-find-auto-install-on-demand "xmlstarlet") ;latex-mode-hook
-  (executable-find-auto-install-on-demand "gnat-4.8") ;ada-mode-hook
-  (executable-find-auto-install-on-demand "gnat-4.9") ;ada-mode-hook
+  (executable-find-auto-install-on-demand "xmlstarlet")     ;latex-mode-hook
+  (executable-find-auto-install-on-demand "gnat-4.8")       ;ada-mode-hook
+  (executable-find-auto-install-on-demand "gnat-4.9")       ;ada-mode-hook
 
   ;; https://github.com/flycheck/flycheck/issues/303
   (defun display-buffer-window-below-and-shrink (buffer alist)
@@ -1635,6 +1635,8 @@ See URL `http://dlang.org/'."
                   d-mode-hook
                   ada-mode-hook
                   fortran-mode-hook
+                  f77-mode-hook
+                  f90-mode-hook
                   asciidoc-mode-hook
                   sh-mode-hook
                   makefile-mode-hook
@@ -1649,7 +1651,7 @@ See URL `http://dlang.org/'."
                   maxima-mode-hook
                   ielm-mode-hook
                   nxml-mode-hook))
-    (add-hook hook (lambda () (flycheck-mode 1))))
+    (add-hook hook 'flycheck-mode))
   )
 
 ;;; Flycheck Coloring
