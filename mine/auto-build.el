@@ -124,7 +124,7 @@ Currently supported through GCC's flags -MD."
                                  (mapcar
                                   ;; converts module name to filename
                                   (lambda (module)
-                                    (when (not (string-has-beginnings module '("std." "core.")))
+                                    (when (not (string-prefixes-p '("std." "core.") module))
                                       ;; TODO: Split module name into parts and search for them in subdirs of filename
                                       (let* (
                                              ;; strip "elf." if inside directory with basename "elf"

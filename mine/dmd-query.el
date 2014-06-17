@@ -26,7 +26,7 @@
       (with-current-buffer dmd-query-buffer-name
         (let* ((str (buffer-substring-no-properties (point-min)
                                                     (point-max)))
-               (off (if (string-has-beginning str "DMD v") ;skip DMD devel build tag
+               (off (if (string-prefix-p "DMD v" str) ;skip DMD devel build tag
                         (1+ (string-find-string "\n" str))
                       0)))
           (when (< off (length str))

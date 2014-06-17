@@ -649,7 +649,7 @@ Comparison is done with `eq'."
 ;;; -------- Querying Sub-Content of Strings --------
 
 (defun string-strip-prefix (whole beg)
-  (if (string-has-beginning whole beg)
+  (if (string-prefix-p beg whole)
       (substring whole (length beg))
     whole))
 (eval-when-compile (assert-equal (string-strip-prefix "elf.low" "elf.") "low"))
@@ -668,18 +668,10 @@ Comparison is done with `eq'."
 ;; Use: (strip-file-extension "foo.el.gz" "gz")
 ;; NOTE: Also see (file-name-sans-extension "foo.h")
 
-(defun string-has-beginning (whole beg)
-  "Return t if the string WHOLE begins with the string BEG."
-  (string-match (concat "\\`" (regexp-quote beg)) whole))
-(defalias 'string-begins-with 'string-has-beginning)
-;; Use: (string-has-beginning "vobj.h" "vobj")
-
-(defun string-has-beginnings (whole begs)
+(defun string-prefixes-p (begs whole)
   "Return t if the string WHOLE begins with any of the strings in BEGS."
   (string-match (concat "\\`" (eval `(rx (| ,@begs)))) whole))
-(defalias 'string-begins-with 'string-has-beginning)
-;; Use: (string-has-beginning "vobj.h" "vobj")
-;; Use: (string-has-beginnings "std." '("std" "core"))
+;; Use: (string-prefixes-p '("std" "core") "std.")
 
 (defun string-has-end (whole end)
   "Return t if the string WHOLE ends with the string END."

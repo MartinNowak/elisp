@@ -39,7 +39,9 @@ In particular, no temp files are created."
 
 (defun string-begins-with-p (string beginning)
   "Return t if and only if string begins with beginning"
-  (string-match-p (concat "^" (regexp-quote beginning)) string))
+  (string-prefix-p beginning string)
+  ;; (string-match-p (concat "^" (regexp-quote beginning)) string)
+  )
 
 (defun file-excluded-from-system-trash-p (path)
   "Returns non-nil if file name is excluded from trash."
@@ -90,5 +92,5 @@ There's also no need to ask, because it's undoable."
   (if delete-by-moving-to-trash
       (move-file-to-trash file)
     ad-do-it))
- 
+
 (provide 'trash-settings)
