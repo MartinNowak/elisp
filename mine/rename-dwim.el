@@ -78,11 +78,11 @@ otherwise default rename-file() on OLD."
       (dolist (bin bins)
         (let ((fbin (faze bin 'file)))
           (when (file-exists-p bin)
-            (if (string-has-end new ".el")
+            (if (string-suffix-p ".el" new)
                 (progn ;this is safer since byte-compiled may contain reference to to original emacs-lisp file
                   (when (y-or-n-p (format "Delete corresponding Byte-Code file %s aswell?" fbin))
                     (delete-file bin))
-                  (when (string-has-end new ".el")
+                  (when (string-suffix-p ".el" new)
                     (byte-compile-file new)))
               (let ((bc-new (concat (file-name-sans-extension new) "."
                                     (file-name-extension bin))))

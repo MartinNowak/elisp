@@ -673,12 +673,6 @@ Comparison is done with `eq'."
   (string-match (concat "\\`" (eval `(rx (| ,@begs)))) whole))
 ;; Use: (string-prefixes-p '("std" "core") "std.")
 
-(defun string-has-end (whole end)
-  "Return t if the string WHOLE ends with the string END."
-  (string-match (concat (regexp-quote end) "\\'") whole))
-(defalias 'string-ends-with 'string-has-end)
-;; Use: (string-has-end "vobj.h" ".h")
-
 (defalias 'string-compare 'compare-strings)
 
 ;; @related: just-one-space

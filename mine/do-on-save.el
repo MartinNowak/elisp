@@ -116,7 +116,7 @@ buffer."
 
 (defun do-on-save-xml ()
   (when (and (or (eq major-mode 'xml-mode)
-                 (string-has-end (downcase (file-name-sans-directory buffer-file-name)) ".xml"))
+                 (string-suffix-p ".xml" (downcase (file-name-sans-directory buffer-file-name))))
              (executable-find-auto-install-on-demand "xmllint"))
     (let ((ch ?l))
       (case (read-char-spec "Do on save" `((,ch ,ch "Run xmllint on buffer)")
@@ -127,7 +127,7 @@ buffer."
 
 (defun do-on-save-python ()
   (when (and (or (eq major-mode 'python-mode)
-                 (string-has-end (downcase (file-name-sans-directory buffer-file-name)) ".py"))
+                 (string-suffix-p ".py" (downcase (file-name-sans-directory buffer-file-name))))
              (executable-find-auto-install-on-demand "pyflakes"))
     ;; TODO: Call it and only show it if exit status is non-zero.
     (case (read-char-spec "Do on save" `((?f ?f "Run pyflakes on buffer)")
