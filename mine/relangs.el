@@ -852,6 +852,7 @@ See
     `((:lang (Matlab Ada Emacs-Lisp) :expr "abs" :arity 1)
       (:lang (C++) :expr "std::abs")
       )) "Arithmetic Absolute Value")
+
 (defconst relangs-arithmetic-power
   (lambda (base exponent)
     `((:lang (Fortran Python Ruby Ada) :expr (: base "**" exponent))
@@ -864,7 +865,24 @@ See
                                      ("powl")
                                      )
                         "(" base "," exponent ")"))
+      (:lang Python :expr (: ("pow") "(" base "," exponent ")"))
       )) "Arithmetic Power (Exponentation) Operator of to the power of exponent")
+
+(defconst relangs-floor
+  (lambda (expr)
+    `((:lang Python :expr (: ("floor") "(" expr ")"))
+      (:lang C :expr (| (: ("floor") "(" expr ")")
+                        (: ("floorf") "(" expr ")")
+                        (: ("floorl") "(" expr ")")))
+      )) "Floor of X.")
+
+(defconst relangs-ceil
+  (lambda (expr)
+    `((:lang Python :expr (: ("ceil") "(" expr ")"))
+      (:lang C :expr (| (: ("ceil") "(" expr ")")
+                        (: ("ceilf") "(" expr ")")
+                        (: ("ceill") "(" expr ")")))
+      )) "Ceiling of X.")
 
 (defun relangs-arithmetic-floating-point-remainder ()
   "Floating Point Division Remainder."
