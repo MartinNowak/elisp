@@ -1609,6 +1609,7 @@ See URL `http://dlang.org/'."
   (executable-find-auto-install-on-demand "bash") ;sh-mode-hook
   (executable-find-auto-install-on-demand '("ghc" "hlint")) ;haskell-mode-hook
   (executable-find-auto-install-on-demand '("clang" "g++")) ;c-mode-hook c++-mode-hook
+  (executable-find-auto-install-on-demand "xmlstarlet") ;latex-mode-hook
 
   ;; https://github.com/flycheck/flycheck/issues/303
   (defun display-buffer-window-below-and-shrink (buffer alist)
