@@ -359,6 +359,7 @@ X defaults to :related"
     `((:lang (C C++ Java C\# D Lua) :expr "int")
       (:lang Swift :expr "Int" :bits (or 32
                                          64))
+      (:lang Fortran :expr "integer" :bits 32)
       (:lang Ada :expr (| "Integer"
                           "Interfaces.C.C_int") :bits 32)
       (:lang Modelica :expr "Integer")
@@ -469,6 +470,7 @@ X defaults to :related"
 (defconst relangs-double-type
   (lambda ()
     `((:lang (C C++ C\# Java D Matlab) :expr "double")
+      (:lang Fortran :expr "real" )
       (:lang Modelica :expr "Real")
       )) "Double-Precision Floating Point Type.")
 
@@ -2034,6 +2036,11 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     ((:MFC "Add")
      (:STL "push_back"))
     ) "Mappings between C++ Standard Template Library (STL) and Microsoft's MFC")
+
+(defconst relangs-case-insensitive
+  (lambda ()
+    `((:lang (Ada Fortran Cobol Basic VB.NET Forth Common-Lisp Scheme) :expr t)
+      )) "Case-Insensitive Languages. See also: https://www.quora.com/Computer-Programming/What-programming-languages-are-case-insensitive")
 
 (defconst relangs-emacs-commands-history
   '(last-command
