@@ -1572,14 +1572,14 @@ See URL `http://dlang.org/'."
                   '((d-mode . ffap-d-mode))))))
 (add-hook 'd-mode-hook 'd-mode-setup-pnw t)
 
-;;; NOTE: Need because for some reason `flycheck-checkers' is overridden by my
-;;; configurations.
-(when (boundp 'flycheck-checkers)
-  (add-to-list 'flycheck-checkers 'ada-gcc)
-  (add-to-list 'flycheck-checkers 'fortran-gcc))
-
 (defun setup-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths."
+
+  ;; NOTE: Need because for some reason `flycheck-checkers' is overridden by my
+  ;; configurations.
+  (when (boundp 'flycheck-checkers)
+    (add-to-list 'flycheck-checkers 'ada-gcc)
+    (add-to-list 'flycheck-checkers 'fortran-gcc))
 
   (when nil                            ;NOTE: Disabled because this causes error
     (when (and buffer-file-name
