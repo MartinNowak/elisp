@@ -1633,6 +1633,8 @@ See URL `http://dlang.org/'."
   (dolist (hook '(c-mode-hook
                   c++-mode-hook
                   d-mode-hook
+                  ada-mode-hook
+                  fortran-mode-hook
                   asciidoc-mode-hook
                   sh-mode-hook
                   makefile-mode-hook
