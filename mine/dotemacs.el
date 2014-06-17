@@ -3447,7 +3447,8 @@ If there is no expansion the command returned by
       (interactive "P")
       (if (save-restriction
             (message-narrow-to-headers)
-            (string-suffix-p "gmail.com" (message-fetch-field "from"))) ;if from an adress ending with gmail.com
+            (string-suffix-p "gmail.com"
+                             (message-fetch-field "from"))) ;if from an adress ending with gmail.com
           (let ((message-send-mail-function 'smtpmail-send-it)
                 ;; gmail says use port 465 or 587, but 25 works and those don't, go figure
                 (smtpmail-starttls-credentials '(("smtp.gmail.com" 25 nil nil)))
