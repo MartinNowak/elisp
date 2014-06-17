@@ -171,15 +171,19 @@ X defaults to :related"
       )) "Print EXPR on a separate line.")
 
 (defconst relangs-begins-with
-  (lambda (expr prefix)
-    `((:lang Python :expr (: expr ".beginswith(" prefix ")"))
-      (:lang Swift :expr (: expr ".hasPrefix(" prefix ")"))
+  (lambda (whole prefix)
+    `((:lang Python :expr (: whole ".startswith(" prefix ")"))
+      (:lang Java :expr (: whole ".startsWith(" prefix ")"))
+      (:lang Swift :expr (: whole ".hasPrefix(" prefix ")"))
+      (:lang Emacs-Lisp :expr (: "(" "string-prefix-p" prefix whole ")"))
       )) "Check if EXPR begins with PREFIX.")
 
 (defconst relangs-ends-with
-  (lambda (expr suffix)
-    `((:lang Python :expr (: expr ".endswith(" suffix ")"))
-      (:lang Swift :expr (: expr ".hasSuffix(" suffix ")"))
+  (lambda (whole suffix)
+    `((:lang Python :expr (: whole ".endswith(" suffix ")"))
+      (:lang Java :expr (: whole ".endsWith(" suffix ")"))
+      (:lang Swift :expr (: whole ".hasSuffix(" suffix ")"))
+      (:lang Emacs-Lisp :expr (: "(" "string-suffix-p" suffix whole ")"))
       )) "Check if EXPR ends with SUFFIX.")
 
 (defconst relangs-get-current-time
