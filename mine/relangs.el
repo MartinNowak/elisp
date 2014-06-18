@@ -973,7 +973,7 @@ See
 
 (defconst relangs-membership
   (lambda (x y)
-    `((:lang Ada :expr (: x "in" y))
+    `((:lang (Python Ada) :expr (: x "in" y))
       (:lang Java :expr (: x ".isinstance(" y ")"))
       (:lang D :expr (: x "in" y)
              :time-complexity "O(c)")  ;TODO: if y is an associative array.
