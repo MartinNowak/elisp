@@ -4232,6 +4232,7 @@ Use PROMPT when querying the password."
 		    ("\\.xscreensaver\\'" . default-generic-mode)
 		    ("\\.fonts.cache-[0-9]+\\'" . default-generic-mode)
 		    ("\\.gtkrc.*\\'" . default-generic-mode)
+		    ("\\.egg-info\\'" . conf-mode)
 		    ("/mnt/*/WINDOWS.*/.*\\.inf\\'" . generic-mode)
 		    ("\\.doxygen\\'" . default-generic-mode)
 		    ("Doxyfile.tmpl$" . makefile-mode)
