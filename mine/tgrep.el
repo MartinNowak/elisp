@@ -218,6 +218,14 @@ and Replace)."
               (unless (string-regexp-p npatt) ;if string contains no regexp special characters
                 (setq regexp-flag nil))       ;dont' treat it as such
 
+              (setq symbol-flag
+                    (string-equal "Symbol"
+                     (completing-read "Context as: " '("Any" "Symbol")
+                                      nil nil nil nil
+                                      (if symbol-flag
+                                          "Symbol"
+                                        "Any"))))
+
               (when symbol-flag
                 (setq regexp-flag t))
 
@@ -246,7 +254,7 @@ and Replace)."
                               "\""
                               (if symbol-flag
                                   (concat "\\<" npatt "\\>")
-                                  npatt)
+                                npatt)
                               "\" "
                               "." ;compacter representation: (file-relative-name dir)
                               (if (and glob
