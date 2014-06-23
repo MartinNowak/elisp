@@ -803,6 +803,7 @@ See
 (defconst relangs-content-not-equality-operator
   (lambda (x y)
     `((:lang (C C++ D Java C\# Python Ruby) :expr (: "!="))
+      (:lang Python :expr "<>" :deprecated true)
       (:lang Fortran-77 :expr (| ".NEQV." ".NE.") :prefer (: x ".NEQV." y))
       (:lang Matlab :expr (| "~="
                              "ne(X,Y)"))
