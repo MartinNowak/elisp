@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Sat Jun  7 11:47:34 2014 (-0700)
+;; Last-Updated: Sat Jun 21 16:09:32 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10942
+;;     Update #: 10954
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -85,6 +85,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
+;; 2014/06/19 dadams
+;;     icicle-explore: Added note to doc string about binding *-incremental-completion to always.
 ;; 2014/06/06 dadams
 ;;     Added: icicle-choose-window-for-buffer-display, icicle-choose-window-by-name,
 ;;            icicle-read-choose-window-args.
@@ -1091,6 +1093,11 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/06/21 dadams
+;;     icicle-imenu-1: Handle multiple submenus with the same name (e.g. Functions).
+;; 2014/06/19 dadams
+;;     icicle-apply, icicle-search:
+;;       Added note to doc string about binding *-incremental-completion to always.
 ;; 2014/05/17 dadams
 ;;     icicle-color-help, icicle-tags-search: with-output-to-temp-buffer -> icicle-with-help-window.
 ;; 2014/05/11 dadams
@@ -4222,6 +4229,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mcmd.el'")
 ;;
+;; 2014/06/21 dadams
+;;     icicle-candidate-set-retrieve-1: Mention whether added or restored in msg.
 ;; 2014/06/07 dadams
 ;;     icicle-switch-to/from-minibuffer:
 ;;       Test for non icicle-pre-minibuffer-buffer, not for eq minibuf win.
@@ -7214,6 +7223,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/06/21 dadams
+;;     icicle-completion-key-bindings:
+;;       Added bindings for bmkp-(set|retrieve(-more)-icicle-search-hits-bookmark.
 ;; 2014/05/16 dadams
 ;;     icicle-default-value: Updated doc string for change to t value behavior.
 ;; 2014/04/29 dadams

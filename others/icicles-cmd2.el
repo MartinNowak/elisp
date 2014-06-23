@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Thu May 21 13:31:43 2009 (-0700)
-;; Last-Updated: Fri May 16 23:37:04 2014 (-0700)
+;; Last-Updated: Sat Jun 21 15:12:45 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 6840
+;;     Update #: 6862
 ;; URL: http://www.emacswiki.org/icicles-cmd2.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -3583,9 +3583,16 @@ Use `mouse-2', `RET', or `S-RET' to finally choose a candidate, or
 `C-g' to quit.  This is an Icicles command - see command
 `icicle-mode'.
 
-`icicle-apply' overrides `icicle-buffer-ignore-space-prefix-flag',
-binding it to nil so that candidates with initial spaces can be
-matched."
+Note:
+* `icicle-apply' overrides `icicle-buffer-ignore-space-prefix-flag',
+  binding it to nil so that candidates with initial spaces can be
+  matched.
+* `icicle-apply' binds user option `icicle-incremental-completion' to
+  `always', because I think you typically want to start it out with
+  incremental completion turned on.  Functions that call
+  `icicle-apply' thus also turn on incremental completion.
+  Remember that you can use `C-#' (once or twice) to turn incremental
+  completion off."
   (interactive
    (list (symbol-value
           (intern
@@ -4231,6 +4238,13 @@ Note that if SCAN-FN-OR-REGEXP is a regexp string, then function
 zones.  You can limit hits to regexp matches that also satisfy a
 predicate, by using `(PREDICATE)' as ARGS: PREDICATE is then passed to
 `icicle-search-regexp-scan' as its PREDICATE argument.
+
+Note: `icicle-search' effectively binds user option
+`icicle-incremental-completion' to `always', because I think you
+typically want to start it out with incremental completion turned on.
+Other Icicles search commands are defined using `icicle-search', so
+they also effectively turn on incremental completion.  Remember that
+you can use `C-#' (once or twice) to turn it off.
 
 This command is intended for use only in Icicle mode."
   (interactive `(,@(icicle-region-or-buffer-limits)
@@ -6946,7 +6960,7 @@ procedure name."
     (icicle-imenu-1 nil beg end require-match where)))
 
 (defun icicle-imenu-help (cand)
-  "Use as `icicle-candidate-help-fn' for `icicle-search' commands."
+  "Use as `icicle-candidate-help-fn' for `icicle-imenu' commands."
   (let* ((icicle-whole-candidate-as-text-prop-p  t)
          (marker  (cdr (funcall icicle-get-alist-candidate-function cand)))
          (buffer  (marker-buffer marker)))
@@ -7353,7 +7367,8 @@ The other args are as for `icicle-search'."
     (unwind-protect
          (save-match-data
            (set-syntax-table table)
-           (let* ((others   0)
+           (let* (regexp
+                  (others   0)
                   (menus    (mapcar (lambda (menu)
                                       (when (equal (car menu) "Other")
                                         (setq others  (1+ others))
@@ -7370,11 +7385,17 @@ The other args are as for `icicle-search'."
                   (submenu  (if submenu-fn
                                 (funcall submenu-fn menus)
                               (if (cadr menus)
-                                  (let ((icicle-show-Completions-initially-flag  t)
-                                        (completion-ignore-case                  t))
-                                    (completing-read "Choose: " menus nil t))
+                                  ;; There can be multiple submenus with the same name.
+                                  ;; E.g., `Functions' can come from `defun' or `defalias'.
+                                  ;; So we cannot just use (cadr (assoc submenus menus)) to get the regexp.
+                                  (let* ((icicle-show-Completions-initially-flag  t)
+                                         (icicle-whole-candidate-as-text-prop-p   t)
+                                         (icicle-candidates-alist                 menus)
+                                         (completion-ignore-case                  t)
+                                         (submnu                                  (completing-read
+                                                                                   "Choose: " menus nil t)))
+                                    (setq regexp  (cadr (icicle-get-alist-candidate submnu 'NO-ERROR))))
                                 (caar menus)))) ; Only one submenu, so use it.
-                  (regexp   (cadr (assoc submenu menus)))
                   (icicle-transform-function
                    (and (not (interactive-p))  icicle-transform-function)))
              (unless (stringp regexp) (icicle-user-error "No match"))

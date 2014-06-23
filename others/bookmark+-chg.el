@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Fri May 30 17:54:07 2014 (-0700)
+;; Last-Updated: Sat Jun 21 20:38:23 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 15545
+;;     Update #: 15577
 ;; URL: http://www.emacswiki.org/bookmark+-chg.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+
@@ -146,6 +146,13 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-1.el'")
 ;;
+;; 2014/06/21 dadams
+;;     Added: bmkp-icicle-search-hits-alist-only, bmkp-icicle-search-hits-bookmark-p,
+;;       bmkp-icicle-search-hits-retrieve-more, bmkp-jump-icicle-search-hits,
+;;       bmkp-retrieve-icicle-search-hits, bmkp-retrieve-more-icicle-search-hits,
+;;       bmkp-retrieve-icicle-search-hits-1, bmkp-set-icicle-search-hits-bookmark,
+;;       bmkp-make-icicle-search-hits-record, bmkp-unpropertized-string.
+;;     bmkp-bookmark-description: Handle Icicles search hits.
 ;; 2014/05/30 dadams
 ;;     bmkp-set-restrictions-bookmark: Updated for new restrictions format (wide-n.el).
 ;; 2014/05/27 dadams
@@ -993,6 +1000,21 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-bmu.el'")
 ;;
+;; 2014/06/21 dadams
+;;     Added: bmkp-no-jump, bmkp-bmenu-mark-bookmark-list-bookmarks,
+;;       bmkp-bmenu-mark-icicle-search-hits-bookmarks, bmkp-bmenu-show-only-bookmark-lists,
+;;       bmkp-bmenu-show-only-icicle-search-hits.
+;;     bookmark-bmenu-list, bookmark-bmenu-mode: Updated doc string, for additions.
+;;     bmkp-bmenu-mode-status-help: Updated for no-jump (used for Icicles search hits bookmarks).
+;;     bmkp-bmenu-propertize-item: Handle Icicles search hits bookmarks.
+;;     Bind *-bmenu-mark-icicle-search-hits-bookmarks, *-bmenu-show-only-icicle-search-hits: i M, i S.
+;;     Bind bmkp-bmenu-mark-bookmark-list-bookmarks, bmkp-bmenu-show-only-bookmark-lists: Z M, Z S.
+;;     bmkp-bmenu-mark-types-menu:
+;;       Added bmkp-bmenu-mark-icicle-search-hits-bookmarks, bmkp-bmenu-mark-bookmark-list-bookmarks.
+;;     bmkp-bmenu-show-types-menu:
+;;       Added bmkp-bmenu-show-only-icicle-search-hits, bmkp-bmenu-show-only-bookmark-lists.
+;; 2014/06/20 dadams
+;;     bmkp-define-tags-sort-command: Load bookmark+-mac.el(c) in interactive spec.
 ;; 2014/05/27 dadams
 ;;     bmkp-bmenu-mode-status-help, bmkp-bmenu-describe-marked:
 ;;       Use bmkp-with-help-window, not with-output-to-temp-buffer (Emacs 24.4+ silliness).

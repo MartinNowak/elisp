@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Aug  1 14:21:16 1995
-;; Last-Updated: Tue Apr 29 08:56:33 2014 (-0700)
+;; Last-Updated: Sat Jun 21 21:24:12 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 28193
+;;     Update #: 28202
 ;; URL: http://www.emacswiki.org/icicles-doc1.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -378,6 +378,7 @@
 ;;    (@file :file-name "icicles-doc2.el" :to "Setting a Bookmark and Jumping to a Bookmark")
 ;;    (@file :file-name "icicles-doc2.el" :to "Jumping to a Bookmark")
 ;;    (@file :file-name "icicles-doc2.el" :to "Searching Bookmarked Objects")
+;;    (@file :file-name "icicles-doc2.el" :to "Bookmarking Icicles Search Hits")
 ;;    (@file :file-name "icicles-doc2.el" :to "Acting on Bookmark Properties")
 ;;  (@file :file-name "icicles-doc2.el" :to "Icicles Enhancements for Emacs Tags")
 ;;    (@file :file-name "icicles-doc2.el" :to "`icicle-find-tag': Find Tags in All Tags Tables")
@@ -3266,8 +3267,8 @@
 ;;  definitions, and any other text entities that you can specify by
 ;;  regexp.  Create a library of regexp-valued variables that are
 ;;  useful to you, and use `C-=' to quickly access them in
-;;  `icicle-search'.  See
-;;  (@file :file-name "icicles-doc2.el" :to "Icicles Search Commands, Overview")
+;;  `icicle-search'.
+;;  See (@file :file-name "icicles-doc2.el" :to "Icicles Search Commands, Overview")
 ;;  for more information.
 ;;
 ;;  These shortcuts are also handy for Isearch, in particular, regexp
@@ -6501,6 +6502,13 @@
 ;;  `icicle-search-bookmark-list-marked'.  You need library `Dired+'
 ;;  for `icicle-occur-dired-marked-recursive' and
 ;;  `icicle-search-dired-marked-recursive'.)
+;;
+;;  Note: Icicles search commands and commands `icicle-find-tag',
+;;  `icicle-goto-marker', and `icicle-goto-global-marker' effectively
+;;  bind user option `icicle-incremental-completion' to `always',
+;;  because I think you typically want to start them out with
+;;  incremental completion turned on.  Remember that you can use `C-#'
+;;  (once or twice) to turn incremental completion off.
 ;;
 ;;(@* "Highlighting the Destination")
 ;;  ** Highlighting the Destination **

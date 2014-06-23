@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Aug  1 14:21:16 1995
-;; Last-Updated: Fri May 16 21:30:36 2014 (-0700)
+;; Last-Updated: Sat Jun 21 21:33:38 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 29514
+;;     Update #: 29544
 ;; URL: http://www.emacswiki.org/icicles-doc2.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -253,6 +253,7 @@
 ;;    (@> "Setting a Bookmark and Jumping to a Bookmark")
 ;;    (@> "Jumping to a Bookmark")
 ;;    (@> "Searching Bookmarked Objects")
+;;    (@> "Bookmarking Icicles Search Hits")
 ;;    (@> "Acting on Bookmark Properties")
 ;;
 ;;  (@> "Icicles Enhancements for Emacs Tags")
@@ -1492,14 +1493,14 @@
 ;;  you do not need to read/scan the whole list.
 ;;
 ;;  If you look at the definition of `icicle-imenu' you'll see that it
-;;  simply lets you choose an Imenu submenu (`Functions', `User
-;;  Options', and so on) that is appropriate for the current buffer
-;;  type, and then it calls `icicle-search', passing it the
-;;  appropriate Imenu regexp.  You can similarly define your own
-;;  specialized search commands using `icicle-search' to browse regexp
-;;  matches.  You get all of the features of `icicle-search' when you
-;;  do that.  For example, `icicle-imenu' gives you these advantages
-;;  over a standard Imenu menu:
+;;  simply lets you choose an Imenu submenu (`Functions', `Options',
+;;  and so on) that is appropriate for the current buffer type, and
+;;  then it calls `icicle-search', passing it the appropriate Imenu
+;;  regexp.  You can similarly define your own specialized search
+;;  commands using `icicle-search' to browse regexp matches.  You get
+;;  all of the features of `icicle-search' when you do that.  For
+;;  example, `icicle-imenu' gives you these advantages over a standard
+;;  Imenu menu:
 ;;
 ;;  * You can restrict navigation (search) to a region.
 ;;
@@ -1511,6 +1512,22 @@
 ;;
 ;;  * As for `icicle-search', you can search multiple bookmarks,
 ;;    multiple buffers, or multiple files.
+;;
+;;  When you use an Icicles Imenu command, first you choose a submenu
+;;  for a given object type (e.g. submenu `Functions' for functions),
+;;  and then you choose an object definition from that submenu.  But
+;;  multiple regexps can be used for a given Imenu submenu, such as
+;;  `Function'.  Icicles Imenu commands use these regexps separately,
+;;  so they present multiple completion candidates with the same name
+;;  when you choose the object type.
+;;
+;;  For example, if two different regexps are used to gather function
+;;  definitions then there might be two corresponding `Functions'
+;;  candidates (depending on whether there are matches for each of the
+;;  regexps).  Choosing one or the other of these submenu candidates
+;;  then gives you different function choices.  (Remember that you can
+;;  cycle to choose among multiple candidates that have the same
+;;  name.)
 ;;
 ;;(@* "Type-Specific Imenu Commands")
 ;;  *** Type-Specific Imenu Commands ***
@@ -1773,7 +1790,9 @@
 ;;  * Tagging files (a la delicious) and jumping to tagged files
 ;;  * Bookmarking the region and selecting a bookmarked region
 ;;  * Setting a bookmark and jumping to a bookmark
-;;  * Searching the text of a bookmark's buffer or region
+;;  * Searching the text of a bookmark's destination buffer or region
+;;  * Saving sets of Icicles search hits as bookmarks - "jump" to such
+;;    a bookmark to restore the saved hits during a later search.
 ;;  * Applying an arbitrary function to any bookmark property
 ;;
 ;;  Each is described in a little more detail below.  More generally,
@@ -2198,6 +2217,16 @@
 ;;  * (@> "Jumping to a Bookmark") for information about bookmark
 ;;    caching.  Caching is also used for bookmark searching.
 ;;  * (@> "Support for Projects")
+;;
+;;(@* "Bookmarking Icicles Search Hits")
+;;  ** Bookmarking Icicles Search Hits **
+;;
+;;  When you use Icicles search (of any kind), you can use `C-x C-M->'
+;;  to save the current set of completion candidates (search hits) as
+;;  an Icicles search-hits bookmark.  "Jumping" to such a bookmark
+;;  during Icicles search (of anything) restores those search hits:
+;;  `C-x C-M-<' replaces the current search hits with them, and `C-x
+;;  C-<' adds them to the set of current search hits.
 ;;
 ;;(@* "Acting on Bookmark Properties")
 ;;  ** Acting on Bookmark Properties **
@@ -5217,6 +5246,12 @@
 ;;    you type.  You can cycle the option among its three possible
 ;;    values at any time using `C-#'.  For more information, see
 ;;    (@file :file-name "icicles-doc1.el" :to "Icompletion").
+;;
+;;    Note: Several tripping (navigating) commands, including Icicles
+;;    search commands, bind option `icicle-incremental-completion' to
+;;    `always', because I think you typically want to start them out
+;;    with incremental completion turned on.  Remember that you can
+;;    use `C-#' (once or twice) to turn incremental completion off.
 ;;
 ;;  * User options `icicle-incremental-completion-delay' and
 ;;    `icicle-incremental-completion-threshold' together cause a delay
@@ -8650,9 +8685,9 @@
 ;;
 ;;  The best way to learn how to do this is to look at how the
 ;;  existing tripping commands are defined.  Some of them use macro
-;;  `icicle-define-command'; others do not.  Some use the
-;;  building-block functions `icicle-explore' or `icicle-apply';
-;;  others do not.  Several use `icicle-search' as a building block.
+;;  `icicle-define-command'; others do not.  Some use building-block
+;;  function `icicle-explore' or `icicle-apply'; others do not.
+;;  Several use `icicle-search' as a building block.
 ;;
 ;;(@* "Using `icicle-define-command'")
 ;;  ** Using `icicle-define-command' **
@@ -8701,6 +8736,16 @@
 ;;  `icicle-get-alist-candidate' to get the location information for a
 ;;  given display candidate.
 ;;
+;;  Note: `icicle-explore' binds user option
+;;  `icicle-incremental-completion' to `always', because I think you
+;;  typically want to start it out with incremental completion turned
+;;  on.  Functions that call `icicle-explore' thus also turn on
+;;  incremental completion.  This includes the predefined Icicles
+;;  commands `icicle-find-tag' and `icicle-search', and the many
+;;  specialized Icicles search commands derived from `icicle-search'.
+;;  Remember that you can use `C-#' (once or twice) to turn
+;;  incremental completion off.
+;;
 ;;(@* "Using `icicle-apply'")
 ;;  ** Using `icicle-apply' **
 ;;
@@ -8719,6 +8764,15 @@
 ;;  make no such provision, but with suitable arguments you can use
 ;;  them too to define tripping commands.
 ;;
+;;  Note: `icicle-apply' binds user option
+;;  `icicle-incremental-completion' to `always', because I think you
+;;  typically want to start it out with incremental completion turned
+;;  on.  Functions that call `icicle-apply' thus also turn on
+;;  incremental completion.  This includes the predefined Icicles
+;;  commands `icicle-goto-marker' and `icicle-goto-global-marker'.
+;;  Remember that you can use `C-#' (once or twice) to turn
+;;  incremental completion off.
+;;
 ;;(@* "Using `icicle-search'")
 ;;  ** Using `icicle-search' **
 ;;
@@ -8731,6 +8785,14 @@
 ;;  needed to define a trip command that uses search hits as
 ;;  completion candidates.  Several predefined Icicles tripping
 ;;  commands were defined using `icicle-search'.
+;;
+;;  Note: `icicle-search' effectively binds user option
+;;  `icicle-incremental-completion' to `always', because I think you
+;;  typically want to start it out with incremental completion turned
+;;  on.  Other Icicles search commands are defined using
+;;  `icicle-search', so they also effectively turn on incremental
+;;  completion.  Remember that you can use `C-#' (once or twice) to
+;;  turn it off.
 ;;
 ;;(@* "Tripping on Foot")
 ;;  ** Tripping on Foot **
