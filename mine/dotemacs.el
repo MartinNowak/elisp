@@ -50,17 +50,16 @@
 ;;(load-file (elsub "mine/pgo-cedet.elc")) ;WARNING: Need this first!
 ;;(load-file (elsub "minimal-cedet-config/minimial-cedet-config-pnw.el")) ;WARNING: Need this first!
 
-(load-file (elsub "mine/faze.elc"))
 (load-file (elsub "mine/path-utils.elc"))
-(load-file (elsub "mine/power-utils.elc"))
-(load-file (elsub "mine/def-unless.elc"))
-(load-file (elsub "mine/eload.elc"))
-;; (load-file (elsub "mine/setup-paths.el") ;Need this first!
-
 (append-to-load-path (elsub "others"))
-;;(prepend-to-load-path (elsub "emacswiki.org"))
 (append-to-load-path (elsub "mine"))
 
+(require 'faze)
+(require 'power-utils)
+(require 'def-unless)
+(require 'eload)
+
+;;; ECB
 (append-to-load-path (elsub "ecb"))
 
 (ignore-errors                          ;ignore error about revering .zsh_history
@@ -510,8 +509,9 @@
 ;;: smart-op.el --- Insert operators with surrounding spaces smartly.
 ;;; Previously smart-operator.el by William Xu.
 ;;; Smart Operator: http://www.emacswiki.org/emacs/SmartOperator
-(when (and (file-exists-p (elsub "mine/smart-op.el"))
-           (load-file (elsub "mine/smart-op.elc")))
+(when (require 'smart-op nil t)
+  ;; (and (file-exists-p (elsub "mine/smart-op.el"))
+  ;;      (load-file (elsub "mine/smart-op.elc")))
   (add-hook 'c-mode-common-hook 'smart-op-mode t)
   (add-hook 'ada-mode-hook 'smart-op-mode t)
   (add-hook 'python-mode-hook 'smart-op-mode t)
