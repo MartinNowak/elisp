@@ -23,12 +23,13 @@
                            (file-regular-p filename)      ;or regular file
                            ))))
     (when move-it
-      (when (y-or-n-p (format "Move active region containing %s... from buffer %s to file %s?"
-                              (faze (let ((rs (region-string)))
-                                         (substring rs 0 (min 32 (length rs))))
-                                       'string)
-                              (faze (buffer-name (current-buffer)) 'buffer)
-                              (faze filename 'file)))
+      (when (setq move-it
+                  (y-or-n-p (format "Move active region containing %s... from buffer %s to file %s?"
+                                    (faze (let ((rs (region-string)))
+                                            (substring rs 0 (min 32 (length rs))))
+                                          'string)
+                                    (faze (buffer-name (current-buffer)) 'buffer)
+                                    (faze filename 'file))))
         (kill-region (car reg) (cdr reg))))
     (find-file filename wildcards)
     (when move-it
