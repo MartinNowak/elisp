@@ -208,14 +208,21 @@ When ONLY-AFTER, insert space at back only."
              (smart-op-insert "." t)
              (insert " "))
             ((or (looking-back "[[:digit:]]" (1- (point)))
-                 (and (memq major-mode '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode python-mode scons-mode))
+                 (and (memq major-mode '(c-mode
+                                         c++-mode
+                                         objc-mode
+                                         java-mode
+                                         csharp-mode
+                                         d-mode
+                                         python-mode
+                                         scons-mode))
                       (looking-back "[[:lower:]]" (1- (point)))))
              (insert "."))
-            ((memq major-mode '(cperl-mode perl-mode))
+            ((memq major-mode '(cperl-mode
+                                perl-mode))
              (insert " . "))
-            ((memq major-mode '(d-mode))
-             (insert "."))
-            ((memq major-mode '(c++-mode))
+            ((memq major-mode '(c++-mode
+                                d-mode))
              (insert "."))
             (t
              (smart-op-insert "." t)
