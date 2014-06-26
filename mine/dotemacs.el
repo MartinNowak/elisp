@@ -1579,7 +1579,9 @@ See URL `http://dlang.org/'."
   ;; configurations.
   (when (boundp 'flycheck-checkers)
     (add-to-list 'flycheck-checkers 'ada-gcc)
-    (add-to-list 'flycheck-checkers 'fortran-gcc))
+    (add-to-list 'flycheck-checkers 'fortran-gcc)
+    (add-to-list 'flycheck-checkers 'sh-shellcheck)
+    (add-to-list 'flycheck-checkers 'sh-bash))
 
   (when nil                            ;NOTE: Disabled because this causes error
     (when (and buffer-file-name
@@ -1617,6 +1619,7 @@ See URL `http://dlang.org/'."
   (executable-find-auto-install-on-demand '("ghc" "hlint")) ;haskell-mode-hook
   (executable-find-auto-install-on-demand '("clang" "g++")) ;c-mode-hook c++-mode-hook
   (executable-find-auto-install-on-demand "xmlstarlet")     ;latex-mode-hook
+  (executable-find-auto-install-on-demand "shellcheck")     ;sh-mode-hook
   ;; (executable-find-auto-install-on-demand "gnat-4.8")       ;ada-mode-hook
   ;; (executable-find-auto-install-on-demand "gnat-4.9")       ;ada-mode-hook
 
