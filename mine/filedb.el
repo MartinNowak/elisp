@@ -2449,8 +2449,7 @@ position in `fmd-type-key-hash'."
          (case ctx
            (any `(let (case-fold-search ,casef)
                    (string-match ,(regexp-quote val) relname)))
-           ((beg +0) `(eq t (compare-strings relname 0 ,(length val)
-                                             ,val 0 nil ,casef)))
+           ((beg +0) `(eq t (string-prefix-p ,val relname ,casef)))
            ((end -1) `(eq t (ignore-errors (compare-strings relname (- (length relname)
                                                                        ,(length val)) nil
                                                                        ,val 0 nil ,casef))))
