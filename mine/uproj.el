@@ -1212,10 +1212,21 @@ directory DIR."
              (require 'compile-frame nil t))
     ))
 
+(defun kill-compilation-dinged ()
+  "Calls `kill-compilation' and calls ding if an error occurred."
+  (interactive)
+  (unless (ignore-errors
+            (kill-compilation))
+    (message "No compilation process active")
+    (ding)))
+(defun make-compilation-mode-safe ()
+  (local-set-key "\C-c\C-k" 'kill-compilation-dinged))
+(add-hook 'compilation-mode-hook 'make-compilation-mode-safe t)
+
 (when nil
   (defalias 'make-project 'compile)       ;to make users find it easier
   (defalias 'remake-project 'recompile)   ;to make users find it easier
-  (defalias 'kill-make-project 'kill-compilation) ;to make users find it easier
+  (defalias 'kill-make-project 'kill-compilation-dinged) ;to make users find it easier
   )
 
 (define-key-after menu-bar-tools-menu [recompile]
@@ -1223,8 +1234,8 @@ directory DIR."
               :help "Restart Current Compilation (Directly), view compilation messages")
   'compile)
 
-(define-key-after menu-bar-tools-menu [kill-compilation]
-  '(menu-item "Abort Compilation" kill-compilation
+(define-key-after menu-bar-tools-menu [kill-compilation-dinged]
+  '(menu-item "Abort Compilation" kill-compilation-dinged
               :help "Abort Current Compilation (Directly)")
   'recompile)
 
