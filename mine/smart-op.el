@@ -57,6 +57,8 @@
 
 ;;; smart-op minor mode
 
+(require 'cc-utils)
+
 (defvar smart-op-mode-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "=" 'smart-op-=)
@@ -213,6 +215,7 @@ When ONLY-AFTER, insert space at back only."
                                          objc-mode
                                          java-mode
                                          csharp-mode
+                                         ada-mode
                                          d-mode
                                          python-mode
                                          scons-mode))
@@ -221,8 +224,7 @@ When ONLY-AFTER, insert space at back only."
             ((memq major-mode '(cperl-mode
                                 perl-mode))
              (insert " . "))
-            ((memq major-mode '(c++-mode
-                                d-mode))
+            ((memq major-mode (append cc-derived-modes '(ada-mode)))
              (insert "."))
             (t
              (smart-op-insert "." t)
