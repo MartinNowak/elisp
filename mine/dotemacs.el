@@ -2387,8 +2387,9 @@ functions, and some types.  It also provides indentation that is
   (setq gud-bashdb-command-name "bashdb ")
   (setq gud-zshdb-command-name "zshdb"))
 
-;;; rocky/emacs-dbgs
-(when (require 'realgud nil t))
+;;; rocky/emacs-dbgr
+(when (and (append-to-load-path (elsub "emacs-dbgr"))
+           (require 'realgud nil t)))
 
 ;;; Development Tools
 (eload 'file-magic)               ;file/magic code editing commands for Emacs
