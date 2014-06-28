@@ -67,3 +67,6 @@
 [submodule "flycheck-nordlow"]
 	path = flycheck-nordlow
 	url = https://github.com/nordlow/flycheck.git
+[submodule "emacs-dbgr"]
+	path = emacs-dbgr
+	url = https://github.com/nordlow/emacs-dbgr.git
