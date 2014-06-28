@@ -276,6 +276,8 @@ names matches the regular expression FILE-REGEXP."
 
 ;; ---------------------------------------------------------------------------
 
+;;; TODO: Try using easy_install X: Should return non-zero
+;;; TODO: Try using cabal list and X and then cabal install X
 ;;; TODO: Add advice on `executable-find'.
 (defun executable-find-auto-install-on-demand (command &optional pkgs)
   "Execute COMMAND.
