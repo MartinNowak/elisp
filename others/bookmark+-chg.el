@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Thu Jun 26 16:22:16 2014 (-0700)
+;; Last-Updated: Mon Jun 30 15:36:24 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 15581
+;;     Update #: 15597
 ;; URL: http://www.emacswiki.org/bookmark+-chg.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+
@@ -146,6 +146,13 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-1.el'")
 ;;
+;; 2014/06/29 dadams
+;;     Added: bmkp-before-jump-hook, bmkp-desktop-save, bmkp-desktop-save-as-last,
+;;            bmkp-desktop-current-file, bmkp-desktop-jump-save-before-flag.
+;;     bmkp-jump-1: Run bmkp-before-jump-hook.
+;;     bmkp-set-desktop-bookmark: Use bmkp-desktop-save.
+;;     bmkp-desktop-jump: If bmkp-desktop-jump-save-before-flag then bmkp-desktop-save-as-last.
+;;     bmkp-desktop-kill: Updated for Emacs 24.4+.
 ;; 2014/06/21 dadams
 ;;     Added: bmkp-icicle-search-hits-alist-only, bmkp-icicle-search-hits-bookmark-p,
 ;;       bmkp-icicle-search-hits-retrieve-more, bmkp-jump-icicle-search-hits,
@@ -1000,6 +1007,9 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-bmu.el'")
 ;;
+;; 2014/06/30 dadams
+;;     bmkp-bmenu-mouse-3-menu:
+;;       Bind bmkp-bmenu-flag-for-deletion, not bookmark-bmenu-delete.  See Emacs bug #17888.
 ;; 2014/06/26 dadams
 ;;     bmkp-bmenu-show-only-omitted:
 ;;       Use bmkp-bmenu-omit/unomit-marked, not bmkp-bmenu-unomit-marked, in doc string.

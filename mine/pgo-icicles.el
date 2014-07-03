@@ -20,12 +20,7 @@
     (when (file-directory-p (elsub "icicles/"))
       (byte-recompile-directory (elsub "icicles/") 0)))
 
-  (when (if (ignore-errors (require 'icicles nil t)) 'icicles
-          (ignore-errors (require 'icicles nil t))) ;Note: If an error occurred try loading it again. This is a hack to make Icicles work on Emacs 23.1
-
-    ;; Stubborn Way: May resolve some missing dependecies
-    (unless (ignore-errors (icy-mode 1))                        ;Enable Icicles
-      (ignore-errors (icy-mode 1)))                             ;If failure try once again
+  (when (require 'icicles nil t) ;Note: If an error occurred try loading it again. This is a hack to make Icicles work on Emacs 23.1
 
     (global-set-key [(meta shift s)] 'icicle-search-generic)
 

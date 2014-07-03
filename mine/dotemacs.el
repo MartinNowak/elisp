@@ -16,9 +16,9 @@
   "Install my favorites packages."
   (package-install 'load-relative)
   (package-install 'loc-changes)
-  (package-install 'realgud)
   (package-install 'dash)
-  (package-install 'flycheck)
+  ;; (package-install 'realgud)
+  ;; (package-install 'flycheck)
   ;; (package-install 'flycheck-d-unittest)
   (package-install 'flycheck-haskell)
   (package-install 'flycheck-color-mode-line)
