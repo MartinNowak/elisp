@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Thu Jul  3 21:04:21 2014 (-0700)
+;; Last-Updated: Sun Jul  6 09:13:53 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 7292
+;;     Update #: 7329
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -304,13 +304,13 @@
 ;;    `bmkp-read-bookmark-file-hook', `bmkp-region-search-size',
 ;;    `bmkp-save-new-location-flag',
 ;;    `bmkp-sequence-jump-display-function',
-;;    `bmkp-show-end-of-region', `bmkp-sort-comparer',
+;;    `bmkp-show-end-of-region-flag', `bmkp-sort-comparer',
 ;;    `bmkp-su-or-sudo-regexp', `bmkp-tags-for-completion',
 ;;    `bmkp-temporary-bookmarking-mode',
 ;;    `bmkp-temporary-bookmarking-mode-hook',
 ;;    `bmkp-temporary-bookmarking-mode-lighter',
 ;;    `bmkp-this-file/buffer-cycle-sort-comparer', `bmkp-use-region',
-;;    `bmkp-w3m-allow-multi-tabs', `bmkp-write-bookmark-file-hook'.
+;;    `bmkp-w3m-allow-multi-tabs-flag', `bmkp-write-bookmark-file-hook'.
 ;;
 ;;  Non-interactive functions defined here:
 ;;
@@ -805,7 +805,6 @@ These are the predefined type predicates:
 ;;;###autoload (autoload 'bmkp-count-multi-mods-as-one-flag "bookmark+")
 (defcustom bmkp-count-multi-mods-as-one-flag t
   "*Non-nil means count multiple modifications as one.
-
 This is for `bookmark-alist-modification-count'.  Non-nil means that
 when you invoke a command that acts on multiple bookmarks or acts in
 multiple ways on one bookmark, all of changes together count as only
@@ -1044,8 +1043,8 @@ as part of the bookmark definition."
   "*Function used to display the bookmarks in a bookmark sequence."
   :type 'function :group 'bookmark-plus)
 
-;;;###autoload (autoload 'bmkp-show-end-of-region "bookmark+")
-(defcustom bmkp-show-end-of-region t
+;;;###autoload (autoload 'bmkp-show-end-of-region-flag "bookmark+")
+(defcustom bmkp-show-end-of-region-flag t
   "*Show end of region with `exchange-point-and-mark' when activating a region.
 If nil show only beginning of region."
   :type 'boolean :group 'bookmark-plus)
@@ -1254,8 +1253,8 @@ is enabled.  Set this to nil or \"\" if you do not want any lighter."
           (const :tag "Activate bookmark region even during cycling"      cycling-too))
   :group 'bookmark-plus)
 
-;;;###autoload (autoload 'bmkp-w3m-allow-multi-tabs "bookmark+")
-(defcustom bmkp-w3m-allow-multi-tabs t
+;;;###autoload (autoload 'bmkp-w3m-allow-multi-tabs-flag "bookmark+")
+(defcustom bmkp-w3m-allow-multi-tabs-flag t
   "*Non-nil means jump to W3M bookmarks in a new session."
   :type 'boolean :group 'bookmark-plus)
 
@@ -2885,7 +2884,8 @@ contain a `%s' construct, so that it can be passed along with FILE to
                                        (search-forward (concat bookmark-end-of-version-stamp-marker "(")
                                                        nil t))
                        (error "Invalid bookmark-file"))
-            end    (or (save-excursion (goto-char (point-max)) (re-search-backward "^)" nil t))
+            end    (or (save-excursion (goto-char start) (and (looking-at ")") start)) ; Empty bmk list: ().
+                       (save-excursion (goto-char (point-max)) (re-search-backward "^)" nil t))
                        (error "Invalid bookmark-file")))
       (unless add (delete-region start end))
       (goto-char (if (eq add 'append) end start))
@@ -3937,7 +3937,7 @@ Be sure to mention the `Update #' from header of the particular Bookmark+ file h
 
 ;;;###autoload (autoload 'bmkp-toggle-bookmark-set-refreshes "bookmark+")
 (defun bmkp-toggle-bookmark-set-refreshes () ; Not bound
-  "Toggle `bookmark-set' refreshing `bmkp-latest-bookmark-alist'.
+  "Toggle whether `bookmark-set' refreshes `bookmark-alist' as last filtered.
 Add/remove `bmkp-refresh-latest-bookmark-list' to/from
 `bmkp-after-set-hook'.
 \(Applies also to command `bmkp-bookmark-set-confirm-overwrite'.)"
@@ -4083,10 +4083,18 @@ message."
 ;;;###autoload (autoload 'bmkp-revert-bookmark-file "bookmark+")
 (defun bmkp-revert-bookmark-file (&optional msg-p) ; Same as `C-u g' in bookmark list (but not bound).
   "Revert to the bookmarks in the current bookmark file.
-This discards all modifications to bookmarks and the bookmark list
-\(e.g. added/deleted bookmarks).
+You are asked for confirmation.
+
+This DISCARDS all modifications to bookmarks and the bookmark list
+\(e.g. added/deleted bookmarks) since the last bookmark-file save.
+IOW, it reloads the bookmark file, overwriting the current bookmark
+list.  This also removes any markings and omissions.
+
 This has the same effect as using `C-u \\<bookmark-bmenu-mode-map>\\[bmkp-bmenu-refresh-menu-list]' in \
 buffer `*Bookmark List*'.
+To refresh the display from the current bookmark list instead of the
+bookmark file, use just `\\[bmkp-bmenu-refresh-menu-list]' (no `C-u').
+
 Non-interactively, non-nil MSG-P means display a status message."
   (interactive "p")
   (when (and msg-p  (not (yes-or-no-p (format "Revert to bookmarks saved in file `%s'? "
@@ -4195,7 +4203,10 @@ NOTE: If FILE already exists and you confirm emptying it, no check is
       It is simply replaced by an empty bookmark file and saved.
 
 This does NOT also make FILE the current bookmark file.  To do that,
-use `\\[bmkp-switch-bookmark-file-create]' (`bmkp-switch-bookmark-file-create')."
+use `\\[bmkp-switch-bookmark-file-create]' (`bmkp-switch-bookmark-file-create').
+
+Interactively, and non-interactively if optional arg CONFIRMP is
+non-nil, require confirmation if the file already exists."
   (interactive (list (let ((icicle-unpropertize-completion-result-flag  t))
                        (read-file-name "Create empty bookmark file: " "~/"))
                      t))
@@ -7872,7 +7883,7 @@ If region was relocated, save it if user confirms saving."
            (goto-char pos)
            (push-mark end-pos 'nomsg 'activate)
            (setq deactivate-mark  nil)
-           (when bmkp-show-end-of-region
+           (when bmkp-show-end-of-region-flag
              (let ((end-win  (save-excursion (forward-line (window-height)) (line-end-position))))
                ;; Bounce point and mark.
                (save-excursion (sit-for 0.6) (exchange-point-and-mark) (sit-for 1))
@@ -8095,7 +8106,7 @@ you can yank it using `C-y'."
   "Copy the text saved in BOOKMARK to the `kill-ring'.
 Handler for snippet bookmarks."
   (kill-new (bookmark-prop-get bookmark 'text))
-  (message "Snippet copied to `kill-ring'"))
+  (message "Snippet of bookmark `%s' copied to `kill-ring'" (bmkp-bookmark-name-from-record bookmark)))
 
 ;;;###autoload (autoload 'bmkp-snippet-to-kill-ring "bookmark+")
 (defun bmkp-snippet-to-kill-ring (bookmark-name) ; `C-x j M-w'
@@ -8103,7 +8114,8 @@ Handler for snippet bookmarks."
 This is a specialization of `bookmark-jump' for snippet bookmarks."
   (interactive
    (let ((alist  (bmkp-snippet-alist-only)))
-     (list (bmkp-read-bookmark-for-type "snippet" alist nil nil 'bmkp-snippet-history))))
+     (list (bmkp-read-bookmark-for-type "snippet" alist nil nil 'bmkp-snippet-history nil
+                                        "Copy snippet to kill ring"))))
   (bmkp-jump-1 bookmark-name 'ignore nil))
 
 ;; Desktop bookmarks
@@ -8751,9 +8763,11 @@ BOOKMARK is a bookmark name or a bookmark record."
 (defun bmkp-jump-w3m (bookmark)
   "Handler function for record returned by `bmkp-make-w3m-record'.
 BOOKMARK is a bookmark name or a bookmark record.
-Use multi-tabs in W3M if `bmkp-w3m-allow-multi-tabs' is non-nil."
+Use multi-tabs in W3M if `bmkp-w3m-allow-multi-tabs-flag' is non-nil."
   (require 'w3m)
-  (if bmkp-w3m-allow-multi-tabs (bmkp-jump-w3m-new-session bookmark) (bmkp-jump-w3m-only-one-tab bookmark)))
+  (if bmkp-w3m-allow-multi-tabs-flag
+      (bmkp-jump-w3m-new-session bookmark)
+    (bmkp-jump-w3m-only-one-tab bookmark)))
 
 
 ;; GNUS support for Emacs < 24.  More or less the same as `gnus-summary-bookmark-make-record' in Emacs 24+.
@@ -8960,7 +8974,7 @@ BOOKMARK is a bookmark name or a bookmark record."
       (save-excursion (dolist (dir  hidden-dirs) (when (dired-goto-subdir dir) (dired-hide-subdir 1)))))
     (goto-char (bookmark-get-position bookmark))))
 
-(defun bmkp-read-bookmark-for-type (type alist &optional other-win pred hist action)
+(defun bmkp-read-bookmark-for-type (type alist &optional other-win pred hist action prompt)
   "Read the name of a bookmark of type TYPE, with completion.
 TYPE is a string used in the prompt: \"Jump to TYPE bookmark: \".
 ALIST is the alist used for completion.  If nil then raise an error to
@@ -8968,10 +8982,11 @@ ALIST is the alist used for completion.  If nil then raise an error to
 Non-nil OTHER-WIN means append \" in another window\" to the prompt.
 Non-nil PRED is a predicate used for bookmark-name completion.
 Non-nil HIST is a history symbol.  Default is `bookmark-history'.
-ACTION is the action to mention in the prompt.  `Jump to ', if nil."
+Non-nil ACTION is the action mentioned in the prompt; nil: `Jump to '.
+Non-nil PROMPT is an alternative prompt."
   (unless alist (error "No bookmarks of type %s" type))
-  (bookmark-completing-read (concat (or action  "Jump to ") type " bookmark"
-                                    (and other-win  " in another window"))
+  (bookmark-completing-read (or prompt  (concat (or action  "Jump to ") type " bookmark"
+                                                (and other-win  " in another window")))
                             (bmkp-default-bookmark-name alist)
                             alist pred hist))
 

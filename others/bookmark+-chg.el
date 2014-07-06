@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Thu Jul  3 21:09:56 2014 (-0700)
+;; Last-Updated: Sun Jul  6 11:05:26 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 15638
+;;     Update #: 15678
 ;; URL: http://www.emacswiki.org/bookmark+-chg.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+
@@ -146,6 +146,12 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-1.el'")
 ;;
+;; 2014/07/06 dadams
+;;     Renamed: bmkp-show-end-of-region, bmkp-w3m-allow-multi-tabs to *-flag.
+;; 2014/07/05 dadams
+;;     bookmark-write-file: List in file could be (), in which case cannot search backward for \n).
+;;     bmkp-read-bookmark-for-type: Added optional PROMPT arg.
+;;     bmkp-jump-snippet: Provide PROMPT to bmkp-read-bookmark-for-type.  Better msg.
 ;; 2014/07/03 dadams
 ;;     Added: bmkp-read-bookmark-file-default.
 ;;     Added redefinition of bookmark-import-new-list, bookmark-maybe-rename.
@@ -1023,6 +1029,17 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-bmu.el'")
 ;;
+;; 2014/07/06 dadams
+;;     Toggle submenu: added lots, improved.
+;; 2014/07/05 dadams
+;;     Added: bmkp-bmenu-create-bookmark-file-from-marked (bound to Y > 0),
+;;            bmkp-bmenu-set-bookmark-file-bookmark-from-marked, bmkp-bmenu-bookmark-file-menu.
+;;     Moved bookmark-file stuff to Bookmark File submenu.
+;;     bookmark-bmenu-mode: Updated doc string.
+;;     bmkp-bmenu-dired-marked: Use bmkp-bmenu-marked-or-this-or-all, not bmkp-marked-bookmarks-only.
+;;     bmkp-bmenu-marked-or-this-or-all: Added optional arg INCLUDE-OMITTED-P - else removed omitted.
+;; 2014/07/04 dadams
+;;     Added to Bookmark+ menu: bmkp-bmenu-(copy|move)-marked-to-bookmark-file.
 ;; 2014/07/03 dadams
 ;;     Added: bmkp-bmenu-copy-marked-to-bookmark-file, bmkp-bmenu-move-marked-to-bookmark-file.
 ;;            Bound to Y > + and Y > -.
@@ -1505,6 +1522,12 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-key.el'")
 ;;
+;; 2014/07/06 dadams
+;;     Removed: bmkp-options-menu.  Use bmkp-bmenu-toggle-menu, and rename Toggle, not Toggle Option.
+;;     Removed individual toggle commands from menu-bar-bookmark-map (Bookmarks).
+;;     Reuse bmkp-bmenu-toggle-menu for menu-bar-bookmark-map [options].
+;; 2014/07/05 dadams
+;;     Moved submenu bmkp-jump-tags-menu before individual menu items.
 ;; 2014/03/23 dadams
 ;;     Bind j and J in bookmark-bmenu-mode-map.  Bind also j > there.
 ;;     Add bmkp-bmenu-jump-to-marked to bmkp-jump-menu when in bookmark-list display.
@@ -1611,6 +1634,9 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-lit.el'")
 ;;
+;; 2014/07/06 dadams
+;;     Added: bmkp-last-auto-light-when-jump, bmkp-last-auto-light-when-set,
+;;            bmkp-toggle-auto-light-when-jump, bmkp-toggle-auto-light-when-set.
 ;; 2013/06/09 dadams
 ;;     Added vacuous defvars to suppress free-var warnings.
 ;; 2013/05/15 dadams
@@ -1671,6 +1697,8 @@
 ;;       that depends on macros needs to be byte-compiled anew after loading the updated macros.
 ;; **************************************************************************************************
 ;;
+;; 2014/07/06 dadams
+;;     bmkp-menu-bar-make-toggle: Redefined - no longer use menu-bar-make-toggle.  Support keywords.
 ;; 2014/05/27 dadams
 ;;     Added: bmkp-with-help-window.
 ;; 2013/04/26 dadams
