@@ -769,6 +769,7 @@ argument list."
 function arguments in cc-modes."
   (interactive)
   (add-hook 'c-mode-common-hook 'cc-structed-setup-keybindings t)
+  (add-hook 'js-mode-hook 'cc-structed-setup-keybindings t)
   (add-hook 'ada-mode-hook 'cc-structed-setup-keybindings t)
   (add-hook 'pascal-mode-hook 'cc-structed-setup-keybindings t)
   (add-hook 'python-mode-hook 'cc-structed-setup-keybindings t)
@@ -781,6 +782,7 @@ function arguments in cc-modes."
   "Remove hook for local keybindings for navigate and operate
 function arguments in cc-modes."
   (remove-hook 'c-mode-common-hook 'cc-structed-setup-keybindings)
+  (remove-hook 'js-mode-hook 'cc-structed-setup-keybindings)
   (remove-hook 'ada-mode-hook 'cc-structed-setup-keybindings)
   (remove-hook 'pascal-mode-hook 'cc-structed-setup-keybindings)
   (remove-hook 'python-mode-hook 'cc-structed-setup-keybindings)
