@@ -208,7 +208,7 @@ X defaults to :related"
 
 (defconst relangs-binary-number
   (lambda ()
-    `((:lang (Ada) :regexp "[^[:digit:]]2#[[01]]+#")
+    `((:lang (Ada Erlang) :regexp "[^[:digit:]]2#[[01]]+#")
       (:lang (D) :regexp "binary![:digit:]")
       (:lang (D Swift Java Python C++14) :pre-regexp "[^0-9a-zA-Z]" :regexp "0[bB][01_]+" :post-regexp "[^2-9a-zA-Z]" :see "https://en.wikipedia.org/wiki/C%2B%2B14#Binary_literals")
       (:lang (Emacs-Lisp) :regexp "#b[[01]]+")
@@ -218,7 +218,7 @@ X defaults to :related"
 (defconst relangs-octal-number
   (lambda ()
     `((:lang (C C++ D Swift) :regexp "[^[:digit:]]0[0-7]+")
-      (:lang (Ada) :regexp "[^[:digit:]]8#[[:xdigit:]]+#")
+      (:lang (Ada Erlang) :regexp "[^[:digit:]]8#[[:xdigit:]]+#")
       (:lang (D) :regexp "octal![:digit:]")
       ))
   "Octal Number")
@@ -226,7 +226,7 @@ X defaults to :related"
 (defconst relangs-hexadecimal-number
   (lambda ()
     `((:lang (C C++ D Swift) :regexp "0x[[:xdigit:]]+" :not-before-regexp "[^[:digit:]]")
-      (:lang (Ada) :regexp "16#[[:xdigit:]]+#" :not-before-regexp [^[:digit:]])
+      (:lang (Ada Erlang) :regexp "16#[[:xdigit:]]+#" :not-before-regexp [^[:digit:]])
       (:lang (Emacs-Lisp) :regexp "#x[[:xdigit:]]+")
       ))
   "Hexadecimal Number")
