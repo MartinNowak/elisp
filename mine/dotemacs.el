@@ -1640,22 +1640,15 @@ See URL `http://dlang.org/'."
 
   ;; (add-hook 'after-init-hook 'global-flycheck-mode)
   ;; Note: Use this in favour of (global-flycheck-mode t) which doesn't work for me
-  (dolist (hook '(c-mode-hook
-                  c++-mode-hook
-                  d-mode-hook
+  (dolist (hook '(c-mode-hook c++-mode-hook d-mode-hook
                   ada-mode-hook
-                  fortran-mode-hook
-                  f77-mode-hook
-                  f90-mode-hook
+                  fortran-mode-hook f90-mode-hook                  ;; f77-mode-hook
                   asciidoc-mode-hook
                   sh-mode-hook
                   makefile-mode-hook
                   haskell-mode-hook
-                  emacs-lisp-mode-hook
-                  TeX-mode-hook
-                  LaTeX-mode-hook
-                  lisp-mode-hook
-                  lisp-interaction-mode-hook
+                  emacs-lisp-mode-hook lisp-mode-hook lisp-interaction-mode-hook
+                  TeX-mode-hook LaTeX-mode-hook
                   haskell-mode-hook
                   python-mode-hook
                   maxima-mode-hook
