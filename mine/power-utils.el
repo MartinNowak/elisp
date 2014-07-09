@@ -1063,8 +1063,7 @@ BUFFER defaults to `current-buffer'."
            (string-to-number
             (shell-command-to-string "grep -c processor /proc/cpuinfo"))))
       (if (>= count 1) count 1))	;default to one if grep failed
-    "Number of CPUs online. Defaults to 1 if this number could not be detected."
-    )
+    "Number of CPUs online. Defaults to 1 if this number could not be detected.")
 
   (defconst win32-p
     (eq system-type 'windows-nt)
