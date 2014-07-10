@@ -7,7 +7,7 @@
   "List of directories that contain local trashcans.")
 
 (setq-default delete-by-moving-to-trash t
-              trash-directory ".trash")
+              trash-directory "~/.emacs.d/trash")
 (defun log-trash (filename)
   (add-to-list 'local-trashcans
                (expand-file-name
