@@ -264,7 +264,7 @@ X defaults to :related"
   (lambda ()
     `((:lang (C C++) :expr (| "NULL" "0" "(void*)0")) ;in order of preference
       (:lang C++11 :expr "nullptr")
-      (:lang D :expr "null")
+      (:lang (PHP D) :expr "null")
       (:lang Go :expr "nil")
       (:lang Java :expr "0")
       (:lang Lisp :expr "nil")
@@ -660,11 +660,13 @@ See
       )))
 
 (defconst relangs-function-definition
-  (lambda (name)
-    `((:lang Python :expr (: "def" ,name))
+  (lambda (name args body)
+    `((:lang Python :expr (: "def" ,name "(" args ")" ":" body))  ;TODO: Indentation controlled
       (:lang Swift :expr (: "func" ,name))
       (:lang Rust :expr (: "fn" ,name))
-      (:lang Emacs-Lisp :expr (: "(" "defun" ,name))
+      (:lang Emacs-Lisp :expr (: "(" "defun" ,name "(" args ")" body ")"))
+      (:lang PHP :expr (: "function" ,name "(" args ")" "{" body "}"))
+      (:lang Groovy :expr (: "def" ,name "(" args ")" "{" body "}"))
       )) "Definition of Function Named NAME.")
 
 (defconst relangs-variable-reference
@@ -1864,9 +1866,9 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-?-:
   (lambda (P T F)
     `(
-      (:lang (C C++ D) :expr (: ,P "?" ,T ":" ,F))
+      (:lang (C C++ D Groovy) :expr (: ,P "?" ,T ":" ,F))
       (:lang Python :expr (: ,T if ,P else ,F))
-      )) "Ternary Operator.")
+      )) "Ternary (Elvis) Operator.")
 
 (relangs-define-synonomys "(global-set-key KEY-COMMAND 'SYMBOL-NAME)"
                           "(define-key global-map KEY-COMMAND 'SYMBOL-NAME)")
