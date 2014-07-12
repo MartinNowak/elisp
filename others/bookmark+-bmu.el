@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 09:05:21 2010 (-0700)
-;; Last-Updated: Sun Jul  6 10:50:38 2014 (-0700)
+;; Last-Updated: Fri Jul 11 20:05:00 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 3343
+;;     Update #: 3357
 ;; URL: http://www.emacswiki.org/bookmark+-bmu.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -5472,7 +5472,8 @@ are marked or ALLP is non-nil."
     "`Toggle' submenu for menu-bar menus `Bookmark+' and `Bookmarks'.")
 (define-key bmkp-bmenu-menubar-menu [toggle] (cons "Toggle" bmkp-bmenu-toggle-menu))
 
-(when (featurep 'bookmark+-lit)
+(when (or (featurep 'bookmark+-lit)
+          (and (fboundp 'diredp-highlight-autofiles-mode)  (featurep 'highlight)))
   (defvar bmkp-bmenu-highlight-menu (make-sparse-keymap "Highlight")
     "`Highlight' submenu for menu-bar `Bookmark+' menu.")
   (define-key bmkp-bmenu-menubar-menu [highlight] (cons "Highlight" bmkp-bmenu-highlight-menu)))
@@ -5558,6 +5559,15 @@ are marked or ALLP is non-nil."
 
 ;;; `Toggle' submenu -------------------------------------------------
 
+(define-key bmkp-bmenu-toggle-menu [diredp-highlight-autofiles-mode]
+  (bmkp-menu-bar-make-toggle diredp-highlight-autofiles-mode
+                             diredp-highlight-autofiles-mode
+                             "Autofile Highlighting in Dired"
+                             "Whether to highlight autofile bookmarks in Dired us biw %s"
+                             "Toggle `diredp-highlight-autofiles-mode'"
+                             nil
+                             :visible (and (fboundp 'diredp-highlight-autofiles-mode)
+                                           (featurep 'highlight))))
 (define-key bmkp-bmenu-toggle-menu [bmkp-toggle-guess-default-file-handler]
   (bmkp-menu-bar-make-toggle bmkp-toggle-guess-default-file-handler
                              bmkp-guess-default-handler-for-file-flag
@@ -5699,6 +5709,16 @@ are marked or ALLP is non-nil."
 
 
 ;;; `Highlight' submenu ----------------------------------------------
+(define-key bmkp-bmenu-highlight-menu [diredp-highlight-autofiles-mode]
+  (bmkp-menu-bar-make-toggle diredp-highlight-autofiles-mode
+                             diredp-highlight-autofiles-mode
+                             "Toggle Autofile Highlighting in Dired"
+                             "Whether to highlight autofile bookmarks in Dired us biw %s"
+                             "Toggle `diredp-highlight-autofiles-mode'"
+                             nil
+                             :visible (and (fboundp 'diredp-highlight-autofiles-mode)
+                                           (featurep 'highlight))))
+
 (when (featurep 'bookmark+-lit)
   (define-key bmkp-bmenu-highlight-menu [bmkp-bmenu-show-only-lighted]
     '(menu-item "Show Only Highlighted" bmkp-bmenu-show-only-lighted
