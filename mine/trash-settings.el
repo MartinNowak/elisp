@@ -82,9 +82,10 @@ If the file is excluded from the trash, it is simply deleted."
 
 (defadvice delete-directory (around no-recursive-trash activate)
   "When trashing a directory, there's no need to trash its contents first."
-  (if delete-by-moving-to-trash
-    (move-file-to-trash directory)
-    ad-do-it))
+  (unless (called-interactively-p 'any)
+    (if delete-by-moving-to-trash
+        (move-file-to-trash directory)
+      ad-do-it)))
 
 (defadvice dired-delete-file (around no-recursive-trash activate)
   "When trashing a directory, there's no need to trash its contents first.
