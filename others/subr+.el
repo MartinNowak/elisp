@@ -8,9 +8,9 @@
 ;; Created: Sat May 24 19:24:18 2014 (-0700)
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Sat May 31 11:31:35 2014 (-0700)
+;; Last-Updated: Mon Jul 14 09:54:41 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 154
+;;     Update #: 158
 ;; URL: http://www.emacswiki.org/simple%2b.el
 ;; Doc URL: http://www.emacswiki.org/SplittingStrings
 ;; Keywords: strings, text
@@ -27,8 +27,8 @@
 ;;    Extensions to standard library `subr.el'.
 ;;
 ;;  This library extends `split-string' so that you can split a string
-;;  based on text properties or a character predicate, not just just
-;;  regexp matching.
+;;  based on text properties or a character predicate, not just regexp
+;;  matching.
 ;;
 ;;  To take advantage of this, your code can conditionally test
 ;;  whether this library is loaded, or just test whether (fboundp
@@ -108,9 +108,10 @@
 
 ;; REPLACES ORIGINAL in `simple.el':
 ;;
-;; 1. Second arg can be a character property list or a predicate, in
-;;    addition to a regexp.
-;; 2. Addtional optional arg FLIP: to complement set of returned substrings.
+;; 1. Second arg HOW can be a character property list or a predicate, in addition to a regexp.
+;; 2. Additional optional arg FLIP: to complement set of returned substrings.
+;; 3. Additional optional arg TEST: passed to `split-string-by-property' if HOW is
+;;    (PROPERTY VALE).
 ;;
 (defun split-string (string &optional how omit-nulls trim flip test)
   "Split STRING into substrings.
@@ -250,8 +251,8 @@ Arguments OMIT-NULLS and TRIM are as for function
 
 Optional arg TEST is a binary predicate that accepts the actual value
 of PROPERTY for a given string position as its first arg and VALUE as
-its second.  It returns non-null if the char is part of an excluded
-substring (or an included one, if FLIP is non-nil).
+its second.  It returns non-nil if the char at that position is part
+of an excluded substring (or an included one, if FLIP is non-nil).
 
 If TEST is omitted or nil (the default) then:
 
