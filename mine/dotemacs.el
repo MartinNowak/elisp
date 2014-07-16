@@ -799,7 +799,7 @@
 (eload 'slick-edit)        ;Quick Single-Line Kill and Yank used in SlickEdit.
 (eload 'tooltip-utils)                ;My tooltip Utilities.
 (eload 'pgo-undo)                      ;Undo and Redo
-(load-file (elsub "mine/trash-settings.elc"))
+;; (load-file (elsub "mine/trash-settings.elc"))
 ;;(eload 'trash-settings (elsub "mine") ;Trash
 (eload 'trashcans)                     ;Trash
 (eload 'shasum)                        ;SHA-Checksums
