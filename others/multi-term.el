@@ -1,15 +1,15 @@
 ;;; multi-term.el --- Managing multiple terminal buffers in Emacs.
 
 ;; Author: Andy Stewart <lazycat.manatee@gmail.com>
-;; Maintainer: ahei <ahei0802@gmail.com>
+;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2008, 2009, 2014 Andy Stewart, all rights reserved.
 ;; Copyright (C) 2010, ahei, all rights reserved.
 ;; Created: <2008-09-19 23:02:42>
-;; Version: 0.8.14
-;; Last-Updated: 2014-03-23 15:46:28
+;; Version: 1.0
+;; Last-Updated: 2014-07-21 22:12:39
 ;; URL: http://www.emacswiki.org/emacs/download/multi-term.el
 ;; Keywords: term, terminal, multiple buffer
-;; Compatibility: GNU Emacs 23.2.1, GNU Emacs 24.3.50
+;; Compatibility: GNU Emacs 23.2.1, GNU Emacs 24.4 (and prereleases)
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -126,6 +126,17 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2014/07/21
+;;      * Andy Stewart
+;;      Bind C-m with `term-send-return' instead `term-send-input' to fixed bug that
+;;      duplicate input when you C-a and C-m in terminal.
+;;
+;; 2014/06/21
+;;      * Fixed bug that can't found define of `multi-term-dedicated-handle-other-window-advice'.
+;;
+;; 2014/05/12
+;;      * Make Emacs 24.4 compatibility cleaner by avoiding version sniffing.
 ;;
 ;; 2014/03/23
 ;;      * Add `term-send-esc' and binding with 'C-c C-e', send esc is useful for some program, such as vim. ;)
@@ -325,7 +336,7 @@ If this option is nil, don't switch other `multi-term' buffer."
     ("C-n" . next-line)
     ("C-s" . isearch-forward)
     ("C-r" . isearch-backward)
-    ("C-m" . term-send-input)
+    ("C-m" . term-send-return)
     ("C-y" . term-paste)
     ("M-f" . term-send-forward-word)
     ("M-b" . term-send-backward-word)
@@ -366,12 +377,12 @@ Default is nil."
   :set (lambda (symbol value)
          (set symbol value)
          ;; ad-advised-definition-p no longer exists on Emacs 24.4 as of 2014-01-03.
-         (if (or (and (>= emacs-major-version 24) (>= emacs-minor-version 4))
-                 (string-match "24\\.3\\.50\\..*" emacs-version))
+         (when (fboundp 'multi-term-dedicated-handle-other-window-advice)
+           (if (fboundp 'ad-advised-definition-p)
+               (when (ad-advised-definition-p 'other-window)
+                 (multi-term-dedicated-handle-other-window-advice value))
              (when (ad-is-advised 'other-window)
-               (multi-term-dedicated-handle-other-window-advice value))
-           (when (ad-advised-definition-p 'other-window)
-             (multi-term-dedicated-handle-other-window-advice value))))
+               (multi-term-dedicated-handle-other-window-advice value)))))
   :group 'multi-term)
 
 (defcustom multi-term-dedicated-select-after-open-p nil
@@ -522,6 +533,13 @@ Will prompt you shell name when you type `C-u' before this command."
   "Send ESC in term mode."
   (interactive)
   (term-send-raw-string "\e"))
+
+(defun term-send-return ()
+  "Use term-send-raw-string \"\C-m\" instead term-send-input.
+Because term-send-input have bug that will duplicate input when you C-a and C-m in terminal."
+  (interactive)
+  (term-send-raw-string "\C-m")
+  )
 
 (defun term-send-backward-kill-word ()
   "Backward kill word in term mode."

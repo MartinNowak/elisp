@@ -8,9 +8,9 @@
 ;; Created: Thu Sep 14 08:15:39 2006
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Mon Jan 20 21:49:14 2014 (-0800)
+;; Last-Updated: Mon Jul 21 14:09:31 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 735
+;;     Update #: 809
 ;; URL: http://www.emacswiki.org/modeline-posn.el
 ;; Keywords: mode-line, region, column
 ;; Compatibility: GNU Emacs: 22.x, 23.x, 24.x
@@ -30,17 +30,21 @@
 ;;     than limit `modelinepos-column-limit'.  Face
 ;;     `modelinepos-column-warning' is used for the highlighting.
 ;;
-;;  2. Make `size-indication-mode' show the size of the region,
-;;     instead of the buffer size, whenever the region is active.
+;;  2. Make `size-indication-mode' show the size of the region (or the
+;;     shape of the selected rectangle), instead of the buffer size,
+;;     whenever the region is active.
 ;;
-;;  3. Make `size-indication-mode' show the current command currently
-;;     acts specially because the region is active (Emacs 23+).
+;;  3. Make `size-indication-mode' show that the current command acts
+;;     on the active region or acts specially because the region is
+;;     now active (Emacs 23+).
 ;;
 ;;  For #2: When the region is active, the mode line displays some
 ;;  information that you can customize - see option
 ;;  `modelinepos-style'.  Customization choices for this include (a)
-;;  the number of chars, (b) the number of chars and number of lines,
-;;  and (c) anything else you might want.  Choice (b) is the default.
+;;  the number of chars, (b) the number of chars and number of lines
+;;  (or the number of rows and number of columns, if a rectangle is
+;;  selected), and (c) anything else you might want.  Choice (b) is
+;;  the default.
 ;;
 ;;  For (c), you provide a `format' expression as separate components:
 ;;  the format string and the sexp arguments to be evaluated and
@@ -57,12 +61,12 @@
 ;;  the active-region indication when the active region is empty.  By
 ;;  default it is t, meaning indicate an empty active region.
 ;;
-;;  For #3, certain standard Emacs commands restrict their scope to
-;;  the region when it is active.  Some of these are handled here by
+;;  For #3, certain standard Emacs commands act on the active region
+;;  or restrict their scope to it.  Some of these are handled here by
 ;;  highlighting the region indication in the mode line specially
 ;;  (using face `modelinepos-region-acting-on' instead of face
 ;;  `modelinepos-region').  The region-restricted commands defined in
-;;  standard library `replace.el' are handled this way.
+;;  standard library `replace.el' are handled this way, for example.
 ;;
 ;;  If you also use my library `isearch+.el', which I recommend, then
 ;;  (for Emacs 24.3+) Isearch commands too can optionally be
@@ -111,13 +115,14 @@
 ;;
 ;;  Non-option variables defined here:
 ;;
-;;    `modelinepos-region-acting-on' (Emacs 23+).
+;;    `modelinepos-rect-p', `modelinepos-region-acting-on' (Emacs
+;;    23+).
 ;;
 ;;  
-;;  ***** NOTE: The following commands defined in `simple.el' have
-;;              been REDEFINED HERE:
+;;  ***** NOTE: The following built-in functions have 
+;;              been ADVISED HERE:
 ;;
-;;    `size-indication-mode'.
+;;    `write-region'.
 ;;
 ;;
 ;;  ***** NOTE: The following variables defined in `bindings.el' have
@@ -126,16 +131,32 @@
 ;;    `mode-line-position'.
 ;;
 ;;
+;;  ***** NOTE: The following commands defined in `files.el' have
+;;              been REDEFINED HERE:
+;;
+;;    `append-to-file'.
+;;
+;;
 ;;  ***** NOTE: The following functions defined in `isearch+.el' have
 ;;              been ADVISED HERE:
 ;;
 ;;    `isearch-mode' (Emacs 24.3+).
+;;
 ;;
 ;;  ***** NOTE: The following functions defined in `isearch.el' have
 ;;              been ADVISED HERE, if you use library `isearch+.el':
 ;;
 ;;    `isearch-query-replace' (Emacs 24.3+),
 ;;    `isearch-query-replace-regexp' (Emacs 24.3+).
+;;
+;;
+;;  ***** NOTE: The following functions defined in `rect.el' have
+;;              been ADVISED HERE:
+;;
+;;    `cua-rectangle-mark-mode', `rectangle-number-lines' (Emacs 24+),
+;;    `rectangle-mark-mode' (Emacs 24.4+), `string-insert-rectangle',
+;;    `string-rectangle'.
+;;
 ;;
 ;;  ***** NOTE: The following functions defined in `replace.el' have
 ;;              been ADVISED HERE:
@@ -145,10 +166,37 @@
 ;;    `query-replace-read-from', `query-replace-read-to',
 ;;    `replace-dehighlight'.
 ;;
+;;
+;;  ***** NOTE: The following functions defined in `register.el' have
+;;              been ADVISED HERE:
+;;
+;;    `append-to-register', `copy-to-register', `prepend-to-register',
+;;    `register-read-with-preview'.
+;;
+;;
+;;  ***** NOTE: The following commands defined in `simple.el' have
+;;              been REDEFINED HERE:
+;;
+;;    `size-indication-mode'.
+;;
+;;
+;;  ***** NOTE: The following commands defined in `simple.el' have
+;;              been ADVISED HERE:
+;;
+;;     `append-to-buffer', `copy-to-buffer', `prepend-to-buffer'.
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change Log:
 ;;
+;; 2014/07/21 dadams
+;;     Added: modelinepos-rect-p, cua-rectangle-mark-mode, rectangle-number-lines, rectangle-mark-mode,
+;;            string-insert-rectangle, string-rectangle.
+;;     modelinepos-style: Respect modelinepos-rect-p, showing rows & cols.
+;;     register-read-with-preview: Bind modelinepos-rect-p.  Added copy-rectangle-to-register to cms affected.
+;; 2014/07/15 dadams
+;;     Advise functions append-to-buffer, prepend-to-buffer, copy-to-buffer, append-to-file,
+;;       register-read-with-preview, copy-to-register, append-to-register, prepend-to-register, write-region.
 ;; 2014/01/18 dadams
 ;;     Added: modelinepos-region-acting-on (face and var), 
 ;;            use-region-p (Emacs 22), use-empty-active-region (Emacs 22).
@@ -199,8 +247,10 @@
 ;;
 ;;; Code:
 
-;; Quiet the Emacs 22 byte-compiler.
-(defvar use-empty-active-region)
+;; Quiet the byte-compiler.
+
+(defvar rectangle--string-preview-window) ; In `rect.el' for Emacs 24.4+
+(defvar use-empty-active-region)          ; In `simple.el' for Emacs 23+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -223,6 +273,15 @@ the region is active."
 \(Not used for Emacs 22)."
   :group 'Modeline :group 'Convenience :group 'Help :group 'faces)
 
+(defvar modelinepos-rect-p nil
+  "Non-nil means the current command is a rectangle command.")
+
+(defvar modelinepos-region-acting-on nil
+  "Non-nil means that a command is acting on the active region.
+It is the responsibility of individual commands to manage the value.
+\(Not used for Emacs 22).")
+(make-variable-buffer-local 'modelinepos-region-acting-on)
+
 ;;;###autoload
 (defcustom modelinepos-column-limit 70
   "*Current column greater than this means highlight column in mode-line."
@@ -234,27 +293,66 @@ the region is active."
   :type 'boolean :group 'Modeline :group 'Convenience :group 'Help)
 
 ;;;###autoload
-(defcustom modelinepos-style '(" %d ch, %d l"
-                               (abs (- (mark t) (point)))
-                               (count-lines (mark t) (point)))
+(defcustom modelinepos-style '((if modelinepos-rect-p " %d rows, %d cols" " %d ch, %d l")
+                               (if modelinepos-rect-p
+                                   (count-lines (region-beginning) (region-end))
+                                 (abs (- (mark t) (point))))
+                               (if modelinepos-rect-p
+                                   (if (fboundp 'rectangle--pos-cols) ; Emacs 24.4+
+                                       (let ((rpc  (rectangle--pos-cols (region-beginning) (region-end))))
+                                         (abs (- (car rpc) (cdr rpc))))
+                                     (let ((start  (region-beginning))
+                                           (end    (region-end))
+                                           startcol endcol)
+                                       (save-excursion
+                                         (goto-char start)
+                                         (setq startcol   (current-column))
+                                         (beginning-of-line)
+                                         (goto-char end)
+                                         (setq endcol  (current-column))
+                                         (when (< endcol startcol) ; Ensure start column is the left one.
+                                           (let ((col  startcol))
+                                             (setq startcol  endcol
+                                                   endcol    col)))
+                                         (abs (- startcol endcol)))))
+                                 (count-lines (mark t) (point))))
   "*What info to include about the region size, in mode-line.
-Value `chars+lines' means print the number of characters and the number of lines."
+Value `chars+lines' means print the number of characters and lines or,
+if a rectangle command is invoked, the number of rows and columns.
+
+In general, the value is a format string followed by however many
+sexps the strings expects as arguments."
   :type '(choice
           (const :tag "Characters: \"_ chars\""
            (" %d chars" (abs (- (mark t) (point)))))
-          (const :tag "Chars & Lines: \"_ ch, _ l\""
-           (" %d ch, %d l" (abs (- (mark t) (point))) (count-lines (mark t) (point))))
+          (const :tag "Chars & Lines: \"_ ch, _ l\" or Rows & Columns: \"_ rows, _ cols\""
+           ((if modelinepos-rect-p " %d rows, %d cols" " %d ch, %d l")
+            (if modelinepos-rect-p
+                (count-lines (region-beginning) (region-end))
+              (abs (- (mark t) (point))))
+            (if modelinepos-rect-p
+                (if (fboundp 'rectangle--pos-cols) ; Emacs 24.4+
+                    (let ((rpc  (rectangle--pos-cols (region-beginning) (region-end))))
+                      (abs (- (car rpc) (cdr rpc))))
+                  (let ((start  (region-beginning))
+                        (end    (region-end))
+                        startcol endcol)
+                    (save-excursion
+                      (goto-char start)
+                      (setq startcol   (current-column))
+                      (beginning-of-line)
+                      (goto-char end)
+                      (setq endcol  (current-column))
+                      (when (< endcol startcol) ; Ensure start column is the left one.
+                        (let ((col  startcol))
+                          (setq startcol  endcol
+                                endcol    col)))
+                      (abs (- startcol endcol)))))
+              (count-lines (mark t) (point)))))
           (list :tag "Customized format"
            (string :tag "Format string")
            (repeat :inline t (sexp :tag "Sexp argument for format string"))))
   :group 'Modeline :group 'Convenience :group 'Help)
-
-(defvar modelinepos-region-acting-on nil
-  "Non-nil means that a command is acting on the active region.
-It is the responsibility of individual commands to manage the value.
-\(Not used for Emacs 22).")
-(make-variable-buffer-local 'modelinepos-region-acting-on)
-
 
 ;; REPLACES ORIGINAL defined in `simple.el'.
 ;;
@@ -433,7 +531,6 @@ For some commands, it may be appropriate to ignore the value of
 
 ;; This one works for `query-replace', `query-replace-regexp', `replace-string',
 ;; and `replace-regexp'.
-;;
 (defadvice query-replace-read-args (around bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
@@ -442,7 +539,6 @@ For some commands, it may be appropriate to ignore the value of
     ad-do-it))
 
 ;; This one is for `isearch-query-replace'.
-;;
 (defadvice query-replace-read-to (around bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
@@ -452,7 +548,6 @@ For some commands, it may be appropriate to ignore the value of
 
 ;; This one is for `query-replace-regexp-eval'.
 ;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
-;;
 (defadvice query-replace-read-from (around bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
@@ -462,7 +557,6 @@ For some commands, it may be appropriate to ignore the value of
 
 ;; This one works for `keep-lines', `flush-lines', and `how-many'.
 ;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
-;;
 (defadvice keep-lines-read-args (around bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
@@ -472,7 +566,6 @@ For some commands, it may be appropriate to ignore the value of
 
 ;; Advise interactive part of `map-query-replace-regexp'.
 ;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
-;;
 (defadvice map-query-replace-regexp (before bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (interactive
@@ -497,22 +590,219 @@ For some commands, it may be appropriate to ignore the value of
                (region-end))))))
 
 ;; Turn on highlighting for act of (query-)replacing.
-;;
 (defadvice perform-replace (before bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (setq modelinepos-region-acting-on  (or (use-region-p)  (and (boundp 'isearchp-reg-beg)  isearchp-reg-beg))))
 
 ;; Turn it off after highlighting for replacement commands.  There is no hook, so use `replace-dehighlight'.
-;;
 (defadvice replace-dehighlight (after bind-modelinepos-region-acting-on activate)
   "\(Not used for Emacs 22.)"
   (setq modelinepos-region-acting-on  nil))
 
 
+;;; Commands from `simple.el' and `files.el' (loaded by default; `files.el' has no `provide').
+
+;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
+(defadvice prepend-to-buffer (around bind-modelinepos-region-acting-on activate)
+  "\(Not used for Emacs 22.)"
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+     (list (read-buffer "Prepend to buffer: " (other-buffer (current-buffer) t))
+           (region-beginning) (region-end))))
+  ad-do-it)
+
+;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
+(defadvice append-to-buffer (around bind-modelinepos-region-acting-on activate)
+  "\(Not used for Emacs 22.)"
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+     (list (read-buffer "Append to buffer: " (other-buffer (current-buffer) t))
+           (region-beginning) (region-end))))
+  ad-do-it)
+
+;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
+(defadvice copy-to-buffer (around bind-modelinepos-region-acting-on activate)
+  "\(Not used for Emacs 22.)"
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+     (list (read-buffer "Copy to buffer: " (other-buffer (current-buffer) t))
+           (region-beginning) (region-end))))
+  ad-do-it)
+
+;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
+(defadvice append-to-file (around bind-modelinepos-region-acting-on activate)
+  "\(Not used for Emacs 22.)"
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+     (list (region-beginning)
+           (region-end)
+           (read-file-name "Append to file: "))))
+  ad-do-it)
+
+
+;; Built-in functions (from C code): 
+
+;; We don't really need the second part of the `(or...)', but could just use `(use-region-p)'.
+;;
+(defadvice write-region (around bind-modelinepos-region-acting-on activate)
+  "\(Not used for Emacs 22.)"
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+     (list (region-beginning)
+           (region-end)
+           (read-file-name "Write region to file: ")
+           nil
+           nil
+           nil
+           t)))
+  ad-do-it)
+
+
+;;; Functions from `register.el'.
+
+(if (fboundp 'register-read-with-preview)
+    ;;  Emacs 24.4+.  Used by all register-reading cmds, but restrict highlighting to those affecting region.
+    (defadvice register-read-with-preview (around bind-modelinepos-region-acting-on activate)
+    (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' for minibuffer input.
+          (modelinepos-region-acting-on          (and (or (use-region-p)
+                                                          (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))
+                                                      (member this-command '(copy-to-register
+                                                                             append-to-register
+                                                                             prepend-to-register
+                                                                             copy-rectangle-to-register))))
+          (modelinepos-rect-p                    (member this-command '(copy-rectangle-to-register))))
+      ad-do-it))
+
+  ;; Emacs 23-24.3 - no `register-read-with-preview'.
+  (defadvice copy-to-register (around bind-modelinepos-region-acting-on activate)
+    "\(Not used for Emacs 22.)"
+    (interactive
+     (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+           (modelinepos-region-acting-on          (or (use-region-p)
+                                                      (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+       (list (read-char "Copy to register: ")
+             (region-beginning)
+             (region-end)
+             current-prefix-arg)))
+    ad-do-it)
+
+  (defadvice append-to-register (around bind-modelinepos-region-acting-on activate)
+    "\(Not used for Emacs 22.)"
+    (interactive
+     (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+           (modelinepos-region-acting-on          (or (use-region-p)
+                                                      (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+       (list (read-char "Append to register: ")
+             (region-beginning)
+             (region-end)
+             current-prefix-arg)))
+    ad-do-it)
+
+  (defadvice prepend-to-register (around bind-modelinepos-region-acting-on activate)
+    "\(Not used for Emacs 22.)"
+    (interactive
+     (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+           (modelinepos-region-acting-on          (or (use-region-p)
+                                                      (and (boundp 'isearchp-reg-beg) isearchp-reg-beg))))
+       (list (read-char "Prepend to register: ")
+             (region-beginning)
+             (region-end)
+             current-prefix-arg)))
+    ad-do-it))
+
+
+;;; Functions from `rect.el'.
+
+(defadvice string-rectangle (around bind-modelinepos-region-acting-on activate)
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg)))
+         (modelinepos-rect-p                    t))
+     (make-local-variable 'rectangle--string-preview-state)
+     (make-local-variable 'rectangle--inhibit-region-highlight)
+     (let* ((buf                                  (current-buffer))
+            (win                                  (and (eq (window-buffer) buf) (selected-window)))
+            (start                                (region-beginning))
+            (end                                  (region-end))
+            (rectangle--string-preview-state      `(nil ,start ,end))
+            ;; Rectangle-region highlighting does not work well in the presence of preview overlays.
+            ;; We could try to make it work better, but it is easier to just disable it temporarily.
+            (rectangle--inhibit-region-highlight  t))
+       (barf-if-buffer-read-only)
+       (list start
+             end
+             (if (fboundp 'rectangle--string-erase-preview) ; Emacs 24.4+
+                 (minibuffer-with-setup-hook
+                     (lambda ()
+                       (setq rectangle--string-preview-window  win)
+                       (add-hook 'minibuffer-exit-hook #'rectangle--string-erase-preview nil t)
+                       (add-hook 'post-command-hook #'rectangle--string-preview nil t))
+                   (read-string (format "String rectangle (default %s): "
+                                        (or (car string-rectangle-history) ""))
+                                nil 'string-rectangle-history (car string-rectangle-history)))
+               (read-string (format "String rectangle (default %s): "
+                                    (or (car string-rectangle-history) ""))
+                            nil 'string-rectangle-history (car string-rectangle-history)))))))
+  ad-do-it)
+
+(defadvice string-insert-rectangle (around bind-modelinepos-region-acting-on activate)
+  (interactive
+   (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+         (modelinepos-region-acting-on          (or (use-region-p)
+                                                    (and (boundp 'isearchp-reg-beg) isearchp-reg-beg)))
+         (modelinepos-rect-p                    t))
+     (barf-if-buffer-read-only)
+     (list (region-beginning)
+           (region-end)
+           (read-string (format "String insert rectangle (default %s): " (or (car string-rectangle-history) ""))
+                        nil 'string-rectangle-history (car string-rectangle-history)))))
+  ad-do-it)
+
+(when (fboundp 'rectangle-number-lines) ; Emacs 24+
+  (defadvice rectangle-number-lines (around bind-modelinepos-region-acting-on activate)
+    (interactive
+     (let ((icicle-change-region-background-flag  nil) ; Inhibit changing face `region' during minibuffer input.
+           (modelinepos-region-acting-on          (or (use-region-p)
+                                                      (and (boundp 'isearchp-reg-beg) isearchp-reg-beg)))
+           (modelinepos-rect-p                    t))
+       (if current-prefix-arg
+           (let* ((start     (region-beginning))
+                  (end       (region-end))
+                  (start-at  (read-number "Number to count from: " 1)))
+             (list start end
+                   start-at
+                   (read-string "Format string: " (rectange--default-line-number-format start end start-at))))
+         ;; (redisplay 'FORCE) (sit-for 0.7)
+         (list (region-beginning) (region-end) 1 nil))))
+    ad-do-it))
+
+(when (fboundp 'rectangle-mark-mode)    ; Emacs 24.4+
+  (defadvice rectangle-mark-mode (after bind-modelinepos-region-acting-on activate)
+    (setq modelinepos-region-acting-on  rectangle-mark-mode
+          modelinepos-rect-p            rectangle-mark-mode)  
+    (redisplay 'force)))
+
+(when (fboundp 'cua-rectangle-mark-mode)    ; Emacs 24.4+, but see Emacs bug #18047
+  (defadvice cua-rectangle-mark-mode (after bind-modelinepos-region-acting-on activate)
+    (setq modelinepos-region-acting-on  cua-rectangle-mark-mode
+          modelinepos-rect-p            cua-rectangle-mark-mode)  
+    (redisplay 'force)))
+
+
 ;;; Functions from `isearch.el' (loaded by default, with no `provide').
 
 ;; Library `isearch+.el' lets you restrict Isearch to the active region.
-
 
 (defadvice isearch-mode (before bind-modelinepos-region-acting-on activate)
   "\(Used only for Emacs 24.3 and later.)"
@@ -522,7 +812,6 @@ For some commands, it may be appropriate to ignore the value of
   (add-hook 'isearch-mode-end-hook  (lambda () (setq modelinepos-region-acting-on  nil))))
 
 ;; Transfer the region restriction and its mode-line highlighting from Isearch to the replacement command.
-;;
 (defadvice isearch-query-replace (around bind-modelinepos-region-acting-on activate)
   "\(Used only for Emacs 24.3 and later.)"
   (interactive
@@ -548,7 +837,6 @@ For some commands, it may be appropriate to ignore the value of
                    `(lambda () (setq modelinepos-region-acting-on  ',modelinepos-region-acting-on))))))
 
 ;; Transfer the region restriction and its mode-line highlighting from Isearch to the replacement command.
-;;
 (defadvice isearch-query-replace-regexp (around bind-modelinepos-region-acting-on activate)
   "\(Used only for Emacs 24.3 and later.)"
   (interactive
