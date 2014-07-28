@@ -17,6 +17,7 @@
 (defun dmd-query-active ()
   "Return non-nil when `dmd-query' should be performed."
   (and (eq major-mode 'd-mode)
+       (executable-find "dmd")
        (not (or isearch-mode
                 (minibufferp)))))
 
