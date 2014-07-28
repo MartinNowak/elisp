@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Mon Jul 14 08:16:46 2014 (-0700)
+;; Last-Updated: Mon Jul 28 09:53:40 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10955
+;;     Update #: 10969
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -85,6 +85,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
+;; 2014/07/28 dadams
+;;     Added new version of icicle-bbdb-complete-mail.  Thx to Alan Schmitt for testing.
 ;; 2014/07/14 dadams
 ;;     icicle-cd-for-loc-files: Bind enable-recursive-minibuffers.
 ;; 2014/06/19 dadams
@@ -1095,6 +1097,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/07/28 dadams
+;;     icicle-complete: Added sort orders.  Bind completion-ignore-case.
+;; 2014/07/27 dadams
+;;     Added: icicle-complete: Icicles version of command complete from completion.el.
 ;; 2014/06/21 dadams
 ;;     icicle-imenu-1: Handle multiple submenus with the same name (e.g. Functions).
 ;; 2014/06/19 dadams
@@ -4231,6 +4237,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mcmd.el'")
 ;;
+;; 2014/07/27 dadams
+;;     Updated delete-selection PUT for icicle-self-insert per Emacs 24.4+.
 ;; 2014/06/21 dadams
 ;;     icicle-candidate-set-retrieve-1: Mention whether added or restored in msg.
 ;; 2014/06/07 dadams
@@ -5937,6 +5945,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mode.el'")
 ;;
+;; 2014/07/27 dadams
+;;     Added icicle-ORIG-complete (original def of command complete from completion.el).
 ;; 2014/06/07 dadams
 ;;     Added: icicle-last-non-minibuffer-buffer.
 ;;     icicle-minibuffer-setup: Use icicle-last-non-minibuffer-buffer for icicle-pre-minibuffer-buffer.
@@ -7225,6 +7235,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/07/27 dadams
+;;     Added: icicle-cmpl-include-cdabbrev-flag, icicle-cmpl-max-candidates-to-cycle.
+;;     icicle-functions-to-redefine: Added complete to the list of functions.
 ;; 2014/06/21 dadams
 ;;     icicle-completion-key-bindings:
 ;;       Added bindings for bmkp-(set|retrieve(-more)-icicle-search-hits-bookmark.
