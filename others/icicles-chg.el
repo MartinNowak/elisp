@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Mon Jul 28 09:53:40 2014 (-0700)
+;; Last-Updated: Mon Aug  4 09:47:28 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10969
+;;     Update #: 10980
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -1097,6 +1097,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/07/31 dadams
+;;     icicle-complete-keys-action: Do not use icicle-orig-buff, icicle-orig-window) - not bound.
+;;       See change-log entry for 2014/02/24.  Must have forgotten to finish that change by doing this.
 ;; 2014/07/28 dadams
 ;;     icicle-complete: Added sort orders.  Bind completion-ignore-case.
 ;; 2014/07/27 dadams
@@ -1125,7 +1128,7 @@
 ;;     Use (featurep 'icomplete), not (boundp 'icomplete-mode), everywhere.
 ;; 2014/03/03 dadams
 ;;     icicle-search-xml-element: Try to handle attributes and <ELTNAME/> too.
-;; 2014/03/24 dadams
+;; 2014/02/24 dadams
 ;;     icicle-complete-keys, icicle-complete-menu-bar:
 ;;       Do not bind icicle-orig-buff or icicle-orig-window - they are the minibuffer buf & window.
 ;; 2014/02/07 dadams
@@ -2035,6 +2038,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/07/29 dadams
+;;     icicle-read-file-name: For Emacs 23+ do not bind ffap vars to nil, so get multiple M-n defaults.
+;;       This reverses the change from 2008/02/03.
 ;; 2014/05/19 dadams
 ;;     icicle-completing-read: Use only first default to prepare for icicle-handle-default-for-prompt.
 ;; 2014/05/17 dadams
@@ -8132,6 +8138,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-var.el'")
 ;;
+;; 2014/08/04 dadams
+;;     icicle-read-expression-map: Typo introduced 2013/12/03: lisp-indent-line, not indent-lisp-line.
+;;                                 Use indent-sexp for Emacs 20-21 (no indent-pp-sexp).
 ;; 2014/06/06 dadams
 ;;     Added: icicle-next-window-for-display-buffer.
 ;; 2014/04/20 dadams

@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Thu May 21 13:31:43 2009 (-0700)
-;; Last-Updated: Mon Jul 28 08:45:13 2014 (-0700)
+;; Last-Updated: Thu Jul 31 09:08:18 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 6887
+;;     Update #: 6916
 ;; URL: http://www.emacswiki.org/icicles-cmd2.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -407,6 +407,23 @@
 (defvar anything-idle-delay)            ; In `anything.el'
 (defvar bmkp-non-file-filename)         ; In `bookmark+-1.el'
 (defvar bmkp-sorted-alist)              ; In `bookmark+-1.el'
+(defvar cmpl-cdabbrev-reset-p)          ; In `completion.el'
+(defvar cmpl-current-index)             ; In `completion.el'
+(defvar cmpl-initialized-p)             ; In `completion.el'
+(defvar cmpl-last-insert-location)      ; In `completion.el'
+(defvar cmpl-leave-point-at-start)      ; In `completion.el'
+(defvar cmpl-obarray)                   ; In `completion.el'
+(defvar cmpl-original-string)           ; In `completion.el'
+(defvar cmpl-cdabbrev-reset-p)          ; In `completion.el'
+(defvar cmpl-symbol-end)                ; In `completion.el'
+(defvar cmpl-symbol-start)              ; In `completion.el'
+(defvar cmpl-test-regexp)               ; In `completion.el'
+(defvar cmpl-test-string)               ; In `completion.el'
+(defvar cmpl-tried-list)                ; In `completion.el'
+(defvar completion-cdabbrev-prompt-flag) ; In `completion.el'
+(defvar completion-prefix-min-length)   ; In `completion.el'
+(defvar completion-prompt-speed-threshold) ; In `completion.el'
+(defvar completion-to-accept)           ; In `completion.el'
 (defvar er/try-expand-list)             ; In `expand-region.el'
 (defvar eyedrop-picked-background)      ; In `eyedrop.el' or `palette.el'
 (defvar eyedrop-picked-foreground)      ; In `eyedrop.el' or `palette.el'
@@ -2540,6 +2557,11 @@ the `CDABBREV' candidates.
 
 During Icicles minibuffer completion you can use `S-delete' to remove
 the current completion candidate from the database of completions.
+Cycle among the candidates (e.g. `down'), and use `S-delete' to delete
+as many as you want.
+
+\(You can also delete any database entry using `\\[kill-completion]'.
+And you can add a database entry using `\\[add-completion]'.)
 
 See the comments at the top of `completion.el' for more info."
   (interactive "*p")
@@ -8419,7 +8441,6 @@ Each is a vector."
           (put (car cand) 'icicle-special-candidate nil))))) ; Reset the property.
 
   ;; Free vars here:
-  ;; `icicle-orig-buff', `icicle-orig-window', bound in `icicle-complete-keys'.
   ;; `icicle-orig-extra-cands', `icicle-this-cmd-keys', `icicle-key-prefix',
   ;; bound in `icicle-complete-keys-1'.
   (defun icicle-complete-keys-action (candidate)
@@ -8431,8 +8452,8 @@ Each is a vector."
            (action-window  (selected-window)))
       (unwind-protect
            (progn
-             (set-buffer icicle-orig-buff)
-             (select-window icicle-orig-window)
+             ;; $$$$$$$$ (set-buffer icicle-orig-buff)       ; These are not bound.
+             ;; $$$$$$$$ (select-window icicle-orig-window)
              (if (string= ".." candidate)
                  (setq cmd-name  "..")
                (unless (and (string-match "\\(.+\\)  =  \\(.+\\)" candidate)  (match-beginning 2))
