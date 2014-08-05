@@ -777,6 +777,8 @@ See
       (:lang Fortran-77 :expr (: x ".LT." y))
       (:lang (Bash) :expr (| (: "if" "[" x "-lt" y "]") ;TODO: Only integer comparison
                              (: "((" x "<" y "))"))) ;TODO: Only integer comparison
+      (:lang (Bash) :expr (| (: "if" "[[" x "<" y "]]") ;TODO: Only string comparison
+                             (: "if" "[" x "\\<" y "]"))) ;TODO: Only string comparison
       )) "Relational Less-Than Operator")
 (defconst relangs-relational-greater-than
   (lambda (x y)
@@ -784,6 +786,8 @@ See
       (:lang Fortran-77 :expr (: x ".GT." y))
       (:lang (Bash) :expr (| (: "if" "[" x "-gt" y "]") ;TODO: Only integer comparison
                              (: "((" x ">" y "))"))) ;TODO: Only integer comparison
+      (:lang (Bash) :expr (| (: "if" "[[" x ">" y "]]") ;TODO: Only string comparison
+                             (: "if" "[" x "\\>" y "]"))) ;TODO: Only string comparison
       )) "Relational Greater-Than Operator")
 (defconst relangs-relational-less-than-or-equal
   (lambda (x y)
@@ -810,6 +814,7 @@ See
       (:lang Emacs-Lisp :expr (: "(equal" x y ")"))
       (:lang (Ada Pascal) :expr (: x "=" y))
       (:lang (Bash) :expr (: "if" "[" x "-eq" y "]")) ;TODO: Only integer comparison
+      (:lang (Bash) :expr (: "if" "[" x "==" y "]")) ;TODO: Only string comparison
       )) "Contents Equality Operator")
 (defconst relangs-content-not-equality-operator
   (lambda (x y)
@@ -830,6 +835,7 @@ See
       (:lang Ada :expr (: x "/=" y))
       (:lang Lua :expr (: x "~=" y))
       (:lang (Bash) :expr (: "if" "[" x "-ne" y "]"))  ;TODO: Only integer comparison
+      (:lang (Bash) :expr (: "if" "[" x "!=" y "]")) ;TODO: Only string comparison
       )) "Contents Non-Equality Operator")
 (define-opposites
   relangs-content-equality-operator
