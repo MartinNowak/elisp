@@ -101,7 +101,7 @@
   '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" "!" ":" "?" "," "." "~"))
 
 (defconst smart-op-modes
-  '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode)
+  '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode ada-mode)
   "Common modes where `smart-op' should have special behaviour.")
 
 (defun smart-op-insert (op &optional only-after)
