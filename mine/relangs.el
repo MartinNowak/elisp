@@ -772,24 +772,32 @@ See
 
 ;;; Relational
 (defconst relangs-relational-less-than
-  (lambda ()
-    `((:lang (C C++ D Java C\# Ada Lua) :expr "<")
-      (:lang Fortran-77 :expr ".LT.")
+  (lambda (x y)
+    `((:lang (C C++ D Java C\# Ada Lua) :expr (: x "<" y))
+      (:lang Fortran-77 :expr (: x ".LT." y))
+      (:lang (Bash) :expr (| (: "if" "[" x "-lt" y "]") ;TODO: Only integer comparison
+                             (: "((" x "<" y "))"))) ;TODO: Only integer comparison
       )) "Relational Less-Than Operator")
 (defconst relangs-relational-greater-than
-  (lambda ()
-    `((:lang (C C++ D Java C\# Ada Lua) :expr ">")
-      (:lang Fortran-77 :expr ".GT.")
+  (lambda (x y)
+    `((:lang (C C++ D Java C\# Ada Lua) :expr (: x ">" y))
+      (:lang Fortran-77 :expr (: x ".GT." y))
+      (:lang (Bash) :expr (| (: "if" "[" x "-gt" y "]") ;TODO: Only integer comparison
+                             (: "((" x ">" y "))"))) ;TODO: Only integer comparison
       )) "Relational Greater-Than Operator")
 (defconst relangs-relational-less-than-or-equal
-  (lambda ()
-    `((:lang (C C++ D Java C\# Ada Lua) :expr "<=")
-      (:lang Fortran-77 :expr ".LE.")
+  (lambda (x y)
+    `((:lang (C C++ D Java C\# Ada Lua) :expr (: x "<=" y))
+      (:lang Fortran-77 :expr (: x ".LE." y))
+      (:lang (Bash) :expr (| (: "if" "[" x "-lte" y "]") ;TODO: Only integer comparison
+                             (: "((" x "<=" y "))"))) ;TODO: Only integer comparison
       )) "Relational Less-Than or Equal Operator")
 (defconst relangs-relational-greater-than-or-equal
-  (lambda ()
-    `((:lang (C C++ D Java C\# Ada Lua) :expr ">=")
-      (:lang Fortran-77 :expr ".GE.")
+  (lambda (x y)
+    `((:lang (C C++ D Java C\# Ada Lua) :expr (: x ">=" y))
+      (:lang Fortran-77 :expr (: x ".GE." y))
+      (:lang (Bash) :expr (| (: "if" "[" x "-gte" y "]") ;TODO: Only integer comparison
+                             (: "((" x ">=" y "))")))  ;TODO: Only integer comparison
       )) "Relational Greater-Than or Equal Operator")
 
 ;;; Contents Equality
@@ -800,18 +808,28 @@ See
       (:lang Matlab :expr (| (: x "==" y)
                              (: "eq(" x "," y ")")))
       (:lang Emacs-Lisp :expr (: "(equal" x y ")"))
-      (:lang (Ada Pascal) :expr "=")
+      (:lang (Ada Pascal) :expr (: x "=" y))
+      (:lang (Bash) :expr (: "if" "[" x "-eq" y "]")) ;TODO: Only integer comparison
       )) "Contents Equality Operator")
 (defconst relangs-content-not-equality-operator
   (lambda (x y)
     `((:lang (C C++ D Java C\# Python Ruby) :expr (: "!="))
-      (:lang Python :expr "<>" :deprecated true)
-      (:lang Fortran-77 :expr (| ".NEQV." ".NE.") :prefer (: x ".NEQV." y))
-      (:lang Matlab :expr (| "~="
-                             "ne(X,Y)"))
-      (:lang Emacs-Lisp :expr (: "(not (equal" x y ")" ")"))
-      (:lang Ada :expr "/=")
-      (:lang Lua :expr "~=")
+      (:lang Python :expr (: x "<>" y) :deprecated true)
+      (:lang Fortran-77
+             :expr (: x
+                      (| ".NEQV."
+                         ".NE.")
+                      y)
+             :prefer (: x ".NEQV." y))
+      (:lang Matlab
+             :expr (: x
+                      (| "~="
+                         "ne(X,Y)")
+                      y))
+      (:lang Emacs-Lisp :expr (: "(not" "(equal" x y ")" ")"))
+      (:lang Ada :expr (: x "/=" y))
+      (:lang Lua :expr (: x "~=" y))
+      (:lang (Bash) :expr (: "if" "[" x "-ne" y "]"))  ;TODO: Only integer comparison
       )) "Contents Non-Equality Operator")
 (define-opposites
   relangs-content-equality-operator
@@ -822,7 +840,7 @@ See
   (lambda (x y)
     `((:lang (Python) :expr (x "is" y))
       (:lang (Ruby) :expr (x "equal?" y))
-      (:lang Emacs-Lisp :expr (: "(eq " x ", $Y$)"))
+      (:lang Emacs-Lisp :expr (: "(eq" x ", $Y$)"))
       )) "Object Equality Operator of X and Y")
 
 ;;; Arithmetic
@@ -1156,9 +1174,9 @@ That is return x ⋅ ( 1 − a ) + y ⋅ a")
 
 (defconst relangs-function-definition
   (lambda (X)
-   `((:lang Python :expr (: "def " ,X "():"))
+   `((:lang Python :expr (: "def" ,X "():"))
      (:lang C :expr (: ,X "()"))
-     (:lang Emacs-Lisp :expr (: "(defun " ,X " ()"))
+     (:lang Emacs-Lisp :expr (: "(defun" ,X " ()"))
      )))
 
 (defconst relangs-function-call
@@ -1209,7 +1227,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
    `((:lang (C C++ D) :expr (: "assert(" ,X "==" ,Y ")"))
      (:lang (C C++) :expr (: "enforce_eq(" ,X "," ,Y ")"))
      (:lang (D) :expr (: "assertEqual(" ,X "," ,Y ")"))
-     (:lang Emacs-Lisp :expr (: "(assert-equal " ,X " ",Y ")"))
+     (:lang Emacs-Lisp :expr (: "(assert-equal" ,X " ",Y ")"))
      ))
   "Assert that expression X and Y have same contents.")
 
@@ -1277,7 +1295,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 
 (defconst relangs-number-to-string
   (lambda (x y)
-   `((:lang Emacs-Lisp :expr ("(string-to-number " x ")"))
+   `((:lang Emacs-Lisp :expr ("(string-to-number" x ")"))
      (:lang Python :expr (: "(float " x ")"))
      )) "Interpret string $X$ as a number.")
 
@@ -1665,7 +1683,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-uniquify-elements
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(delete-dups " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(delete-dups" ,X ")"))
       (:lang Haskell :expr (: "Data.List.nub"))
       (:lang Python :expr (: "list(set(" ,X "))") :when "isinstance(" ,X ",list)")
       (:lang D :expr (: "uniq(" ,X ")") :import "std.algorithm")
@@ -1697,7 +1715,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-containing-directory-of-filename
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(file-name-directory " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(file-name-directory" ,X ")"))
       (:lang C          :expr (: "dirname(" ,X ")") :include "libgen.h")
       (:lang D          :expr (: "dirName(" ,X ")") :import "std.path")
       (:lang Shell      :expr (: "dirname " ,X))
@@ -1709,8 +1727,8 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-filename-directory
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(file-name-nondirectory ") ,X ")")
-      (:lang GNU-Make   :expr (: "$(notdir ") ,X ")")
+      (:lang Emacs-Lisp :expr (: "(file-name-nondirectory" ,X ")"))
+      (:lang GNU-Make   :expr (: "$(notdir " ,X ")"))
       (:lang C          :expr ("basename(" ,X ")") :include "libgen.h")
       (:lang D          :expr (: "baseName(") ,X ")" :import "std.path")
       )) "Filename X without any leading directory part.")
@@ -1718,7 +1736,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-filename-base
   (lambda (X)
    `(
-     (:lang Emacs-Lisp :expr (: "(file-name-sans-extension ") ,X ")")
+     (:lang Emacs-Lisp :expr (: "(file-name-sans-extension" ,X ")"))
      (:lang GNU-Make :expr (: "$(basename ") ,X ")")
      (:lang Python :expr (: "splitext(") ,X ")[0]" :import "os.path")
      (:lang D :expr (: "std.path.stripExtension(") ,X ")" :import "std.path")
@@ -1727,7 +1745,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-filename-extension
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(file-name-extension " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(file-name-extension" ,X ")"))
       (:lang GNU-Make :expr (: "$(suffix " ,X ")"))
       (:lang Python :expr (: "splitext(" ,X ")[1][1:].strip()") :import "os.path")
       )) "Get Extension of filename X if any.")
@@ -1735,7 +1753,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-combine-canonicalize-path
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(expand-file-name " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(expand-file-name" ,X ")"))
       (:lang Python :expr (: "normpath(" ,X ")") :import "os.path")
       (:lang Matlab :expr (: "fullfile(" ,X ")"))
       (:lang GNU-Make :expr (: "$(abspath " ,X ")"))
@@ -1745,7 +1763,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-combine-combine-diretory-and-file
   (lambda (file dir)
     `(
-      (:lang Emacs-Lisp :expr (: "(expand-file-name " ,file " " (? ,dir) ")")) ;NOTE: dir is optional
+      (:lang Emacs-Lisp :expr (: "(expand-file-name" ,file " " (? ,dir) ")")) ;NOTE: dir is optional
       (:lang Python :expr (: "join(" ,dir "," ,file ")") :import "os.path")
       (:lang D :expr (: "buildPath(" ,dir "," ,file ")") :import "std.path")
       )) "Combine Filenames or Paths")
@@ -1758,7 +1776,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
   (lambda (X)
    `(
      (:lang C :expr (: "tolower(" ,X ")"))
-     (:lang Emacs-Lisp :expr (: "(downcase " ,X ")"))
+     (:lang Emacs-Lisp :expr (: "(downcase" ,X ")"))
      (:lang Python :expr (: ,X ".lower()"))
      (:lang Ruby :expr (: ,X ".downcase"))
      (:lang Matlab :expr (: "lower(" ,X ")"))
@@ -1768,7 +1786,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
   (lambda (X)
     `(
       (:lang C :expr (: "toupper(" ,X ")"))
-      (:lang Emacs-Lisp :expr (: "(upcase " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(upcase" ,X ")"))
       (:lang Python :expr (: ,X ".upper()"))
       (:lang Ruby :expr (: ,X ".upcase"))
       (:lang Matlab :expr (: "upper(" ,X ")"))
@@ -1777,14 +1795,14 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-string-capitalize
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(capitalize " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(capitalize" ,X ")"))
       (:lang Python :expr (: ,X ".capitalize()"))
       )) "String Capitalize.")
 
 (defconst relangs-string-length
   (lambda (X)
     `(
-      (:lang Emacs-Lisp :expr (: "(string-length " ,X ")"))
+      (:lang Emacs-Lisp :expr (: "(string-length" ,X ")"))
       (:lang Python :expr (: "len(" ,X ")"))
       (:lang Ruby :expr (| (: ,X ".length")
                            (: ,X ".size")))
@@ -1838,7 +1856,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 (defconst relangs-string-replace
   (lambda (REGEXP REP STRING)
     `(
-      (:lang Emacs-Lisp :expr (: "(replace-regexp-in-string " ,REGEXP " " ,REP " " ,STRING ")"))
+      (:lang Emacs-Lisp :expr (: "(replace-regexp-in-string" ,REGEXP " " ,REP " " ,STRING ")"))
       (:lang Python :expr (: "re.sub(" ,REGEXP "," ,REP "," ,STRING ""))
       "String Regular Expression REGEXP with Replacement REP in STRING.")))
 

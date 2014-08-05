@@ -2792,6 +2792,7 @@ And make sure that it really shows up!"
 
           'setenv-history
           'vc-git-history
+
           'coding-system-history
 
           'find-args-history
