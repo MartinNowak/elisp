@@ -1592,7 +1592,6 @@ See URL `http://dlang.org/'."
 
 (defun setup-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths."
-
   (when nil                            ;NOTE: Disabled because this causes error
     (when (and buffer-file-name
                (string-match "/dmd/src/" (file-name-directory
@@ -1600,9 +1599,13 @@ See URL `http://dlang.org/'."
       (dolist (dir '("root"
                      "tk"
                      "backend"))
-        (add-to-list 'flycheck-clang-include-path dir))
-      )))
+        (add-to-list 'flycheck-clang-include-path dir)))))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
+
+;;; Activate for Ada and Fortran
+(add-hook 'ada-mode-hook 'flycheck-mode t)
+(add-hook 'fortran-mode-hook 'flycheck-mode t)
+(add-hook 'f90-mode-hook 'flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
 (defun flycheck-display-error-messages-unless-error-buffer (errors)
