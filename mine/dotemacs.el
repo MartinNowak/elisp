@@ -1525,6 +1525,14 @@ save it in `ffap-file-at-point-line-number' variable."
 (global-set-key [(control f7)] 'flycheck-previous-error)
 (global-set-key [(control f8)] 'flycheck-next-error)
 
+;;; Note: Disabled for now. Instead put std.cfg in ~/.config/cppcheck
+;; (let ((cppcheck (executable-find "cppcheck")))
+;;   (setenv "CFGDIR" (expand-file-name "cfg"
+;;                                      (file-name-directory
+;;                                       (directory-file-name
+;;                                        (file-name-directory cppcheck))))))
+;; (getenv "CFGDIR")
+
 ;;; Auto Choose Ada Include path for GCA
 (defun ada-mode-setup-flycheck-include-path ()
   (when (eq major-mode 'ada-mode)
