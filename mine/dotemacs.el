@@ -1598,8 +1598,8 @@ See URL `http://dlang.org/'."
                   '((d-mode . ffap-d-mode))))))
 (add-hook 'd-mode-hook 'd-mode-setup-pnw t)
 
-(defun setup-flycheck-mode ()
-  "Setup FlyCheck Clang Include Paths."
+(defun setup-cc-flycheck-mode ()
+  "Setup FlyCheck Clang Include Paths for C-like modes."
   (when (memq major-mode '(c-mode c++-mode objc-mode))
     (when (and buffer-file-name
                (string-match "/dmd/src/" (file-name-directory
@@ -1608,7 +1608,7 @@ See URL `http://dlang.org/'."
                      "tk"
                      "backend"))
         (add-to-list 'flycheck-clang-include-path dir)))))
-(add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
+(add-hook 'flycheck-mode-hook 'setup-cc-flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
 (defun flycheck-display-error-messages-unless-error-buffer (errors)
