@@ -258,29 +258,35 @@ string."
                       (hit (when match
                              (cons dir match))))
                  (if multi
-                     (let ((parents (trace-directory-upwards-helper matcher (directory-file-name parent) multi halt-dir)))
+                     (let ((parents (trace-directory-upwards-helper matcher
+                                                                    (directory-file-name parent)
+                                                                    multi
+                                                                    halt-dir)))
                        (append (if (consp hit)
                                    (list hit)
                                  hit)
                                parents))
                    hit)))
               (t
-               (trace-directory-upwards-helper matcher (directory-file-name parent)))))
+               (trace-directory-upwards-helper matcher
+                                               (directory-file-name parent)))))
     (error "%s is not a directory!" start-dir)))
-(defun trace-directory-upwards-r (matcher &optional dir multi halt-dir)
+(defun trace-directory-upwards (matcher &optional dir multi halt-dir)
   "See `trace-directory-upwards-helper'."
-  (trace-directory-upwards-helper matcher (expand-file-name (or dir default-directory)) multi halt-dir))
-;; Use: (trace-directory-upwards-r "home" "~/")
-;; Use: (trace-directory-upwards-r "home" "~/" t)
-;; Use: (trace-directory-upwards-r 'file-directory-p "~/justcxx/semnet" t)
-;; Use: (trace-directory-upwards-r 'file-directory-p "~/justcxx/semnet" t "~")
-;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "~/justcxx/semnet")
-;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "~/justcxx/semnet" t)
-;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "/ssh:rsr@150.227.198.29:/")
+  (trace-directory-upwards-helper matcher
+                                  (expand-file-name (or dir default-directory))
+                                  multi halt-dir))
+;; Use: (trace-directory-upwards "home" "~/")
+;; Use: (trace-directory-upwards "home" "~/" t)
+;; Use: (trace-directory-upwards 'file-directory-p "~/justcxx/semnet" t)
+;; Use: (trace-directory-upwards 'file-directory-p "~/justcxx/semnet" t "~")
+;; Use: (trace-directory-upwards 'file-tags-root-directory-p "~/justcxx/semnet")
+;; Use: (trace-directory-upwards 'file-tags-root-directory-p "~/justcxx/semnet" t)
+;; Use: (trace-directory-upwards 'file-tags-root-directory-p "/ssh:rsr@150.227.198.29:/")
 
 (defun trace-file-upwards (dir &optional matcher multi regexp-flag recog)
   (interactive "sFilename: ")
-  (let ((hits (trace-directory-upwards-r (cond ((stringp matcher)
+  (let ((hits (trace-directory-upwards (cond ((stringp matcher)
                                                 `(lambda (dir)
                                                    (if ,regexp-flag
                                                        (directory-files dir t ,matcher)

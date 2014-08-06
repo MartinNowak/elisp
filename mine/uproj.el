@@ -1004,7 +1004,7 @@ of jobs running with nicenessrity NICENESS."
                            )))
                     (read-directory-name "Build in directory: "
                                          (or dir
-                                             (car (trace-directory-upwards-r
+                                             (car (trace-directory-upwards
                                                    (lambda (dir)
                                                      (and
                                                       (file-project-root-directory-p dir)
@@ -1014,8 +1014,8 @@ of jobs running with nicenessrity NICENESS."
                                                        (directory-makefile-target-of-buffer dir buffer-file-name))
                                                       ))
                                                    directory multi halt-dir))
-                                             (car (trace-directory-upwards-r 'file-build-directory-p
-                                                                             directory multi halt-dir)))
+                                             (car (trace-directory-upwards 'file-build-directory-p
+                                                                           directory multi halt-dir)))
                                          nil t)))))
       (when bdir
         (when fcache

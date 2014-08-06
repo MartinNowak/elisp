@@ -563,7 +563,7 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
                 (unless file (setq file default-directory))
                 (unless (file-directory-p file) (setq file (file-name-directory file)))
                 file))
-         (tags-root (car (trace-directory-upwards-r
+         (tags-root (car (trace-directory-upwards
                           'file-ectags-root-directory-p
                           dir))))
     (or tags-root                        ;either we found root
@@ -581,7 +581,7 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
 context."
   (interactive)
   (run-hooks 'ectags-lazy-hook)
-  (let ((root (car (trace-directory-upwards-r 'file-tags-root-directory-p)))) ;try to find tags root
+  (let ((root (car (trace-directory-upwards 'file-tags-root-directory-p)))) ;try to find tags root
     (when root
       (if dir-flag
           (ectags-scan-directory root 'ectags-format-vi-full-raw *ectags*)

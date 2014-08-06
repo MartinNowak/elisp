@@ -106,14 +106,14 @@ default (shallowest)."
   (let ((entry (assoc dir atags-schedule)))
     (when entry
       (setcdr entry '(nil))))            ;remove timer but keep directory
-  (let ((hits (trace-directory-upwards-r (cond ((memq tags-type '(ectags
-                                                                  Exuberant-Ctags))
-                                                'file-ectags-root-directory-p)
-                                               ((memq tags-type '(etags
-                                                                  Emacs-Ctags))
-                                                'file-etags-root-directory-p)
-                                               (t
-                                                'file-tags-root-directory-p))
+  (let ((hits (trace-directory-upwards (cond ((memq tags-type '(ectags
+                                                                Exuberant-Ctags))
+                                              'file-ectags-root-directory-p)
+                                             ((memq tags-type '(etags
+                                                                Emacs-Ctags))
+                                              'file-etags-root-directory-p)
+                                             (t
+                                              'file-tags-root-directory-p))
                                          (expand-file-name dir) multi)))
     (tags-update-at
      (if multi                          ;if multiple hits
@@ -150,8 +150,8 @@ default (shallowest)."
   "Prepare Etags and Ctags Interface for a lookup at directory
 DIR."
   (unless dir (setq dir default-directory))
-  (let ((root-dir (car (trace-directory-upwards-r 'file-tags-root-directory-p
-                                                  (expand-file-name dir)))))
+  (let ((root-dir (car (trace-directory-upwards 'file-tags-root-directory-p
+                                                (expand-file-name dir)))))
     (if root-dir             ;if tags parent directory already present
         ;; use it
         (add-to-list 'atags-root-history root-dir) ;remember it

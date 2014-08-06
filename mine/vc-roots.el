@@ -64,7 +64,7 @@ An entry is either a string path or a (ROOT-DIR BACKENDS-SYMBOL-LIST")
           (hit (directory-has-any-p directory vc-directory-exclusion-list)))
       (and hit
            (cond ((member directory '("RCS" "CVS" ".svn"))
-                  ;; trace-directory-upwards-r
+                  ;; trace-directory-upwards
                   nil)
                  (t
                   (let* ((vc-dir (abbreviate-file-name (directory-file-name (file-name-directory hit))))
@@ -94,7 +94,7 @@ parenting directories of FILE as (VC-ROOT-DIR . BACKEND-SYMBOL).
 Possible values for VC-ROOT-BACKEND-SYMBOL are found in `vc-backend-dir-type'."
   (let (case-fold-search                           ;Note: Case-Sensitive!
         (dir (or dir (file-name-directory file)))) ;get file directory
-    (trace-directory-upwards-r 'file-vc-root-directory-p dir multi halt-dir)))
+    (trace-directory-upwards 'file-vc-root-directory-p dir multi halt-dir)))
 ;; Use: (file-under-vc-directory-p "~/cognia/vec2f.h")
 ;; Use: (file-under-vc-directory-p "~/cognia/nxhtml")
 ;; Use: (file-under-vc-directory-p (elsub "yasnippet"))
