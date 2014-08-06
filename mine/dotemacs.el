@@ -1525,6 +1525,23 @@ save it in `ffap-file-at-point-line-number' variable."
 (global-set-key [(control f7)] 'flycheck-previous-error)
 (global-set-key [(control f8)] 'flycheck-next-error)
 
+;;; Auto Choose Ada Include path for GCA
+(defun ada-mode-setup-flycheck-include-path ()
+  (when (eq major-mode 'ada-mode)
+    (let ((cs (trace-file-upwards "." "config_spec.xml")))
+      (when cs
+        (let* ((top (car cs))
+               (build-dir (car (last (directory-files
+                                      (expand-file-name "build" top)
+                                      t))))
+               (include-dir (expand-file-name "include" build-dir)))
+          (setq flycheck-gnat-include-path
+                (list
+                 (expand-file-name "components" include-dir)
+                 (expand-file-name "subsystems" include-dir))))))))
+(add-hook 'flycheck-before-syntax-check-hook
+          'ada-mode-setup-flycheck-include-path t)
+
 ;; (repeatable-command-advice flycheck-previous-error)
 ;; (repeatable-command-advice flycheck-next-error)
 ;; (c-add-style "D" '((c++-indent-level . 4)
@@ -1545,7 +1562,7 @@ save it in `ffap-file-at-point-line-number' variable."
     (flycheck-mode 1))
 
   (when (dmd-support-columns)
-    (flycheck-define-checker d-dmd
+    (flycheck-define-checker d-dmd      ;TODO: Integrate this with flycheck.el
       "A D syntax checker using the DMD compiler.
 
 See URL `http://dlang.org/'."

@@ -1,0 +1,28 @@
+V "GNAT Lib v4.8"
+A -fsyntax-only
+A -fshow-column
+A -fno-diagnostics-show-caret
+A -fno-diagnostics-show-option
+A -gnat2012
+A -gnata
+A -gnatwu
+A -gnatwa
+A -gnatf
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+
+U x%s			x.ads			d84f02e1 NE OO PK
+W y%s			y.ads			y.ali
+
+D system.ads		20140416144310 90249111
+D x.ads			20140806133055 ada1314a
+D y.ads			20140806133038 75ee33ab
+X 2 x.ads
+3K9*X 5l5 5e6
+4N4*A
+X 3 y.ads
+1K9*Y 2|1w6 3|3e6
+
