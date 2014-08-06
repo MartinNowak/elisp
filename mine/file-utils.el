@@ -272,10 +272,10 @@ string."
   (trace-directory-upwards-helper matcher (expand-file-name (or dir default-directory)) multi halt-dir))
 ;; Use: (trace-directory-upwards-r "home" "~/")
 ;; Use: (trace-directory-upwards-r "home" "~/" t)
-;; Use: (trace-directory-upwards-r 'file-directory-p "~/cognia/semnet" t)
-;; Use: (trace-directory-upwards-r 'file-directory-p "~/cognia/semnet" t "~")
-;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "~/cognia/semnet")
-;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "~/cognia/semnet" t)
+;; Use: (trace-directory-upwards-r 'file-directory-p "~/justcxx/semnet" t)
+;; Use: (trace-directory-upwards-r 'file-directory-p "~/justcxx/semnet" t "~")
+;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "~/justcxx/semnet")
+;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "~/justcxx/semnet" t)
 ;; Use: (trace-directory-upwards-r 'file-tags-root-directory-p "/ssh:rsr@150.227.198.29:/")
 
 (defun trace-file-upwards (dir &optional matcher multi regexp-flag recog)
@@ -300,12 +300,12 @@ string."
                                          dir
                                          multi)))
     hits))
-;; Use: (trace-file-upwards "~/cognia/semnet/" "GNUmakefile")
-;; Use: (trace-file-upwards "~/cognia/semnet/" "GNUmakefile" t)
-;; Use: (trace-file-upwards "~/cognia/semnet/" "[mM]akefile\\'" nil t)
-;; Use: (trace-file-upwards "~/cognia/semnet/" "[mM]akefile\\'" t t)
-;; Use: (trace-file-upwards "~/cognia/semnet/" 'Makefile t nil 'name-recog)
-;; Use: (trace-file-upwards "~/cognia/semnet/" (fmd-nexpr (fmd-get-type 'Makefile)) t t)
+;; Use: (trace-file-upwards "~/justcxx/semnet/" "GNUmakefile.backup")
+;; Use: (trace-file-upwards "~/justcxx/semnet/" "GNUmakefile.backup" t)
+;; Use: (trace-file-upwards "~/justcxx/semnet/" "[mM]akefile\\'" nil t)
+;; Use: (trace-file-upwards "~/justcxx/semnet/" "[mM]akefile\\'" t t)
+;; Use: (trace-file-upwards "~/justcxx/semnet/" 'Makefile t nil 'name-recog)
+;; Use: (trace-file-upwards "~/justcxx/semnet/" (fmd-nexpr (fmd-get-type 'Makefile)) t t)
 
 ;; name as defined in http://www.emacswiki.org/cgi-bin/wiki/CompileCommand
 (defalias 'upwards-find-file 'trace-file-upwards)
