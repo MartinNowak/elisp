@@ -8,8 +8,6 @@ A -gnata
 A -gnatwu
 A -gnatwa
 A -gnatf
-A -mtune=generic
-A -march=x86-64
 P ZX
 
 RN
@@ -18,7 +16,7 @@ U x%s			x.ads			d84f02e1 NE OO PK
 W y%s			y.ads			y.ali
 
 D system.ads		20140416144310 90249111
-D x.ads			20140806133055 ada1314a
+D x.ads			20140806144217 ada1314a
 D y.ads			20140806133038 75ee33ab
 X 2 x.ads
 3K9*X 5l5 5e6
