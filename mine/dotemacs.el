@@ -1600,7 +1600,7 @@ See URL `http://dlang.org/'."
 
 (defun setup-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths."
-  (when nil                            ;NOTE: Disabled because this causes error
+  (when (memq major-mode '(c-mode c++-mode objc-mode))
     (when (and buffer-file-name
                (string-match "/dmd/src/" (file-name-directory
                                           buffer-file-name)))
@@ -1609,11 +1609,6 @@ See URL `http://dlang.org/'."
                      "backend"))
         (add-to-list 'flycheck-clang-include-path dir)))))
 (add-hook 'flycheck-mode-hook 'setup-flycheck-mode t)
-
-;;; Activate for Ada and Fortran
-(add-hook 'ada-mode-hook 'flycheck-mode t)
-(add-hook 'fortran-mode-hook 'flycheck-mode t)
-(add-hook 'f90-mode-hook 'flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
 (defun flycheck-display-error-messages-unless-error-buffer (errors)
@@ -1661,7 +1656,7 @@ See URL `http://dlang.org/'."
 
   ;; (add-hook 'after-init-hook 'global-flycheck-mode)
   ;; Note: Use this in favour of (global-flycheck-mode t) which doesn't work for me
-  (dolist (hook '(c-mode-hook c++-mode-hook d-mode-hook
+  (dolist (hook '(c-mode-hook c++-mode-hook objc-mode-hook d-mode-hook
                   ada-mode-hook
                   fortran-mode-hook f90-mode-hook                  ;; f77-mode-hook
                   asciidoc-mode-hook
