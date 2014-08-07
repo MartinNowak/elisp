@@ -1504,7 +1504,7 @@ save it in `ffap-file-at-point-line-number' variable."
             (6 . 7))))
 
 ;;; mode line
-(when nil
+(when nil        ;TODO: Disabled in order for colored flycheck-mode-line to work
   (when (append-to-load-path (elsub "smart-mode-line"))
     (setq sml/theme 'dark)
     (require 'smart-mode-line)
