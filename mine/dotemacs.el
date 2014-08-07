@@ -1577,7 +1577,7 @@ See URL `http://dlang.org/'."
       :command ("dmd" "-vcolumns" "-debug" "-o-"
                 "-wi"     ; Compilation will continue even if there are warnings
                 (eval (s-concat "-I" (flycheck-d-base-directory)))
-                (option-list "-I" flycheck-dmd-include-path s-prepend)
+                (option-list "-I" flycheck-dmd-include-path concat)
                 source)
       :error-patterns
       ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
