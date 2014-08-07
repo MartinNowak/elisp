@@ -1607,7 +1607,8 @@ See URL `http://dlang.org/'."
       (dolist (dir '("root"
                      "tk"
                      "backend"))
-        (add-to-list 'flycheck-clang-include-path dir)))))
+        (add-to-list 'flycheck-clang-include-path dir)
+        (add-to-list 'flycheck-gcc-include-path dir)))))
 (add-hook 'flycheck-mode-hook 'setup-cc-flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
