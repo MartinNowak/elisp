@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Wed Aug  6 10:44:28 2014 (-0700)
+;; Last-Updated: Wed Aug  6 16:59:25 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 10991
+;;     Update #: 10994
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -86,7 +86,8 @@
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
 ;; 2014/08/06 dadams
-;;     icicle-other-window-or-frame: C-u C-u C-u means use all frames.
+;;     icicle-other-window-or-frame:
+;;        C-u C-u is select win from any frame. C-u C-u C-u also choosed from all frames.
 ;;     icicle-select-window: Negative prefix arg means use all frames.
 ;;     icicle-choose-window-by-name: Negative prefix arg means use all frames. +/-99: do not select.
 ;;     icicle-make-window-alist: ALL-P can have value visible; other non-nil now means use all frames.
@@ -1104,6 +1105,9 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/08/06 dadams
+;;     icicle-complete-keys, icicle-complete-menu-bar:
+;;       Bind icicle-must-pass-after-match-predicate to nil.  (M-x ESC S-TAB did not complete.)
 ;; 2014/07/31 dadams
 ;;     icicle-complete-keys-action: Do not use icicle-orig-buff, icicle-orig-window) - not bound.
 ;;       See change-log entry for 2014/02/24.  Must have forgotten to finish that change by doing this.
