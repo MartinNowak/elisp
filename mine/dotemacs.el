@@ -1600,6 +1600,7 @@ See URL `http://dlang.org/'."
                   '((d-mode . ffap-d-mode))))))
 (add-hook 'd-mode-hook 'd-mode-setup-pnw t)
 
+;;; See: http://www.lunaryorn.com/2014/07/30/new-mode-line-support-in-flycheck.html
 (setq flycheck-mode-line
       '(:eval
         (pcase flycheck-last-status-change
