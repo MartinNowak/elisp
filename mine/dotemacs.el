@@ -1504,13 +1504,14 @@ save it in `ffap-file-at-point-line-number' variable."
             (6 . 7))))
 
 ;;; mode line
-(when (append-to-load-path (elsub "smart-mode-line"))
-  (setq sml/theme 'dark)
-  (require 'smart-mode-line)
-  (sml/setup)
-  (add-to-list 'sml/replacer-regexp-list `(,(concat "^/p/avionics-work/develop/users/"
-                                                    "\\(" user-login-name "\\)")
-                                           ":WS-\\1:")))
+(when nil
+  (when (append-to-load-path (elsub "smart-mode-line"))
+    (setq sml/theme 'dark)
+    (require 'smart-mode-line)
+    (sml/setup)
+    (add-to-list 'sml/replacer-regexp-list `(,(concat "^/p/avionics-work/develop/users/"
+                                                      "\\(" user-login-name "\\)")
+                                             ":WS-\\1:"))))
 
 ;;; ===========================================================================
 ;;; asciidoc
