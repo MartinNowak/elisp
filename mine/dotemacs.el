@@ -1148,10 +1148,11 @@ save it in `ffap-file-at-point-line-number' variable."
 ;; below.
 (add-hook 'c-mode-common-hook
  	  '(lambda ()
- 	     (cond ((string-match "/\\([Oo]pen\\)?[Gg][Ll]/"  ;if OpenGL anywhere in directory path
- 				  buffer-file-name)
- 		    (require 'OpenGL)
-		    (OpenGL-minor-mode 1)))))
+             (when (memq major-mode '(c-mode c++-mode objc-mode))
+               (cond ((string-match "/\\([Oo]pen\\)?[Gg][Ll]/" ;if OpenGL anywhere in directory path
+                                    buffer-file-name)
+                      (require 'OpenGL)
+                      (OpenGL-minor-mode 1))))))
 ;;(autoload 'OpenGL-minor-mode "OpenGL" "OpenGL editing utilities." t)
 (defun try-complete-OpenGL-symbol (old)
   (interactive)
