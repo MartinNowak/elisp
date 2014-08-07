@@ -1599,6 +1599,25 @@ See URL `http://dlang.org/'."
                   '((d-mode . ffap-d-mode))))))
 (add-hook 'd-mode-hook 'd-mode-setup-pnw t)
 
+(setq flycheck-mode-line
+      '(:eval
+        (pcase flycheck-last-status-change
+          (`not-checked nil)
+          (`no-checker (propertize " -" 'face 'warning))
+          (`running (propertize " ✷" 'face 'success))
+          (`errored (propertize " !" 'face 'error))
+          (`finished
+           (let* ((error-counts (flycheck-count-errors flycheck-current-errors))
+                  (no-errors (cdr (assq 'error error-counts)))
+                  (no-warnings (cdr (assq 'warning error-counts)))
+                  (face (cond (no-errors 'error)
+                              (no-warnings 'warning)
+                              (t 'success))))
+             (propertize (format " %s/%s" (or no-errors 0) (or no-warnings 0))
+                         'face face)))
+          (`interrupted " -")
+          (`suspicious '(propertize " ?" 'face 'warning)))))
+
 (defun setup-cc-flycheck-mode ()
   "Setup FlyCheck Clang Include Paths for C-like modes."
   (when (memq major-mode '(c-mode c++-mode objc-mode))
