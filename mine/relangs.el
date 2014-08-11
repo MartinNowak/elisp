@@ -177,6 +177,7 @@ X defaults to :related"
       (:lang Java :expr (: whole ".startsWith(" prefix ")"))
       (:lang Swift :expr (: whole ".hasPrefix(" prefix ")"))
       (:lang Emacs-Lisp :expr (: "(" "string-prefix-p" prefix whole ")"))
+      (:lang Bash :expr (: "[[ " whole "==" prefix "*" " ]]")) ;See also: https://stackoverflow.com/questions/2172352/in-bash-how-can-i-check-if-a-string-begins-with-some-value
       )) "Check if EXPR begins with PREFIX.")
 
 (defconst relangs-ends-with
@@ -185,6 +186,7 @@ X defaults to :related"
       (:lang Java :expr (: whole ".endsWith(" suffix ")"))
       (:lang Swift :expr (: whole ".hasSuffix(" suffix ")"))
       (:lang Emacs-Lisp :expr (: "(" "string-suffix-p" suffix whole ")"))
+      (:lang Bash :expr (: "[[ " whole "==" "*" prefix " ]]"))
       )) "Check if EXPR ends with SUFFIX.")
 
 (defconst relangs-get-current-time
