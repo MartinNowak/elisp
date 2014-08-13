@@ -7,8 +7,9 @@
 ;;; ===========================================================================
 ;;; Package Management
 (when (require 'package nil t)
-  (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  (when (boundp 'package-archives)
+    (add-to-list 'package-archives
+                 '("melpa" . "http://melpa.milkbox.net/packages/") t))
   (package-initialize)
   ;; (package-refresh-contents)
   )
@@ -1536,7 +1537,29 @@ save it in `ffap-file-at-point-line-number' variable."
 ;; (getenv "CFGDIR")
 
 ;;; Auto Choose Ada Include path for GCA
-(defun ada-mode-setup-flycheck-include-path ()
+(defun setup-flycheck-include-paths ()
+  ;; Generic
+  (let ((std-path (list
+                   "./include"
+                   "../include")))
+    (setq flycheck-clang-include-path std-path)
+    (setq flycheck-dmd-include-path std-path)
+    (setq flycheck-gcc-include-path std-path)
+    (setq flycheck-gfortran-include-path std-path)
+    (setq flycheck-gnat-include-path std-path))
+
+  ;; C/C++/Objective-C
+  (when (memq major-mode '(c-mode c++-mode objc-mode))
+    (when (and buffer-file-name
+               (string-match "/dmd/src/" (file-name-directory
+                                          buffer-file-name)))
+      (dolist (dir '("root"
+                     "tk"
+                     "backend"))
+        (add-to-list 'flycheck-clang-include-path dir)
+        (add-to-list 'flycheck-gcc-include-path dir))))
+
+  ;; Ada (GNAT)
   (when (eq major-mode 'ada-mode)
     (let ((cs (trace-file-upwards "." "config_spec.xml")))
       (when cs
@@ -1547,10 +1570,12 @@ save it in `ffap-file-at-point-line-number' variable."
                (include-dir (expand-file-name "include" build-dir)))
           (setq flycheck-gnat-include-path
                 (list
+                 "./include"
+                 "../include"
                  (expand-file-name "components" include-dir)
                  (expand-file-name "subsystems" include-dir))))))))
 (add-hook 'flycheck-before-syntax-check-hook
-          'ada-mode-setup-flycheck-include-path t)
+          'setup-flycheck-include-paths t)
 
 ;; (repeatable-command-advice flycheck-previous-error)
 ;; (repeatable-command-advice flycheck-next-error)
@@ -1620,19 +1645,6 @@ See URL `http://dlang.org/'."
                          'face face)))
           (`interrupted " -")
           (`suspicious '(propertize " ?" 'face 'warning)))))
-
-(defun setup-cc-flycheck-mode ()
-  "Setup FlyCheck Clang Include Paths for C-like modes."
-  (when (memq major-mode '(c-mode c++-mode objc-mode))
-    (when (and buffer-file-name
-               (string-match "/dmd/src/" (file-name-directory
-                                          buffer-file-name)))
-      (dolist (dir '("root"
-                     "tk"
-                     "backend"))
-        (add-to-list 'flycheck-clang-include-path dir)
-        (add-to-list 'flycheck-gcc-include-path dir)))))
-(add-hook 'flycheck-mode-hook 'setup-cc-flycheck-mode t)
 
 ;; https://github.com/flycheck/flycheck/issues/302
 (defun flycheck-display-error-messages-unless-error-buffer (errors)
