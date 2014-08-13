@@ -421,8 +421,8 @@ so I have to replace it with struct name."
 	  (replace-match "\\\\n"))
 	))
 
-(defun ac-dcd-get-ddoc (pos)
-  "Get document with `dcd-client --doc'.  `POS' is cursor position."
+(defun ac-dcd-get-ddoc ()
+  "Get document with `dcd-client --doc'."
   (save-buffer)
   (let ((args
 		 (append
@@ -449,7 +449,7 @@ so I have to replace it with struct name."
 (defun ac-dcd-show-ddoc-with-buffer ()
   "Display Ddoc at point using `display-buffer'."
   (interactive)
-  (ac-dcd-get-ddoc (ac-dcd-cursor-position))
+  (ac-dcd-get-ddoc)
   (ac-dcd-reformat-document)
   (display-buffer (get-buffer-create ac-dcd-document-buffer-name)))
 
@@ -485,7 +485,7 @@ so I have to replace it with struct name."
   "Goto declaration of symbol at point."
   (interactive)
   (save-buffer)
-  (ac-dcd-call-process-for-symbol-declaration (point))
+  (ac-dcd-call-process-for-symbol-declaration)
   (let* ((data (ac-dcd-parse-output-for-get-symbol-declaration))
 		 (file (car data))
 		 (offset (cdr data)))
@@ -493,21 +493,15 @@ so I have to replace it with struct name."
 		(message "Not found")
 	  (progn
 		(ac-dcd-goto-def-push-marker)
-		(if (string=  file "stdin") ; When the declaration is in the current file
-			(progn
-			  (goto-char (point-min))
-			  (forward-char (string-to-number offset)))
-		  (progn
-			(find-file file)
-			(goto-char (point-min))
-			(forward-char (string-to-number offset))))))))
+        (unless (string=  file "stdin") ; the declaration is in the current file
+          (find-file file))
+        (goto-char (byte-to-position (string-to-number offset)))))))
 
 
 ;; utilities for goto-definition
 
-(defun ac-dcd-call-process-for-symbol-declaration (pos)
-  "Get location of symbol declaration with `dcd-client --symbolLocation'.
-`POS' is cursor position."
+(defun ac-dcd-call-process-for-symbol-declaration ()
+  "Get location of symbol declaration with `dcd-client --symbolLocation'."
   (let ((args
 		 (append
 		  (ac-dcd-build-complete-args (ac-dcd-cursor-position))
@@ -533,6 +527,86 @@ output is just like following.\n
 		(cons nil nil)))
 	))
 
+(defun ac-dcd-parent-directory (dir)
+  "Returns parent directory of dir"
+  (when dir
+    (file-name-directory (directory-file-name (expand-file-name dir)))))
+
+(defun ac-dcd-search-file-up (name &optional path)
+  "Searches for file `name' in parent directories recursively"
+  (let* ((tags-file-name (concat path name))
+         (parent (ac-dcd-parent-directory path))
+         (path (or path default-directory))
+         )
+    (cond
+     ((file-exists-p tags-file-name) tags-file-name)
+     ((string= parent path) nil)
+     (t (ac-dcd-search-file-up name parent)))))
+
+(defun ac-dcd-find-imports-dub ()
+  "Extract import flags from \"dub describe\" output."
+  (let ((dub-root-dir (ac-dcd-parent-directory
+                       (or (ac-dcd-search-file-up "dub.json" default-directory)
+                           (ac-dcd-search-file-up "package.json" default-directory))))
+        (dub-executable "dub"))
+
+    (when dub-root-dir
+      (with-temp-buffer
+        (let ((default-directory dub-root-dir))
+          (call-process dub-executable nil (current-buffer) nil "describe"))
+        (require 'json)
+        (let* ((json-object-type 'hash-table)
+               (describe-hash (json-read-from-string (buffer-string)))
+               (packages-array (gethash "packages" describe-hash))
+               (imports-list '()))
+          (mapcar
+           (lambda (package)
+             (let ((package-path (gethash "path" package))
+                   (import-paths-array (gethash "importPaths" package)))
+               (mapcar
+                (lambda (import-path)
+                  (add-to-list 'imports-list
+                               (concat "-I" package-path import-path)))
+                import-paths-array)))
+           packages-array)
+          imports-list)))))
+
+(defun ac-dcd-find-imports-std ()
+  "Extract import flags from dmd.conf file."
+  (require 'cl)
+  (let ((dmd-conf-filename
+         (find-if 'file-exists-p
+                  (list
+                   ;; TODO: the first directory to look into should be dmd's current
+                   ;; working dir
+                   (concat (getenv "HOME") "/dmd.conf")
+                   (concat (ac-dcd-parent-directory (executable-find "dmd")) "dmd.conf")
+                   "/etc/dmd.conf"))))
+
+    ;; TODO: this extracting procedure is pretty rough, it just searches for
+    ;; the first occurrence of the DFLAGS
+    (save-window-excursion
+      (with-temp-buffer
+        (find-file dmd-conf-filename)
+        (goto-char (point-min))
+        (search-forward "\nDFLAGS")
+        (skip-chars-forward " =")
+        (let ((flags-list (split-string (buffer-substring-no-properties
+                                         (point) (line-end-position)))))
+          (remove-if-not '(lambda (s)
+                            (string-prefix-p "-I" s))
+                         flags-list))))))
+
+(defun ac-dcd-add-imports ()
+  "Send import flags of the current DUB project to dcd-server.
+
+The root of the project is determined by the \"closest\" dub.json
+or package.json file."
+  (interactive)
+  (ac-dcd-call-process ""
+                       (append
+                        (ac-dcd-find-imports-std)
+                        (ac-dcd-find-imports-dub))))
 
 (provide 'ac-dcd)
 ;;; ac-dcd.el ends here
