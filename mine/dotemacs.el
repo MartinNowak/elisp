@@ -1593,9 +1593,23 @@ save it in `ffap-file-at-point-line-number' variable."
 ;; (when (executable-find "dcd-client")
 ;;   (start-process "dcd-set-paths" nil "dcd-client"
 ;;                  (concat "-I" (expand-file-name "~/justd"))))
-;;; autocompletion for dcd
+
+;;; https://github.com/atilaneves/ac-dcd
+(defun d-mode-setup-ac-dcd ()
+  (auto-complete-mode t)
+  (yas-minor-mode-on)
+  (ac-dcd-maybe-start-server)
+  (add-to-list 'ac-sources 'ac-source-dcd)
+  (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+  (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+  (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+  (when (featurep 'popwin)
+    (add-to-list 'popwin:special-display-config
+                 `(,ac-dcd-error-buffer-name :noselect t))
+    (add-to-list 'popwin:special-display-config
+                 `(,ac-dcd-document-buffer-name :position right :width 80))))
 (when (ignore-errors (load-file (elsub "ac-dcd/ac-dcd.elc")))
-  )
+  (add-hook 'd-mode-hook 'd-mode-setup-ac-dcd t))
 
 (defun dmd-support-columns (&optional dmd-compiler)
   "DMD 2.066+ has -vcolumns flag."
@@ -1608,7 +1622,6 @@ save it in `ffap-file-at-point-line-number' variable."
   ;; Flycheck D Unittest: https://github.com/tom-tan/flycheck-d-unittest/wiki/Start-D-with-Emacs
   (when (require 'flycheck nil t)
     (flycheck-mode 1))
-
   (when (dmd-support-columns)
     (flycheck-define-checker d-dmd      ;TODO: Integrate this with flycheck.el
       "A D syntax checker using the DMD compiler.
