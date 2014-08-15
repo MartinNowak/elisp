@@ -1585,6 +1585,17 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;                    (substatement-open . 0)
 ;;                    (inline-open . 0)))
 
+;;; DCD - D Completion Daemon
+(when (ignore-errors (load-file (elsub "ac-dcd/ac-dcd.elc")))
+  (when (executable-find "dcd-server")
+    (start-process "DCD" nil "dcd-server"
+                   (concat "-I" (expand-file-name "~/justd"))
+                   (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))
+  ;; (when (executable-find "dcd-client")
+  ;;   (start-process "dcd-set-paths" nil "dcd-client"
+  ;;                  (concat "-I" (expand-file-name "~/justd"))))
+  )
+
 (defun dmd-support-columns (&optional dmd-compiler)
   "DMD 2.066+ has -vcolumns flag."
   (compiler-version-at-least "2.066" (or dmd-compiler "dmd")))
@@ -1852,18 +1863,6 @@ functions, and some types.  It also provides indentation that is
           (setq ac-sources (append '(ac-source-clang ac-source-yasnippet) ac-sources)) (delete-dups ac-sources))
         (add-hook 'c-mode-common-hook 'ac-cc-setup)))
     ))
-
-;;; ===========================================================================
-;;; DCD - D Completion Daemon
-(when (load-file (elsub "others/ac-dcd.elc"))
-  (when (executable-find "dcd-server")
-    (start-process "DCD" nil "dcd-server"
-                   (concat "-I" (expand-file-name "~/justd"))
-                   (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))
-  ;; (when (executable-find "dcd-client")
-  ;;   (start-process "dcd-set-paths" nil "dcd-client"
-  ;;                  (concat "-I" (expand-file-name "~/justd"))))
-  )
 
 ;;; ===========================================================================
 ;;; Python
