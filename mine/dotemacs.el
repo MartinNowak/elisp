@@ -794,6 +794,7 @@
 (eload 'tgrep)                         ;Grep and Locate Utilities
 
 (eload 'vc-and-ediff)                  ;Version Control Systems (VCS) and (E)Diff Integration
+(eload 'svn-mode-line)
 (eload 'do-on-save) ;Perform Operations (Compile, Load, etc.) upon Saving Buffer
 
 (eload 'memoize)                       ;Memoize Elisp Functions
