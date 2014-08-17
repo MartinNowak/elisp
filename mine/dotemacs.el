@@ -1618,7 +1618,10 @@ save it in `ffap-file-at-point-line-number' variable."
 (defun d-mode-setup-pnw ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
   (setq imenu-generic-expression nil)
+
   (c-set-style "D")
+  (c-set-offset 'case-label c-basic-offset) ;fix indentation of switch case labels
+
   ;; Flycheck D Unittest: https://github.com/tom-tan/flycheck-d-unittest/wiki/Start-D-with-Emacs
   (when (require 'flycheck nil t)
     (flycheck-mode 1))
