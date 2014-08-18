@@ -1560,6 +1560,7 @@ save it in `ffap-file-at-point-line-number' variable."
         (add-to-list 'flycheck-clang-include-path dir)
         (add-to-list 'flycheck-gcc-include-path dir))
       (when (eq system-type 'gnu/linux)
+        ;; TODO: Fetch from from "make -B foo.o" when editing foo.c?
         (add-to-list 'flycheck-gcc-definitions "TARGET_LINUX")
         (add-to-list 'flycheck-clang-definitions "TARGET_LINUX"))))
 
