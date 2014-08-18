@@ -1618,8 +1618,11 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-hook 'd-mode-hook 'd-mode-setup-ac-dcd t))
 
 (defun dmd-support-columns (&optional dmd-compiler)
-  "DMD 2.066+ has -vcolumns flag."
-  (compiler-version-at-least "2.066" (or dmd-compiler "dmd")))
+  "Check if installed DMD supports `-vcolumns' flag introduced in
+DMD version 2.066."
+  (string-match "-vcolumns" (shell-command-to-string "dmd --help"))
+  ;; (compiler-version-at-least "2.066" (or dmd-compiler "dmd"))
+  )
 
 (defun d-mode-setup-pnw ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
