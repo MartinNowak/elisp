@@ -1558,7 +1558,10 @@ save it in `ffap-file-at-point-line-number' variable."
                      "tk"
                      "backend"))
         (add-to-list 'flycheck-clang-include-path dir)
-        (add-to-list 'flycheck-gcc-include-path dir))))
+        (add-to-list 'flycheck-gcc-include-path dir))
+      (when (eq system-type 'gnu/linux)
+        (add-to-list 'flycheck-gcc-definitions "TARGET_LINUX")
+        (add-to-list 'flycheck-clang-definitions "TARGET_LINUX"))))
 
   ;; Ada (GNAT)
   (when (eq major-mode 'ada-mode)
