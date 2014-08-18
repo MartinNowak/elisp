@@ -1537,17 +1537,19 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;                                        (file-name-directory cppcheck))))))
 ;; (getenv "CFGDIR")
 
-;;; Auto Choose Ada Include path for GCA
-(defun setup-flycheck-include-paths ()
+(defun setup-flycheck-common-stuff ()
   ;; Generic
   (let ((std-path (list
                    "./include"
                    "../include")))
-    (setq flycheck-clang-include-path std-path)
-    (setq flycheck-dmd-include-path std-path)
-    (setq flycheck-gcc-include-path std-path)
-    (setq flycheck-gfortran-include-path std-path)
-    (setq flycheck-gnat-include-path std-path))
+    (setq flycheck-clang-include-path std-path
+          flycheck-dmd-include-path std-path
+          flycheck-gcc-include-path std-path
+          flycheck-gfortran-include-path std-path
+          flycheck-gnat-include-path std-path
+          ;; C++ Standard
+          flycheck-gcc-language-standard "c++11"
+          flycheck-clang-language-standard "c++11"))
 
   ;; C/C++/Objective-C
   (when (memq major-mode '(c-mode c++-mode objc-mode))
@@ -1580,7 +1582,7 @@ save it in `ffap-file-at-point-line-number' variable."
                  (expand-file-name "components" include-dir)
                  (expand-file-name "subsystems" include-dir))))))))
 (add-hook 'flycheck-before-syntax-check-hook
-          'setup-flycheck-include-paths t)
+          'setup-flycheck-common-stuff t)
 
 ;; (repeatable-command-advice flycheck-previous-error)
 ;; (repeatable-command-advice flycheck-next-error)
