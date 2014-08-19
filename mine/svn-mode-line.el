@@ -1,6 +1,8 @@
 ;;; svn-mode-line.el --- Subversion mode-line Enhancements
-;; Author: Per Nordlöw
-;; See also: https://stackoverflow.com/questions/25316133/subversion-branch-in-mode-line
+;;; Author: Per Nordlöw
+;;; See also: https://stackoverflow.com/questions/25316133/subversion-branch-in-mode-line
+;;; Commentary:
+;;; Code:
 
 (defun vc-svn-mode-line-string (&optional file)
   (let ((file (or file
@@ -41,3 +43,4 @@
 ;; Use: (vc-svn-branch-or-trunk-tag)
 
 (provide 'svn-mode-line)
+;;; svn-mode-line.el ends here
