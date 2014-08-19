@@ -365,6 +365,7 @@ X defaults to :related"
       (:lang Fortran :expr "integer" :bits 32)
       (:lang Ada :expr (| "Integer"
                           "Interfaces.C.C_int") :bits 32)
+      (:lang Rust :expr "i32" :bits 32)
       (:lang Modelica :expr "Integer")
       )) "Integer Type with Default Machine Precision.")
 
@@ -379,6 +380,7 @@ X defaults to :related"
       (:lang (C\# D) :expr "uint" :bits 32)
       (:lang Ada :expr (| "Integer"
                           "Interfaces.C.unsigned") :bits 32)
+      (:lang Rust :expr "u32" :bits 32)
       )) "Unsigned Integer Type with Default Machine Precision.")
 
 (defconst relangs-short-integer-type
@@ -387,6 +389,7 @@ X defaults to :related"
       (:lang Swift :expr "Short")
       (:lang Ada :expr (| "Short_Integer"
                           "Interfaces.C.short"))
+      (:lang Rust :expr "i16" :bits 16)
       )) "Short Integer Type.")
 
 (defconst relangs-unsigned-short-integer-type
@@ -394,6 +397,7 @@ X defaults to :related"
     `((:lang (C C++ Java) :expr "unsigned short")
       (:lang (D C\#) :expr "ushort")
       (:lang Ada :expr "Interfaces.C.unsigned_short")
+      (:lang Rust :expr "u16" :bits 16)
       )) "Unsigned Short Integer Type.")
 
 (defconst relangs-long
@@ -418,23 +422,26 @@ X defaults to :related"
     `((:lang (C C++) :expr "long long")
       (:lang (C\# D) :expr "long")
       (:lang Ada :expr "Long_Long_Integer")
+      (:lang Rust :expr "i64")
       )) "Signed 64-bit Integer Type.")
 (defconst relangs-unsigned-long-long
   (lambda ()
     `((:lang (C C++) :expr (: "unsigned" "long" "long"))
       (:lang (C\# D) :expr "ulong")
+      (:lang Rust :expr "u64")
       )) "Unsigned 64-bit Integer Type.")
 
-(defconst relangs-single-precision-float
+(defconst relangs-single-precision-floating-point
   (lambda ()
     `((:lang (C C++ Java C\# D Lua) :expr "float")
       (:lang Swift :expr "Float")
       (:lang Ada :expr (| "Float"
                           "Interfaces.C.C_float"))
       (:lang Matlab :expr "single")
+      (:lang Rust :expr "f32")
       )) "Floating Point Type with 32-bits precision.")
 
-(defconst relangs-single-precision-double
+(defconst relangs-double-precision-floating-point
   (lambda ()
     `((:lang (C C++ Java C\# D Lua) :expr "double")
       (:lang Swift :expr "Double")
@@ -442,6 +449,7 @@ X defaults to :related"
                           "Interfaces.C.double"
                           "Interfaces.C.long_double"))
       (:lang Matlab :expr "double")
+      (:lang Rust :expr "f64")
       )) "Floating Point Type with 64-bits precision.")
 
 (defconst relangs-utf8-string-type
@@ -520,8 +528,8 @@ X defaults to :related"
     relangs-short-integer-type
     relangs-long
     relangs-long-long
-    relangs-single-precision-float
-    relangs-single-precision-double
+    relangs-single-precision-floating-point
+    relangs-double-precision-floating-point
     relangs-real-type)
   "Language Built-In Primitive Data Types.")
 
