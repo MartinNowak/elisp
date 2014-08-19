@@ -7,7 +7,10 @@
                   (buffer-file-name))))
     (let* ((tag (vc-svn-branch-or-trunk-tag file))
            (rev (vc-svn-working-revision file)))
-      (format "SVN:%s@%s" tag rev))))
+      (format "%s:%s@%s"
+              "SVN"
+              tag
+              (propertize rev 'face 'font-lock-constant-face)))))
 
 (defun vc-fancy-mode-line-string (&optional file)
   (let ((file (or file
@@ -32,7 +35,7 @@
       (cond ((string-match-p "/trunk" url)
              (propertize "trunk" 'face 'error))
             ((string-match "/branches/\\([^/]+\\)" url)
-             (propertize (match-string 1 url) 'face 'font-lock-constant-face))
+             (propertize (match-string 1 url) 'face 'warning))
             (t
              nil)))))
 ;; Use: (vc-svn-branch-or-trunk-tag)
