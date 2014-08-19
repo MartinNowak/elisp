@@ -901,6 +901,15 @@
 (when (append-to-load-path (elsub "neotree"))
   (autoload 'neotree "neotree" "File Tree Mode"))
 
+(add-hook 'neotree-mode-hook 'setup-neotree-dired-keys)
+
+(defun setup-neotree-dired-keys ()
+  (let ((map neotree-mode-map))
+    (define-key map (kbd "N") 'neotree-create-node)
+    ;;(define-key map (kbd "C") 'neotree-copy-node)
+    (define-key map (kbd "D") 'neotree-delete-node)
+    (define-key map (kbd "R") 'neotree-rename-node)))
+
 ;;; ===========================================================================
 ;;; Shell-mode
 (defun sh-mode-setup-pnw ()
@@ -1647,7 +1656,8 @@ See URL `http://dlang.org/'."
       ((error line-start (file-name) "(" line "," column "): Error: " (message) line-end)
        (warning line-start (file-name) "(" line "," column "): "
                 (or "Warning"
-                    "Deprecation") ": " (message) line-end))
+                    "Deprecation") ": " (message) line-end)
+       (info line-start (file-name) "(" line "," column "):        " (message) line-end))
       :modes d-mode))
 
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
