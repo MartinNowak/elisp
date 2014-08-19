@@ -3,24 +3,31 @@
 ;; See also: https://stackoverflow.com/questions/25316133/subversion-branch-in-mode-line
 
 (defun vc-svn-mode-line-string (&optional file)
-  (let* ((tag (vc-svn-branch-or-trunk-tag file))
-         (rev (vc-svn-working-revision (or file
-                                           (buffer-file-name)))))
-    (format "SVN-%s@%s"
-            (propertize tag
-                        'face
-                        (if (string-equal tag "trunk")
-                            'error
-                          'warning))
-            rev)))
+  (let ((file (or file
+                  (buffer-file-name))))
+    (let* ((tag (vc-svn-branch-or-trunk-tag file))
+           (rev (vc-svn-working-revision file)))
+      (format "SVN:%s@%s"
+              (propertize tag
+                          'face
+                          (if (string-equal tag "trunk")
+                              'error
+                            'warning))
+              (propertize rev
+                          'face
+                          'font-lock-constant-face)))))
 
 (defun vc-fancy-mode-line-string (&optional file)
-  (if (eq (vc-backend file) 'SVN)
-      (vc-svn-mode-line-string file)
-    vc-mode))
+  (let ((file (or file
+                  (buffer-file-name))))
+    (if (eq (vc-backend file) 'SVN)
+        (vc-svn-mode-line-string file)
+      vc-mode)))
 
 (setcdr (assq 'vc-mode mode-line-format)
-        '(vc-mode)) ;TODO: `vc-svn-mode-line-string' instead of `vc-mode' doesn't work
+        ;;'(vc-mode)
+        '((:eval (vc-fancy-mode-line-string)))
+        )
 
 (defun vc-svn-branch-or-trunk-tag (&optional filename)
   (let* ((filename (or filename
@@ -36,8 +43,6 @@
              (match-string 1 url))
             (t
              nil)))))
-;; Use: (vc-svn-branch-or-trunk-tag "~/Work/elisp/nav/")
-;; Use: (vc-svn-branch-or-trunk-tag "~/Work/elisp/nav/nav.el")
 ;; Use: (vc-svn-branch-or-trunk-tag)
 
 (provide 'svn-mode-line)
