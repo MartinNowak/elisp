@@ -1555,9 +1555,11 @@ save it in `ffap-file-at-point-line-number' variable."
           flycheck-dmd-include-path std-path
           flycheck-gcc-include-path std-path
           flycheck-gfortran-include-path std-path
-          flycheck-gnat-include-path std-path
-          ;; C++ Standard
-          flycheck-gcc-language-standard "c++11"
+          flycheck-gnat-include-path std-path))
+
+  ;; Set C++ Standard
+  (when (eq major-mode '(c++-mode))
+    (setq flycheck-gcc-language-standard "c++11"
           flycheck-clang-language-standard "c++11"))
 
   ;; C/C++/Objective-C
