@@ -20,7 +20,7 @@
     vc-mode))
 
 (setcdr (assq 'vc-mode mode-line-format)
-        '(vc-mode))
+        '(vc-mode)) ;TODO: `vc-svn-mode-line-string' instead of `vc-mode' doesn't work
 
 (defun vc-svn-branch-or-trunk-tag (&optional filename)
   (let* ((filename (or filename
