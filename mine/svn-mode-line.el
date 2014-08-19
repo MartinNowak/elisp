@@ -2,23 +2,42 @@
 ;; Author: Per Nordlöw
 ;; See also: https://stackoverflow.com/questions/25316133/subversion-branch-in-mode-line
 
-(defun lunaryorn-vc-mode-line ()
-  (let ((backend (vc-backend (buffer-file-name))))
-    (if (eq backend 'SVN)
-        (let ((url (vc-svn-repository-hostname (buffer-file-name))))
-          (cond
-           ((string-match-p "/trunk/" url) "SVN-trunk")
-           ((string-match "/branches/\\([^/]+\\)/" url)
-            (concat "SVN-" (match-string 1 url)))
-           (t vc-mode)))
-      ;; Use default mode text for other backends
-      vc-mode)))
-;; Use: (lunaryorn-vc-mode-line)
+(defun vc-svn-mode-line-string (&optional file)
+  (let* ((tag (vc-svn-branch-or-trunk-tag file))
+         (rev (vc-svn-working-revision (or file
+                                           (buffer-file-name)))))
+    (format "SVN-%s@%s"
+            (propertize tag
+                        'face
+                        (if (string-equal tag "trunk")
+                            'error
+                          'warning))
+            rev)))
 
-(when nil
-  (setq-default mode-line-format
-                '(…
-                  (vc-mode (" " :eval (lunaryorn-vc-mode-line)))
-                  …)))
+(defun vc-fancy-mode-line-string (&optional file)
+  (if (eq (vc-backend file) 'SVN)
+      (vc-svn-mode-line-string file)
+    vc-mode))
+
+(setcdr (assq 'vc-mode mode-line-format)
+        '(vc-mode))
+
+(defun vc-svn-branch-or-trunk-tag (&optional filename)
+  (let* ((filename (or filename
+                       (buffer-file-name)))
+         (url (vc-svn-repository-hostname (if (file-directory-p filename)
+                                              filename
+                                            (file-name-directory
+                                             filename)))))
+    (when url
+      (cond ((string-match-p "/trunk" url)
+             "trunk")
+            ((string-match "/branches/\\([^/]+\\)" url)
+             (match-string 1 url))
+            (t
+             nil)))))
+;; Use: (vc-svn-branch-or-trunk-tag "~/Work/elisp/nav/")
+;; Use: (vc-svn-branch-or-trunk-tag "~/Work/elisp/nav/nav.el")
+;; Use: (vc-svn-branch-or-trunk-tag)
 
 (provide 'svn-mode-line)
