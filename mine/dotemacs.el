@@ -1022,11 +1022,12 @@ save it in `ffap-file-at-point-line-number' variable."
 ;; Edit Filename At Point
 
 ;;; ===========================================================================
-;;; Unit-Test. May collide with package `test-simple'.
+;;; ELK Unit-Test. May collide with package `test-simple'.
+
+(add-to-list 'auto-mode-alist '("\\.elk\\'" . elk-test-mode))
 (let* ((elk (elsub "elk-test/elk-test.elc")))
   (when (file-regular-p elk)
-    (load-file elk))
-  (add-to-list 'auto-mode-alist '("\\.elk\\'" . elk-test-mode))
+    (autoload 'elk-test-mode "elk-test" "ELK Test" t))
   (defun elk-test-assert-lock ()
     "Highlight assert symbols defined by `elk-test.el'."
     (font-lock-add-keywords
