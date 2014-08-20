@@ -1,4 +1,4 @@
-;;; svn-mode-line.el --- Subversion mode-line Enhancements
+;;; vc-mode-line.el --- VC mode-line Enhancements
 ;;; Author: Per Nordlöw
 ;;; See also: https://stackoverflow.com/questions/25316133/subversion-branch-in-mode-line
 ;;; Commentary:
@@ -42,5 +42,5 @@
              nil)))))
 ;; Use: (vc-svn-branch-or-trunk-tag)
 
-(provide 'svn-mode-line)
-;;; svn-mode-line.el ends here
+(provide 'vc-mode-line)
+;;; vc-mode-line.el ends here

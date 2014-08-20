@@ -1990,7 +1990,7 @@ Return t if `forward-sexp' otherwise nil."
 
 (define-minor-mode cool-light-lock-mode
   "Cool Light Font Locking Mode."
-  :global nil
+  :global t
   :lighter " Cooler"
   ;;:group 'coolock
   (let ((activate cool-light-lock-mode))
@@ -2022,7 +2022,7 @@ Return t if `forward-sexp' otherwise nil."
 
 (define-minor-mode coolock-mode
   "Cool Font Locking Mode."
-  :global nil
+  :global t
   :lighter " Coolest"
   ;;:group 'coolock
   (let ((activate coolock-mode))
