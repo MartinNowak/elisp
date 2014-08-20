@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Sat Aug 16 13:38:14 2014 (-0700)
+;; Last-Updated: Tue Aug 19 17:02:10 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 11145
+;;     Update #: 11203
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -85,6 +85,16 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
+;; 2014/08/19 dadams
+;;     Added: icicle-bookmark-(dired-this-dir|dired-wildcards|navlist)-narrow.
+;;     icicle-bookmark: Updated doc string for narrowing keys and to mention M-&.
+;;     icicle-bookmark-bind-narrow-commands:
+;;       Bind icicle-bookmark-*-narrow, for *:
+;;         dired-(this-dir|wildcards)|function|icicle-search-hits|lighted|marked|modified|navlist|
+;;         orphaned(-local|-remote)-file|sequence|snippet|tagged|variable-list
+;;     icicle-bookmark-*-narrow: Use named predicates now, instead of lambdas.
+;;     icicle-bookmark-url-narrow: Handle either kind of URL bookmark.
+;;     icicle-bookmarked-(buffer|file)-list: Added optional arg MSGP.
 ;; 2014/08/16 dadams
 ;;     icicle-customize-face(-other-window), icicle-face-list, icicle-customize-apropos-faces:
 ;;       Bind icicle-face-completing-p.
@@ -1115,8 +1125,21 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/08/18 dadams
+;;     icicle-choose-(in)visible-faces: Bind icicle-face-completing-p.
+;; 2014/08/17 dadams
+;;     Added: icicle-color-from-multi-completion-input.
+;;     icicle-read-color: Wrap call to icicle-read-color-WYSIWYG in condition-case.  Removed all of the
+;;                        rest of the code, except check for empty input.
+;;     icicle-read-color-WYSIWYG: Just call icicle-color-from-multi-completion-input, to handle input.
+;;     icicle-pick-color-by-name: Redefined as defun, not using icicle-define-command.
+;;                                Use icicle-read-color.  Bind icicle-color-completing-p.
+;;     icicle-pick-color-by-name-action: Redefined to use icicle-color-from-multi-completion-input.
+;;     Added M-c binding for palette.
+;;     icicle-widget-color-complete: Bind icicle-color-completing.
 ;; 2014/08/16 dadams
 ;;     Renamed: icicle-read-color-wysiwyg to icicle-read-color-WYSIWYG.
+;;     icicle-read-color-WYSIWYG: Bind icicle-color-completing-p.
 ;;     icicle-imenu-1: Fixed bug introduced 2014/06/21: Set REGEXP from SUBMENU.
 ;; 2014/08/12 dadams
 ;;     Added: icicle-wide-n, icicle-wide-n-action.
@@ -2068,6 +2091,14 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/08/19 dadams
+;;     Added: icicle-bookmark-navlist-p.
+;;     Removed (commented out):
+;;       icicle-bookmark-last-specific-(buffer|file)-p, icicle-bookmark-this-file-p (not used yet).
+;;     icicle-bookmark(-autonamed)-this-buffer-p, icicle-bookmark-(dired|file)-this-dir-p:
+;;       Wrap body in with-current-buffer, for ORIG buf.
+;; 2014/08/17 dadams
+;;     Moved to icicles-opt.el: icicle-color-defined-p.
 ;; 2014/08/12 dadams
 ;;     icicle-special-candidates-first-p: Use icicle-special-candidate-p.
 ;; 2014/08/10 dadams
@@ -2944,7 +2975,7 @@
 ;;       Handle lambdas, menu-function-# from easy-menu, and prefix keys.
 ;;     icicle-make-color-candidate: Construct short help only if user will see it.
 ;; 2009/04/10 dadams
-;;     Added: icicle-candidate-short-help, icicle-color-completion-setup (from i*-read-color).
+;;     Added: icicle-candidate-short-help, icicle-color-completion-setup (from icicle-read-color).
 ;;     Moved here from icicle-cmds.el:
 ;;      icicle-remove-color-duplicates, icicle-color-help, icicle-make-color-candidate.
 ;;     icicle-make-color-candidate: Added short help, using icicle-candidate-short-help.
@@ -7332,6 +7363,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/08/19 dadams
+;;     icicle-cand-preds-for-bookmark: Updated list (removed 3, added 1 today).
+;; 2014/08/17 dadams
+;;     Moved here from icicles-fn.el: icicle-color-defined-p.
 ;; 2014/08/11 dadams
 ;;     icicle-cand-preds-for-(buffer|file): Added :group for buffers|files.
 ;; 2014/08/10 dadams

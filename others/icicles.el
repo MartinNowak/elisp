@@ -8,9 +8,9 @@
 ;; Created: Tue Aug  1 14:21:16 1995
 ;; Version: 2014.08.10
 ;; Package-Requires: ()
-;; Last-Updated: Sat Aug 16 13:37:13 2014 (-0700)
+;; Last-Updated: Tue Aug 19 17:05:22 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 23624
+;;     Update #: 23631
 ;; URL: http://www.emacswiki.org/icicles.el
 ;; Doc URL: http://emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -511,7 +511,8 @@
 ;;    `icicle-bookmark-gnus-narrow', `icicle-bookmark-image-narrow',
 ;;    `icicle-bookmark-info-narrow',
 ;;    `icicle-bookmark-local-file-narrow',
-;;    `icicle-bookmark-man-narrow', `icicle-bookmark-non-file-narrow',
+;;    `icicle-bookmark-man-narrow', `icicle-bookmark-navlist-narrow',
+;;    `icicle-bookmark-non-file-narrow',
 ;;    `icicle-bookmark-region-narrow',
 ;;    `icicle-bookmark-remote-file-narrow',
 ;;    `icicle-bookmark-specific-buffers-narrow',
@@ -983,15 +984,15 @@
 ;;    `icicle-bookmark-local-directory-p',
 ;;    `icicle-bookmark-local-file-p', `icicle-bookmark-man-p',
 ;;    `icicle-bookmark-marked-p', `icicle-bookmark-modified-p',
-;;    `icicle-bookmark-non-file-p', `icicle-bookmark-omitted-p',
-;;    `icicle-bookmark-orphaned-file-p',
+;;    `icicle-bookmark-navlist-p', `icicle-bookmark-non-file-p',
+;;    `icicle-bookmark-omitted-p', `icicle-bookmark-orphaned-file-p',
 ;;    `icicle-bookmark-orphaned-local-file-p',
 ;;    `icicle-bookmark-orphaned-remote-file-p',
 ;;    `icicle-bookmark-region-p', `icicle-bookmark-remote-file-p',
 ;;    `icicle-bookmark-sequence-p', `icicle-bookmark-snippet-p',
 ;;    `icicle-bookmark-tagged-p', `icicle-bookmark-temporary-p',
-;;    `icicle-bookmark-this-buffer-p', `icicle-bookmark-this-file-p',
-;;    `icicle-bookmark-url-p', `icicle-bookmark-url-browse-p',
+;;    `icicle-bookmark-this-buffer-p', `icicle-bookmark-url-p',
+;;    `icicle-bookmark-url-browse-p',
 ;;    `icicle-bookmark-variable-list-p', `icicle-bookmark-w3m-p',
 ;;    `icicle-bounds-of-thing-at-point',
 ;;    `icicle-buffer-file/process-name-less-p',
@@ -1015,7 +1016,9 @@
 ;;    `icicle-choose-candidate-of-type',
 ;;    `icicle-choose-completion-string', `icicle-clear-history-1',
 ;;    `icicle-clear-history-entry', `icicle-clear-lighter',
-;;    `icicle-clear-minibuffer', `icicle-cmd2-after-load-bookmark+',
+;;    `icicle-clear-minibuffer',
+;;    `icicle-color-from-multi-completion-input',
+;;    `icicle-cmd2-after-load-bookmark+',
 ;;    `icicle-cmd2-after-load-hexrgb',
 ;;    `icicle-cmd2-after-load-highlight',
 ;;    `icicle-cmd2-after-load-palette',
