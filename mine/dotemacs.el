@@ -1546,52 +1546,55 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;                                        (file-name-directory cppcheck))))))
 ;; (getenv "CFGDIR")
 
+(defconst flycheck-common-include-path
+  (list
+   "./public" "./include"
+   "../public" "../include")
+  "Flycheck include path common for many languages.")
+
 (defun setup-flycheck-common-stuff ()
   ;; Generic
-  (let ((std-path (list
-                   "./include"
-                   "../include")))
+  (let ((std-path flycheck-common-include-path))
     (setq flycheck-clang-include-path std-path
           flycheck-dmd-include-path std-path
           flycheck-gcc-include-path std-path
           flycheck-gfortran-include-path std-path
-          flycheck-gnat-include-path std-path))
+          flycheck-gnat-include-path std-path)
 
-  ;; Set C++ Standard
-  (when (eq major-mode '(c++-mode))
-    (setq flycheck-gcc-language-standard "c++11"
-          flycheck-clang-language-standard "c++11"))
+    ;; Set C++ Standard
+    (when (eq major-mode '(c++-mode))
+      (setq flycheck-gcc-language-standard "c++11"
+            flycheck-clang-language-standard "c++11"))
 
-  ;; C/C++/Objective-C
-  (when (memq major-mode '(c-mode c++-mode objc-mode))
-    (when (and buffer-file-name
-               (string-match "/dmd/src/" (file-name-directory
-                                          buffer-file-name)))
-      (dolist (dir '("root"
-                     "tk"
-                     "backend"))
-        (add-to-list 'flycheck-clang-include-path dir)
-        (add-to-list 'flycheck-gcc-include-path dir))
-      (when (eq system-type 'gnu/linux)
-        ;; TODO: Fetch from from "make -B foo.o" when editing foo.c?
-        (add-to-list 'flycheck-gcc-definitions "TARGET_LINUX")
-        (add-to-list 'flycheck-clang-definitions "TARGET_LINUX"))))
+    ;; C/C++/Objective-C
+    (when (memq major-mode '(c-mode c++-mode objc-mode))
+      (when (and buffer-file-name
+                 (string-match "/dmd/src/" (file-name-directory
+                                            buffer-file-name)))
+        (dolist (dir '("root"
+                       "tk"
+                       "backend"))
+          (add-to-list 'flycheck-clang-include-path dir)
+          (add-to-list 'flycheck-gcc-include-path dir))
+        (when (eq system-type 'gnu/linux)
+          ;; TODO: Fetch from from "make -B foo.o" when editing foo.c?
+          (add-to-list 'flycheck-gcc-definitions "TARGET_LINUX")
+          (add-to-list 'flycheck-clang-definitions "TARGET_LINUX"))))
 
-  ;; Ada (GNAT)
-  (when (eq major-mode 'ada-mode)
-    (let ((cs (trace-file-upwards "." "config_spec.xml")))
-      (when cs
-        (let* ((top (car cs))
-               (build-dir (car (last (directory-files
-                                      (expand-file-name "build" top)
-                                      t))))
-               (include-dir (expand-file-name "include" build-dir)))
-          (setq flycheck-gnat-include-path
-                (list
-                 "./include"
-                 "../include"
-                 (expand-file-name "components" include-dir)
-                 (expand-file-name "subsystems" include-dir))))))))
+    ;; Ada (GNAT)
+    (when (eq major-mode 'ada-mode)
+      (let ((cs (trace-file-upwards "." "config_spec.xml")))
+        (when cs
+          (let* ((top (car cs))
+                 (build-dir (car (last (directory-files
+                                        (expand-file-name "build" top)
+                                        t))))
+                 (include-dir (expand-file-name "include" build-dir)))
+            (setq flycheck-gnat-include-path
+                  (append
+                   std-path
+                   (list (expand-file-name "components" include-dir)
+                         (expand-file-name "subsystems" include-dir))))))))))
 (add-hook 'flycheck-before-syntax-check-hook
           'setup-flycheck-common-stuff t)
 
@@ -1602,31 +1605,34 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;                    (substatement-open . 0)
 ;;                    (inline-open . 0)))
 
-;;; DCD - D Completion Daemon
-(when (executable-find "dcd-server")
-  (start-process "DCD" nil "dcd-server"
-                 (concat "-I" (expand-file-name "~/justd"))
-                 (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))
+;;; DCD
+(defun launch-dcd-server ()
+  "Lauch DCD (D Completion Daemon)."
+  (let ((cmd "dcd-server"))
+    (when (executable-find cmd)
+      (start-process "DCD" nil cmd
+                     (concat "-I" (expand-file-name "~/justd"))
+                     (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))))
 ;; (when (executable-find "dcd-client")
 ;;   (start-process "dcd-set-paths" nil "dcd-client"
 ;;                  (concat "-I" (expand-file-name "~/justd"))))
-
 ;;; https://github.com/atilaneves/ac-dcd
-(defun d-mode-setup-ac-dcd ()
-  (auto-complete-mode t)
-  (yas-minor-mode-on)
-  (ac-dcd-maybe-start-server)
-  (add-to-list 'ac-sources 'ac-source-dcd)
-  (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
-  (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
-  (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
-  (when (featurep 'popwin)
-    (add-to-list 'popwin:special-display-config
-                 `(,ac-dcd-error-buffer-name :noselect t))
-    (add-to-list 'popwin:special-display-config
-                 `(,ac-dcd-document-buffer-name :position right :width 80))))
-(when (ignore-errors (load-file (elsub "ac-dcd/ac-dcd.elc")))
-  (add-hook 'd-mode-hook 'd-mode-setup-ac-dcd t))
+(defun d-mode-setup-dcd ()
+  (when (ignore-errors (load-file (elsub "ac-dcd/ac-dcd.elc")))
+    (launch-dcd-server)
+    (auto-complete-mode t)
+    (yas-minor-mode-on)
+    (ac-dcd-maybe-start-server)
+    (add-to-list 'ac-sources 'ac-source-dcd)
+    (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+    (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+    (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+    (when (featurep 'popwin)
+      (add-to-list 'popwin:special-display-config
+                   `(,ac-dcd-error-buffer-name :noselect t))
+      (add-to-list 'popwin:special-display-config
+                   `(,ac-dcd-document-buffer-name :position right :width 80)))))
+(add-hook 'd-mode-hook 'd-mode-setup-dcd t)
 
 (defun dmd-support-columns (&optional dmd-compiler)
   "Check if installed DMD supports `-vcolumns' flag introduced in
