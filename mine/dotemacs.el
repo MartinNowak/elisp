@@ -1,5 +1,5 @@
 ;;; package --- Summary coding: mule-utf-8-unix
-;; Author: Per Nordlöw
+;; Author: Per Nordlöw (per.nordlow@gmail.com)
 
 ;;; TODO: http://draketo.de/light/english/emacs/babcore#sec-3-2
 ;;; Code:
@@ -600,7 +600,8 @@
 ;; Icicles
 ;;(eload 'pgo-icicles)    ;Icicles
 (when (eload 'icicles)
-  (icy-mode 1)
+  (when pnw-me?
+    (icy-mode 1))
   (when (boundp 'icicle-default-in-prompt-format-function)
     (setq-default icicle-default-in-prompt-format-function
                   (lambda (default)
@@ -1109,12 +1110,14 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;;; ===========================================================================
 ;;; Markdown
+
 (defun setup-markdown-hook ()
   "Setup Markdown hook."
   (executable-find-auto-install-on-demand "markdown"))
 (when (append-to-load-path (elsub "markdown-mode"))
   (autoload 'markdown-mode "markdown-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
   (add-hook 'markdown-mode-hook 'setup-markdown-hook))
 
 ;;; ===========================================================================
