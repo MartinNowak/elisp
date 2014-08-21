@@ -117,17 +117,18 @@ See `run-hooks'. The value in the buffer in which
 (defconst ectags-kinds
   '(
     (?a "Anchor" font-lock-constant-face) ;HTML Anchor (<a href>. Kind of like goto adress.
-    (?c "Class" font-lock-class-face) ;class name
+    (?c "Class" font-lock-class-face) ;class
     (?d "Macro" font-lock-preprocessor-face) ;define
-    (?e "Enumerator" font-lock-enumeration-face) ;enumerator
-    (?f "Function" font-lock-function-name-face) ;function or method name
-    (?F "File" font-lock-file-name-face) ;file name
-    (?g "Enumeration" font-lock-enumerator-face) ;enumeration name
+    (?e "Enumeration" font-lock-enumeration-face) ;enumeration
+    (?f "Function" font-lock-function-name-face) ;function or method
+    (?F "File" font-lock-file-name-face) ;file
+    (?g "Enumerator" font-lock-enumerator-face) ;enumerator
+    (?l "Enumerator" font-lock-enumerator-face) ;enumerator (Ada)
     (?m "Member Variable" font-lock-variable-name-face) ;member (of structure or class data)
     (?p "Function Prototype" font-lock-function-name-face) ;function prototype
-    (?s "Structure" font-lock-structure-face) ;structure name
+    (?s "Structure" font-lock-structure-face) ;structure
     (?t "Typedef" font-lock-type-face) ;typedef
-    (?u "Union" font-lock-union-name-face) ;union name
+    (?u "Union" font-lock-union-name-face) ;union
     (?v "Variable" font-lock-variable-name-face) ;variable
     (?n "Namespace" font-lock-keyword-face) ;namespace
 
