@@ -1,5 +1,7 @@
-;;; relangs.el --- Relations/Associations between (Programming) Languages and their associated modules/library APIs.
-;; Author: Per Nordlöw
+;;; relangs.el --- Relations between (Programming) Languages and APIs.
+;;; Commentary:
+;;; Author: Per Nordlöw
+;;; Code:
 
 ;;; NOTE: Underscores in patterns means at least one underscore.
 
@@ -115,7 +117,7 @@ X defaults to :related"
     `((:lang Python :expr "getcwd()" :import "os")
       (:lang D :expr "getcwd()" :import "std.file")
       (:lang Emacs :expr "default-directory")
-      )) "Get current time")
+      )) "Get current time.")
 
 (defconst relangs-make-directory
   (lambda (dir)
@@ -197,7 +199,7 @@ X defaults to :related"
                               "localtime_r")) "(" ,x ")"))
       (:lang Emacs :expr ("(current-time)" "(float-time)"))
       (:lang Matlab :expr ("now" "()"))
-      )) "Get Current Time")
+      )) "Get Current Time.")
 
 (defconst relangs-format-time
   (lambda (x)
@@ -206,7 +208,7 @@ X defaults to :related"
       (:lang Emacs :expr ("(format-time-string " ,x ")"))
       (:lang Matlab :expr ("datestr(" ,x ")"))
       ))
-  "Format timer")
+  "Format timer.")
 
 (defconst relangs-binary-number
   (lambda ()
@@ -215,7 +217,7 @@ X defaults to :related"
       (:lang (D Swift Java Python C++14) :pre-regexp "[^0-9a-zA-Z]" :regexp "0[bB][01_]+" :post-regexp "[^2-9a-zA-Z]" :see "https://en.wikipedia.org/wiki/C%2B%2B14#Binary_literals")
       (:lang (Emacs-Lisp) :regexp "#b[[01]]+")
       ))
-  "Binary Number")
+  "Binary Number.")
 
 (defconst relangs-octal-number
   (lambda ()
@@ -223,7 +225,7 @@ X defaults to :related"
       (:lang (Ada Erlang) :regexp "[^[:digit:]]8#[[:xdigit:]]+#")
       (:lang (D) :regexp "octal![:digit:]")
       ))
-  "Octal Number")
+  "Octal Number.")
 
 (defconst relangs-hexadecimal-number
   (lambda ()
@@ -231,7 +233,7 @@ X defaults to :related"
       (:lang (Ada Erlang) :regexp "16#[[:xdigit:]]+#" :not-before-regexp [^[:digit:]])
       (:lang (Emacs-Lisp) :regexp "#x[[:xdigit:]]+")
       ))
-  "Hexadecimal Number")
+  "Hexadecimal Number.")
 
 (defconst relangs-scan-formatted
   (lambda ()
@@ -244,14 +246,14 @@ X defaults to :related"
                           "re-search-forward"
                           "re-search-backward"))
       (:lang Matlab :expr "textscan")
-      )) "Formatted Scanning")
+      )) "Formatted Scanning.")
 
 (defconst relangs-channels
   (lambda ()
     `((:lang C++11 :expr "Future-Promise")
       (:lang D :expr "")
       (:lang Go :expr "Channels")
-      )) "Empty (Undefined) Constant Literal Value")
+      )) "Empty (Undefined) Constant Literal Value.")
 
 (defconst relangs-future
   (lambda (type)
@@ -275,19 +277,19 @@ X defaults to :related"
       (:lang Haskell :expr "Nothing")
       (:lang Matlab :expr (| "[]" "{}") :comment "Empty Matrix or Cell Array")
       (:lang Lua :expr (: "nil"))
-      )) "Empty/Undefined/Null Literal Constant Value")
+      )) "Empty/Undefined/Null Literal Constant Value.")
 
 (defconst relangs-nonnull
   (lambda ()
     `((:lang D :expr (not "@nullable")) ;TODO: Support inverse logic
       (:lang Ada2005 :expr (: "not" "null"))
-      )) "Empty/Undefined/Null Literal Constant Value")
+      )) "Empty/Undefined/Null Literal Constant Value.")
 
 (defconst relangs-nothrow
   (lambda ()
     `((:lang C++11 :expr "noexcept")
       (:lang D :expr "nothrow")
-      )) "Empty/Undefined/Null Literal Constant Value")
+      )) "Empty/Undefined/Null Literal Constant Value.")
 
 (defconst relangs-currying
   (lambda ()
@@ -299,7 +301,7 @@ X defaults to :related"
   (lambda ()
     `((:lang C++ :expr "std::numeric_limits<" type-id ">::" (| "min" "max") "()" :import "limits")
       (:lang D :expr (: type-id "." (| "min" "max")))
-      )) "")
+      )) ".")
 
 (defconst relangs-void
   (lambda ()
@@ -495,13 +497,13 @@ X defaults to :related"
   (lambda ()
     `((:lang C :expr (: "_Imaginary" relangs-float-type))
       (:lang D :expr (: "i" relangs-float-type))
-      )) "Imaginary Floating Point Type")
+      )) "Imaginary Floating Point Type.")
 
 (defconst relangs-complex
   (lambda ()
     `((:lang C :expr (: "_Complex" relangs-float-type))
       (:lang D :expr (: "i" relangs-float-type))
-      )) "Complex Floating Point Type")
+      )) "Complex Floating Point Type.")
 
 (defconst relangs-block-comment-begin
   (lambda ()
@@ -2223,3 +2225,4 @@ LANG defaults major-mode language, for example `c' if `c-mode' etc."
     ) "Range Concept Names")
 
 (provide 'relangs)
+;;; relangs.el ends here
