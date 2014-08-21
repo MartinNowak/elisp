@@ -38,6 +38,11 @@
     (message "No trashcans created yet")))
 (global-set-key [(control x) (?T)] 'list-local-trashcans)
 
+(defun call-process-discard-output (program &rest args)
+  "Execute program with args without saving any output.
+In particular, no temp files are created."
+  (eval (append `(call-process ,program nil nil nil) args)))
+
 (defun empty-all-local-trashcans ()
   (setq local-trashcans
         (delq nil
