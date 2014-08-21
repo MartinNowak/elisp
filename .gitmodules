@@ -73,3 +73,6 @@
 [submodule "ac-dcd"]
 	path = ac-dcd
 	url = https://github.com/atilaneves/ac-dcd.git
+[submodule "yasnippet"]
+	path = yasnippet
+	url = https://github.com/capitaomorte/yasnippet.git
