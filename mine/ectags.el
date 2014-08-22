@@ -729,7 +729,8 @@ In C++ this means namespace qualifier. "
  to search for, based on text at point. If there is no plausible
  default, return nil. THING defaults to symbol."
   (ectags-lazy-completion-table)
-  (let ((tag (and (or (not (cc-derived-mode-p)) (c-on-identifier))
+  (let ((tag (and (or (not (cc-derived-mode-p))
+                      (c-on-identifier))
                   (cond ((or (null thing)
                              (eq thing 'symbol))
                          (or (symbol-at-point)
@@ -739,13 +740,23 @@ In C++ this means namespace qualifier. "
     (when tag
       (let* ((tag (if (symbolp tag) (symbol-name tag) tag)) ;assure string
              (sym (ectags-lookup-tag-symbol tag)) ;first try exact match
-             (sym-name (symbol-name sym)))        ;we want to return the string instead of the symbol
+             (sym-name (symbol-name sym))) ;we want to return the string instead of the symbol
         (or
          (and sym sym-name)             ;exact match as string first
          (when (>= (length tag) 2) ;only match symbol at point that have 2 or more letters to not make matches to many
            (let ((scope (symbol-scope-at-point)))
-             (or (obarray-multi-match-string tag propname 'exact (ectags-syntax-context-kind-atpt) scope *ectags*) ;try exact first
-                 (obarray-multi-match-string tag propname 'partial (ectags-syntax-context-kind-atpt) scope *ectags*))))))))) ;try partial second
+             (or (obarray-multi-match-string tag
+                                             propname
+                                             'exact
+                                             (ectags-syntax-context-kind-atpt)
+                                             scope *ectags*) ;try exact first
+                 (when nil ;NOTE: Disabled for now because too slow for large projects.
+                   (obarray-multi-match-string tag
+                                               propname
+                                               'partial
+                                               (ectags-syntax-context-kind-atpt)
+                                               scope
+                                               *ectags*)))))))))) ;try partial second
 ;; Use: (ectags-default-tags-at-point)
 
 ;; ---------------------------------------------------------------------------
@@ -875,7 +886,7 @@ Use as `icicle-candidate-help-fn' for `find-ectag'."
          (icicle-candidate-action-fn 'icicle-find-ectag-action)
          (icicle-candidate-help-fn 'icicle-find-ectag-help)
          ;;(icicle-sort-functions-alist ectags-sort-commands)
-         (defs (when nil                ;NOTE: Disabled for now because too slow for large projects.
+         (defs (when nil                ;NOTE: Disabled for now because too slow for large projects
                  (ectags-default-tags-at-point 'symbol :name)) ;partial tag name matches. TODO: Use lazy.
            )
          (defs-num (cond ((stringp defs) 1)
