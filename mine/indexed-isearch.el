@@ -35,7 +35,7 @@
                                       after))
                            'face 'shadow)))))))
 
-(add-hook 'isearch-update-post-hook 'isearch-count-message)
+(remove-hook 'isearch-update-post-hook 'isearch-count-message)
 
 ;; (when nil
 ;;   (defun lazy-highlight-cleanup (&optional force)
