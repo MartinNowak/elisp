@@ -31,7 +31,7 @@ and my own
 - `comment-dwim.el`: Comment Do What I Mean.
 - `complete-dwim.el`: Unified Interface to Completion, where Indentation and Alignment are actually Whitspace Completion.
 - `completion-styles-cycle.el`: Cycle Completion Styles.
-- `cscan.el`: Match Contents of strings, buffers and files with strings and regexps. Supports clustered sorting of hits used by package tscan.
+- `cscan.el`: Match Contents of strings, buffers and files with strings and regexps. Supports clustered sorting of hits used by package `tscan`.
 - `c-styles.el`: Setup CC Mode Styles.
 - `dabbrev-substring.el`: Substring Dabbrev Expansion.
 - `dabbrev-acronym.el`: Acronym Dabbrev Expansion. This one is goodie I use all the time!
