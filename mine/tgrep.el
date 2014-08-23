@@ -1,6 +1,8 @@
 ;;; tgrep.el --- Tree Grep and Locate Fancyfied.
-;; Author: Per Nordlöw
-;; todo: Support git grep
+;;; Author: Per Nordlöw
+;;; todo: Support git grep
+;;; Commentary:
+;;; Code:
 
 (require 'multi-read)
 (require 'combinations)
@@ -422,3 +424,4 @@ and Replace)."
 (defalias 'grep-recursively 'rgrep)
 
 (provide 'tgrep)
+;;; tgrep.el ends here
