@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:22:14 2006
-;; Last-Updated: Tue Aug 19 16:39:07 2014 (-0700)
+;; Last-Updated: Fri Aug 22 10:26:31 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 6033
+;;     Update #: 6047
 ;; URL: http://www.emacswiki.org/icicles-opt.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -1306,7 +1306,8 @@ with Emacs 23) option `icicle-Completions-text-scale-decrease'."
   :type 'integer :group 'Icicles-Completions-Display)
 
 (defcustom icicle-cand-preds-for-bookmark (and (require 'bookmark+ nil t)
-                                               '("icicle-bookmark-autofile-p"
+                                               '("icicle-bookmark-annotated-p"
+                                                 "icicle-bookmark-autofile-p"
                                                  "icicle-bookmark-autonamed-p"
                                                  "icicle-bookmark-autonamed-this-buffer-p"
                                                  "icicle-bookmark-bookmark-file-p"
@@ -1358,7 +1359,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-bookmark-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-buffer (append '("icicle-buffer-modified-p"
@@ -1377,7 +1382,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-buffer-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate"))
   :group 'Icicles-Matching :group 'Icicles-Buffers)
 
@@ -1420,7 +1429,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-color-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-face '("icicle-face-bold-p"
@@ -1438,11 +1451,16 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-face-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-file (append '("icicle-file-accessible-directory-p"
                                                 "icicle-file-compressed-p"
+                                                "icicle-file-desktop-p"
                                                 "icicle-file-directory-p"
                                                 "icicle-file-executable-p"
                                                 "icicle-file-exists-p"
@@ -1453,7 +1471,6 @@ string car, symbol, etc.)"
                                                 "icicle-file-remote-p"
                                                 "icicle-file-symlink-p"
                                                 "icicle-file-writable-p"
-;; @@@@@ NOT DONE YET  "icicle-desktop-file-p" - see `bmkp-desktop-file-p'
                                                 "icicle-image-file-p"
                                                 "icicle-looks-like-dir-name-p"
                                                 "icicle-nondirectory-p")
@@ -1472,7 +1489,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-file-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate"))
   :group 'Icicles-Matching :group 'Icicles-Files)
 
@@ -1492,7 +1513,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-frame-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-misc '("icicle-not-special-candidate-p"
@@ -1522,7 +1547,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-package-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-symbol '("icicle-binary-option-p"
@@ -1536,7 +1565,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-symbol-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-variable (append '("icicle-custom-variable-p")
@@ -1551,7 +1584,11 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-variable-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
 (defcustom icicle-cand-preds-for-window (append '("icicle-window-dedicated-p")
@@ -1571,10 +1608,14 @@ predicate names, but they can also be lambda forms.
 
 Depending on the command, the argument to the predicate can take any
 form acceptable as a full completion candidate (alist entry with
-string car, symbol, etc.)"
+string car, symbol, etc.)
+
+To make these predicates available for narrowing for one of your
+commands, just bind `icicle-window-completing-p' to non-nil in the
+command."
   :type '(repeat (function :tag "Predicate to keep candidate")) :group 'Icicles-Matching)
 
-;; Must be after `icicle-cand-preds-for-*'.
+;; Must come after all `icicle-cand-preds-for-*' options.
 (defcustom icicle-cand-preds-all (append icicle-cand-preds-for-bookmark
                                          icicle-cand-preds-for-buffer
                                          icicle-cand-preds-for-color

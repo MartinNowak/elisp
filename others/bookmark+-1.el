@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Tue Aug 19 15:57:02 2014 (-0700)
+;; Last-Updated: Fri Aug 22 14:09:24 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 7367
+;;     Update #: 7386
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -318,7 +318,8 @@
 ;;    `bmkext-jump-woman', `bmkp-all-exif-data',
 ;;    `bmkp-all-tags-alist-only', `bmkp-all-tags-regexp-alist-only',
 ;;    `bmkp-alpha-cp', `bmkp-alpha-p', `bmkp-annotated-alist-only',
-;;    `bmkp-autofile-alist-only', `bmkp-autofile-all-tags-alist-only',
+;;    `bmkp-annotated-bookmark-p', `bmkp-autofile-alist-only',
+;;    `bmkp-autofile-all-tags-alist-only',
 ;;    `bmkp-autofile-all-tags-regexp-alist-only',
 ;;    `bmkp-autofile-bookmark-p',
 ;;    `bmkp-autofile-some-tags-alist-only',
@@ -788,8 +789,9 @@ accepts as its (first) argument a bookmark or bookmark name.
 
 These are the predefined type predicates:
 
-`bmkp-autofile-bookmark-p', `bmkp-autonamed-bookmark-for-buffer-p',
-`bmkp-autonamed-bookmark-p', `bmkp-autonamed-this-buffer-bookmark-p',
+`bmkp-autofile-bookmark-p', `bmkp-annotated-bookmark-p',
+`bmkp-autonamed-bookmark-for-buffer-p', `bmkp-autonamed-bookmark-p',
+`bmkp-autonamed-this-buffer-bookmark-p','
 `bmkp-bookmark-file-bookmark-p', `bmkp-bookmark-list-bookmark-p',
 `bmkp-desktop-bookmark-p', `bmkp-dired-bookmark-p',
 `bmkp-dired-this-dir-bookmark-p', `bmkp-dired-wildcards-bookmark-p',
@@ -1973,9 +1975,9 @@ The names are those of the bookmarks in ALIST or, if nil,
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
 ;; 1. Added optional args ALIST, PRED, and HIST.
-;; 2. Define using helper function `bmkp-completing-read-1'.
-;;    which: (a) binds `icicle-delete-candidate-object' to (essentially) `bookmark-delete'.
-;;           (b) forces you to enter a non-empty name, if DEFAULT is nil or "".
+;; 2. Use helper function `bmkp-completing-read-1', which does this:
+;;    (a) binds `icicle-delete-candidate-object' to (essentially) `bookmark-delete'.
+;;    (b) forces you to enter a non-empty name, if DEFAULT is nil or "".
 ;;
 (defun bookmark-completing-read (prompt &optional default alist pred hist)
   "Read a bookmark name, prompting with PROMPT.
@@ -3480,6 +3482,7 @@ LAXP non-nil means use lax (non-strict) completion."
          (bookmark-all-names alist)))
     (let* ((icicle-delete-candidate-object  (lambda (cand) ; For `S-delete' in Icicles.
                                               (bookmark-delete (icicle-transform-multi-completion cand))))
+           (icicle-bookmark-completing-p    t)
            (completion-ignore-case          bookmark-completion-ignore-case)
            (default                         (and (not (equal "" default))  default)) ; Treat "" like nil.
            (prompt                          (concat prompt (if default
@@ -5009,6 +5012,14 @@ Non-interactively:
 ;;(@* "Bookmark Predicates")
 ;;  *** Bookmark Predicates ***
 
+(defun bmkp-annotated-bookmark-p (bookmark)
+  "Return non-nil if BOOKMARK has an annotation.
+BOOKMARK is a bookmark name or a bookmark record.
+If it is a record then it need not belong to `bookmark-alist'."
+  (setq bookmark  (bookmark-get-bookmark bookmark))
+  (let ((annotation  (bookmark-get-annotation bookmark)))
+    (and annotation  (not (string-equal annotation "")))))
+
 (defun bmkp-autofile-bookmark-p (bookmark &optional prefix)
   "Return non-nil if BOOKMARK is an autofile bookmark.
 That means that it is `bmkp-file-bookmark-p' and also its
@@ -5088,8 +5099,10 @@ If it is a record then it need not belong to `bookmark-alist'."
 This excludes bookmarks of a more specific kind (e.g. Info, Gnus).
 BOOKMARK is a bookmark name or a bookmark record.
 If it is a record then it need not belong to `bookmark-alist'."
-  (and (bmkp-file-bookmark-p bookmark)
-       (equal (file-name-directory (bookmark-get-filename bookmark)) default-directory)))
+  (setq bookmark  (bookmark-get-bookmark bookmark 'NOERROR))
+  (and bookmark
+       (bmkp-file-bookmark-p bookmark)
+       (bmkp-same-file-p (file-name-directory (bookmark-get-filename bookmark)) default-directory)))
 
 (defun bmkp-flagged-bookmark-p (bookmark)
   "Return non-nil if BOOKMARK is flagged for deletion in `*Bookmark List*'.
@@ -5396,10 +5409,7 @@ A new list is returned (no side effects)."
   "`bookmark-alist', but only for bookmarks with non-empty annotations.
 A new list is returned (no side effects)."
   (bookmark-maybe-load-default-file)
-  (bmkp-remove-if-not (lambda (bmk)
-                        (let ((annotation  (bookmark-get-annotation bmk)))
-                          (and annotation  (not (string-equal annotation "")))))
-                      bookmark-alist))
+  (bmkp-remove-if-not #'bmkp-annotated-bookmark-p bookmark-alist))
 
 (defun bmkp-autofile-alist-only (&optional prefix)
   "`bookmark-alist', filtered to retain only autofile bookmarks.
@@ -8225,15 +8235,29 @@ You might want to use this on `kill-emacs-hook'."
              (bmkp-same-file-p (desktop-full-file-name) bmkp-desktop-current-file))
     (bmkp-desktop-save bmkp-desktop-current-file)))
 
-(defun bmkp-desktop-file-p (file)
-  "Return non-nil if FILE is readable and appears to be a desktop file.
-FILE is a file-name string."
-  (and (stringp file)
-       (file-readable-p file)
-       (with-current-buffer (let ((enable-local-variables nil)) (find-file-noselect file))
+;;; (defun bmkp-desktop-file-p (file)
+;;;   "Return non-nil if FILE is readable and appears to be a desktop file.
+;;; FILE is a file-name string."
+;;;   (and (stringp file)
+;;;        (file-readable-p file)
+;;;        (with-current-buffer (let ((enable-local-variables nil)) (find-file-noselect file))
+;;;          (goto-char (point-min))
+;;;          (and (zerop (forward-line 2))
+;;;               (bmkp-looking-at-p "^;; Desktop File for Emacs$")))))
+
+;; Similar to `icicle-file-desktop-p' in `icicles-fn.el'.
+;; This is better than using `find-file-noselect', which visits the file and leaves its buffer.
+(defun bmkp-desktop-file-p (filename)
+  "Return non-nil if FILENAME names a desktop file."
+  (when (consp filename) (setq filename  (car filename)))
+  (and (stringp filename)
+       (file-readable-p filename)
+       (not (file-directory-p filename))
+       (with-temp-buffer
+         (insert-file-contents-literally filename nil 0 1000)
          (goto-char (point-min))
          (and (zerop (forward-line 2))
-              (bmkp-looking-at-p "^;; Desktop File for Emacs$")))))
+              (bmkp-looking-at-p "^;; Desktop File for Emacs"))))) ; No $, because maybe eol chars (e.g. ^M).
 
 (defun bmkp-make-desktop-record (desktop-file)
   "Create and return a desktop bookmark record.

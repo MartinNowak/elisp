@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Tue Aug 19 17:02:10 2014 (-0700)
+;; Last-Updated: Fri Aug 22 17:52:06 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 11203
+;;     Update #: 11245
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -85,6 +85,12 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd1.el'")
 ;;
+;; 2014/08/22 dadams
+;;     icicle-file-of-content-apropos-complete-match: Update icicle-new-bufs-to-kill before searching.
+;;     icicle-bookmark-jump-1: Better error if input BOOKMARK does not name an existing bookmark.
+;; 2014/08/21 dadams
+;;     Added: icicle-bookmark-annotated-narrow.
+;;     icicle-bookmark-bind-narrow-commands: Bind icicle-bookmark-annotated-narrow.
 ;; 2014/08/19 dadams
 ;;     Added: icicle-bookmark-(dired-this-dir|dired-wildcards|navlist)-narrow.
 ;;     icicle-bookmark: Updated doc string for narrowing keys and to mention M-&.
@@ -1125,6 +1131,15 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/08/22 dadams
+;;     icicle-pick-color-by-name(-1): Added optional arg MSGP.  Show message if non-nil.
+;; 2014/08/21 dadams
+;;     Added: icicle-pick-color-by-name-1 - from icicle-pick-color-by-name-action.
+;;     icicle-pick-color-by-name: Bind icicle-list-use-nth-parts.  Use icicle-pick-color-by-name-1.
+;;     icicle-pick-color-by-name-action: If palette is not shown, do not try to redisplay it.
+;;                                       Use icicle-pick-color-by-name-1.
+;;     icicle-color-from-multi-completion-input: Removed bindings of icicle-list-*.
+;;     icicle-bookmark-tagged(-other-window): Bind icicle-bookmark-completing-p.
 ;; 2014/08/18 dadams
 ;;     icicle-choose-(in)visible-faces: Bind icicle-face-completing-p.
 ;; 2014/08/17 dadams
@@ -2091,6 +2106,11 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/08/22 dadams
+;;     Added: icicle-file-desktop-p.
+;;     icicle-file-compressed-p: Handle cons argument.
+;; 2014/08/21 dadams
+;;     Added: icicle-bookmark-annotated-p.
 ;; 2014/08/19 dadams
 ;;     Added: icicle-bookmark-navlist-p.
 ;;     Removed (commented out):
@@ -4112,6 +4132,9 @@
 ;;       macros needs to be byte-compiled anew after loading the updated macros.
 ;; ****************************************************************************************************
 ;;
+;; 2014/08/22 dadams
+;;     icicle-define(-file)-command: Added unwind-protect, so LAST-SEXP is always evaluated.
+;;                                   (C-g in content-searching was sometimes not killing some buffers.)
 ;; 2014/08/10 dadams
 ;;     icicle-(buffer|file)-bindings: Bind icicle-(buffer|file)-completing-p.
 ;;     icicle-define-bookmark-command-1, icicle-define-search-bookmark-command:
@@ -4355,12 +4378,22 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-mcmd.el'")
 ;;
+;; 2014/08/22 dadams
+;;     icicle-narrow-candidates-with-predicate:
+;;       Must also match current candidates (incorporate M-*).
+;;       Use same code as icicle-narrow-candidates, and just bind icicle-must-pass-predicate, instead
+;;         of setting minibuffer-completion-predicate or read-file-name-predicate.
+;;         So this is no longer the same logic as for icicle-remove-cand-from-lists.
+;;     icicle-narrow-candidates:
+;;       For cons, obarray, etc. case: use ICICLE-CANDS-TO-NARROW, not icicle-completion-candidates.
+;;     icicle-apropos-complete-and-narrow: Added prefix arg, to do predicate narrowing.
+;;     icicle-looking-at-p: Redefined to use defalias or looking-at.
 ;; 2014/08/16 dadams
 ;;     icicle-narrow-candidates-with-predicate: Bind icicle-must-pass-after-match-predicate to nil.
 ;; 2014/08/10 dadams
 ;;     Added: icicle-cand-preds (var and fn).
 ;;     icicle-narrow-candidates-with-predicate:
-;;       Rewrote to provide completion against predefined cand predicates (Emacs 24+).
+;;       Rewrote to provide completion against predefined predicates (Emacs 24+).
 ;;       Added prefix arg, ALLP.
 ;; 2014/07/27 dadams
 ;;     Updated delete-selection PUT for icicle-self-insert per Emacs 24.4+.
@@ -7363,6 +7396,10 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/08/22 dadams
+;;     icicle-cand-preds-for-file: Added icicle-file-desktop-p.
+;; 2014/08/21 dadams
+;;     icicle-cand-preds-for-bookmark: Added icicle-bookmark-annotated-p.
 ;; 2014/08/19 dadams
 ;;     icicle-cand-preds-for-bookmark: Updated list (removed 3, added 1 today).
 ;; 2014/08/17 dadams

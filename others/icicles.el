@@ -8,9 +8,9 @@
 ;; Created: Tue Aug  1 14:21:16 1995
 ;; Version: 2014.08.10
 ;; Package-Requires: ()
-;; Last-Updated: Tue Aug 19 17:05:22 2014 (-0700)
+;; Last-Updated: Fri Aug 22 10:23:06 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 23631
+;;     Update #: 23636
 ;; URL: http://www.emacswiki.org/icicles.el
 ;; Doc URL: http://emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -495,6 +495,7 @@
 ;;    `icicle-apropos-complete-and-narrow',
 ;;    `icicle-apropos-complete-and-widen',
 ;;    `icicle-apropos-complete-no-display',
+;;    `icicle-bookmark-annotated-narrow',
 ;;    `icicle-bookmark-autofile-narrow',
 ;;    `icicle-bookmark-autonamed-narrow',
 ;;    `icicle-bookmark-autonamed-this-buffer-narrow',
@@ -1099,9 +1100,10 @@
 ;;    `icicle-face-valid-attribute-values',
 ;;    `icicle-ffap-file-remote-p', `icicle-ffap-url-p',
 ;;    `icicle-file-accessible-directory-p',
-;;    `icicle-file-compressed-p', `icicle-file-directory-p',
-;;    `icicle-file-executable-p', `icicle-file-exists-p',
-;;    `icicle-file-locked-p', `icicle-file-name-absolute-p',
+;;    `icicle-file-compressed-p', `icicle-file-desktop-p',
+;;    `icicle-file-directory-p', `icicle-file-executable-p',
+;;    `icicle-file-exists-p', `icicle-file-locked-p',
+;;    `icicle-file-name-absolute-p',
 ;;    `icicle-file-name-apropos-candidates',
 ;;    `icicle-file-name-directory',
 ;;    `icicle-file-name-directory-w-default',
@@ -1250,9 +1252,10 @@
 ;;    `icicle-package-installed-p', `icicle-part-1-cdr-lessp',
 ;;    `icicle-part-1-lessp', `icicle-part-2-lessp',
 ;;    `icicle-part-3-lessp', `icicle-part-4-lessp',
-;;    `icicle-part-N-lessp', `icicle-pick-color-by-name-action',
-;;    `icicle-place-cursor', `icicle-place-overlay',
-;;    `icicle-position', `icicle-prefix-any-candidates-p',
+;;    `icicle-part-N-lessp', `icicle-pick-color-by-name-1',
+;;    `icicle-pick-color-by-name-action', `icicle-place-cursor',
+;;    `icicle-place-overlay', `icicle-position',
+;;    `icicle-prefix-any-candidates-p',
 ;;    `icicle-prefix-any-file-name-candidates-p',
 ;;    `icicle-prefix-candidates', `icicle-prefix-complete-1',
 ;;    `icicle-prefix-complete-2', `icicle-prefix-keys-first-p',
