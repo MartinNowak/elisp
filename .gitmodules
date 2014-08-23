@@ -65,7 +65,7 @@
 	path = spray
 	url = https://github.com/zk-phi/spray.git
 [submodule "flycheck-nordlow"]
-	path = flycheck-nordlow
+	path = flycheck
 	url = https://github.com/nordlow/flycheck.git
 [submodule "emacs-dbgr"]
 	path = emacs-dbgr
