@@ -4,7 +4,7 @@
 ;;; Code:
 ;;; See: https://stackoverflow.com/questions/14764130/1-of-n-result-for-emacs-search
 
-(defun count-search-hits-backward (string &optional bound noerror count)
+(defun isearch-count-hits-backward (string &optional bound noerror count)
   (save-excursion
     (let ((count 0))
       (while (ignore-errors (if isearch-regexp
@@ -13,7 +13,7 @@
         (setq count (1+ count)))
       count)))
 
-(defun count-search-hits-forward (string &optional bound noerror count)
+(defun isearch-count-hits-forward (string &optional bound noerror count)
   (save-excursion
     (let ((count 0))
       (while (ignore-errors (if isearch-regexp
@@ -23,19 +23,23 @@
       count)))
 
 (defun isearch-count-message ()
+  (setq isearch-message-suffix-add "")
   (when isearch-success
-   (let* ((string isearch-string))
-     (when (>= (length string) 1)
-       (let ((before (count-search-hits-backward string))
-             (after (count-search-hits-forward string)))
-         (setq isearch-message-suffix-add
-               (propertize (format " (%d of %d)"
-                                   before
-                                   (+ before
-                                      after))
-                           'face 'shadow)))))))
+    (let* ((string isearch-string))
+      (when (>= (length string) 1)
+        (let ((before (isearch-count-hits-backward string))
+              (after (isearch-count-hits-forward string)))
+          (message "%s" (current-buffer))
+          (setq isearch-message-suffix-add
+                (propertize (format " (%d of %d)"
+                                    before
+                                    (+ before
+                                       after))
+                            'face 'shadow))
+          (when isearch-mode
+            (isearch-update)))))))
 
-(remove-hook 'isearch-update-post-hook 'isearch-count-message)
+(remove-hook 'post-command-hook 'isearch-count-message)
 
 ;; (when nil
 ;;   (defun lazy-highlight-cleanup (&optional force)
