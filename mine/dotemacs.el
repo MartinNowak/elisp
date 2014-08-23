@@ -156,6 +156,9 @@
 				       exit-minibuffer keyboard-quit delete-backward-char))
 	    (ding)))
 	)
+(when (boundp 'compilation-do-echo-command)
+  (setq-default compilation-do-echo-command nil)) ;do echo compilations for now
+
 ;; (setq-default frame-background-mode 'dark)
 ;;(set-frame-font "6x13")
 ;;(set-default-font "6x13")
