@@ -15,13 +15,16 @@ Tested on Emacs 24.3 and later.
 
 Goodies loaded from `mine/dotemacs.el` include
 
-- CEDET: Collection of Emacs Development Tools <https://github.com/emacsmirror/cedet>
-- smartparens: https://github.com/Fuco1/smartparens
 - FlyCheck: <https://github.com/flycheck/flycheck>
 - Magit: <https://github.com/magit/magit>
+- smartparens: <https://github.com/Fuco1/smartparens>
+- CEDET: <https://github.com/emacsmirror/cedet>
 - `smart-mode-line`: <https://github.com/Bruce-Connor/smart-mode-line>
+
+and my own
+
 - `hictx.el`: Temporarily Highlight Context of recent navigation/operation
-- `do-on-save.el`:
+- `do-on-save.el`: Perform Operations (Compile, Load, Test, Debug, etc.) upon Saving Buffer.
 - `filedb.el`: Intelligent handling of files types
 - `cc-assist.el`: Extension to C-like modes
 - `font-lock-extras.el`: Extra general faces (may become part of font-lock...)
@@ -46,4 +49,5 @@ Goodies loaded from `mine/dotemacs.el` include
 - `gprof-mode.el`: GNU Emacs major mode (only font-locking) for gprof output
 - `gprof-utils.el`: Setup Interface to GNUs gprof.
 - `hash-table-utils.el`: Hash table Utitlies.
-- ...
+
+and more...
