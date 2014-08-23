@@ -4,8 +4,6 @@
 ;;; Code:
 ;;; See: https://stackoverflow.com/questions/14764130/1-of-n-result-for-emacs-search
 
-(add-hook 'isearch-update-post-hook 'isearch-count-message)
-
 (defun count-search-hits-backward (string &optional bound noerror count)
   (save-excursion
     (let ((count 0))
@@ -36,6 +34,8 @@
                                    (+ before
                                       after))
                            'face 'shadow)))))))
+
+(add-hook 'isearch-update-post-hook 'isearch-count-message)
 
 ;; (when nil
 ;;   (defun lazy-highlight-cleanup (&optional force)
