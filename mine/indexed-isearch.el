@@ -23,13 +23,11 @@
       count)))
 
 (defun isearch-count-message ()
-  (setq isearch-message-suffix-add "")
   (when isearch-success
     (let* ((string isearch-string))
       (when (>= (length string) 1)
         (let ((before (isearch-count-hits-backward string))
               (after (isearch-count-hits-forward string)))
-          (message "%s" (current-buffer))
           (setq isearch-message-suffix-add
                 (propertize (format " (%d of %d)"
                                     before
@@ -39,7 +37,11 @@
           (when isearch-mode
             (isearch-update)))))))
 
-(remove-hook 'post-command-hook 'isearch-count-message)
+(defun isearch-count-message-end ()
+  (setq isearch-message-suffix-add ""))
+
+(add-hook 'post-command-hook 'isearch-count-message)
+(add-hook 'isearch-mode-end-hook 'isearch-count-message-end)
 
 ;; (when nil
 ;;   (defun lazy-highlight-cleanup (&optional force)
