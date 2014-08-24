@@ -222,11 +222,14 @@ and Replace)."
 
               (setq symbol-flag
                     (string-equal "Symbol"
-                     (completing-read "Context as: " '("Any" "Symbol")
-                                      nil nil nil nil
-                                      (if symbol-flag
-                                          "Symbol"
-                                        "Any"))))
+                                  (completing-read "Context as: "
+                                                   '("Any" "Symbol")
+                                                   nil nil nil nil
+                                                   "Any"
+                                                   ;; (if symbol-flag
+                                                   ;;     "Symbol"
+                                                   ;;   "Any")
+                                                   )))
 
               (when symbol-flag
                 (setq regexp-flag t))
