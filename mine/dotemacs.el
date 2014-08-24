@@ -904,7 +904,7 @@
 ;;; ===========================================================================
 ;;; NeoTree
 (when (append-to-load-path (elsub "neotree"))
-  (autoload 'neotree "neotree" "File Tree Mode"))
+  (autoload 'neotree "neotree" "File Tree Mode" t))
 
 (add-hook 'neotree-mode-hook 'setup-neotree-dired-keys)
 
