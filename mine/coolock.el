@@ -263,11 +263,11 @@
          '((1 'font-lock-number-face keep)
            ))
    ;; NOTE: needs to be before matching C operator '.' below
-   (cons number-dec-regexp
+   (cons (number-dec-regexp 'haskell-mode)
          '((1 'font-lock-number-face keep)
            ))
    ;; NOTE: needs to be before matching C operator '.' below
-   (cons number-hex-regexp
+   (cons (number-hex-regexp 'haskell-mode)
          '((1 'font-lock-number-passive-face keep)
            (2 'font-lock-number-face keep)
            ))
@@ -919,7 +919,7 @@ See also: http://dlang.org/traits.html"
            (3 'font-lock-type-face keep)
            ))
    ;; NOTE: needs to be before matching C operator '.' below
-   (cons (c-number-dec-regexp)
+   (cons (c-number-dec-regexp 'julia-mode)
          '((1 'font-lock-number-face keep)
            (2 'font-lock-number-passive-face keep)
            (3 'font-lock-type-face keep)
@@ -1253,7 +1253,7 @@ Return t if `forward-sexp' otherwise nil."
            ))
 
    ;; decimal number literal
-   (cons number-dec-regexp
+   (cons (number-dec-regexp 'elisp-mode)
          '(1 'font-lock-number-face keep))
 
    ;; hexadecimal number literal

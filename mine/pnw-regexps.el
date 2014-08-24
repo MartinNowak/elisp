@@ -123,26 +123,40 @@
 
 ;; Number Literal
 
-(defconst number-dec-regexp
+(defun number-dec-regexp (&optional mode)
+  "Regular Expression Matching a Decimal Integer (positive or negative."
   (concat Y<
-	  $< "[+-]?" "[[:digit:]]+" $>          ;digits (1)
-	  Y>)
-  "Regular Expression Matching a Decimal Integer (positive or negative.")
+	  $< "[+-]?" (if (memq mode '(d-mode ada-mode c++-mode))
+                         "[[:digit:]_]"
+                       "[[:digit:]]") "+" $>          ;digits (1)
+	  Y>))
+(eval-when-compile
+  (assert-equal 0
+                (string-match (number-dec-regexp 'd-mode) "+123_456_7890")))
 
-(defconst number-hex-regexp
+(defun number-hex-regexp (&optional mode)
+  "Regular Expression Matching a Hexadecimal Integer."
   (concat Y<
 	  $< "0[xX]" $>              ;prefix (1
-	  $< "[[:xdigit:]]+" $>    ;digits (2)
-	  Y>)
-  "Regular Expression Matching a Hexadecimal Integer.")
+	  $< (if (memq mode '(d-mode ada-mode c++-mode))
+                 "[[:xdigit:]_]"
+               "[[:xdigit:]]") "+" $>  ;digits (2)
+	  Y>))
+(eval-when-compile
+  (assert-equal 0
+                (string-match (number-hex-regexp 'd-mode) "0x01234567890_abcdef")))
 
 (defun number-bin-regexp (&optional mode)
-  "Regular Expression Matching a Binary Integer."
+  "Regular Expression Matching a C++/D-style Binary Integer."
   (concat Y<
           $< "0[bB]" $>              ;prefix (1
-          $< (if (eq mode 'd-mode) "[01_]" "[01]") "+" $>           ;digits (2)
+          $< (if (memq mode '(d-mode ada-mode c++-mode))
+                 "[01_]"
+               "[01]") "+" $>           ;digits (2)
           Y>))
-;; Use: (number-bin-regexp 'd-mode)
+(eval-when-compile
+  (assert-equal 0
+                (string-match (number-bin-regexp 'd-mode) "0b10_000")))
 
 ;; ----------------------------------------------------------------------------
 
@@ -153,9 +167,9 @@
   "Regular Expression matching C++11 User Defined Literal (UDL).")
 
 (defun c-number-dec-regexp (&optional mode)
-  "Regular Expression Matching a C-Style Decimal Integer."
+  "Regular Expression Matching a Decimal Integer."
   (concat Y<
-          $< (if (eq mode 'd-mode)
+          $< (if (memq mode '(d-mode ada-mode c++-mode))
                  (concat "[[:digit:]]"
                          "[[:digit:]_]+") ;digits (1) with D underscore separators
                "[[:digit:]]+"      ;digits (1)
@@ -554,7 +568,7 @@
    (list (concat
 	  "\\(?:" "[^0-9a-fA-F]" "\\|" BOL $>
 	  $<
-	  number-hex-regexp
+	  (number-hex-regexp)
 	  $>)
 	 1 font-lock-constant-face)
    (list foi-phone-number-regexp
@@ -599,7 +613,7 @@
 	 1 font-lock-constant-face)
    ;; Valgrind address and source function
    (list (concat
-	  $< number-hex-regexp $>
+	  $< (number-hex-regexp) $>
 	  ": "
 	  $< ascii-name-regexp $>
 	  )
