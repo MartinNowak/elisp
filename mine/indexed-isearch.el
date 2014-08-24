@@ -40,8 +40,8 @@
 (defun isearch-count-message-end ()
   (setq isearch-message-suffix-add ""))
 
-(add-hook 'post-command-hook 'isearch-count-message)
-(add-hook 'isearch-mode-end-hook 'isearch-count-message-end)
+(remove-hook 'post-command-hook 'isearch-count-message)
+(remove-hook 'isearch-mode-end-hook 'isearch-count-message-end)
 
 ;; (when nil
 ;;   (defun lazy-highlight-cleanup (&optional force)
