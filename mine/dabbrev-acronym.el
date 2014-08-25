@@ -15,7 +15,7 @@ http://www.emacswiki.org/cgi-bin/wiki/HippieExpand#toc5"
                       ;;  (concat (regexp-quote pattern)
                       ;;          "\\(\\sw\\|\\s_\\)*"))
                       (t
-                       (acronymize-string pattern 'symbol t)
+                       (acronymize-string pattern 'symbol t major-mode)
                        ))))
     (while (and (not result)
                 (if reverse

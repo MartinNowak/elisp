@@ -532,7 +532,8 @@
            (require 'smartparens nil t)
            (fboundp 'smartparens-mode))
   (require 'smartparens-config)
-  (smartparens-global-mode -1))
+  (smartparens-global-mode -1)          ;disabled in favour of `autopair'
+  )
 
 ;;; http://www.emacswiki.org/emacs/AutoPairs
 ;;; https://github.com/capitaomorte/autopair
