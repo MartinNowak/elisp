@@ -96,7 +96,8 @@ overlay untouched (until it finishes), `hictx-last-overlay'."
     (hictx-log overlay)
     (when window
       (overlay-put overlay 'window window))
-    (overlay-put overlay 'face (or face 'hictx-face))
+    (overlay-put overlay 'face (or face
+                                   'hictx-face))
     (run-with-timer (or duration hictx-timeout) nil ;run in original window to prevent flashing of menus
                     #'hictx-delete
                     overlay buffer)) ;delete overlay later kind of "asynchronously"
@@ -235,6 +236,15 @@ overlay untouched (until it finishes), `hictx-last-overlay'."
                          (tap-bounds-of-symbol-at-point)))))
       (when bounds
         (hictx-generic (car bounds) (cdr bounds) window face duration delay keep-last async-flag)))))
+
+(defun hictx-symbol-after-point (&optional window face duration delay keep-last async-flag)
+  (with-selected-window (or window (selected-window))
+    (save-excursion ;needed by skip-whitespace-forward
+      (let ((bounds (cond ((fboundp 'tap-bounds-of-symbol-at-point)
+                           (skip-whitespace-forward)
+                           (tap-bounds-of-symbol-at-point)))))
+        (when bounds
+          (hictx-generic (car bounds) (cdr bounds) window face duration delay keep-last async-flag))))))
 
 (defun hictx-button (&optional window face duration delay keep-last async-flag)
   (with-selected-window (or window (selected-window))

@@ -1533,6 +1533,24 @@ save it in `ffap-file-at-point-line-number' variable."
                                              ":WS-\\1:"))))
 
 ;;; ===========================================================================
+
+;;; This fix prevents group permission problems for byte-compiled files.
+
+(defun copy-file-modes (from-file to-file)
+  "Copy `file-modes' from FROM-FILE to TO-FILE."
+  (set-file-modes to-file (file-modes from-file)))
+
+(defun adjust-byte-compiled-file-permissions (filename)
+  "Adjust file modes of byte-compiled version of FILENAME to
+match FILENAME."
+  (let ((elc (concat filename "c")))
+    (when (file-exists-p elc)
+      (copy-file-modes filename elc))))
+(defadvice byte-compile-file (after adjust-permissions (filename &optional load))
+  (adjust-byte-compiled-file-permissions filename))
+(ad-activate 'byte-compile-file)
+
+;;; ===========================================================================
 ;;; asciidoc
 (when (append-to-load-path (elsub "asciidoc-mode"))
   (autoload 'asciidoc-mode "asciidoc-mode" "Major mode for editing D code." t)

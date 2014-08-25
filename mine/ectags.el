@@ -822,9 +822,13 @@ Inspired by `icicle-find-tag-action'."
           (ectags-goto-tag cand t)
           (widen)
           ;; inherits behaviour of `previous-error' and `next-error'
-          (hictx-symbol-at-point nil 'next-error (if (numberp next-error-highlight)
-                                                     next-error-highlight
-                                                   0.5))
+          (hictx-line nil 'next-error (if (numberp next-error-highlight)
+                                                        next-error-highlight
+                                                      0.5))
+          (when nil                     ;disabled because too hard to spot
+            (hictx-symbol-after-point nil 'next-error (if (numberp next-error-highlight)
+                                                          next-error-highlight
+                                                        0.5)))
           (select-window (minibuffer-window))
           (select-frame-set-input-focus (selected-frame)))
       (message "Warning: File %s not present." (faze file 'file)))))
