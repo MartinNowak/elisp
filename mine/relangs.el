@@ -366,7 +366,7 @@ X defaults to :related"
                                          64))
       (:lang Fortran :expr "integer" :bits 32)
       (:lang Ada :expr (| "Integer"
-                          "Interfaces.C.C_int") :bits 32)
+                          "Interfaces.C.int") :bits 32)
       (:lang Rust :expr "i32" :bits 32)
       (:lang Modelica :expr "Integer")
       )) "Integer Type with Default Machine Precision.")
@@ -671,6 +671,19 @@ See
       (:lang (Ada) :expr "Access Type")
       )))
 
+(defconst relangs-reference-type
+  (lambda (type)
+    `((:lang C :expr (,type "&"))
+      (:lang D :expr ("ref" ,type))
+      (:lang Ada :expr ("access" ,type))
+      )) "Reference to TYPE.")
+
+(defconst relangs-address-of-instance
+  (lambda (variable)
+    `((:lang (C C++ D) :expr ("&" ,variable))
+      (:lang Ada :expr (,variable "'access"))
+      )) "Address of Instance VARIABLE.")
+
 (defconst relangs-function-definition
   (lambda (name args body)
     `((:lang Python :expr (: "def" ,name "(" args ")" ":" body))  ;TODO: Indentation controlled
@@ -680,12 +693,6 @@ See
       (:lang PHP :expr (: "function" ,name "(" args ")" "{" body "}"))
       (:lang Groovy :expr (: "def" ,name "(" args ")" "{" body "}"))
       )) "Definition of Function Named NAME.")
-
-(defconst relangs-variable-reference
-  (lambda (type)
-    `((:lang C :expr (,type "&"))
-      (:lang D :expr ("ref" _ ,type))
-      )) "Variable Reference to Variable Instance of type TYPE.")
 
 (defconst relangs-variable-definition
   (lambda (name type value)
