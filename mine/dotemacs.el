@@ -1588,9 +1588,15 @@ match FILENAME."
           flycheck-gnat-include-path std-path)
 
     ;; Set C++ Standard
-    (when (eq major-mode '(c++-mode))
-      (setq flycheck-gcc-language-standard "c++11"
-            flycheck-clang-language-standard "c++11"))
+    (cond ((eq major-mode '(c++-mode))
+           (setq flycheck-gcc-language-standard "c++11"
+                 flycheck-clang-language-standard "c++11"))
+          ((eq major-mode '(c-mode))
+           (setq flycheck-gcc-language-standard "c99"
+                 flycheck-clang-language-standard "c99"))
+          ;; ((eq major-mode '(objc-mode))
+          ;;  (setq flycheck-gcc-language-standard "c99"))
+          )
 
     ;; C/C++/Objective-C
     (when (memq major-mode '(c-mode c++-mode objc-mode))
