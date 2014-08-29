@@ -396,7 +396,7 @@
 ;;   (kbd "C-x <up>"))
 
 (defun winner-undo-safe ()
-  "Nicer variant of `winner-undo' that dings instead of errors."
+  "Variant of `winner-undo' that dings instead of errors."
   (interactive)
   (unless (ignore-errors (winner-undo) t)
     (message "At first window layout") ;; (sit-for 1)
@@ -418,7 +418,7 @@
       (message "Winner undid undo")))
    (t (error "Previous command was not a `winner-undo'"))))
 (defun winner-redo-safe ()
-  "Nicer variant of `winner-redo' that dings instead of errors."
+  "Variant of `winner-redo' that dings instead of errors."
   (interactive)
   (unless (ignore-errors (winner-redo) t)
     (message "At last window layout") ;; (sit-for 1)
@@ -445,10 +445,36 @@
   ;;(remove "*Kill Ring*" winner-boring-buffers)
   ;;(remove "*Compile-Log*" winner-boring-buffers)
   )
-(define-key global-map [(shift meta left)] 'windmove-left)
-(define-key global-map [(shift meta right)] 'windmove-right)
-(define-key global-map [(shift meta up)] 'windmove-up)
-(define-key global-map [(shift meta down)] 'windmove-down)
+
+(defun windmove-left-safe ()
+  "Variant of `windmove-left' that dings instead of errors."
+  (interactive)
+  (unless (ignore-errors (windmove-left) t)
+    (message "At leftmost window") ;; (sit-for 1)
+    (ding)))
+(defun windmove-right-safe ()
+  "Variant of `windmove-right' that dings instead of errors."
+  (interactive)
+  (unless (ignore-errors (windmove-right) t)
+    (message "At rightmost window") ;; (sit-for 1)
+    (ding)))
+(defun windmove-up-safe ()
+  "Variant of `windmove-up' that dings instead of errors."
+  (interactive)
+  (unless (ignore-errors (windmove-up) t)
+    (message "At topmost window") ;; (sit-for 1)
+    (ding)))
+(defun windmove-down-safe ()
+  "Variant of `windmove-down' that dings instead of errors."
+  (interactive)
+  (unless (ignore-errors (windmove-down) t)
+    (message "At bottommost window") ;; (sit-for 1)
+    (ding)))
+
+(define-key global-map [(shift meta left)] 'windmove-left-safe)
+(define-key global-map [(shift meta right)] 'windmove-right-safe)
+(define-key global-map [(shift meta up)] 'windmove-up-safe)
+(define-key global-map [(shift meta down)] 'windmove-down-safe)
 
 ;; Start Emacs Server
 ;; C-x # runs the command `server-edit' to complete an emacsclient edit.
