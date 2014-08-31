@@ -2472,9 +2472,12 @@ functions, and some types.  It also provides indentation that is
   (unless (minibufferp)
     (when (cc-derived-mode-p major-mode)
       (just-one-space))))
-(global-set-key [(control k)] 'kill-and-join-forward)
+;; TODO: Disabled because it inserts an annoying extra space when editing
+;; (global-set-key [(control k)] 'kill-and-join-forward)
+(global-set-key [(control k)] 'kill-line)
 (when (fboundp 'icicle-yank-pop-commands)
   (global-set-key [(meta y)] 'icicle-yank-pop-commands))
+
 (when nil
   ;; Interactively insert items from kill-ring:
   ;; M-y and C-y work as usual.  You can also use C-r like in a
