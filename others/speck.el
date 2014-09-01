@@ -1,10 +1,16 @@
-;;; speck.el --- minor mode for spell checking
+;;; speck.el --- minor mode for spell checking    -*- coding: utf-8; -*-
 
 ;; Copyright (C) 2006, 2007, 2008, 2009, 2010 Martin Rudalics
 
-;; Time-stamp: "2010-05-25 14:09:47 martin"
+;; Time-stamp: "2014-08-30 15:30:34 york"
 ;; Author: Martin Rudalics <rudalics@gmx.at>
 ;; Keywords: spell checking
+;; Version: 2014.08.30
+
+;; Contributors:
+;; Frank Fischer <frank.fischer@mathematik.tu-chemnitz.de>
+;; Andrei Chițu <andrei.chitu1@gmail.com>
+;; York Zhao <gtdplatform@gmail.com>
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,11 +31,34 @@
 ;; in Emacs windows.  Invoke the command `speck-mode' to toggle specking
 ;; of all windows showing the current buffer.
 
+;; Change Log:
+;; 2014/08/30 York Zhao
+;;     Add support to allow binding a lisp function to a "replace key" in
+;;     `speck-replace-keys' and/or `speck-replace-map', so that one can define a
+;;     function to do more hacking. For instance, one can define a function, and
+;;     bind it to the ESC key in `speck-replace-keys' and/or
+;;     `speck-replace-map', to decide whether to accept the speck correction, by
+;;     returning non-nil, or reject it, by returning nil. One use case is that
+;;     in Evil, a Vim emulation in Emacs, one can allow ESC to accept a speck
+;;     correction only in insert state.
+;; 2014/04/16 York Zhao
+;;     Fix whitespace, replace TABs with spaces.
+;; 2013/12/30 York Zhao
+;;     Require the `cl-lib', instead of `cl'
+;; 2013/05/19 Andrei Chițu
+;;     bugfix: bugfix: in `speck-windows' check that `window' is non-nil before specking it
+;;     bugfix: keep case of dictionary names in `speck-hunspell-dictionary-alist'
+;; 2013/02/03 Frank Fischer
+;;     Add LIMIT to `looking-back' in `speck-auto-correct-after-change'.
+;;     Set `speck-auto-correct-after-change' to nil.
+
 ;; _____________________________________________________________________________
-;;                                                                              
-;;;			       General options					
+;;
+;;;                            General options
 ;; _____________________________________________________________________________
-;;                                                                              
+;;
+(require 'cl-lib)
+
 (defgroup speck nil
   "Another interface to Aspell, Hunspell and Ispell."
   :version "23.1"
@@ -80,6 +109,7 @@
   (and (stringp speck-ispell-program)
        (file-executable-p speck-ispell-program)))
 
+
 (defcustom speck-engine
   (cond
    ((speck-hunspell-executable-p) 'Hunspell)
@@ -96,9 +126,9 @@ Hunspell or Ispell or make sure that Emacs can find that program.
 
 Don't set this to `Invalid' yourself - it will break Speck."
   :type '(choice (const :tag "Invalid" nil)
-		 (const Aspell)
-		 (const Hunspell)
-		 (const Ispell))
+                 (const Aspell)
+                 (const Hunspell)
+                 (const Ispell))
   :group 'speck)
 
 (defcustom speck-iso-639-1-alist
@@ -119,9 +149,9 @@ Otherwise Speck will display the first two characters of the
 dictionary name.  This list is not needed for the Aspell
 interface."
   :type '(repeat
-	  (cons :format "%v\n"
-		(string :format " %v" :size 2)
-		(string :format " %v" :size 20)))
+          (cons :format "%v\n"
+                (string :format " %v" :size 2)
+                (string :format " %v" :size 20)))
   :group 'speck)
 
 (defcustom speck-delay 0.5
@@ -152,8 +182,8 @@ Choices are:
 
  always .... always speck chunk-at-point."
   :type '(choice (const :tag "Never" nil)
-		 (const :tag "Commands" commands)
-		 (const :tag "Always" t))
+                 (const :tag "Commands" commands)
+                 (const :tag "Always" t))
   :group 'speck)
 
 (defcustom speck-chunk-at-point-commands
@@ -180,9 +210,9 @@ The preferred way to set this option is by adding
 
 to a major mode's hook."
   :type '(choice (const :tag "Any" nil)
-		 (const :tag "Comments" 'comments)
-		 (const :tag "Strings" 'strings)
-		 (const :tag "Comments or Strings" t))
+                 (const :tag "Comments" 'comments)
+                 (const :tag "Strings" 'strings)
+                 (const :tag "Comments or Strings" t))
   :group 'speck)
 
 (defcustom speck-face-inhibit-list nil
@@ -200,7 +230,7 @@ major mode hook.  The following code asserts that in
      '(lambda ()
         (set (make-local-variable 'speck-syntactic) t)
         (set (make-local-variable 'speck-face-inhibit-list)
-	      '(font-lock-string-face font-lock-constant-face))))"
+              '(font-lock-string-face font-lock-constant-face))))"
   :type '(repeat face)
   :group 'speck)
 
@@ -241,8 +271,8 @@ newlines, regardless of what the current `syntax-table' says
 about them.  If the given choice can't be applied, the standard
 inheritance mechanism is used."
   :type '(choice (const :tag "Off" nil)
-		 (const :tag "Line" line)
-		 (const :tag "White" white))
+                 (const :tag "Line" line)
+                 (const :tag "White" white))
   :group 'speck)
 
 (defcustom speck-replace-query nil
@@ -263,8 +293,8 @@ Options are:
 
  after .... after replaced text"
   :type '(choice (const :tag "Before" before)
-		 (const :tag "Within" within)
-		 (const :tag "After" after))
+                 (const :tag "Within" within)
+                 (const :tag "After" after))
   :group 'speck)
 
 (defcustom speck-lighter t
@@ -476,14 +506,14 @@ removes the entry from `format-alist' but doesn't remove the line
 and the corresponding annotations from the file until you
 explicitly save the buffer."
   :type '(choice (const :tag "None" nil)
-		 (const :tag "End of file" eof)
-		 (const :tag "Standard" t))
+                 (const :tag "End of file" eof)
+                 (const :tag "Standard" t))
   :set #'(lambda (symbol value)
-	   (set-default symbol value)
-	   (setq format-alist
-		 (delete speck-multi-format-alist-entry format-alist))
-	   (when value
-	     (add-to-list 'format-alist speck-multi-format-alist-entry)))
+           (set-default symbol value)
+           (setq format-alist
+                 (delete speck-multi-format-alist-entry format-alist))
+           (when value
+             (add-to-list 'format-alist speck-multi-format-alist-entry)))
   :group 'speck)
 
 (defcustom speck-dictionary-names-alist nil
@@ -494,9 +524,9 @@ by entering the associated integer as prefix argument.
 Do not set up an association for zero or a negative value here
 since these are not handled correctly."
   :type '(repeat
-	  (cons :format "%v\n"
-		(integer :format "%v" :size 2)
-		(string :tag "Dictionary Name:" :format "  %t  %v\n" :size 5)))
+          (cons :format "%v\n"
+                (integer :format "%v" :size 2)
+                (string :tag "Dictionary Name:" :format "  %t  %v\n" :size 5)))
   :group 'speck)
 
 (defcustom speck-auto-correct-case nil
@@ -518,9 +548,9 @@ Options are:
 
 See also `speck-auto-correct-minimum-length'."
   :type '(choice (const :tag "Never" nil)
-		 (const :tag "Two" two)
-		 (const :tag "One" one)
-		 (const :tag "Always" t))
+                 (const :tag "Two" two)
+                 (const :tag "One" one)
+                 (const :tag "Always" t))
   :group 'speck)
 
 (defcustom speck-auto-correct-minimum-length 3
@@ -539,15 +569,15 @@ value means don't check text displayed with that face.  A regexp
 means don't check text when the beginning of the line where the
 text appears matches that regular expression."
   :type '(choice (const :tag "Never" nil)
-		 (face :face "Face" font-lock-comment-face)
-		 (regexp :tag "Regexp" "[>}|]"))
+                 (face :face "Face" font-lock-comment-face)
+                 (regexp :tag "Regexp" "[>}|]"))
   :group 'speck)
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				    Faces					
+;;
+;;;                                 Faces
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defgroup speck-faces nil
   "Faces."
   :group 'speck)
@@ -601,10 +631,10 @@ doublets."
   :group 'speck)
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				Aspell group					
+;;
+;;;                             Aspell group
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defcustom speck-aspell-home-dir nil
   "Directory where personal word lists reside.
 Default uses the default proposed by Aspell.  File means you have
@@ -614,8 +644,8 @@ lists reside."
   ;; directory of the file it's checking (doesn't work here and can't be
   ;; tested).
   :type '(choice (const :tag "Default" nil)
-		 (file :tag "File"))
-  ;; 		 (const :tag "Current Directory" t))
+                 (file :tag "File"))
+  ;;             (const :tag "Current Directory" t))
   :group 'speck-aspell)
 
 (defcustom speck-personal-dictionary-file nil
@@ -628,7 +658,7 @@ dictionaries it seems better to leave this option alone.
 Otherwise Aspell won't be able to add a word to the word list
 corresponding to the respective dictionary."
   :type '(choice (const :tag "Default" nil)
-		 (file :tag "File"))
+                 (file :tag "File"))
   :group 'speck-aspell)
 
 (defvar speck-aspell-dictionary-directory
@@ -675,48 +705,48 @@ corresponding to the respective dictionary."
   "Return alist with known aliases for Aspell's dictionaries."
   (when speck-aspell-dictionary-directory
     (let ((alias-files (file-expand-wildcards
-			(concat speck-aspell-dictionary-directory "/*.alias")))
-	  aliases)
+                        (concat speck-aspell-dictionary-directory "/*.alias")))
+          aliases)
       (dolist (alias-file alias-files aliases)
-	(with-temp-buffer
-	  (insert-file-contents alias-file)
-	  (when (re-search-forward "^add \\([^.]+\\)\\.multi" nil t)
-	    (let* ((alias (file-name-sans-extension
-			   (file-name-nondirectory alias-file)))
-		   (name (match-string-no-properties 1))
-		   (entry (assoc name aliases)))
-	      (if entry
-		  (setcdr entry (cons alias (cdr entry)))
-		(setq aliases (cons (cons name (list alias)) aliases))))))))))
+        (with-temp-buffer
+          (insert-file-contents alias-file)
+          (when (re-search-forward "^add \\([^.]+\\)\\.multi" nil t)
+            (let* ((alias (file-name-sans-extension
+                           (file-name-nondirectory alias-file)))
+                   (name (match-string-no-properties 1))
+                   (entry (assoc name aliases)))
+              (if entry
+                  (setcdr entry (cons alias (cdr entry)))
+                (setq aliases (cons (cons name (list alias)) aliases))))))))))
 
 (defun speck-aspell-charset (name)
   "Return Aspell's coding system (aka charset)."
   (setq name (if (string-match "\\(^[a-zA-Z]+\\)[_-]" name)
-		 (match-string-no-properties 1 name)
-	       name))
+                 (match-string-no-properties 1 name)
+               name))
   (let ((data-file (concat speck-aspell-data-directory "/" name ".dat")))
     (when (file-exists-p data-file)
       (with-temp-buffer
-	(insert-file-contents data-file)
-	(goto-char (point-min))
-	(when (re-search-forward "^charset " nil t)
-	  (let ((charset (buffer-substring (match-end 0) (line-end-position))))
-	    (when (string-match "\\(iso\\)\\([^-].*\\)$" charset)
-	      ;; iso... should become iso-...
-	      (setq charset
-		    (concat
-		     (match-string-no-properties 1 charset) "-"
-		     (match-string-no-properties 2 charset))))
-	    (intern charset)))))))
+        (insert-file-contents data-file)
+        (goto-char (point-min))
+        (when (re-search-forward "^charset " nil t)
+          (let ((charset (buffer-substring (match-end 0) (line-end-position))))
+            (when (string-match "\\(iso\\)\\([^-].*\\)$" charset)
+              ;; iso... should become iso-...
+              (setq charset
+                    (concat
+                     (match-string-no-properties 1 charset) "-"
+                     (match-string-no-properties 2 charset))))
+            (intern charset)))))))
 
 (defun speck-aspell-dictionary-names-and-aliases ()
   "Return names of all installed Aspell dictionaries with aliases."
   (let ((aliases (speck-aspell-aliases))
-	names)
+        names)
     (dolist (name speck-aspell-dictionary-names)
       (setq names
-	    (cons (list name (cdr (assoc name aliases)))
-		  names)))
+            (cons (list name (cdr (assoc name aliases)))
+                  names)))
     ;; could sort that here
     (nreverse names)))
 
@@ -736,21 +766,21 @@ provided by Aspell.
 In addition to the name of the dictionary we display also its
 known aliases (in parentheses)."
   :type `(radio
-	  :indent 2
-	  ,@(mapcar
-	     (lambda (name)
-	       (list 'const
-		     :format
-		     (concat
-		      "%v"
-		      (when (nth 1 name)
-			(let ((aliases (car (nth 1 name))))
-			  (dolist (alias (cdr (nth 1 name)) aliases)
-			    (setq aliases (concat aliases ", " alias)))
-			  (concat "  (" aliases ")")))
-		      "\n")
-		     (car name)))
-	     (speck-aspell-dictionary-names-and-aliases)))
+          :indent 2
+          ,@(mapcar
+             (lambda (name)
+               (list 'const
+                     :format
+                     (concat
+                      "%v"
+                      (when (nth 1 name)
+                        (let ((aliases (car (nth 1 name))))
+                          (dolist (alias (cdr (nth 1 name)) aliases)
+                            (setq aliases (concat aliases ", " alias)))
+                          (concat "  (" aliases ")")))
+                      "\n")
+                     (car name)))
+             (speck-aspell-dictionary-names-and-aliases)))
   :group 'speck-aspell)
 
 (defun speck-aspell-languages ()
@@ -758,16 +788,16 @@ known aliases (in parentheses)."
   (when (speck-aspell-executable-p)
     (let (language languages)
       (with-temp-buffer
-	;; Aspell returns this list sorted alphabetically.
-	(call-process speck-aspell-program nil t nil "dicts")
-	(goto-char (point-min))
-	(while (not (eobp))
-	  ;; The first two letters constitute the language code.
-	  (setq language (buffer-substring-no-properties
-			  (point) (+ (point) 2)))
-	  (unless (member language languages)
-	    (push language languages))
-	  (forward-line)))
+        ;; Aspell returns this list sorted alphabetically.
+        (call-process speck-aspell-program nil t nil "dicts")
+        (goto-char (point-min))
+        (while (not (eobp))
+          ;; The first two letters constitute the language code.
+          (setq language (buffer-substring-no-properties
+                          (point) (+ (point) 2)))
+          (unless (member language languages)
+            (push language languages))
+          (forward-line)))
       (nreverse languages))))
 
 (defun speck-aspell-language-options ()
@@ -776,11 +806,11 @@ known aliases (in parentheses)."
     (nreverse
      (dolist (language (speck-aspell-languages) options)
        (push (list
-	      language
-	      (speck-aspell-charset language)
-	      nil
-	      (when (string-match "^de" language) t))
-	     options)))))
+              language
+              (speck-aspell-charset language)
+              nil
+              (when (string-match "^de" language) t))
+             options)))))
 
 (defcustom speck-aspell-language-options (speck-aspell-language-options)
   "Aspell language options.
@@ -805,23 +835,23 @@ by Speck.
 Specifying a value of \"None\" \(nil) for \(2--4) means do not
 pass a value for this option to Aspell."
   :type '(repeat
-	  (list :tag "" :format "%v"
-		(string :tag "Language" :format "%t: %v\n" :size 2)
-		(choice :tag "Coding System" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" nil)
-			(coding-system :tag "Coding System" :size 10 :value utf-8)
-			;; Leave this in: it might be useful when a user changes
-			;; this option and installs a new dictionary later.
-			(const :tag "Aspell" t))
-		(choice :tag "Minimum Word Length" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" :format "%t" nil)
-			(integer :tag "Length" :format "%t: %v " :size 2))
-		(choice :tag "Run-together Words" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" :format "%t" nil)
-			(integer :tag "Maximum Number" :format "Number: %v " :size 2)
-			(const :tag "Unlimited" :format "%t" t))
-		(repeat :tag "Extra Arguments"
-			(string :format "%v\n" :size 40))))
+          (list :tag "" :format "%v"
+                (string :tag "Language" :format "%t: %v\n" :size 2)
+                (choice :tag "Coding System" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" nil)
+                        (coding-system :tag "Coding System" :size 10 :value utf-8)
+                        ;; Leave this in: it might be useful when a user changes
+                        ;; this option and installs a new dictionary later.
+                        (const :tag "Aspell" t))
+                (choice :tag "Minimum Word Length" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" :format "%t" nil)
+                        (integer :tag "Length" :format "%t: %v " :size 2))
+                (choice :tag "Run-together Words" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" :format "%t" nil)
+                        (integer :tag "Maximum Number" :format "Number: %v " :size 2)
+                        (const :tag "Unlimited" :format "%t" t))
+                (repeat :tag "Extra Arguments"
+                        (string :format "%v\n" :size 40))))
   :group 'speck-aspell)
 
 (defcustom speck-aspell-coding-system nil
@@ -832,7 +862,7 @@ override those settings.  If communication with Aspell appears
 broken and the version of Aspell is 0.60 setting this to `utf-8'
 might help."
   :type '(choice (cons :tag "None" nil)
-		 (coding-system :tag "Coding System" utf-8))
+                 (coding-system :tag "Coding System" utf-8))
   :group 'speck-aspell)
 
 (defcustom speck-aspell-minimum-word-length nil
@@ -841,7 +871,7 @@ might help."
 `speck-aspell-language-options'.  Specifying a value here will
 override those settings."
   :type '(choice (const :tag "None" nil)
-		 (integer :tag "Length" :format "%t: %v " :size 2))
+                 (integer :tag "Length" :format "%t: %v " :size 2))
   :group 'speck-aspell)
 
 (defcustom speck-aspell-maximum-run-together nil
@@ -850,8 +880,8 @@ override those settings."
 `speck-aspell-language-options'.  Specifying a value here will
 override those settings."
   :type '(choice (const :tag "None" :format "%t" nil)
-		 (integer :tag "Maximum Number" :format "Number: %v " :size 2)
-		 (const :tag "Unlimited" :format "%t" t))
+                 (integer :tag "Maximum Number" :format "Number: %v " :size 2)
+                 (const :tag "Unlimited" :format "%t" t))
   :group 'speck-aspell)
 
 (defcustom speck-aspell-extra-arguments nil
@@ -869,31 +899,31 @@ process.  On slow systems `Ultra' is recommended.  With Aspell
 0.60 the method `Fast' is identical to `Ultra'.  You have to
 \(re-)activate `speck-mode' for this option to take effect."
   :type '(choice (const :tag "None" nil)
-		 (const :tag "Ultra" "ultra")
-		 (const :tag "Fast" "fast")
-		 (const :tag "Normal" "normal")
-		 (const :tag "Slow" "slow")
-		 (const :tag "Bad Spellers" "bad-spellers"))
+                 (const :tag "Ultra" "ultra")
+                 (const :tag "Fast" "fast")
+                 (const :tag "Normal" "normal")
+                 (const :tag "Slow" "slow")
+                 (const :tag "Bad Spellers" "bad-spellers"))
   :group 'speck-aspell)
 
 ;; IIUC this is only provided by Aspell.
 (defcustom speck-filter-mode 'URL
   "Speck filter mode.
 Probably supported by Aspell only."
-  :type '(choice 
-	  (const None)
-	  (const URL)
-	  (const Email)
-	  (const SGML)
-	  (const TeX))
+  :type '(choice
+          (const None)
+          (const URL)
+          (const Email)
+          (const SGML)
+          (const TeX))
   :group 'speck-aspell)
 (make-variable-buffer-local 'speck-filter-mode)
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			    Hunspell group					
+;;
+;;;                         Hunspell group
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defsubst speck-hunspell-binary-directory ()
   "Return directory component of `speck-hunspell-program'."
   (and speck-hunspell-program
@@ -906,44 +936,46 @@ This should specify the absolute name of the directory where the
 Hunspell dictionaries reside.  The default value is the directory where
 the Hunspell executable resides."
   :type '(choice (const :tag "Invalid" nil)
-		 (file :tag "File"))
+                 (file :tag "File"))
   :group 'speck-hunspell)
 
 (defun speck-hunspell-dictionary-alist ()
   "Return alist of language codes and names of installed Hunspell dictionaries."
   (cond
    ((and speck-hunspell-library-directory
-	 (file-exists-p speck-hunspell-library-directory)
-	 (let ((names (directory-files
-		       speck-hunspell-library-directory nil "\\.dic$"))
-	       alist aname)
-	   (dolist (name names)
-	     (setq aname (downcase (file-name-sans-extension name)))
-	     (setq alist
-		   (cons (or (rassoc aname speck-iso-639-1-alist)
-			     (cons (substring aname 0 2) aname))
-			 alist)))
-	   (nreverse alist))))
+         (file-exists-p speck-hunspell-library-directory)
+         (let ((names (directory-files
+                       speck-hunspell-library-directory nil "\\.dic$"))
+               alist aname lower-aname)
+           (dolist (name names)
+             (setq aname (file-name-sans-extension name)
+		   lower-aname (downcase aname))
+             (setq alist
+                   (cons (or (rassoc lower-aname speck-iso-639-1-alist)
+                             (cons (substring lower-aname 0 2) aname))
+                         alist)))
+           (nreverse alist))))
    ((and (speck-hunspell-binary-directory)
-	 (file-exists-p (speck-hunspell-binary-directory)))
+         (file-exists-p (speck-hunspell-binary-directory)))
     (let ((files (directory-files (speck-hunspell-binary-directory) t))
-	  alist aname)
+          alist aname lower-aname)
       (dolist (file files)
-	(when (and (not (string-equal file "."))
-		   (not (string-equal file ".."))
-		   (file-directory-p file))
-	  (let ((names (directory-files file nil "\\.dic")))
-	    (dolist (name names)
-	      (setq aname (downcase (file-name-sans-extension name)))
-	      (setq alist
-		    (cons (or (rassoc aname speck-iso-639-1-alist)
-			      (cons (substring aname 0 2) aname))
-			  alist))))))
+        (when (and (not (string-equal file "."))
+                   (not (string-equal file ".."))
+                   (file-directory-p file))
+          (let ((names (directory-files file nil "\\.dic")))
+            (dolist (name names)
+              (setq aname (file-name-sans-extension name)
+                    lower-aname (downcase aname))
+              (setq alist
+                    (cons (or (rassoc lower-aname speck-iso-639-1-alist)
+                              (cons (substring lower-aname 0 2) aname))
+                          alist))))))
       (nreverse alist)))))
 
 (defcustom speck-hunspell-dictionary-alist (speck-hunspell-dictionary-alist)
   "List associating a language code with Hunspell dictionary names.
-This list is generated from the option `speck-iso-639-1-alist'
+KThis list is generated from the option `speck-iso-639-1-alist'
 and the dictionaries found in `speck-hunspell-library-directory'.
 
 If this list contains two or more entries for the same language
@@ -952,10 +984,10 @@ Hence, you should make sure that every language code occurs once
 only in this list.  The preferred way to do this is by adding a
 corresponding association to `speck-iso-639-1-alist'."
   :type '(repeat
-	  (cons :format "%v\n"
-		;; We could use a symbol here.
-		(string :format " %v" :size 2)
-		(string :format " %v" :size 20)))
+          (cons :format "%v\n"
+                ;; We could use a symbol here.
+                (string :format " %v" :size 2)
+                (string :format " %v" :size 20)))
   :group 'speck-hunspell)
 
 (defun speck-hunspell-dictionary-names ()
@@ -986,11 +1018,11 @@ variable.  The default valus is the first dictionary found in
 `speck-hunspell-dictionary-alist' (which is usually wrong when
 you have installed several dictionaries)."
   :type `(radio
-	  :indent 2
-	  ,@(mapcar
-	     (lambda (entry)
-	       (list 'const :format "%v \n" (car entry)))
-	     speck-hunspell-dictionary-alist))
+          :indent 2
+          ,@(mapcar
+             (lambda (entry)
+               (list 'const :format "%v \n" (car entry)))
+             speck-hunspell-dictionary-alist))
   :group 'speck-hunspell)
 
 (defcustom speck-hunspell-language-options
@@ -1000,7 +1032,7 @@ you have installed several dictionaries)."
     ("fr" iso-8859-1 nil nil)
     ("it" iso-8859-1 nil nil)
     ("ru" koi8-r nil nil))
-    "Hunspell language options.
+  "Hunspell language options.
 Its value should be a list of five entries for each language.
 
 \(1) The two letter ISO-639-1 language code.  For a
@@ -1022,20 +1054,20 @@ Its value should be a list of five entries for each language.
 Specifying \"None\" \(nil) for \(2--4) means do not pass a value
 for this option to Hunspell."
   :type '(repeat
-	  (list :tag "" :format "%v"
-		(string :tag "Language" :format "%t: %v\n" :size 2)
-		(choice :tag "Coding System" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" nil)
-			(coding-system :tag "Coding System" :size 10 :value utf-8)
-			;; Leave this in: it might be useful when a user changes
-			;; this option and installs a new dictionary later.
-			(const :tag "Hunspell" t))
-		(choice :tag "Minimum Word Length" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" :format "%t" nil)
-			(integer :tag "Length" :format "%t: %v " :size 2))
-		(boolean :tag "Run-together Words")
-		(repeat :tag "Extra Arguments"
-			(string :format "%v\n" :size 40))))
+          (list :tag "" :format "%v"
+                (string :tag "Language" :format "%t: %v\n" :size 2)
+                (choice :tag "Coding System" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" nil)
+                        (coding-system :tag "Coding System" :size 10 :value utf-8)
+                        ;; Leave this in: it might be useful when a user changes
+                        ;; this option and installs a new dictionary later.
+                        (const :tag "Hunspell" t))
+                (choice :tag "Minimum Word Length" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" :format "%t" nil)
+                        (integer :tag "Length" :format "%t: %v " :size 2))
+                (boolean :tag "Run-together Words")
+                (repeat :tag "Extra Arguments"
+                        (string :format "%v\n" :size 40))))
   :group 'speck-hunspell)
 
 (defcustom speck-hunspell-coding-system nil
@@ -1044,7 +1076,7 @@ for this option to Hunspell."
 `speck-hunspell-language-options'.  Specifying a value here will
 override those settings."
   :type '(choice (cons :tag "None" nil)
-		 (coding-system :tag "Coding System" utf-8))
+                 (coding-system :tag "Coding System" utf-8))
   :group 'speck-hunspell)
 
 (defcustom speck-hunspell-minimum-word-length nil
@@ -1053,7 +1085,7 @@ override those settings."
 `speck-hunspell-language-options'.  Specifying a value here will
 override those settings."
   :type '(choice (const :tag "None" nil)
-		 (integer :tag "Length" :format "%t: %v " :size 2))
+                 (integer :tag "Length" :format "%t: %v " :size 2))
   :group 'speck-hunspell)
 
 (defcustom speck-hunspell-run-together nil
@@ -1076,68 +1108,68 @@ customizing `speck-hunspell-language-options'."
   "Start Hunspell process."
   ;; `speck-dictionary' is the language code.
   (let* ((code-name (symbol-name speck-dictionary))
-	 (dictionary-name
-	  (cdr (assoc code-name speck-hunspell-dictionary-alist)))
-	 (options (assoc code-name speck-hunspell-language-options))
-	 (coding-system (nth 1 options))
-	 (minimum-word-length
-	  ;; A value specified in `speck-hunspell-minimum-word-length' overrides
-	  ;; anything else.
-	  (or speck-hunspell-minimum-word-length
-	      (when options (nth 2 options))))
-	 (run-together
-	  ;; A value specified in `speck-hunspell-maximum-run-together' overrides
-	  ;; anything else.
-	  (or speck-hunspell-run-together (nth 3 options)))
-	 (extra-arguments (nth 4 options))
-	 (arguments
-	  (append
-	   ;; Pipe option and `speck-hunspell-library-directory'
-	   ;; concatenated with `dictionary-name' - Hunspell wants it
-	   ;; this way.
-	   (list "-a" "-d" (concat speck-hunspell-library-directory dictionary-name))
-	   ;; Minimum word length.
-	   (when minimum-word-length
-	     (list (concat "-W" (number-to-string minimum-word-length))))
-	   ;; Run-together words.
-	   (if run-together (list "-C") (list "-B"))
-	   extra-arguments
-	   speck-hunspell-extra-arguments))
-	 (process (rassoc arguments speck-process-argument-alist))
-	 ;; An options should exist when a process exists, but be paranoid here.
-	 (options (when process (assq (car process) speck-process-buffer-alist)))
-	 process-connection-type)
+         (dictionary-name
+          (cdr (assoc code-name speck-hunspell-dictionary-alist)))
+         (options (assoc code-name speck-hunspell-language-options))
+         (coding-system (nth 1 options))
+         (minimum-word-length
+          ;; A value specified in `speck-hunspell-minimum-word-length' overrides
+          ;; anything else.
+          (or speck-hunspell-minimum-word-length
+              (when options (nth 2 options))))
+         (run-together
+          ;; A value specified in `speck-hunspell-maximum-run-together' overrides
+          ;; anything else.
+          (or speck-hunspell-run-together (nth 3 options)))
+         (extra-arguments (nth 4 options))
+         (arguments
+          (append
+           ;; Pipe option and `speck-hunspell-library-directory'
+           ;; concatenated with `dictionary-name' - Hunspell wants it
+           ;; this way.
+           (list "-a" "-d" (concat speck-hunspell-library-directory dictionary-name))
+           ;; Minimum word length.
+           (when minimum-word-length
+             (list (concat "-W" (number-to-string minimum-word-length))))
+           ;; Run-together words.
+           (if run-together (list "-C") (list "-B"))
+           extra-arguments
+           speck-hunspell-extra-arguments))
+         (process (rassoc arguments speck-process-argument-alist))
+         ;; An options should exist when a process exists, but be paranoid here.
+         (options (when process (assq (car process) speck-process-buffer-alist)))
+         process-connection-type)
     (if (and process options)
-	;; Process and options exist.
-	(progn
-	  (setq speck-process (car process))
-	  (setcdr options (cons (current-buffer) (cdr options))))
+        ;; Process and options exist.
+        (progn
+          (setq speck-process (car process))
+          (setcdr options (cons (current-buffer) (cdr options))))
       ;; No suitable process exists.
       (setq speck-process
-	    (let ((default-directory speck-hunspell-library-directory))
-	      (apply 'start-process "speck"
-		     (generate-new-buffer " *speck-process-buffer*")
-		     speck-hunspell-program arguments)))
+            (let ((default-directory speck-hunspell-library-directory))
+              (apply 'start-process "speck"
+                     (generate-new-buffer " *speck-process-buffer*")
+                     speck-hunspell-program arguments)))
       (setq speck-process-buffer-alist
-	    (cons (cons speck-process (list (current-buffer)))
-		  speck-process-buffer-alist))
+            (cons (cons speck-process (list (current-buffer)))
+                  speck-process-buffer-alist))
       (setq speck-process-argument-alist
-	    (cons (cons speck-process arguments)
-		  speck-process-argument-alist))
+            (cons (cons speck-process arguments)
+                  speck-process-argument-alist))
       (setq speck-process-dictionary-alist
-	    ;; Buffer local.
-	    (cons (cons speck-process speck-dictionary)
-		  speck-process-dictionary-alist))
+            ;; Buffer local.
+            (cons (cons speck-process speck-dictionary)
+                  speck-process-dictionary-alist))
       (set-process-query-on-exit-flag speck-process nil)
       (when coding-system
-	(set-process-coding-system
-	 speck-process coding-system coding-system)))))
+        (set-process-coding-system
+         speck-process coding-system coding-system)))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			    Ispell group					
+;;
+;;;                         Ispell group
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-ispell-vv ()
   "Return Ispell settings.
 Return value is a list with the following elements:
@@ -1146,16 +1178,16 @@ Return value is a list with the following elements:
 1 ... default dictionary"
   (condition-case nil
       (when (speck-ispell-executable-p)
-	(with-temp-buffer
-	  (let (v1 v2)
-	    (call-process speck-ispell-program nil t nil "-vv")
-	    (goto-char (point-min))
-	    (when (re-search-forward "LIBDIR = \\\"\\([^ \t\n]*\\)\\\"" nil t)
-	      (setq v1 (buffer-substring (match-beginning 1) (match-end 1))))
-	    (goto-char (point-min))
-	    (when (re-search-forward "DEFHASH = \\\"\\([^ \t\n]*\\)\\.hash?\\\"" nil t)
-	      (setq v2 (buffer-substring (match-beginning 1) (match-end 1))))
-	    (list v1 v2))))
+        (with-temp-buffer
+          (let (v1 v2)
+            (call-process speck-ispell-program nil t nil "-vv")
+            (goto-char (point-min))
+            (when (re-search-forward "LIBDIR = \\\"\\([^ \t\n]*\\)\\\"" nil t)
+              (setq v1 (buffer-substring (match-beginning 1) (match-end 1))))
+            (goto-char (point-min))
+            (when (re-search-forward "DEFHASH = \\\"\\([^ \t\n]*\\)\\.hash?\\\"" nil t)
+              (setq v2 (buffer-substring (match-beginning 1) (match-end 1))))
+            (list v1 v2))))
     (error nil)))
 
 (defvar speck-ispell-vv (speck-ispell-vv)
@@ -1163,16 +1195,16 @@ Return value is a list with the following elements:
 
 (defcustom speck-ispell-library-directory
   (or (and speck-ispell-vv (nth 0 speck-ispell-vv)
-	   (file-directory-p (nth 0 speck-ispell-vv))
-	   (nth 0 speck-ispell-vv))
+           (file-directory-p (nth 0 speck-ispell-vv))
+           (nth 0 speck-ispell-vv))
       (and speck-ispell-program
-	   (file-directory-p (file-name-directory speck-ispell-program))
-	   (file-name-directory speck-ispell-program)))
+           (file-directory-p (file-name-directory speck-ispell-program))
+           (file-name-directory speck-ispell-program)))
   "Name of Ispell library directory.
 This should name the directory where the Ispell dictionaries
 reside."
   :type '(choice (const :tag "Invalid" nil)
-		 (file :tag "File"))
+                 (file :tag "File"))
   :group 'speck-ispell)
 
 (defsubst speck-ispell-binary-directory ()
@@ -1184,34 +1216,34 @@ reside."
   "Return alist of language codes and names of installed Ispell dictionaries."
   (cond
    ((and speck-ispell-library-directory
-	 (file-exists-p speck-ispell-library-directory)
-	 (let ((names (directory-files
-		       speck-ispell-library-directory nil "\\.hash?$"))
-	       alist aname)
-	   (dolist (name names)
-	     (setq aname (downcase (file-name-sans-extension name)))
-	     (setq alist
-		   (cons (or (rassoc aname speck-iso-639-1-alist)
-			     (cons (substring aname 0 2) aname))
-			 alist)))
-	   (nreverse alist))))
+         (file-exists-p speck-ispell-library-directory)
+         (let ((names (directory-files
+                       speck-ispell-library-directory nil "\\.hash?$"))
+               alist aname)
+           (dolist (name names)
+             (setq aname (downcase (file-name-sans-extension name)))
+             (setq alist
+                   (cons (or (rassoc aname speck-iso-639-1-alist)
+                             (cons (substring aname 0 2) aname))
+                         alist)))
+           (nreverse alist))))
    ((and (speck-ispell-binary-directory)
-	 (file-exists-p (speck-ispell-binary-directory)))
+         (file-exists-p (speck-ispell-binary-directory)))
     ;; This assumes that speck-ispell-binary-directory contains directories with
     ;; each directory containing the respective .hash files.
     (let ((files (directory-files (speck-ispell-binary-directory) t))
-	  alist aname)
+          alist aname)
       (dolist (file files)
-	(when (and (not (string-equal file "."))
-		   (not (string-equal file ".."))
-		   (file-directory-p file))
-	  (let ((names (directory-files file nil "\\.hash?$")))
-	    (dolist (name names)
-	      (setq aname (downcase (file-name-sans-extension name)))
-	      (setq alist
-		    (cons (or (rassoc aname speck-iso-639-1-alist)
-			      (cons (substring aname 0 2) aname))
-			  alist))))))
+        (when (and (not (string-equal file "."))
+                   (not (string-equal file ".."))
+                   (file-directory-p file))
+          (let ((names (directory-files file nil "\\.hash?$")))
+            (dolist (name names)
+              (setq aname (downcase (file-name-sans-extension name)))
+              (setq alist
+                    (cons (or (rassoc aname speck-iso-639-1-alist)
+                              (cons (substring aname 0 2) aname))
+                          alist))))))
       (nreverse alist)))))
 
 ;; We could introduce an update function for this.  This would be useful
@@ -1227,10 +1259,10 @@ Hence, you should make sure that every language code occurs once
 only in this list.  The preferred way to do this is by adding a
 corresponding association to `speck-iso-639-1-alist'."
   :type '(repeat
-	  (cons :format "%v\n"
-		;; We could use a symbol here.
-		(string :format " %v" :size 2)
-		(string :format " %v" :size 20)))
+          (cons :format "%v\n"
+                ;; We could use a symbol here.
+                (string :format " %v" :size 2)
+                (string :format " %v" :size 20)))
   :group 'speck-ispell)
 
 (defun speck-ispell-dictionary-names ()
@@ -1258,11 +1290,11 @@ The default dictionary is used for specking a buffer unless you
 specify another dictionary via `speck-buffer' or a file-local
 variable."
   :type `(radio
-	  :indent 2
-	  ,@(mapcar
-	     (lambda (entry)
-	       (list 'const :format "%v \n" (car entry)))
-	     speck-ispell-dictionary-alist))
+          :indent 2
+          ,@(mapcar
+             (lambda (entry)
+               (list 'const :format "%v \n" (car entry)))
+             speck-ispell-dictionary-alist))
   :group 'speck-ispell)
 
 (defcustom speck-ispell-language-options
@@ -1271,7 +1303,7 @@ variable."
     ("fr" iso-8859-1 nil nil)
     ("it" iso-8859-1 nil nil)
     ("ru" koi8-r nil nil))
-    "Ispell language options.
+  "Ispell language options.
 Its value should be a list of five entries for each language.
 
 \(1) The two letter ISO-639-1 language code.  For a
@@ -1293,20 +1325,20 @@ Its value should be a list of five entries for each language.
 Specifying \"None\" \(nil) for \(2--4) means do not pass a value
 for this option to Ispell."
   :type '(repeat
-	  (list :tag "" :format "%v"
-		(string :tag "Language" :format "%t: %v\n" :size 2)
-		(choice :tag "Coding System" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" nil)
-			(coding-system :tag "Coding System" :size 10 :value utf-8)
-			;; Leave this in: it might be useful when a user changes
-			;; this option and installs a new dictionary later.
-			(const :tag "Ispell" t))
-		(choice :tag "Minimum Word Length" :format "%t: %[Choice%] %v\n"
-			(const :tag "None" :format "%t" nil)
-			(integer :tag "Length" :format "%t: %v " :size 2))
-		(boolean :tag "Run-together Words")
-		(repeat :tag "Extra Arguments"
-			(string :format "%v\n" :size 40))))
+          (list :tag "" :format "%v"
+                (string :tag "Language" :format "%t: %v\n" :size 2)
+                (choice :tag "Coding System" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" nil)
+                        (coding-system :tag "Coding System" :size 10 :value utf-8)
+                        ;; Leave this in: it might be useful when a user changes
+                        ;; this option and installs a new dictionary later.
+                        (const :tag "Ispell" t))
+                (choice :tag "Minimum Word Length" :format "%t: %[Choice%] %v\n"
+                        (const :tag "None" :format "%t" nil)
+                        (integer :tag "Length" :format "%t: %v " :size 2))
+                (boolean :tag "Run-together Words")
+                (repeat :tag "Extra Arguments"
+                        (string :format "%v\n" :size 40))))
   :group 'speck-ispell)
 
 (defcustom speck-ispell-coding-system nil
@@ -1315,7 +1347,7 @@ for this option to Ispell."
 `speck-ispell-language-options'.  Specifying a value here will
 override those settings."
   :type '(choice (cons :tag "None" nil)
-		 (coding-system :tag "Coding System" utf-8))
+                 (coding-system :tag "Coding System" utf-8))
   :group 'speck-ispell)
 
 (defcustom speck-ispell-minimum-word-length nil
@@ -1324,7 +1356,7 @@ override those settings."
 `speck-ispell-language-options'.  Specifying a value here will
 override those settings."
   :type '(choice (const :tag "None" nil)
-		 (integer :tag "Length" :format "%t: %v " :size 2))
+                 (integer :tag "Length" :format "%t: %v " :size 2))
   :group 'speck-ispell)
 
 (defcustom speck-ispell-run-together nil
@@ -1347,72 +1379,72 @@ customizing `speck-ispell-language-options'."
   "Start Ispell process."
   ;; `speck-dictionary' is the language code.
   (let* ((code-name (symbol-name speck-dictionary))
-	 (dictionary-name
-	  (cdr (assoc code-name speck-ispell-dictionary-alist)))
-	 (options (assoc code-name speck-ispell-language-options))
-	 (coding-system (nth 1 options))
-	 (minimum-word-length
-	  ;; A value specified in `speck-ispell-minimum-word-length' overrides
-	  ;; anything else.
-	  (or speck-ispell-minimum-word-length
-	      (when options (nth 2 options))))
-	 (run-together
-	  ;; A value specified in `speck-ispell-maximum-run-together' overrides
-	  ;; anything else.
-	  (or speck-ispell-run-together (nth 3 options)))
-	 (extra-arguments (nth 4 options))
-	 (arguments
-	  (append
-	   ;; Pipe option and dictionary-name.
-	   (list "-a" "-d" dictionary-name)
-	   ;; Minimum word length.
-	   (when minimum-word-length
-	     (list (concat "-W" (number-to-string minimum-word-length))))
-	   ;; Run-together words.
-	   (if run-together (list "-C") (list "-B"))
-	   extra-arguments
-	   speck-ispell-extra-arguments))
-	 (process (rassoc arguments speck-process-argument-alist))
-	 ;; An options should exist when a process exists, but be paranoid here.
-	 (options (when process (assq (car process) speck-process-buffer-alist)))
-	 process-connection-type)
+         (dictionary-name
+          (cdr (assoc code-name speck-ispell-dictionary-alist)))
+         (options (assoc code-name speck-ispell-language-options))
+         (coding-system (nth 1 options))
+         (minimum-word-length
+          ;; A value specified in `speck-ispell-minimum-word-length' overrides
+          ;; anything else.
+          (or speck-ispell-minimum-word-length
+              (when options (nth 2 options))))
+         (run-together
+          ;; A value specified in `speck-ispell-maximum-run-together' overrides
+          ;; anything else.
+          (or speck-ispell-run-together (nth 3 options)))
+         (extra-arguments (nth 4 options))
+         (arguments
+          (append
+           ;; Pipe option and dictionary-name.
+           (list "-a" "-d" dictionary-name)
+           ;; Minimum word length.
+           (when minimum-word-length
+             (list (concat "-W" (number-to-string minimum-word-length))))
+           ;; Run-together words.
+           (if run-together (list "-C") (list "-B"))
+           extra-arguments
+           speck-ispell-extra-arguments))
+         (process (rassoc arguments speck-process-argument-alist))
+         ;; An options should exist when a process exists, but be paranoid here.
+         (options (when process (assq (car process) speck-process-buffer-alist)))
+         process-connection-type)
     (if (and process options)
-	;; Process and options exist.
-	(progn
-	  (setq speck-process (car process))
-	  (setcdr options (cons (current-buffer) (cdr options))))
+        ;; Process and options exist.
+        (progn
+          (setq speck-process (car process))
+          (setcdr options (cons (current-buffer) (cdr options))))
       ;; No suitable process exists.
-     (let ((default-directory
-	     (if (and (file-directory-p default-directory)
-		      (file-readable-p default-directory))
-		 ;; Defend against bad `default-directory'.
-		 default-directory
-	       (expand-file-name "~/"))))
-       (setq speck-process
-	     (apply 'start-process "speck"
-		    (generate-new-buffer " *speck-process-buffer*")
-		    speck-ispell-program arguments)))
+      (let ((default-directory
+              (if (and (file-directory-p default-directory)
+                       (file-readable-p default-directory))
+                  ;; Defend against bad `default-directory'.
+                  default-directory
+                (expand-file-name "~/"))))
+        (setq speck-process
+              (apply 'start-process "speck"
+                     (generate-new-buffer " *speck-process-buffer*")
+                     speck-ispell-program arguments)))
       (setq speck-process-buffer-alist
-	    (cons (cons speck-process (list (current-buffer)))
-		  speck-process-buffer-alist))
+            (cons (cons speck-process (list (current-buffer)))
+                  speck-process-buffer-alist))
       (setq speck-process-argument-alist
-	    (cons (cons speck-process arguments)
-		  speck-process-argument-alist))
+            (cons (cons speck-process arguments)
+                  speck-process-argument-alist))
       (setq speck-process-dictionary-alist
-	    ;; Buffer local.
-	    (cons (cons speck-process speck-dictionary)
-		  speck-process-dictionary-alist))
+            ;; Buffer local.
+            (cons (cons speck-process speck-dictionary)
+                  speck-process-dictionary-alist))
       (set-process-query-on-exit-flag speck-process nil)
       (when coding-system
-	(set-process-coding-system
-	 speck-process coding-system coding-system)))))
+        (set-process-coding-system
+         speck-process coding-system coding-system)))))
 
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				Files						
+;;
+;;;                             Files
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defgroup speck-save nil
   "Saving speck specifications to visited file."
   :group 'speck)
@@ -1432,8 +1464,8 @@ this option override any existing settings for
 `speck-multi-style', `speck-save-words' and
 `speck-save-options'."
   :type '(choice (const :tag "Never" nil)
-		 (const :tag "Ask" ask)
-		 (const :tag "Silently" t))
+                 (const :tag "Ask" ask)
+                 (const :tag "Silently" t))
   :group 'speck-save)
 ;; `speck-save-ask' may be consulted during `insert-file-contents' and should
 ;; survive any subsequent `kill-all-local-variables'.  It will also continue to
@@ -1475,10 +1507,10 @@ be asked."
   (or (eq speck-save-confirmed t)
       (and (eq speck-save-ask t) (setq speck-save-confirmed t))
       (and speck-save-ask buffer-file-name
-	   speck-save-confirmed ; hence it's yet 'undecided
-	   (setq speck-save-confirmed
-		 (y-or-n-p
-		  "Process buffer-local specifications for specking? ")))))
+           speck-save-confirmed ; hence it's yet 'undecided
+           (setq speck-save-confirmed
+                 (y-or-n-p
+                  "Process buffer-local specifications for specking? ")))))
 
 (defcustom speck-save-permanent 'adjust
   "Whether specification changes are permanent.
@@ -1500,8 +1532,8 @@ option is `adjust' undoable buffer changes following the affected
 Local section are adjusted properly so that undoing them later is
 done correctly."
   :type '(choice (const nil)
-		 (const t)
-		 (const :tag "Adjust" adjust))
+                 (const t)
+                 (const :tag "Adjust" adjust))
   :group 'speck-save)
 ;; Must be buffer-local.
 (make-variable-buffer-local 'speck-save-permanent)
@@ -1608,10 +1640,10 @@ is ignored when `speck-save-ask' equals \"Never\" \(nil)."
 (make-variable-buffer-local 'speck-kill-buffer-query)
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			       Keymaps						
+;;
+;;;                            Keymaps
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-make-mode-map (map)
   "Assign `speck-mode-keys' to MAP which should be `speck-mode-map'."
   (when (boundp 'speck-mode-keys)
@@ -1672,15 +1704,15 @@ is ignored when `speck-save-ask' equals \"Never\" \(nil)."
      :tag "Set option                 " :format "  %t %v\n\n"
      :value '[(control meta ?\?)] :size 20))
   :set #'(lambda (symbol value)
-	   (when (and (boundp 'speck-mode-map)
-		      ;; Paranoia.
-		      (boundp 'speck-mode-keys)
-		      (listp speck-mode-keys))
-	     (dolist (key speck-mode-keys)
-	       (define-key speck-mode-map key nil)))
-	   (set-default symbol value)
-	   (when (boundp 'speck-mode-map)
-	     (speck-make-mode-map speck-mode-map)))
+           (when (and (boundp 'speck-mode-map)
+                      ;; Paranoia.
+                      (boundp 'speck-mode-keys)
+                      (listp speck-mode-keys))
+             (dolist (key speck-mode-keys)
+               (define-key speck-mode-map key nil)))
+           (set-default symbol value)
+           (when (boundp 'speck-mode-map)
+             (speck-make-mode-map speck-mode-map)))
   :group 'speck)
 
 (defun speck-assign-keys-to-map (map keys)
@@ -1706,24 +1738,24 @@ MAP must be a keymap, KEYS a list of (command . key) pairs."
   :type
   '(repeat
     (cons :format "%v"
-	  (choice :format " %[Command%] %v"
-		  (const :format "help           " help)
-		  (const :format "accept         " accept)
-		  (const :format "accept-and-quit" accept-and-quit)
-		  (const :format "reject-and-quit" reject-and-quit)
-		  (const :format "forward        " forward)
-		  (const :format "backward       " backward))
-	  (key-sequence :format "    Key: %v\n\n" :size 20)))
+          (choice :format " %[Command%] %v"
+                  (const :format "help           " help)
+                  (const :format "accept         " accept)
+                  (const :format "accept-and-quit" accept-and-quit)
+                  (const :format "reject-and-quit" reject-and-quit)
+                  (const :format "forward        " forward)
+                  (const :format "backward       " backward))
+          (key-sequence :format "    Key: %v\n\n" :size 20)))
   :set #'(lambda (symbol value)
-	   ;; Don't "and" these.
-	   (when (boundp 'speck-replace-map)
-	     (when (boundp 'speck-replace-keys)
-	       (dolist (pair speck-replace-keys)
-		 ;; Reset them all.
-		 (define-key speck-replace-map (cdr pair) nil))))
-	   (set-default symbol value)
-	   (when (boundp 'speck-replace-map)
-	     (speck-assign-keys-to-map speck-replace-map speck-replace-keys)))
+           ;; Don't "and" these.
+           (when (boundp 'speck-replace-map)
+             (when (boundp 'speck-replace-keys)
+               (dolist (pair speck-replace-keys)
+                 ;; Reset them all.
+                 (define-key speck-replace-map (cdr pair) nil))))
+           (set-default symbol value)
+           (when (boundp 'speck-replace-map)
+             (speck-assign-keys-to-map speck-replace-map speck-replace-keys)))
   :group 'speck)
 
 (defvar speck-replace-map
@@ -1753,26 +1785,26 @@ MAP must be a keymap, KEYS a list of (command . key) pairs."
   :type
   '(repeat
     (cons :format "%v"
-	  (choice :format " %[Command%] %v"
-		  (const :format "help           " help)
-		  (const :format "accept         " accept)
-		  (const :format "accept-and-quit" accept-and-quit)
-		  (const :format "reject         " reject)
-		  (const :format "reject-and-quit" reject-and-quit)
-		  (const :format "forward        " forward)
-		  (const :format "backward       " backward))
-	  (key-sequence :format "    Key: %v\n\n" :size 20)))
+          (choice :format " %[Command%] %v"
+                  (const :format "help           " help)
+                  (const :format "accept         " accept)
+                  (const :format "accept-and-quit" accept-and-quit)
+                  (const :format "reject         " reject)
+                  (const :format "reject-and-quit" reject-and-quit)
+                  (const :format "forward        " forward)
+                  (const :format "backward       " backward))
+          (key-sequence :format "    Key: %v\n\n" :size 20)))
   :set #'(lambda (symbol value)
-	   ;; Don't "and" these.
-	   (when (boundp 'speck-replace-query-map)
-	     (when (boundp 'speck-replace-query-keys)
-	       (dolist (pair speck-replace-query-keys)
-		 ;; Reset them all.
-		 (define-key speck-replace-query-map (cdr pair) nil))))
-	   (set-default symbol value)
-	   (when (boundp 'speck-replace-query-map)
-	     (speck-assign-keys-to-map
-	      speck-replace-query-map speck-replace-query-keys)))
+           ;; Don't "and" these.
+           (when (boundp 'speck-replace-query-map)
+             (when (boundp 'speck-replace-query-keys)
+               (dolist (pair speck-replace-query-keys)
+                 ;; Reset them all.
+                 (define-key speck-replace-query-map (cdr pair) nil))))
+           (set-default symbol value)
+           (when (boundp 'speck-replace-query-map)
+             (speck-assign-keys-to-map
+              speck-replace-query-map speck-replace-query-keys)))
   :group 'speck)
 
 (defvar speck-replace-query-map
@@ -1782,81 +1814,78 @@ MAP must be a keymap, KEYS a list of (command . key) pairs."
   "Dummy keymap for `speck-replace-query'.")
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			       Macros						
+;;
+;;;                            Macros
 ;; _____________________________________________________________________________
-;; 										
-(eval-when-compile
-  (require 'cl)
+;;
+(defmacro with-buffer-unmodified (&rest body)
+  "Eval BODY, preserving the current buffer's modified state."
+  (declare (debug t))
+  (let ((modified (make-symbol "modified")))
+    `(let ((,modified (buffer-modified-p)))
+       (unwind-protect
+           (progn ,@body)
+         (unless ,modified
+           (restore-buffer-modified-p nil))))))
 
-  (defmacro with-buffer-unmodified (&rest body)
-    "Eval BODY, preserving the current buffer's modified state."
-    (declare (debug t))
-    (let ((modified (make-symbol "modified")))
-      `(let ((,modified (buffer-modified-p)))
-	 (unwind-protect
-	     (progn ,@body)
-	   (unless ,modified
-	     (restore-buffer-modified-p nil))))))
-
-  ;; Save match-data maybe .............
-  (defmacro with-buffer-prepared-for-specking (&rest body)
-    "Execute BODY in current buffer, overriding several variables.
+;; Save match-data maybe .............
+(defmacro with-buffer-prepared-for-specking (&rest body)
+  "Execute BODY in current buffer, overriding several variables.
 Preserves the `buffer-modified-p' state of the current buffer."
-    (declare (debug t))
-    `(with-buffer-unmodified
-      (let ((buffer-undo-list t)
-	    (inhibit-read-only t)
-	    (inhibit-point-motion-hooks t)
-	    (inhibit-modification-hooks t)
-	    (inhibit-field-text-motion t)
-	    first-change-hook after-change-functions
-	    deactivate-mark buffer-file-name buffer-file-truename)
-	,@body))))
+  (declare (debug t))
+  `(with-buffer-unmodified
+    (let ((buffer-undo-list t)
+          (inhibit-read-only t)
+          (inhibit-point-motion-hooks t)
+          (inhibit-modification-hooks t)
+          (inhibit-field-text-motion t)
+          first-change-hook after-change-functions
+          deactivate-mark buffer-file-name buffer-file-truename)
+      ,@body)))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				Mode						
+;;
+;;;                             Mode
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-lighter ()
   "Speck lighter."
   (let (prop prop-insert)
     (propertize
      (if (stringp speck-mode-line-specking)
-	 speck-mode-line-specking
+         speck-mode-line-specking
        (setq prop (or (speck-get-speck (window-point))
-		      speck-dictionary))
+                      speck-dictionary))
        (setq prop-insert
-	     (cond
-	      ((and speck-multi-pre-property
-		    (not (eq speck-multi-pre-property t)))
-	       ;; We've just set up a new dictionary and there's no such
-	       ;; character yet.  Let's be imaginative.
-	       speck-multi-pre-property)
-	      ((and speck-self-insert-inherit
-		    (not (eobp))
-		    (not (memq (char-after) '(?\  ?\n ?\t)))
-		    (or (bobp)
-			(and (eq speck-self-insert-inherit 'line)
-			     (eq (char-before) ?\n))
-			(and (eq speck-self-insert-inherit 'white)
-			     (memq (char-before) '(?\  ?\n ?\t)))))
-	       (speck-get-speck (point)))
-	      ((not (bobp))
-	       ;; People should not change the stickyness of the speck
-	       ;; property.
-	       (or (speck-get-speck (1- (point)))
-		   speck-dictionary))))
+             (cond
+              ((and speck-multi-pre-property
+                    (not (eq speck-multi-pre-property t)))
+               ;; We've just set up a new dictionary and there's no such
+               ;; character yet.  Let's be imaginative.
+               speck-multi-pre-property)
+              ((and speck-self-insert-inherit
+                    (not (eobp))
+                    (not (memq (char-after) '(?\  ?\n ?\t)))
+                    (or (bobp)
+                        (and (eq speck-self-insert-inherit 'line)
+                             (eq (char-before) ?\n))
+                        (and (eq speck-self-insert-inherit 'white)
+                             (memq (char-before) '(?\  ?\n ?\t)))))
+               (speck-get-speck (point)))
+              ((not (bobp))
+               ;; People should not change the stickyness of the speck
+               ;; property.
+               (or (speck-get-speck (1- (point)))
+                   speck-dictionary))))
        (concat
-	" ["
-	(if (and prop-insert (not (eq prop prop-insert)))
-	    (symbol-name prop-insert)
-	  (symbol-name (or prop speck-dictionary)))
-	"]"))
+        " ["
+        (if (and prop-insert (not (eq prop prop-insert)))
+            (symbol-name prop-insert)
+          (symbol-name (or prop speck-dictionary)))
+        "]"))
      'face (if (memq (selected-window) speck-window-list)
-	       'speck-mode-line-specking
-	     'speck-mode-line-specked))))
+               'speck-mode-line-specking
+             'speck-mode-line-specked))))
 
 ;;;###autoload
 (define-minor-mode speck-mode
@@ -1891,114 +1920,114 @@ entry from `speck-dictionary-names-alist'."
     ;; With no argument toggle `speck-mode' respecting any existing
     ;; value for (file-)local dictionary.
     (if speck-mode
-	(speck-mode 0)
+        (speck-mode 0)
       (speck-mode 1)))
    ((not (numberp arg))
     ;; With non-numeric argument prompt for dictionary, this may
     ;; override any existing (file-)local value for `speck-dictionary'.
     (let* ((dictionary-names
-	    (cond
-	     ((eq speck-engine 'Aspell)
-	      speck-aspell-dictionary-names)
-	     ((eq speck-engine 'Hunspell)
-	      speck-hunspell-dictionary-names)
-	     ((eq speck-engine 'Ispell)
-	      speck-ispell-dictionary-names)))
-	   (dictionary-names-history
-	    (cond
-	     ((eq speck-engine 'Aspell)
-	      speck-aspell-dictionary-names-history)
-	     ((eq speck-engine 'Hunspell)
-	      speck-hunspell-dictionary-names-history)
-	     ((eq speck-engine 'Ispell)
-	      speck-ispell-dictionary-names-history)))
-	   (dictionary-name
-	    (completing-read
-	     (concat
-	      "Enter " (when speck-mode "new ")
-	      "dictionary name (RET for default, SPC to complete): ")
-	     (mapcar 'list (cons "default" dictionary-names))
-	     nil t nil 'dictionary-names-history))
-	   (default-dictionary-name
-	     (cond
-	      ((eq speck-engine 'Aspell)
-	       speck-aspell-default-dictionary-name)
-	      ((eq speck-engine 'Hunspell)
-	       speck-hunspell-default-dictionary-name)
-	      ((eq speck-engine 'Ispell)
-	       speck-ispell-default-dictionary-name)))
-	   dictionary)
+            (cond
+             ((eq speck-engine 'Aspell)
+              speck-aspell-dictionary-names)
+             ((eq speck-engine 'Hunspell)
+              speck-hunspell-dictionary-names)
+             ((eq speck-engine 'Ispell)
+              speck-ispell-dictionary-names)))
+           (dictionary-names-history
+            (cond
+             ((eq speck-engine 'Aspell)
+              speck-aspell-dictionary-names-history)
+             ((eq speck-engine 'Hunspell)
+              speck-hunspell-dictionary-names-history)
+             ((eq speck-engine 'Ispell)
+              speck-ispell-dictionary-names-history)))
+           (dictionary-name
+            (completing-read
+             (concat
+              "Enter " (when speck-mode "new ")
+              "dictionary name (RET for default, SPC to complete): ")
+             (mapcar 'list (cons "default" dictionary-names))
+             nil t nil 'dictionary-names-history))
+           (default-dictionary-name
+             (cond
+              ((eq speck-engine 'Aspell)
+               speck-aspell-default-dictionary-name)
+              ((eq speck-engine 'Hunspell)
+               speck-hunspell-default-dictionary-name)
+              ((eq speck-engine 'Ispell)
+               speck-ispell-default-dictionary-name)))
+           dictionary)
       (if (or (string-equal dictionary-name "")
-	      (string-equal dictionary-name "default"))
-	  (setq dictionary (intern default-dictionary-name))
-	(setq dictionary (intern dictionary-name)))
+              (string-equal dictionary-name "default"))
+          (setq dictionary (intern default-dictionary-name))
+        (setq dictionary (intern dictionary-name)))
       (if speck-mode
-	  ;; Retain all local variable values but that of
-	  ;; `speck-dictionary'.
-	  (if (eq dictionary speck-dictionary)
-	      (message "Dictionary \"%s\" unchanged" dictionary)
-	    (speck-deactivate)
-	    ;; Hunspell occasionally hangs when restarting, maybe the
-	    ;; following helps.
-	    (sleep-for 0.1)
-	    (setq speck-dictionary dictionary)
-	    (let ((speck-retain-local-variables t))
-	      (speck-mode)))
-	(setq speck-dictionary dictionary)
-	(speck-mode))))
+          ;; Retain all local variable values but that of
+          ;; `speck-dictionary'.
+          (if (eq dictionary speck-dictionary)
+              (message "Dictionary \"%s\" unchanged" dictionary)
+            (speck-deactivate)
+            ;; Hunspell occasionally hangs when restarting, maybe the
+            ;; following helps.
+            (sleep-for 0.1)
+            (setq speck-dictionary dictionary)
+            (let ((speck-retain-local-variables t))
+              (speck-mode)))
+        (setq speck-dictionary dictionary)
+        (speck-mode))))
    ((zerop arg)
     ;; With argument zero force use of default dictionary (may override
     ;; file-local value).
     (let ((dictionary
-	   (cond
-	    ((eq speck-engine 'Aspell)
-	     (intern speck-aspell-default-dictionary-name))
-	    ((eq speck-engine 'Hunspell)
-	     (intern speck-hunspell-default-dictionary-name))
-	    ((eq speck-engine 'Ispell)
-	     (intern speck-ispell-default-dictionary-name)))))
+           (cond
+            ((eq speck-engine 'Aspell)
+             (intern speck-aspell-default-dictionary-name))
+            ((eq speck-engine 'Hunspell)
+             (intern speck-hunspell-default-dictionary-name))
+            ((eq speck-engine 'Ispell)
+             (intern speck-ispell-default-dictionary-name)))))
       (if speck-mode
-	  (if (eq dictionary speck-dictionary)
-	      (message "Dictionary \"%s\" unchanged" dictionary)
-	    (speck-deactivate)
-	    ;; Hunspell occasionally hangs when restarting, maybe the
-	    ;; following helps.
-	    (sleep-for 0.1)
-	    (setq speck-dictionary dictionary)
-	    (let ((speck-retain-local-variables t))
-	      (speck-mode)))
-	(setq speck-dictionary dictionary)
-	(speck-mode))))
+          (if (eq dictionary speck-dictionary)
+              (message "Dictionary \"%s\" unchanged" dictionary)
+            (speck-deactivate)
+            ;; Hunspell occasionally hangs when restarting, maybe the
+            ;; following helps.
+            (sleep-for 0.1)
+            (setq speck-dictionary dictionary)
+            (let ((speck-retain-local-variables t))
+              (speck-mode)))
+        (setq speck-dictionary dictionary)
+        (speck-mode))))
    (t
     ;; With any other argument try association list (may override
     ;; file-local value).
     (let* ((association (assoc arg speck-dictionary-names-alist))
-	   (dictionary-name (when association (cdr association)))
-	   (dictionary (when dictionary-name (intern dictionary-name)))
-	   (dictionary-names
-	    (cond
-	     ((eq speck-engine 'Aspell)
-	      speck-aspell-dictionary-names)
-	     ((eq speck-engine 'Hunspell)
-	      speck-hunspell-dictionary-names)
-	     ((eq speck-engine 'Ispell)
-	      speck-ispell-dictionary-names))))
+           (dictionary-name (when association (cdr association)))
+           (dictionary (when dictionary-name (intern dictionary-name)))
+           (dictionary-names
+            (cond
+             ((eq speck-engine 'Aspell)
+              speck-aspell-dictionary-names)
+             ((eq speck-engine 'Hunspell)
+              speck-hunspell-dictionary-names)
+             ((eq speck-engine 'Ispell)
+              speck-ispell-dictionary-names))))
       (if dictionary
-	  (if (member dictionary-name dictionary-names)
-	      (if speck-mode
-		  (if (eq dictionary speck-dictionary)
-		      (message "Dictionary \"%s\" unchanged" dictionary)
-		    (speck-deactivate)
-		    ;; Hunspell occasionally hangs when restarting, maybe the
-		    ;; following helps.
-		    (sleep-for 0.1)
-		    (setq speck-dictionary dictionary)
-		    (let ((speck-retain-local-variables t))
-		      (speck-mode)))
-		(setq speck-dictionary dictionary)
-		(speck-mode))
-	    (message "No such dictionary \"%s\"" dictionary-name))
-	(message "No association for argument \"%s\"" arg))))))
+          (if (member dictionary-name dictionary-names)
+              (if speck-mode
+                  (if (eq dictionary speck-dictionary)
+                      (message "Dictionary \"%s\" unchanged" dictionary)
+                    (speck-deactivate)
+                    ;; Hunspell occasionally hangs when restarting, maybe the
+                    ;; following helps.
+                    (sleep-for 0.1)
+                    (setq speck-dictionary dictionary)
+                    (let ((speck-retain-local-variables t))
+                      (speck-mode)))
+                (setq speck-dictionary dictionary)
+                (speck-mode))
+            (message "No such dictionary \"%s\"" dictionary-name))
+        (message "No association for argument \"%s\"" arg))))))
 
 (defsubst speck-remove-all-properties ()
   (with-buffer-prepared-for-specking
@@ -2016,7 +2045,7 @@ entry from `speck-dictionary-names-alist'."
     ;; avoid that user gets asked twice.
     (unless (local-variable-p 'speck-save-confirmed)
       (setq speck-save-confirmed
-	    (or (eq speck-save-ask t) 'undecided)))
+            (or (eq speck-save-ask t) 'undecided)))
     ;; Install hash-table first `speck-restore-words' may fill it
     ;; afterwards.
     (setq speck-hash-table nil)
@@ -2026,20 +2055,20 @@ entry from `speck-dictionary-names-alist'."
     (when (and speck-save-ask speck-save-options) (speck-restore-options)))
   (unless (and (local-variable-p 'speck-dictionary) speck-dictionary)
     (setq speck-dictionary
-	  (or  speck-saved-dictionary				; Saved value.
-	       (cond
-		((eq speck-engine 'Aspell)
-		 (intern speck-aspell-default-dictionary-name))
-		((eq speck-engine 'Hunspell)
-		 (intern speck-hunspell-default-dictionary-name))
-		((eq speck-engine 'Ispell)
-		 (intern speck-ispell-default-dictionary-name))))))
+          (or  speck-saved-dictionary                           ; Saved value.
+               (cond
+                ((eq speck-engine 'Aspell)
+                 (intern speck-aspell-default-dictionary-name))
+                ((eq speck-engine 'Hunspell)
+                 (intern speck-hunspell-default-dictionary-name))
+                ((eq speck-engine 'Ispell)
+                 (intern speck-ispell-default-dictionary-name))))))
   (setq speck-saved-dictionary speck-dictionary)
   ;; Filter-mode.
   (unless (local-variable-p 'speck-filter-mode)
     (setq speck-filter-mode
-	  ;; Use either saved or default value. 
-	  (or speck-saved-filter-mode speck-filter-mode)))
+          ;; Use either saved or default value.
+          (or speck-saved-filter-mode speck-filter-mode)))
   (setq speck-saved-filter-mode speck-filter-mode)
   (when (eq speck-filter-mode 'Email)
     ;; Set up regions in Email mode.
@@ -2048,7 +2077,7 @@ entry from `speck-dictionary-names-alist'."
   (if (eq speck-filter-mode 'None)
       (message "Using dictionary \"%s\"" speck-dictionary)
     (message "Using dictionary \"%s\" and filter \"%s\""
-	     speck-dictionary speck-filter-mode))
+             speck-dictionary speck-filter-mode))
 
   (setq speck-process-dictionary-alist nil)
   ;; Start `speck-process'.
@@ -2059,7 +2088,7 @@ entry from `speck-dictionary-names-alist'."
   ;; Add current buffer to speck's buffers.
   (unless (memq (current-buffer) speck-buffer-list)
     (setq speck-buffer-list
-	  (cons (current-buffer) speck-buffer-list)))
+          (cons (current-buffer) speck-buffer-list)))
   ;; Add all windows showing current buffer to speck's windows.
   (dolist (window (get-buffer-window-list (current-buffer) t))
     (speck-window-add window))
@@ -2081,7 +2110,7 @@ entry from `speck-dictionary-names-alist'."
   ;; has been idle for `speck-delay' seconds.
   (unless speck-delay-timer
     (setq speck-delay-timer
-	  (run-with-idle-timer speck-delay t 'speck-windows)))
+          (run-with-idle-timer speck-delay t 'speck-windows)))
   ;; Create `speck-pause-timer' - an idle timer called iff Emacs has
   ;; been idle for `speck-pause' seconds.  This timer is activated in
   ;; `speck-windows'.
@@ -2135,38 +2164,38 @@ entry from `speck-dictionary-names-alist'."
   (message "Speck-mode turned off"))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			      utility functions					
+;;
+;;;                           utility functions
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-window-add (window)
   "Add WINDOW to `speck-window-list'."
   (unless (memq window speck-window-list)
     (with-current-buffer (window-buffer window)
       (when speck-mode
-	(setq speck-window-list
-	      (cons window speck-window-list))
-	(force-mode-line-update)))))
+        (setq speck-window-list
+              (cons window speck-window-list))
+        (force-mode-line-update)))))
 
 (defun speck-window-remove (window)
   "Remove WINDOW from `speck-window-list'."
   (setq speck-window-list
-	(delq window speck-window-list))
+        (delq window speck-window-list))
   (force-mode-line-update))
 
 (defun speck-marker-goto ()
   "Go to `speck-marker' and make it nil."
   (when (and (markerp speck-marker) (marker-position speck-marker)
-	     (window-live-p speck-marker-window))
+             (window-live-p speck-marker-window))
     (select-window speck-marker-window)
     (goto-char speck-marker)
     (set-marker speck-marker nil)))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				  overlays					
+;;
+;;;                               overlays
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defvar speck-overlay-map
   (let ((map (make-sparse-keymap)))
     (define-key map [down-mouse-3] 'speck-mouse-popup-menu)
@@ -2183,7 +2212,7 @@ entry from `speck-dictionary-names-alist'."
       ;; No help-echo here since I don't know in advance which key
       ;; `speck-mouse-popup-menu' is bound to.
       (overlay-put overlay 'mouse-face 'speck-mouse))
-      (setq speck-break t)))
+    (setq speck-break t)))
 
 (defun speck-delete-overlays (&optional beg end)
   "Delete all speck overlays overlapping the region."
@@ -2195,7 +2224,7 @@ entry from `speck-dictionary-names-alist'."
     ;; The following is not overl(a)y fast.
     (dolist (overlay (overlays-in beg end))
       (when (overlay-get overlay 'specky)
-	(delete-overlay overlay)))))
+        (delete-overlay overlay)))))
 
 (defun speck-delete-doublet-overlays (&optional beg end)
   "Delete all speck overlays overlapping the region."
@@ -2207,7 +2236,7 @@ entry from `speck-dictionary-names-alist'."
     ;; The following is not overl(a)y fast.
     (dolist (overlay (overlays-in beg end))
       (when (eq (overlay-get overlay 'face) 'speck-doublet)
-	(delete-overlay overlay)))))
+        (delete-overlay overlay)))))
 
 (defun speck-overlay-at-point (&optional at faces)
   "Return speck overlay at point.
@@ -2217,7 +2246,7 @@ if it has a face property in that list."
   (setq at (or at (point)))
   (let ((overlay (cdr (get-char-property-and-overlay at 'specky))))
     (when (or (not faces)
-	      (and overlay (memq (overlay-get overlay 'face) faces)))
+              (and overlay (memq (overlay-get overlay 'face) faces)))
       overlay)))
 
 (defun speck-next-overlay (&optional arg faces)
@@ -2229,19 +2258,19 @@ and only if it has a face property in that list."
     (setq arg (or arg 1))
     (let ((overlay (speck-overlay-at-point nil faces)))
       (unless (and overlay
-		   (or (= arg 1)
-		       (progn
-			 (setq arg (1- arg))
-			 (goto-char (overlay-end overlay))
-			 (setq overlay nil))))
-	(save-restriction
-	  (narrow-to-region (point) (window-end))
-	  (while (and (not overlay) (< (point) (point-max)) (>= arg 0))
-	    (goto-char (next-overlay-change (point)))
-	    (setq overlay (speck-overlay-at-point nil faces))
-	    (when (and overlay (> arg 1))
-	      (setq overlay nil)
-	      (setq arg (1- arg))))))
+                   (or (= arg 1)
+                       (progn
+                         (setq arg (1- arg))
+                         (goto-char (overlay-end overlay))
+                         (setq overlay nil))))
+        (save-restriction
+          (narrow-to-region (point) (window-end))
+          (while (and (not overlay) (< (point) (point-max)) (>= arg 0))
+            (goto-char (next-overlay-change (point)))
+            (setq overlay (speck-overlay-at-point nil faces))
+            (when (and overlay (> arg 1))
+              (setq overlay nil)
+              (setq arg (1- arg))))))
       overlay)))
 
 (defun speck-previous-overlay (&optional arg faces)
@@ -2253,29 +2282,29 @@ and only if it has a face property in that list."
     (setq arg (or arg 1))
     (let ((overlay (speck-overlay-at-point nil faces)))
       (unless (and overlay
-		   (or (< (overlay-start overlay) (point))
-		       (setq overlay nil))
-		   (or (= arg 1)
-		       (progn
-			 (setq arg (1- arg))
-			 (goto-char (overlay-start overlay))
-			 (setq overlay nil))))
-	(save-restriction
-	  (narrow-to-region (window-start) (point))
-	  (while (and (not overlay) (> (point) (point-min)) (>= arg 0))
-	    (goto-char (previous-overlay-change (point)))
-	    (setq overlay (speck-overlay-at-point nil faces))
-	    (when (and overlay (> arg 1))
-	      (setq overlay nil)
-	      (setq arg (1- arg))))))
+                   (or (< (overlay-start overlay) (point))
+                       (setq overlay nil))
+                   (or (= arg 1)
+                       (progn
+                         (setq arg (1- arg))
+                         (goto-char (overlay-start overlay))
+                         (setq overlay nil))))
+        (save-restriction
+          (narrow-to-region (window-start) (point))
+          (while (and (not overlay) (> (point) (point-min)) (>= arg 0))
+            (goto-char (previous-overlay-change (point)))
+            (setq overlay (speck-overlay-at-point nil faces))
+            (when (and overlay (> arg 1))
+              (setq overlay nil)
+              (setq arg (1- arg))))))
       overlay)))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				    hooks					
+;;
+;;;                                 hooks
 ;; _____________________________________________________________________________
-;; 										
-(defvar speck-auto-correct-after-change t)
+;;
+(defvar speck-auto-correct-after-change nil)
 
 (defun speck-put-speck (from to prop)
   "Assign speck property PROP to text from FROM to TO."
@@ -2290,39 +2319,39 @@ and only if it has a face property in that list."
 START, END, and OLD-LEN have the usual meanings."
   (when speck-mode
     (if (> end start)
-	;; Insertion.
-	(with-buffer-prepared-for-specking
-	 (put-text-property start end 'specked 'fresh)
-	 (if speck-multi-post-property
-	     ;; Assign `speck-multi-post-property' to inserted text.
-	     (progn
-	       (speck-kill-buffer-add)
-	       (if (eq speck-multi-post-property 'default)
-		   (remove-text-properties start end '(speck nil))
-		 (put-text-property start end 'speck speck-multi-post-property)))
-	   (let ((prop
-		  ;; Check whether we should inherit speck property from
-		  ;; following character.
-		  (and speck-self-insert-inherit
-		       ;; Inherit for self-insertions only.
-		       (eq this-command 'self-insert-command)
-		       ;; Inherit iff the last command was not a simple
-		       ;; text changing command.
-		       (not (memq last-command
-				  '(self-insert-command
-				    delete-char delete-backward-char
-				    backward-delete-char-untabify transpose-chars)))
-		       ;; There must be a following character ...
-		       (/= end (point-max))
-		       ;; ... and it must not be whitespace.
-		       (not (memq (char-after end) '(?\  ?\n ?\t)))
-		       (or (= start (point-min))
-			   (and (eq speck-self-insert-inherit 'line)
-				(eq (char-before start) ?\n))
-			   (and (eq speck-self-insert-inherit 'white)
-				(memq (char-before start) '(?\  ?\n ?\t))))
-		       (speck-get-speck end))))
-	     (when prop (speck-put-speck start end prop)))))
+        ;; Insertion.
+        (with-buffer-prepared-for-specking
+         (put-text-property start end 'specked 'fresh)
+         (if speck-multi-post-property
+             ;; Assign `speck-multi-post-property' to inserted text.
+             (progn
+               (speck-kill-buffer-add)
+               (if (eq speck-multi-post-property 'default)
+                   (remove-text-properties start end '(speck nil))
+                 (put-text-property start end 'speck speck-multi-post-property)))
+           (let ((prop
+                  ;; Check whether we should inherit speck property from
+                  ;; following character.
+                  (and speck-self-insert-inherit
+                       ;; Inherit for self-insertions only.
+                       (eq this-command 'self-insert-command)
+                       ;; Inherit iff the last command was not a simple
+                       ;; text changing command.
+                       (not (memq last-command
+                                  '(self-insert-command
+                                    delete-char delete-backward-char
+                                    backward-delete-char-untabify transpose-chars)))
+                       ;; There must be a following character ...
+                       (/= end (point-max))
+                       ;; ... and it must not be whitespace.
+                       (not (memq (char-after end) '(?\  ?\n ?\t)))
+                       (or (= start (point-min))
+                           (and (eq speck-self-insert-inherit 'line)
+                                (eq (char-before start) ?\n))
+                           (and (eq speck-self-insert-inherit 'white)
+                                (memq (char-before start) '(?\  ?\n ?\t))))
+                       (speck-get-speck end))))
+             (when prop (speck-put-speck start end prop)))))
       ;; Deletion.
       (setq start (max (1- start) (point-min)))
       (setq end (min (1+ end) (point-max)))
@@ -2387,22 +2416,22 @@ START, END, and OLD-LEN have the usual meanings."
      (save-restriction
        (widen)
        (let (from)
-	 (while (setq from (text-property-any
-			    (point) (point-max) 'specked 'fresh))
-	   (goto-char (next-single-property-change
-		       from 'specked nil (point-max)))
-	   (speck-remove-property from (point)))))))
+         (while (setq from (text-property-any
+                            (point) (point-max) 'specked 'fresh))
+           (goto-char (next-single-property-change
+                       from 'specked nil (point-max)))
+           (speck-remove-property from (point)))))))
   ;; Reset `speck-kill-buffer-query'.
   (when speck-kill-buffer-query ; When non-nil this is buffer-local.
     (setq speck-kill-buffer-query nil)
     (setq speck-kill-buffer-query-list
-	  (delq (current-buffer) speck-kill-buffer-query-list))))
+          (delq (current-buffer) speck-kill-buffer-query-list))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				 hash tables					
+;;
+;;;                              hash tables
 ;; _____________________________________________________________________________
-;; 										
+;;
 
 ;; For each key (which is actually a word rejected by the spell-checking
 ;; process) we store one of the following informations:
@@ -2440,7 +2469,7 @@ START, END, and OLD-LEN have the usual meanings."
     (setq speck-hash-table (make-hash-table :test 'equal)))
   (let ((hash (speck-hash-get word)))
     (when (and (not (eq value 'buffer))
-	       speck-save-ask speck-save-words speck-save-permanent)
+               speck-save-ask speck-save-words speck-save-permanent)
       ;; Make sure a word section is written before buffer is killed.
       (speck-kill-buffer-add))
     (cond
@@ -2461,25 +2490,25 @@ START, END, and OLD-LEN have the usual meanings."
       (speck-save-word word value)))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			     process management					
+;;
+;;;                          process management
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-start-process ()
   (cond
    ((eq speck-engine 'Aspell)
     (if (speck-aspell-executable-p)
-	(speck-aspell-start-process)
+        (speck-aspell-start-process)
       (speck-mode -1)
       (error "Aspell not executable")))
    ((eq speck-engine 'Hunspell)
     (if (speck-hunspell-executable-p)
-	(speck-hunspell-start-process)
+        (speck-hunspell-start-process)
       (speck-mode -1)
       (error "Hunspell not executable")))
    ((eq speck-engine 'Ispell)
     (if (speck-ispell-executable-p)
-	(speck-ispell-start-process)
+        (speck-ispell-start-process)
       (speck-mode -1)
       (error "Ispell not executable")))
    (t
@@ -2491,111 +2520,111 @@ START, END, and OLD-LEN have the usual meanings."
   "Start Aspell process."
   ;; `speck-dictionary' must be a symbol denoting a valid dictionary.
   (let* ((dictionary-name (symbol-name speck-dictionary))
-	 ;; The first two characters are the language code, the
-	 ;; remainder are regions, accents, ...
-	 (entry (assoc (substring dictionary-name 0 2)
-		       speck-aspell-language-options))
-	 (coding-system
-	  ;; A value specified in `speck-aspell-coding-system' overrides
-	  ;; everything else.  Note: Most problems in our communcation
-	  ;; with Aspell will stem from what we set up here.
-	  (or speck-aspell-coding-system
-	      (when entry
-		(if (eq (nth 1 entry) t)
-		    ;; Obtain coding system from Aspell.
-		    (speck-aspell-charset entry)
-		  ;; Obtain coding system from option.
-		  (nth 1 entry)))))
-	 (minimum-word-length
-	  ;; A value specified in `speck-aspell-minimum-word-length'
-	  ;; overrides anything else.
-	  (or speck-aspell-minimum-word-length
-	      (when entry (nth 2 entry))))
-	 (run-together
-	  ;; A value specified in `speck-aspell-maximum-run-together' overrides
-	  ;; anything else.
-	  (or speck-aspell-maximum-run-together
-	      (when entry (nth 3 entry))))
-	 (extra-arguments (when entry (nth 4 entry)))
-	 (arguments
-	  (append
-	   ;; Pipe option and dictionary-name.
-	   (list "-a" "-d" dictionary-name)
-	   ;; Coding system.
-	   (when coding-system
-	     (list (concat "--encoding=" (symbol-name coding-system))))
-	   ;; Minimum word length.
-	   (when minimum-word-length
-	     (list (concat "--ignore=" (number-to-string minimum-word-length))))
-	   ;; Run-together words.
-	   (if run-together (list "-C") (list "-B"))
-	   (when (numberp run-together)
-	     (list (concat "--run-together-limit=" (number-to-string run-together))))
-	   ;; Filter-mode, aspell wants it downcased.
-	   (unless (eq speck-filter-mode 'URL)
-	     (list (concat "--mode=" (downcase (symbol-name speck-filter-mode)))))
+         ;; The first two characters are the language code, the
+         ;; remainder are regions, accents, ...
+         (entry (assoc (substring dictionary-name 0 2)
+                       speck-aspell-language-options))
+         (coding-system
+          ;; A value specified in `speck-aspell-coding-system' overrides
+          ;; everything else.  Note: Most problems in our communcation
+          ;; with Aspell will stem from what we set up here.
+          (or speck-aspell-coding-system
+              (when entry
+                (if (eq (nth 1 entry) t)
+                    ;; Obtain coding system from Aspell.
+                    (speck-aspell-charset entry)
+                  ;; Obtain coding system from option.
+                  (nth 1 entry)))))
+         (minimum-word-length
+          ;; A value specified in `speck-aspell-minimum-word-length'
+          ;; overrides anything else.
+          (or speck-aspell-minimum-word-length
+              (when entry (nth 2 entry))))
+         (run-together
+          ;; A value specified in `speck-aspell-maximum-run-together' overrides
+          ;; anything else.
+          (or speck-aspell-maximum-run-together
+              (when entry (nth 3 entry))))
+         (extra-arguments (when entry (nth 4 entry)))
+         (arguments
+          (append
+           ;; Pipe option and dictionary-name.
+           (list "-a" "-d" dictionary-name)
+           ;; Coding system.
+           (when coding-system
+             (list (concat "--encoding=" (symbol-name coding-system))))
+           ;; Minimum word length.
+           (when minimum-word-length
+             (list (concat "--ignore=" (number-to-string minimum-word-length))))
+           ;; Run-together words.
+           (if run-together (list "-C") (list "-B"))
+           (when (numberp run-together)
+             (list (concat "--run-together-limit=" (number-to-string run-together))))
+           ;; Filter-mode, aspell wants it downcased.
+           (unless (eq speck-filter-mode 'URL)
+             (list (concat "--mode=" (downcase (symbol-name speck-filter-mode)))))
 
-	   ;; The following code doesn't work on my system when multiple
-	   ;; dictionaries are involved, for some strange reason Emacs decides
-	   ;; to set buffer-file-name to nil for the second call and Aspell
-	   ;; seems to get confused.  
-	   ;; 	   (cond
-	   ;; 	    ((and (eq speck-aspell-home-dir t)
-	   ;; 		  (let* ((dir-name
-	   ;; 			  (when buffer-file-name
-	   ;; 			    (directory-file-name
-	   ;; 			     (file-name-directory buffer-file-name)))))
-	   ;; 		    (when dir-name
-	   ;; 		      (list "--home-dir"
-	   ;; 			    (convert-standard-filename dir-name))))))
+           ;; The following code doesn't work on my system when multiple
+           ;; dictionaries are involved, for some strange reason Emacs decides
+           ;; to set buffer-file-name to nil for the second call and Aspell
+           ;; seems to get confused.
+           ;;      (cond
+           ;;       ((and (eq speck-aspell-home-dir t)
+           ;;             (let* ((dir-name
+           ;;                     (when buffer-file-name
+           ;;                       (directory-file-name
+           ;;                        (file-name-directory buffer-file-name)))))
+           ;;               (when dir-name
+           ;;                 (list "--home-dir"
+           ;;                       (convert-standard-filename dir-name))))))
 
-	   ;; Specify directory where personal word lists reside.
-	   (when speck-aspell-home-dir
-	     (list "--home-dir"
-		   (convert-standard-filename speck-aspell-home-dir)))
-	   ;; The name of the personal word list (dictionary file).
-	   (when speck-personal-dictionary-file
-	     (list "--personal" speck-personal-dictionary-file))
-	   ;; The following is the Aspell standard, hence it's commented out.
-	   ;; 	   (list "--personal" (concat dictionary-name ".pws")))
-	   (when speck-aspell-suggestion-mode
-	     (list (concat "--sug-mode=" speck-aspell-suggestion-mode)))
-	   extra-arguments
-	   speck-aspell-extra-arguments))
-	 (process (rassoc arguments speck-process-argument-alist))
-	 ;; An entry should exist when a process exists, but be paranoid here.
-	 (entry (when process (assq (car process) speck-process-buffer-alist)))
-	 process-connection-type)
+           ;; Specify directory where personal word lists reside.
+           (when speck-aspell-home-dir
+             (list "--home-dir"
+                   (convert-standard-filename speck-aspell-home-dir)))
+           ;; The name of the personal word list (dictionary file).
+           (when speck-personal-dictionary-file
+             (list "--personal" speck-personal-dictionary-file))
+           ;; The following is the Aspell standard, hence it's commented out.
+           ;;      (list "--personal" (concat dictionary-name ".pws")))
+           (when speck-aspell-suggestion-mode
+             (list (concat "--sug-mode=" speck-aspell-suggestion-mode)))
+           extra-arguments
+           speck-aspell-extra-arguments))
+         (process (rassoc arguments speck-process-argument-alist))
+         ;; An entry should exist when a process exists, but be paranoid here.
+         (entry (when process (assq (car process) speck-process-buffer-alist)))
+         process-connection-type)
     (if (and process entry)
-	;; Process and entry exist.
-	(progn
-	  (setq speck-process (car process))
-	  (setcdr entry (cons (current-buffer) (cdr entry))))
+        ;; Process and entry exist.
+        (progn
+          (setq speck-process (car process))
+          (setcdr entry (cons (current-buffer) (cdr entry))))
       ;; No suitable process exists.
-     (let ((default-directory
-	     (if (and (file-directory-p default-directory)
-		      (file-readable-p default-directory))
-		 ;; Defend against bad `default-directory'.
-		 default-directory
-	       (expand-file-name "~/"))))
-       (setq speck-process
-	     (apply 'start-process "speck"
-		    (generate-new-buffer " *speck-process-buffer*")
-		    speck-aspell-program arguments)))
+      (let ((default-directory
+              (if (and (file-directory-p default-directory)
+                       (file-readable-p default-directory))
+                  ;; Defend against bad `default-directory'.
+                  default-directory
+                (expand-file-name "~/"))))
+        (setq speck-process
+              (apply 'start-process "speck"
+                     (generate-new-buffer " *speck-process-buffer*")
+                     speck-aspell-program arguments)))
       (setq speck-process-buffer-alist
-	    (cons (cons speck-process (list (current-buffer)))
-		  speck-process-buffer-alist))
+            (cons (cons speck-process (list (current-buffer)))
+                  speck-process-buffer-alist))
       (setq speck-process-argument-alist
-	    (cons (cons speck-process arguments)
-		  speck-process-argument-alist))
+            (cons (cons speck-process arguments)
+                  speck-process-argument-alist))
       (setq speck-process-dictionary-alist
-	    ;; Buffer local.
-	    (cons (cons speck-process speck-dictionary)
-		  speck-process-dictionary-alist))
+            ;; Buffer local.
+            (cons (cons speck-process speck-dictionary)
+                  speck-process-dictionary-alist))
       (set-process-query-on-exit-flag speck-process nil)
       (when coding-system
-	(set-process-coding-system
-	 speck-process coding-system coding-system)))))
+        (set-process-coding-system
+         speck-process coding-system coding-system)))))
 
 (defun speck-delete-process ()
   "Delete any `speck-process' associated with current buffer.
@@ -2604,11 +2633,11 @@ Do not delete such a process if another buffer still needs it."
     (setcdr buffer-entry (delq (current-buffer) (cdr buffer-entry)))
     (unless (cdr buffer-entry)
       (setq speck-process-buffer-alist
-	    (assq-delete-all
-	     (car buffer-entry) speck-process-buffer-alist))
+            (assq-delete-all
+             (car buffer-entry) speck-process-buffer-alist))
       (setq speck-process-argument-alist
-	    (assq-delete-all
-	     (car buffer-entry) speck-process-argument-alist))
+            (assq-delete-all
+             (car buffer-entry) speck-process-argument-alist))
       ;; Kill process-buffer.
       (kill-buffer (process-buffer (car buffer-entry)))
       ;; Likely kill-buffer should have done that already:
@@ -2619,15 +2648,15 @@ Do not delete such a process if another buffer still needs it."
 (defun speck-chunk ()
   "Send a line-like object to `speck-process'."
   (let* ((process speck-process)
-	 (process-buffer (process-buffer speck-process))
-	 (string
-	  (concat "^" (buffer-substring-no-properties
-		       (point-min) (point-max))
-		  "\n"))
-	 (bol (point-min))
-	 (eol (point-max))
-	 (old bol)
-	 at length from to face hash)
+         (process-buffer (process-buffer speck-process))
+         (string
+          (concat "^" (buffer-substring-no-properties
+                       (point-min) (point-max))
+                  "\n"))
+         (bol (point-min))
+         (eol (point-max))
+         (old bol)
+         at length from to face hash)
     (speck-delete-overlays (point-min) (point-max))
     (with-current-buffer process-buffer
       ;; Erasing the buffer does not give any guarantee that process
@@ -2638,113 +2667,113 @@ Do not delete such a process if another buffer still needs it."
       (process-send-string process "!\n")
       (process-send-string process string)
       (while (and (not (speck-stop))
-		  (progn
-		    (accept-process-output process 0.01)
-		    (goto-char (point-max))
-		    ;; Aspell appends an empty line, wait till it's
-		    ;; here.
-		    (not (looking-back "^\n")))))
+                  (progn
+                    (accept-process-output process 0.01)
+                    (goto-char (point-max))
+                    ;; Aspell appends an empty line, wait till it's
+                    ;; here.
+                    (not (looking-back "^\n")))))
       (goto-char (point-min)))
     (while (and (not (speck-stop))
-		(with-current-buffer process-buffer
-		  (and (re-search-forward "\\(^& \\)\\|\\(^# \\)" nil t)
-		       (cond
-			((match-beginning 1)	; &
-			 (setq length (skip-chars-forward "^ "))
-			 (forward-char)
-			 (re-search-forward " " nil t)
-			 (setq at (point))
-			 (re-search-forward ":" nil t)
-			 (setq from (+ (string-to-number
-					(buffer-substring-no-properties
-					 at (1- (point))))
-				       bol -1))
-			 ;; The `eol' stuff should work around Ispell
-			 ;; failing to report our positions and
-			 ;; lengths when coding-systems mismatch.
-			 (setq to (min (+ from length) eol))
-			 (setq face 'speck-guess))
-			((match-beginning 2)	; #
-			 (setq length (skip-chars-forward "^ "))
-			 (forward-char)
-			 (setq at (point))
-			 ;; Stop before space or newline character.
-			 (skip-chars-forward "^ \n")
-			 (setq from (+ (string-to-number
-					(buffer-substring-no-properties
-					 at (point)))
-				       bol -1))
-			 ;; See above.
-			 (setq to (min (+ from length) eol))
-			 (setq face 'speck-miss))))))
+                (with-current-buffer process-buffer
+                  (and (re-search-forward "\\(^& \\)\\|\\(^# \\)" nil t)
+                       (cond
+                        ((match-beginning 1)    ; &
+                         (setq length (skip-chars-forward "^ "))
+                         (forward-char)
+                         (re-search-forward " " nil t)
+                         (setq at (point))
+                         (re-search-forward ":" nil t)
+                         (setq from (+ (string-to-number
+                                        (buffer-substring-no-properties
+                                         at (1- (point))))
+                                       bol -1))
+                         ;; The `eol' stuff should work around Ispell
+                         ;; failing to report our positions and
+                         ;; lengths when coding-systems mismatch.
+                         (setq to (min (+ from length) eol))
+                         (setq face 'speck-guess))
+                        ((match-beginning 2)    ; #
+                         (setq length (skip-chars-forward "^ "))
+                         (forward-char)
+                         (setq at (point))
+                         ;; Stop before space or newline character.
+                         (skip-chars-forward "^ \n")
+                         (setq from (+ (string-to-number
+                                        (buffer-substring-no-properties
+                                         at (point)))
+                                       bol -1))
+                         ;; See above.
+                         (setq to (min (+ from length) eol))
+                         (setq face 'speck-miss))))))
       (cond
        ((and speck-face-inhibit-list
-	     (let ((faces (get-text-property from 'face)))
-	       ;; Inhibit specking this word if (one of) its face(s)
-	       ;; at the first char is in `speck-face-inhibit-list'.
-	       (cond
-		((not faces)
-		 nil)
-		((listp faces)
-		 ;; We have a list of face properties.
-		 (catch 'found
-		   (dolist (face faces)
-		     (when (memq face speck-face-inhibit-list)
-		       (throw 'found t)))))
-		(t				; atom
-		 (memq faces speck-face-inhibit-list)))))
-	(speck-put-specked old to))
+             (let ((faces (get-text-property from 'face)))
+               ;; Inhibit specking this word if (one of) its face(s)
+               ;; at the first char is in `speck-face-inhibit-list'.
+               (cond
+                ((not faces)
+                 nil)
+                ((listp faces)
+                 ;; We have a list of face properties.
+                 (catch 'found
+                   (dolist (face faces)
+                     (when (memq face speck-face-inhibit-list)
+                       (throw 'found t)))))
+                (t                              ; atom
+                 (memq faces speck-face-inhibit-list)))))
+        (speck-put-specked old to))
        ((and (eq speck-filter-mode 'Email)
-	     speck-email-citations
-	     (if (facep speck-email-citations)
-		 ;; Face.
-		 (let ((faces (get-text-property from 'face)))
-		   ;; Inhibit specking this word if (one of) its
-		   ;; face(s) at the first char is in
-		   ;; `speck-face-inhibit-list'.
-		   (cond
-		    ((not faces)
-		     nil)
-		    ((listp faces)
-		     ;; We have a list of face properties.
-		     (catch 'found
-		       (dolist (face faces)
-			 (when (eq face speck-email-citations)
-			   (throw 'found t)))))
-		    (t				; atom
-		     (eq faces speck-email-citations))))
-	       ;; Regexp
-	       (save-excursion
-		 (save-restriction
-		   (widen)
-		   (beginning-of-line)
-		   (looking-at speck-email-citations)))))
-	(speck-put-property old to))
+             speck-email-citations
+             (if (facep speck-email-citations)
+                 ;; Face.
+                 (let ((faces (get-text-property from 'face)))
+                   ;; Inhibit specking this word if (one of) its
+                   ;; face(s) at the first char is in
+                   ;; `speck-face-inhibit-list'.
+                   (cond
+                    ((not faces)
+                     nil)
+                    ((listp faces)
+                     ;; We have a list of face properties.
+                     (catch 'found
+                       (dolist (face faces)
+                         (when (eq face speck-email-citations)
+                           (throw 'found t)))))
+                    (t                          ; atom
+                     (eq faces speck-email-citations))))
+               ;; Regexp
+               (save-excursion
+                 (save-restriction
+                   (widen)
+                   (beginning-of-line)
+                   (looking-at speck-email-citations)))))
+        (speck-put-property old to))
        ((and speck-hash-table
-	     (setq hash (speck-hash-get
-			 (buffer-substring-no-properties from to)))
-	     (or (memq hash '(buffer file))
-		 (if (speck-get-speck from)
-		     (memq (speck-get-speck from) hash)
-		   (memq speck-dictionary hash))))
-	;; Don't put overlay if the word is in the hash table.
-	(speck-put-specked old to))
+             (setq hash (speck-hash-get
+                         (buffer-substring-no-properties from to)))
+             (or (memq hash '(buffer file))
+                 (if (speck-get-speck from)
+                     (memq (speck-get-speck from) hash)
+                   (memq speck-dictionary hash))))
+        ;; Don't put overlay if the word is in the hash table.
+        (speck-put-specked old to))
        ((and (eq (current-buffer) speck-nospeck-buffer)
-	     (<= from speck-nospeck-at)
-	     (<= speck-nospeck-at to))
-	;; We are not allowed to put an overlay here
-	(speck-put-specked old from)
-	(speck-remove-property from to))
+             (<= from speck-nospeck-at)
+             (<= speck-nospeck-at to))
+        ;; We are not allowed to put an overlay here
+        (speck-put-specked old from)
+        (speck-remove-property from to))
        ((and speck-auto-correct-case
-	     ;; Proceed iff we have guesses.
-	     (eq face 'speck-guess)
-	     (text-property-any from to 'specked 'fresh)
-	     (speck-auto-correct-case
-	      old from to (buffer-substring-no-properties from to))))
+             ;; Proceed iff we have guesses.
+             (eq face 'speck-guess)
+             (text-property-any from to 'specked 'fresh)
+             (speck-auto-correct-case
+              old from to (buffer-substring-no-properties from to))))
        (t
-	;; Put property and overlay.
-	(speck-put-specked old to from)
-	(speck-make-overlay from to face)))
+        ;; Put property and overlay.
+        (speck-put-specked old to from)
+        (speck-make-overlay from to face)))
       ;; The following is a pain, needed to handle Ispell's failure to
       ;; get coding-system.
       (setq old to))
@@ -2754,35 +2783,35 @@ Do not delete such a process if another buffer still needs it."
 (defun speck-word (from to word &optional multi)
   "Send a word-like object to `speck-process' and return list of guesses."
   (let* ((dictionary (when multi (speck-get-speck from)))
-	 (process
-	  (if dictionary
-	      (car (rassq dictionary speck-process-dictionary-alist))
-	    speck-process))
-	 guesses)
+         (process
+          (if dictionary
+              (car (rassq dictionary speck-process-dictionary-alist))
+            speck-process))
+         guesses)
     (unless process
       ;; Should not occur.
       (let ((speck-dictionary dictionary)
-	    speck-process)
-	(speck-start-process)
-	(setq process speck-process)))
+            speck-process)
+        (speck-start-process)
+        (setq process speck-process)))
     (with-current-buffer (process-buffer process)
       ;; Wait for latest output from spell-engine (Hunspell).
       (accept-process-output process 0.1)
       (erase-buffer)
       (process-send-string process (concat "^" word "\n"))
       (while (and (not quit-flag)
-		  (progn
-		    (accept-process-output process 0.05)
-		    (goto-char (point-max))
-		    ;; Aspell appends an empty line, wait till it's here.
-		    (not (looking-back "^\n")))))
+                  (progn
+                    (accept-process-output process 0.05)
+                    (goto-char (point-max))
+                    ;; Aspell appends an empty line, wait till it's here.
+                    (not (looking-back "^\n")))))
       (goto-char (point-min))
       (when (and (re-search-forward "^& " nil t)
-		 (not (zerop (skip-chars-forward "^ ")))
-		 (re-search-forward ": "))
-	(while (re-search-forward "\\(.*?\\)\\(?:, \\|\n\n\\)" nil t)
-	  (setq guesses (cons (match-string-no-properties 1) guesses)))
-	(when guesses (nreverse guesses))))))
+                 (not (zerop (skip-chars-forward "^ ")))
+                 (re-search-forward ": "))
+        (while (re-search-forward "\\(.*?\\)\\(?:, \\|\n\n\\)" nil t)
+          (setq guesses (cons (match-string-no-properties 1) guesses)))
+        (when guesses (nreverse guesses))))))
 
 (defun speck-send-replacement (misspelled replacement)
   "Tell Aspell that MISSPELLED should be spelled REPLACEMENT."
@@ -2793,10 +2822,10 @@ Do not delete such a process if another buffer still needs it."
   (process-send-string speck-process "#\n"))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				   windows					
+;;
+;;;                                windows
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defsubst speck-stop ()
   (or speck-stop (setq speck-stop (input-pending-p))))
 
@@ -2824,24 +2853,24 @@ by `speck-pause-timer'."
   ;; Continue iff there's something to speck and we don't interfere with
   ;; more important activities.
   (cond
-   ((or (input-pending-p)	  ; (active-minibuffer-window) ; do we ned this?
-	executing-kbd-macro defining-kbd-macro)
+   ((or (input-pending-p)         ; (active-minibuffer-window) ; do we ned this?
+        executing-kbd-macro defining-kbd-macro)
     ;; Pause by `speck-delay' seconds (maybe the list above should be
     ;; extended).
     (speck-respeck speck-delay))
    ;; Test selected window first.
    ((and (not (memq (selected-window) speck-suspension-list))
-	 ;; Do not reset `speck-nospeck-buffer' as long as the selected
-	 ;; window is suspended.
-	 (progn
-	   (setq speck-nospeck-buffer nil)
-	   (memq (selected-window) speck-window-list))
-	 (or (let ((buffer (window-buffer)))
-	       (and (local-variable-p 'speck-mode buffer)
-		    (buffer-local-value 'speck-mode buffer)))
-	     ;; The selected window is not suitable for specking, remove
-	     ;; it from `speck-window-list' (could it ever get there?).
-	     (and (speck-window-remove (selected-window)) nil)))
+         ;; Do not reset `speck-nospeck-buffer' as long as the selected
+         ;; window is suspended.
+         (progn
+           (setq speck-nospeck-buffer nil)
+           (memq (selected-window) speck-window-list))
+         (or (let ((buffer (window-buffer)))
+               (and (local-variable-p 'speck-mode buffer)
+                    (buffer-local-value 'speck-mode buffer)))
+             ;; The selected window is not suitable for specking, remove
+             ;; it from `speck-window-list' (could it ever get there?).
+             (and (speck-window-remove (selected-window)) nil)))
     ;; Auto correction, must be improved, currently speck-fresh is never
     ;; reset.
     ;;     (when speck-fresh (speck-auto-correct))
@@ -2849,31 +2878,32 @@ by `speck-pause-timer'."
      ;; The selected window is suitable for specking, test for nospeck area.
      (when (and speck-process (not (process-get speck-process 'preempted)))
        (let (minibuffer-auto-raise message-log-max)
-	 (save-excursion
-	   (speck-window t))))))
+         (save-excursion
+           (speck-window t))))))
    ((let ((window
-	   (catch 'found
-	     ;; Scan `speck-window-list'
-	     (dolist (window speck-window-list)
-	       (unless (memq window speck-suspension-list)
-		 (if (and (window-live-p window)
-			  (let ((buffer (window-buffer window)))
-			    (and (local-variable-p 'speck-mode buffer)
-				 (buffer-local-value 'speck-mode buffer))))
-		     ;; `window' is suitable for specking, return it.
-		     (throw 'found window)
-		   ;; `window' is not suitable for specking, remove it
-		   ;; from `speck-window-list'.
-		   (speck-window-remove window)))))))
+           (catch 'found
+             ;; Scan `speck-window-list'
+             (dolist (window speck-window-list)
+               (unless (memq window speck-suspension-list)
+                 (if (and (window-live-p window)
+                          (let ((buffer (window-buffer window)))
+                            (and (local-variable-p 'speck-mode buffer)
+                                 (buffer-local-value 'speck-mode buffer))))
+                     ;; `window' is suitable for specking, return it.
+                     (throw 'found window)
+                   ;; `window' is not suitable for specking, remove it
+                   ;; from `speck-window-list'.
+                   (speck-window-remove window)))))))
       ;; Speck `window'.
-      (with-selected-window window
-	;; Do this after we selected the window and thus implicitly made
-	;; its buffer current.
-	(when (and speck-process (not (process-get speck-process 'preempted))) 
-	  (with-buffer-prepared-for-specking
-	   (let (minibuffer-auto-raise message-log-max)
-	     (save-excursion
-	       (speck-window)))))))))
+      (when window
+        (with-selected-window window
+	  ;; Do this after we selected the window and thus implicitly made
+	  ;; its buffer current.
+	  (when (and speck-process (not (process-get speck-process 'preempted)))
+	    (with-buffer-prepared-for-specking
+             (let (minibuffer-auto-raise message-log-max)
+               (save-excursion
+                 (speck-window))))))))))
   (when speck-window-list
     ;; Pause by `speck-pause' seconds.
     (speck-respeck speck-pause)))
@@ -2886,9 +2916,9 @@ window actually selected by the user.
 This function must be called `with-buffer-prepared-for-specking'
 and within a `save-excursion'."
   (let ((at (window-point))
-	(window-start (window-start))
-	(window-end (window-end))
-	line-start line-end)
+        (window-start (window-start))
+        (window-end (window-end))
+        line-start line-end)
     ;; Note: `selected' => `speck-nospeck-buffer' is either nil or
     ;; `current-buffer'.
     (setq speck-stop nil)
@@ -2897,61 +2927,61 @@ and within a `save-excursion'."
     ;; In user-selected window try to speck line around `at'.
     (when (and selected (not (speck-stop)))
       (if (bolp)
-	  ;; When at `bolp' speck last chunk on preceding line.
-	  (forward-line -1)
-	;; Speck last chunk on present line.
-	(when (or (eq speck-chunk-at-point t)
-		  (and (eq speck-chunk-at-point 'commands)
-		       (memq last-command speck-chunk-at-point-commands)))
-	  (setq speck-nospeck-buffer (current-buffer))
-	  (setq speck-nospeck-at (window-point))))
+          ;; When at `bolp' speck last chunk on preceding line.
+          (forward-line -1)
+        ;; Speck last chunk on present line.
+        (when (or (eq speck-chunk-at-point t)
+                  (and (eq speck-chunk-at-point 'commands)
+                       (memq last-command speck-chunk-at-point-commands)))
+          (setq speck-nospeck-buffer (current-buffer))
+          (setq speck-nospeck-at (window-point))))
       (save-excursion
-	(save-restriction
-	  (let (temp)
-	    (narrow-to-region
-	     (progn
-	       (skip-chars-backward " \t")
-	       (setq temp (point))
-	       (skip-chars-backward "^ \n\t\f")
-	       (point))
-	     (progn
-	       (goto-char temp)
-	       (skip-chars-forward "^\n\t\f")
-	       (point)))
-	    (goto-char (point-min))
-	    ;; `speck-chunks' would be more intuitive here but we would
-	    ;; have to set up things for that, hence stick to
-	    ;; `speck-line'.
-	    (speck-line))))
+        (save-restriction
+          (let (temp)
+            (narrow-to-region
+             (progn
+               (skip-chars-backward " \t")
+               (setq temp (point))
+               (skip-chars-backward "^ \n\t\f")
+               (point))
+             (progn
+               (goto-char temp)
+               (skip-chars-forward "^\n\t\f")
+               (point)))
+            (goto-char (point-min))
+            ;; `speck-chunks' would be more intuitive here but we would
+            ;; have to set up things for that, hence stick to
+            ;; `speck-line'.
+            (speck-line))))
       (when (and speck-nospeck-buffer
-		 (or speck-stop
-		     (and (or (= speck-nospeck-at window-start)
-			      (eq (get-text-property
-				   (1- speck-nospeck-at) 'specked) t))
-			  (or (= speck-nospeck-at window-end)
-			      (eq (get-text-property
-				   speck-nospeck-at 'specked) t)))))
-	;; Reset this, we won't need it in this round.
-	(setq speck-nospeck-buffer nil)))
+                 (or speck-stop
+                     (and (or (= speck-nospeck-at window-start)
+                              (eq (get-text-property
+                                   (1- speck-nospeck-at) 'specked) t))
+                          (or (= speck-nospeck-at window-end)
+                              (eq (get-text-property
+                                   speck-nospeck-at 'specked) t)))))
+        ;; Reset this, we won't need it in this round.
+        (setq speck-nospeck-buffer nil)))
     ;; Reset again.
     (setq speck-ppss-at nil)
     ;; Speck window.
     (unless (or (speck-stop) speck-break)
       (save-restriction
-	(narrow-to-region window-start window-end)
-	(goto-char (point-min))
-	(while (and (not (speck-stop)) (not (eobp)))
-	  (speck-line))))
+        (narrow-to-region window-start window-end)
+        (goto-char (point-min))
+        (while (and (not (speck-stop)) (not (eobp)))
+          (speck-line))))
     (unless (or speck-stop speck-break)
       (if (eq (current-buffer) speck-nospeck-buffer)
-	  (progn
-	    ;; Suspend specking this window.
-	    (setq speck-suspension-list
-		  (cons (selected-window) speck-suspension-list))
-	    (add-hook 'pre-command-hook 'speck-desuspend))
-	;; Nothing to speck in this window, remove it from
-	;; `speck-window-list'.
-	(speck-window-remove (selected-window))))))
+          (progn
+            ;; Suspend specking this window.
+            (setq speck-suspension-list
+                  (cons (selected-window) speck-suspension-list))
+            (add-hook 'pre-command-hook 'speck-desuspend))
+        ;; Nothing to speck in this window, remove it from
+        ;; `speck-window-list'.
+        (speck-window-remove (selected-window))))))
 
 (defun speck-chunks ()
   "Process a contiguous set of chunks."
@@ -2962,16 +2992,16 @@ and within a `save-excursion'."
       (skip-chars-forward " \t")
       (speck-put-property old (point))
       (unless (eobp)
-	(save-restriction
-	  (narrow-to-region
-	   (point)
-	   (progn
-	     (skip-chars-forward "^ \t")
-	     (point)))
-	  ;; We have isolated a chunk.
-	  (if speck-multi
-	      (speck-multi-chunk)
-	    (speck-chunk)))))))
+        (save-restriction
+          (narrow-to-region
+           (point)
+           (progn
+             (skip-chars-forward "^ \t")
+             (point)))
+          ;; We have isolated a chunk.
+          (if speck-multi
+              (speck-multi-chunk)
+            (speck-chunk)))))))
 
 (defun speck-multi-chunk ()
   "Process a chunk possibly composed from multi language chunks."
@@ -2983,68 +3013,68 @@ and within a `save-excursion'."
        (next-single-property-change (point) 'speck nil (point-max)))
       ;; Check language.
       (let* ((dictionary (speck-get-speck (point-min)))
-	     (speck-process
-	      (if dictionary
-		  (if (memq dictionary '(-- ==))
-		      'ignore
-		    (car (rassq dictionary speck-process-dictionary-alist)))
-		speck-process))
-	     (speck-dictionary (or dictionary speck-dictionary)))
-	(cond
-	 ((eq speck-process 'ignore)
-	  (speck-put-property (point-min) (point-max)))
-	 (speck-process
-	  (speck-chunk))
-	 ;; Using `member' seems ugly.  But the following check is
-	 ;; needed only for the first time the property is encountered
-	 ;; in a buffer.
-	 ((member (symbol-name speck-dictionary)
-		  (cond
-		   ((eq speck-engine 'Aspell)
-		    speck-aspell-dictionary-names)
-		   ((eq speck-engine 'Hunspell)
-		    speck-hunspell-dictionary-names)
-		   ((eq speck-engine 'Ispell)
-		    speck-ispell-dictionary-names)))
-	  (speck-start-process)
-	  (speck-chunk))
-	 ;; This check is needed more often, but it should be
-	 ;; exceptional using an uninstalled dictionary.
-	 ((member (symbol-name speck-dictionary)
-		  (cond
-		   ((eq speck-engine 'Aspell)
-		    speck-aspell-non-dictionary-names)
-		   ((eq speck-engine 'Hunspell)
-		    speck-hunspell-non-dictionary-names)
-		   ((eq speck-engine 'Ispell)
-		    speck-ispell-non-dictionary-names)))
-	  ;; We already know that this dictionary doesn't exist.
-	  (speck-put-property (point-min) (point-max)))
-	 (t
-	  ;; We encounter this dictionary for the first time, it's
-	  ;; probably from an imported file and we have to warn the user
-	  ;; that the dictionary doesn't exist.
-	  (speck-put-property (point-min) (point-max))
-	  (cond
-	   ((eq speck-engine 'Aspell)
-	    (setq speck-aspell-non-dictionary-names
-		  (cons (symbol-name speck-dictionary)
-			speck-aspell-non-dictionary-names)))
-	   ((eq speck-engine 'Hunspell)
-	    (setq speck-hunspell-non-dictionary-names
-		  (cons (symbol-name speck-dictionary)
-			speck-hunspell-non-dictionary-names)))
-	   ((eq speck-engine 'Ispell)
-	    (setq speck-ispell-non-dictionary-names
-		(cons (symbol-name speck-dictionary)
-		      speck-ispell-non-dictionary-names))))
-	  (save-restriction
-	    (widen)
-	    ;; Should become an error, maybe ... On the other hand we
-	    ;; might want to continue checking the rest of the text if
-	    ;; it has a valid dictionary.
-	    (message "No such dictionary \"%s\"" speck-dictionary)
-	    (ding) (sit-for 3)))))
+             (speck-process
+              (if dictionary
+                  (if (memq dictionary '(-- ==))
+                      'ignore
+                    (car (rassq dictionary speck-process-dictionary-alist)))
+                speck-process))
+             (speck-dictionary (or dictionary speck-dictionary)))
+        (cond
+         ((eq speck-process 'ignore)
+          (speck-put-property (point-min) (point-max)))
+         (speck-process
+          (speck-chunk))
+         ;; Using `member' seems ugly.  But the following check is
+         ;; needed only for the first time the property is encountered
+         ;; in a buffer.
+         ((member (symbol-name speck-dictionary)
+                  (cond
+                   ((eq speck-engine 'Aspell)
+                    speck-aspell-dictionary-names)
+                   ((eq speck-engine 'Hunspell)
+                    speck-hunspell-dictionary-names)
+                   ((eq speck-engine 'Ispell)
+                    speck-ispell-dictionary-names)))
+          (speck-start-process)
+          (speck-chunk))
+         ;; This check is needed more often, but it should be
+         ;; exceptional using an uninstalled dictionary.
+         ((member (symbol-name speck-dictionary)
+                  (cond
+                   ((eq speck-engine 'Aspell)
+                    speck-aspell-non-dictionary-names)
+                   ((eq speck-engine 'Hunspell)
+                    speck-hunspell-non-dictionary-names)
+                   ((eq speck-engine 'Ispell)
+                    speck-ispell-non-dictionary-names)))
+          ;; We already know that this dictionary doesn't exist.
+          (speck-put-property (point-min) (point-max)))
+         (t
+          ;; We encounter this dictionary for the first time, it's
+          ;; probably from an imported file and we have to warn the user
+          ;; that the dictionary doesn't exist.
+          (speck-put-property (point-min) (point-max))
+          (cond
+           ((eq speck-engine 'Aspell)
+            (setq speck-aspell-non-dictionary-names
+                  (cons (symbol-name speck-dictionary)
+                        speck-aspell-non-dictionary-names)))
+           ((eq speck-engine 'Hunspell)
+            (setq speck-hunspell-non-dictionary-names
+                  (cons (symbol-name speck-dictionary)
+                        speck-hunspell-non-dictionary-names)))
+           ((eq speck-engine 'Ispell)
+            (setq speck-ispell-non-dictionary-names
+                  (cons (symbol-name speck-dictionary)
+                        speck-ispell-non-dictionary-names))))
+          (save-restriction
+            (widen)
+            ;; Should become an error, maybe ... On the other hand we
+            ;; might want to continue checking the rest of the text if
+            ;; it has a valid dictionary.
+            (message "No such dictionary \"%s\"" speck-dictionary)
+            (ding) (sit-for 3)))))
       (goto-char (point-max)))))
 
 (defun speck-line ()
@@ -3053,82 +3083,82 @@ and within a `save-excursion'."
   (let (old)
     (unless (eolp)
       (save-restriction
-	(narrow-to-region (line-beginning-position) (line-end-position))
-	(goto-char (point-min))
-	(while (and (not (speck-stop))
-		    (setq old (text-property-not-all
-			       (point) (point-max) 'specked t)))
-	  (goto-char old)
-	  (save-restriction
-	    ;; Narrow down to chunk around `old'.
-	    (narrow-to-region
-	     (progn
-	       (skip-chars-backward "^ \t") (point))
-	     (progn
-	       (goto-char
-		(or (text-property-any old (point-max) 'specked t)
-		    (point-max)))
-	       (skip-chars-forward "^ \t") (point)))
-	    (cond
-	     ((save-excursion
-		(goto-char (point-min))
-		(skip-chars-forward " \t")
-		(eobp))
-	      ;; Only whitespace here.
-	      (speck-put-property (point-min) (point-max)))
-	     (speck-syntactic
-	      ;; Speck comments and/or strings only.
-	      (goto-char (point-min))
-	      (save-restriction
-		(widen)
-		(if speck-ppss-at
-		    ;; Parse from `speck-ppss-at'.
-		    (setq speck-ppss
-			  (parse-partial-sexp
-			   speck-ppss-at (point) nil nil speck-ppss))
-		  ;; Use `syntax-ppss'.
-		  (setq speck-ppss (syntax-ppss))))
-	      (setq speck-ppss-at (point))
-	      (unless (or (and (nth 3 speck-ppss)
-			       (memq speck-syntactic '(strings t)))
-			  (and (nth 4 speck-ppss)
-			       (memq speck-syntactic '(comments t))))
-		;; Find end of comment or string.
-		(setq speck-ppss
-		      (parse-partial-sexp
-		       speck-ppss-at (point-max) nil nil
-		       speck-ppss 'syntax-table))
-		(setq speck-ppss-at (point))
-		(speck-put-property old (point)))
-	      (while (and (not (speck-stop)) (not (eobp)))
-		(save-restriction
-		  (let ((in-string (nth 3 speck-ppss))
-			(in-comment (nth 4 speck-ppss)))
-		    (narrow-to-region
-		     speck-ppss-at
-		     (progn
-		       (setq speck-ppss
-			     (parse-partial-sexp
-			      speck-ppss-at (point-max) nil nil
-			      speck-ppss 'syntax-table))
-		       (setq speck-ppss-at (point))))
-		    (if (or (and in-string
-				 (memq speck-syntactic '(strings t)))
-			    (and in-comment
-				 (memq speck-syntactic '(comments t))))
-			(speck-chunks)
-		      (speck-put-property (point-min) (point-max)))))
-		(setq old (point))
-		(setq speck-ppss
-		      (parse-partial-sexp
-		       speck-ppss-at (point-max) nil nil
-		       speck-ppss 'syntax-table))
-		(setq speck-ppss-at (point))
-		(unless speck-stop
-		  (speck-put-property old (point)))))
-	     ;; Speck entire line.
-	     (t (speck-chunks)))
-	    (goto-char (point-max))))))
+        (narrow-to-region (line-beginning-position) (line-end-position))
+        (goto-char (point-min))
+        (while (and (not (speck-stop))
+                    (setq old (text-property-not-all
+                               (point) (point-max) 'specked t)))
+          (goto-char old)
+          (save-restriction
+            ;; Narrow down to chunk around `old'.
+            (narrow-to-region
+             (progn
+               (skip-chars-backward "^ \t") (point))
+             (progn
+               (goto-char
+                (or (text-property-any old (point-max) 'specked t)
+                    (point-max)))
+               (skip-chars-forward "^ \t") (point)))
+            (cond
+             ((save-excursion
+                (goto-char (point-min))
+                (skip-chars-forward " \t")
+                (eobp))
+              ;; Only whitespace here.
+              (speck-put-property (point-min) (point-max)))
+             (speck-syntactic
+              ;; Speck comments and/or strings only.
+              (goto-char (point-min))
+              (save-restriction
+                (widen)
+                (if speck-ppss-at
+                    ;; Parse from `speck-ppss-at'.
+                    (setq speck-ppss
+                          (parse-partial-sexp
+                           speck-ppss-at (point) nil nil speck-ppss))
+                  ;; Use `syntax-ppss'.
+                  (setq speck-ppss (syntax-ppss))))
+              (setq speck-ppss-at (point))
+              (unless (or (and (nth 3 speck-ppss)
+                               (memq speck-syntactic '(strings t)))
+                          (and (nth 4 speck-ppss)
+                               (memq speck-syntactic '(comments t))))
+                ;; Find end of comment or string.
+                (setq speck-ppss
+                      (parse-partial-sexp
+                       speck-ppss-at (point-max) nil nil
+                       speck-ppss 'syntax-table))
+                (setq speck-ppss-at (point))
+                (speck-put-property old (point)))
+              (while (and (not (speck-stop)) (not (eobp)))
+                (save-restriction
+                  (let ((in-string (nth 3 speck-ppss))
+                        (in-comment (nth 4 speck-ppss)))
+                    (narrow-to-region
+                     speck-ppss-at
+                     (progn
+                       (setq speck-ppss
+                             (parse-partial-sexp
+                              speck-ppss-at (point-max) nil nil
+                              speck-ppss 'syntax-table))
+                       (setq speck-ppss-at (point))))
+                    (if (or (and in-string
+                                 (memq speck-syntactic '(strings t)))
+                            (and in-comment
+                                 (memq speck-syntactic '(comments t))))
+                        (speck-chunks)
+                      (speck-put-property (point-min) (point-max)))))
+                (setq old (point))
+                (setq speck-ppss
+                      (parse-partial-sexp
+                       speck-ppss-at (point-max) nil nil
+                       speck-ppss 'syntax-table))
+                (setq speck-ppss-at (point))
+                (unless speck-stop
+                  (speck-put-property old (point)))))
+             ;; Speck entire line.
+             (t (speck-chunks)))
+            (goto-char (point-max))))))
     (setq old (point))
     (forward-line)
     ;; Speck newline.
@@ -3156,30 +3186,30 @@ and within a `save-excursion'."
 (defun speck-syntactic-p ()
   "Return t when character at `point' may be syntactically checked."
   (and (or (not speck-syntactic)
-	   (let ((parse-state (syntax-ppss)))
-	     (or (and (nth 3 parse-state)
-		      (memq speck-syntactic '(strings t)))
-		 (and (nth 4 parse-state)
-		      (memq speck-syntactic '(comments t))))))
+           (let ((parse-state (syntax-ppss)))
+             (or (and (nth 3 parse-state)
+                      (memq speck-syntactic '(strings t)))
+                 (and (nth 4 parse-state)
+                      (memq speck-syntactic '(comments t))))))
        (or (not speck-face-inhibit-list)
-	   (progn
-	     (unless (get-text-property (point) 'fontified)
-	       (speck-ensure-fontified
-		(line-beginning-position) (line-end-position))
-	     nil))
-	   (let ((faces (get-text-property (point) 'face)))
-	     ;; Inhibit specking this word if (one of) its face(s) is in
-	     ;; `speck-face-inhibit-list'.
-	     (cond
-	      ((not faces))
-	      ((listp faces)
-	       ;; We have a list of face properties.
-	       (catch 'found
-		 (dolist (face faces t)
-		   (when (memq face speck-face-inhibit-list)
-			 (throw 'found nil)))))
-	      (t ; Atom.
-	       (not (memq faces speck-face-inhibit-list))))))))
+           (progn
+             (unless (get-text-property (point) 'fontified)
+               (speck-ensure-fontified
+                (line-beginning-position) (line-end-position))
+               nil))
+           (let ((faces (get-text-property (point) 'face)))
+             ;; Inhibit specking this word if (one of) its face(s) is in
+             ;; `speck-face-inhibit-list'.
+             (cond
+              ((not faces))
+              ((listp faces)
+               ;; We have a list of face properties.
+               (catch 'found
+                 (dolist (face faces t)
+                   (when (memq face speck-face-inhibit-list)
+                     (throw 'found nil)))))
+              (t ; Atom.
+               (not (memq faces speck-face-inhibit-list))))))))
 
 (defun speck-put-specked (old to &optional from)
   "Put `specked' property from OLD to TO.
@@ -3187,92 +3217,92 @@ Optional argument FROM means there is a misspelled word from FROM
 till TO."
   ;; Must be called `with-buffer-prepared-for-specking'.
   (if speck-doublets
-    (let ((start old)
-	  (end to)
-	  too prev prev-from prev-to next next-from next-to
-	  nospeck-from nospeck-to)
-      (save-excursion
-	(save-restriction
-	  (widen)
-	  ;; Adjust region around `old'.
-	  (goto-char old)
-	  (when (and (skip-chars-forward " \t\n\f")
-		     (not (zerop (skip-chars-backward " \t\n\f")))
-		     (setq too (point))
-		     ;; We consider symbol syntax only.
-		     (not (zerop (skip-syntax-backward "w_")))
-		     (not (text-property-not-all (point) old 'specked t))
-		     (not (get-char-property (point) 'specky))
-		     (= (next-single-char-property-change
-			 (point) 'specky nil too) too))
-	    (setq start (point)))
-	  ;; Adjust region around `to'.
-	  (goto-char to)
-	  (when (and (not (zerop (skip-chars-forward " \t\n\f")))
-		     (not (zerop (skip-syntax-forward "w_"))))
-	    (if from
-		(progn
-		  (unless (or (text-property-not-all to (point) 'specked t)
-			      (zerop (skip-chars-forward " \t\n\f")) (eobp)
-			      (progn
-				(setq too (point))
-				(zerop (skip-syntax-forward "w_"))))
-		    ;; Remove any doublet overlays here.
-		    (speck-delete-doublet-overlays too (point)))
-		  (goto-char from)
-		  (skip-chars-backward " \t\n\f")
-		  (setq end (point)))
-	      (setq end (point))))
-	  ;; Now scan region from `start' till `end'.
-	  (speck-delete-doublet-overlays old end)
-	  (narrow-to-region start end)
-	  (goto-char start)
-	  ;; A doublet _must_ start with a word character.
-	  (skip-syntax-forward "^w")
-	  (setq prev-from (point))
-	  (skip-syntax-forward "w_")
-	  (setq prev-to (point))
-	  (setq prev (buffer-substring-no-properties prev-from prev-to))
-	  (while (not (eobp))
-	    (if (and (not (string-equal prev ""))
-		     (not (zerop (skip-chars-forward " \t\n\f")))
-		     (setq next-from (point))
-		     (skip-syntax-forward "w_")
-		     (setq next-to (point))
-		     (setq next (buffer-substring-no-properties
-				 next-from next-to))
-		     (not (string-equal next "")))
-		(progn
-		  (when (and (string-equal prev next)
-			     (or (not (eq (current-buffer) speck-nospeck-buffer))
-				 (> next-from speck-nospeck-at)
-				 (< next-to speck-nospeck-at)
-				 (progn
-				   (setq nospeck-from next-from)
-				   (setq nospeck-to next-to)
-				   nil)))
-		    (speck-make-overlay next-from next-to 'speck-doublet))
-		  (setq prev-from next-from)
-		  (setq prev-to next-to)
-		  (setq prev next))
-	      (skip-syntax-forward "^w")
-	      (setq prev-from (point))
-	      (skip-syntax-forward "w_")
-	      (setq prev-to (point))
-	      (setq prev (buffer-substring-no-properties prev-from prev-to))))))
-      (if nospeck-from
-	  (progn
-	    (speck-put-property old nospeck-from)
-	    (speck-put-property nospeck-to to))
-	(speck-put-property old to)))
+      (let ((start old)
+            (end to)
+            too prev prev-from prev-to next next-from next-to
+            nospeck-from nospeck-to)
+        (save-excursion
+          (save-restriction
+            (widen)
+            ;; Adjust region around `old'.
+            (goto-char old)
+            (when (and (skip-chars-forward " \t\n\f")
+                       (not (zerop (skip-chars-backward " \t\n\f")))
+                       (setq too (point))
+                       ;; We consider symbol syntax only.
+                       (not (zerop (skip-syntax-backward "w_")))
+                       (not (text-property-not-all (point) old 'specked t))
+                       (not (get-char-property (point) 'specky))
+                       (= (next-single-char-property-change
+                           (point) 'specky nil too) too))
+              (setq start (point)))
+            ;; Adjust region around `to'.
+            (goto-char to)
+            (when (and (not (zerop (skip-chars-forward " \t\n\f")))
+                       (not (zerop (skip-syntax-forward "w_"))))
+              (if from
+                  (progn
+                    (unless (or (text-property-not-all to (point) 'specked t)
+                                (zerop (skip-chars-forward " \t\n\f")) (eobp)
+                                (progn
+                                  (setq too (point))
+                                  (zerop (skip-syntax-forward "w_"))))
+                      ;; Remove any doublet overlays here.
+                      (speck-delete-doublet-overlays too (point)))
+                    (goto-char from)
+                    (skip-chars-backward " \t\n\f")
+                    (setq end (point)))
+                (setq end (point))))
+            ;; Now scan region from `start' till `end'.
+            (speck-delete-doublet-overlays old end)
+            (narrow-to-region start end)
+            (goto-char start)
+            ;; A doublet _must_ start with a word character.
+            (skip-syntax-forward "^w")
+            (setq prev-from (point))
+            (skip-syntax-forward "w_")
+            (setq prev-to (point))
+            (setq prev (buffer-substring-no-properties prev-from prev-to))
+            (while (not (eobp))
+              (if (and (not (string-equal prev ""))
+                       (not (zerop (skip-chars-forward " \t\n\f")))
+                       (setq next-from (point))
+                       (skip-syntax-forward "w_")
+                       (setq next-to (point))
+                       (setq next (buffer-substring-no-properties
+                                   next-from next-to))
+                       (not (string-equal next "")))
+                  (progn
+                    (when (and (string-equal prev next)
+                               (or (not (eq (current-buffer) speck-nospeck-buffer))
+                                   (> next-from speck-nospeck-at)
+                                   (< next-to speck-nospeck-at)
+                                   (progn
+                                     (setq nospeck-from next-from)
+                                     (setq nospeck-to next-to)
+                                     nil)))
+                      (speck-make-overlay next-from next-to 'speck-doublet))
+                    (setq prev-from next-from)
+                    (setq prev-to next-to)
+                    (setq prev next))
+                (skip-syntax-forward "^w")
+                (setq prev-from (point))
+                (skip-syntax-forward "w_")
+                (setq prev-to (point))
+                (setq prev (buffer-substring-no-properties prev-from prev-to))))))
+        (if nospeck-from
+            (progn
+              (speck-put-property old nospeck-from)
+              (speck-put-property nospeck-to to))
+          (speck-put-property old to)))
     ;; Put the text property.
     (speck-put-property old to)))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				adding words					
+;;
+;;;                             adding words
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-add-cleanup (overlay from to word)
   "Cleanup after WORD has been added.
 OVERLAY is the overlay covering WORD, FROM and TO its boundaries."
@@ -3285,21 +3315,21 @@ OVERLAY is the overlay covering WORD, FROM and TO its boundaries."
        (goto-char (point-min))
        ;; Should we relocate all overlays here?
        (unless (get-char-property (point) 'specky)
-	 (goto-char (or (next-single-char-property-change (point) 'specky)
-			(point-max)))
-	 (let (property)
-	   (while (not (eobp))
-	     (setq from (point))
-	     (setq to (or (next-single-char-property-change from 'specky)
-			  (point-max)))
-	     (setq overlay (cdr (get-char-property-and-overlay from 'specky)))
-	     (when (and overlay
-			(string-equal (buffer-substring-no-properties from to)
-				      word))
-	       (delete-overlay overlay)
-	       (speck-remove-property from to))
-	     (goto-char (or (next-single-char-property-change (point) 'specky)
-			    (point-max)))))))))
+         (goto-char (or (next-single-char-property-change (point) 'specky)
+                        (point-max)))
+         (let (property)
+           (while (not (eobp))
+             (setq from (point))
+             (setq to (or (next-single-char-property-change from 'specky)
+                          (point-max)))
+             (setq overlay (cdr (get-char-property-and-overlay from 'specky)))
+             (when (and overlay
+                        (string-equal (buffer-substring-no-properties from to)
+                                      word))
+               (delete-overlay overlay)
+               (speck-remove-property from to))
+             (goto-char (or (next-single-char-property-change (point) 'specky)
+                            (point-max)))))))))
   ;; Add buffer to speck's windows.
   (dolist (window (get-buffer-window-list (current-buffer)))
     (speck-window-add window)))
@@ -3308,71 +3338,71 @@ OVERLAY is the overlay covering WORD, FROM and TO its boundaries."
   "Add word covered by OVERLAY to dictionary or list."
   (interactive)
   (let* ((from (overlay-start overlay))
-	 (to (overlay-end overlay))
-	 (word (buffer-substring-no-properties from to))
-	 (face (overlay-get overlay 'face))
-	 (hash (speck-hash-get word))
-	 ;; We need the correct personal word list (pws) and thus have
-	 ;; to find the Aspell process adminstrating it.  It's not
-	 ;; entirely clear what happens when two processes
-	 ;; intermittently modify the same pws (there's been some
-	 ;; discussion on thread safety) but our approach of sharing one
-	 ;; process for all regions with the same dictionary should
-	 ;; render this less dramatic within one and the same Emacs
-	 ;; session.
-	 (dictionary (speck-get-speck from))
-	 (speck-process
-	  (if dictionary
-	      (car (rassq dictionary speck-process-dictionary-alist))
-	    speck-process))
-	 (speck-dictionary (or dictionary speck-dictionary)))
+         (to (overlay-end overlay))
+         (word (buffer-substring-no-properties from to))
+         (face (overlay-get overlay 'face))
+         (hash (speck-hash-get word))
+         ;; We need the correct personal word list (pws) and thus have
+         ;; to find the Aspell process adminstrating it.  It's not
+         ;; entirely clear what happens when two processes
+         ;; intermittently modify the same pws (there's been some
+         ;; discussion on thread safety) but our approach of sharing one
+         ;; process for all regions with the same dictionary should
+         ;; render this less dramatic within one and the same Emacs
+         ;; session.
+         (dictionary (speck-get-speck from))
+         (speck-process
+          (if dictionary
+              (car (rassq dictionary speck-process-dictionary-alist))
+            speck-process))
+         (speck-dictionary (or dictionary speck-dictionary)))
     (when overlay
       (overlay-put overlay 'face 'speck-query)
       (message (concat
-		(format "\"p\" add `%s' personally" word)
-		(unless (string-equal word (downcase word))
-		  (format " (\"l\" adds `%s')" (downcase word)))
-		;; Suppress the following when an entry already exists.
-		(unless hash (format ", \"b\" add for buffer"))
-		(when (and speck-save-confirmed ; may be yet 'undecided
-			   speck-save-words buffer-file-name)
-		  (format ", \"f\" file, \"d\" dictionary \"%s\""
-			  (or dictionary speck-dictionary)))))
+                (format "\"p\" add `%s' personally" word)
+                (unless (string-equal word (downcase word))
+                  (format " (\"l\" adds `%s')" (downcase word)))
+                ;; Suppress the following when an entry already exists.
+                (unless hash (format ", \"b\" add for buffer"))
+                (when (and speck-save-confirmed ; may be yet 'undecided
+                           speck-save-words buffer-file-name)
+                  (format ", \"f\" file, \"d\" dictionary \"%s\""
+                          (or dictionary speck-dictionary)))))
       (unwind-protect
-	  (let* ((char (read-event))
-		 (key (vector char))
-		 (case-fold-search t))
-	    (cond
-	     ((and (integerp char)
-		   (or (char-equal char ?p) (char-equal char ?*)))
-	      (process-send-string speck-process (concat "*" word "\n"))
-	      (process-send-string speck-process "#\n")
-	      (speck-add-cleanup overlay from to word))
-	     ((and (integerp char)
-		   (or (char-equal char ?l) (char-equal char ?&)))
-	      (process-send-string speck-process (concat "&" word "\n"))
-	      (process-send-string speck-process "#\n")
-	      (speck-add-cleanup overlay from to word))
-	     ((and (integerp char) (char-equal char ?b) (not hash))
-	      (speck-hash-put word 'buffer)
-	      (speck-add-cleanup overlay from to word))
-	     ((and (integerp char) (char-equal char ?f)
-		   speck-save-words (speck-save-confirm))
-	      (speck-hash-put word 'file)
-	      (speck-add-cleanup overlay from to word))
-	     ((and (integerp char) (char-equal char ?d)
-		   speck-save-words (speck-save-confirm))
-	      (speck-hash-put
-	       word (or dictionary speck-dictionary))
-	      (speck-add-cleanup overlay from to word))
-	     (t
-	      (setq this-command 'mode-exited)
-	      (setq unread-command-events
-		    (append (listify-key-sequence key)
-			    unread-command-events)))))
-	;; Restore previous face.
-	(when (overlayp overlay)
-	  (overlay-put overlay 'face face))))))
+          (let* ((char (read-event))
+                 (key (vector char))
+                 (case-fold-search t))
+            (cond
+             ((and (integerp char)
+                   (or (char-equal char ?p) (char-equal char ?*)))
+              (process-send-string speck-process (concat "*" word "\n"))
+              (process-send-string speck-process "#\n")
+              (speck-add-cleanup overlay from to word))
+             ((and (integerp char)
+                   (or (char-equal char ?l) (char-equal char ?&)))
+              (process-send-string speck-process (concat "&" word "\n"))
+              (process-send-string speck-process "#\n")
+              (speck-add-cleanup overlay from to word))
+             ((and (integerp char) (char-equal char ?b) (not hash))
+              (speck-hash-put word 'buffer)
+              (speck-add-cleanup overlay from to word))
+             ((and (integerp char) (char-equal char ?f)
+                   speck-save-words (speck-save-confirm))
+              (speck-hash-put word 'file)
+              (speck-add-cleanup overlay from to word))
+             ((and (integerp char) (char-equal char ?d)
+                   speck-save-words (speck-save-confirm))
+              (speck-hash-put
+               word (or dictionary speck-dictionary))
+              (speck-add-cleanup overlay from to word))
+             (t
+              (setq this-command 'mode-exited)
+              (setq unread-command-events
+                    (append (listify-key-sequence key)
+                            unread-command-events)))))
+        ;; Restore previous face.
+        (when (overlayp overlay)
+          (overlay-put overlay 'face face))))))
 
 (defun speck-add-previous (&optional arg)
   "Add previous highlighted word on selected window.
@@ -3380,10 +3410,10 @@ With ARG n do this for nth highlighted word preceding `point'."
   (interactive "p")
   (let ((overlay (speck-previous-overlay (or arg 1) '(speck-guess speck-miss))))
     (if overlay
-	(speck-add-word overlay)
+        (speck-add-word overlay)
       (let (message-log-max)
-	(message "Not found ...")
-	(ding)))))
+        (message "Not found ...")
+        (ding)))))
 
 (defun speck-add-next (&optional arg)
   "Add next highlighted word on selected window.
@@ -3391,16 +3421,16 @@ With ARG n do this for nth highlighted word following `point'."
   (interactive "p")
   (let ((overlay (speck-next-overlay (or arg 1) '(speck-guess speck-miss))))
     (if overlay
-	(speck-add-word overlay)
+        (speck-add-word overlay)
       (let (message-log-max)
-	(message "Not found ...")
-	(ding)))))
+        (message "Not found ...")
+        (ding)))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				 popup menus					
+;;
+;;;                              popup menus
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-menu-tail (lower buffer dictionary)
   "Precalculated tail for popup menu."
   (append
@@ -3419,89 +3449,89 @@ With ARG n do this for nth highlighted word following `point'."
 (defun speck-popup-menu (posn &optional faces)
   "Pop up speck menu at position POSN."
   (let ((overlay (speck-overlay-at-point nil faces))
-	(process speck-process))
+        (process speck-process))
     (when (and overlay process)
       ;; Preempt `speck-process' and unwind-protect the following to
       ;; assert that preemption is cancelled (we do this to avoid that
       ;; specking continues during popups).
       (process-put process 'preempted t)
       (unwind-protect
-	  (let* ((from (overlay-start overlay))
-		 (to (overlay-end overlay))
-		 (word (buffer-substring-no-properties from to))
-		 (guesses
-		  (let (list)
-		    (nreverse
-		     (dolist (item (speck-word from to word speck-multi) list)
-		       (setq list (cons (cons item item) list))))))
-		 (property (when speck-multi (speck-get-speck from)))
-		 (property-name (when property (symbol-name property)))
-		 (hash (speck-hash-get word))
-		 (speck-replace-query speck-replace-query)
-		 (replace (x-popup-menu
-			   posn
-			   ;; Put dictionary in menu (the user should
-			   ;; not have to guess which language is used).
-			   (list
-			    (if property
-				(concat word "  [" property-name "]")
-			      word)
-			    (cons "" guesses)
-			    (speck-menu-tail
-			     (not (string-equal word (downcase word)))
-			     (not hash)
-			     (or property-name
-				 (symbol-name speck-dictionary)))
-			    )))
-		 (speck-process
-		  (if property
-		      (car (rassq property speck-process-dictionary-alist))
-		    speck-process))
-		 (speck-dictionary (or property speck-dictionary)))
-	    (while (eq replace 'query)
-	      (setq speck-replace-query (not speck-replace-query))
-	      (setq replace (x-popup-menu
-			     posn
-			     (list
-			      (if property
-				  (concat word " (" property-name ")")
-				word)
-			      (cons "" guesses)
-			      (speck-menu-tail
-			       (not (string-equal word (downcase word)))
-			       (not hash)
-			       (or property-name speck-dictionary))
-			      ))))
-	    (when (eq replace 'minibuffer)
-	      (setq replace
-		    (read-from-minibuffer
-		     "Replace word: " word minibuffer-local-map nil
-		     'speck-replace-history word t)))
-	    (cond
-	     ((memq replace '(personal lower))
-	      (if (eq replace 'personal)
-		  (process-send-string speck-process (concat "*" word "\n"))
-		(process-send-string
-		 speck-process (concat "&" word "\n")))
-	      (process-send-string speck-process "#\n")
-	      (speck-add-cleanup overlay from to word))
-	     ((and (eq replace 'buffer) (not hash))
-	      (speck-hash-put word 'buffer)
-	      (speck-add-cleanup overlay from to word))
-	     ((eq replace 'file)
-	      (speck-hash-put word 'file)
-	      (speck-add-cleanup overlay from to word))
-	     ((eq replace 'dictionary)
-	      (speck-hash-put word (or property speck-dictionary))
-	      (speck-add-cleanup overlay from to word))
-	     (replace
-	      (unless (atom replace)
-		(setq replace (car replace)))
-	      (speck-replace-word from to word replace overlay property)
-	      (when speck-replace-query
-		(speck-replace-query
-		 (downcase word) replace (or property speck-dictionary))))))
-	(process-put process 'preempted nil)))))
+          (let* ((from (overlay-start overlay))
+                 (to (overlay-end overlay))
+                 (word (buffer-substring-no-properties from to))
+                 (guesses
+                  (let (list)
+                    (nreverse
+                     (dolist (item (speck-word from to word speck-multi) list)
+                       (setq list (cons (cons item item) list))))))
+                 (property (when speck-multi (speck-get-speck from)))
+                 (property-name (when property (symbol-name property)))
+                 (hash (speck-hash-get word))
+                 (speck-replace-query speck-replace-query)
+                 (replace (x-popup-menu
+                           posn
+                           ;; Put dictionary in menu (the user should
+                           ;; not have to guess which language is used).
+                           (list
+                            (if property
+                                (concat word "  [" property-name "]")
+                              word)
+                            (cons "" guesses)
+                            (speck-menu-tail
+                             (not (string-equal word (downcase word)))
+                             (not hash)
+                             (or property-name
+                                 (symbol-name speck-dictionary)))
+                            )))
+                 (speck-process
+                  (if property
+                      (car (rassq property speck-process-dictionary-alist))
+                    speck-process))
+                 (speck-dictionary (or property speck-dictionary)))
+            (while (eq replace 'query)
+              (setq speck-replace-query (not speck-replace-query))
+              (setq replace (x-popup-menu
+                             posn
+                             (list
+                              (if property
+                                  (concat word " (" property-name ")")
+                                word)
+                              (cons "" guesses)
+                              (speck-menu-tail
+                               (not (string-equal word (downcase word)))
+                               (not hash)
+                               (or property-name speck-dictionary))
+                              ))))
+            (when (eq replace 'minibuffer)
+              (setq replace
+                    (read-from-minibuffer
+                     "Replace word: " word minibuffer-local-map nil
+                     'speck-replace-history word t)))
+            (cond
+             ((memq replace '(personal lower))
+              (if (eq replace 'personal)
+                  (process-send-string speck-process (concat "*" word "\n"))
+                (process-send-string
+                 speck-process (concat "&" word "\n")))
+              (process-send-string speck-process "#\n")
+              (speck-add-cleanup overlay from to word))
+             ((and (eq replace 'buffer) (not hash))
+              (speck-hash-put word 'buffer)
+              (speck-add-cleanup overlay from to word))
+             ((eq replace 'file)
+              (speck-hash-put word 'file)
+              (speck-add-cleanup overlay from to word))
+             ((eq replace 'dictionary)
+              (speck-hash-put word (or property speck-dictionary))
+              (speck-add-cleanup overlay from to word))
+             (replace
+              (unless (atom replace)
+                (setq replace (car replace)))
+              (speck-replace-word from to word replace overlay property)
+              (when speck-replace-query
+                (speck-replace-query
+                 (downcase word) replace (or property speck-dictionary))))))
+        (process-put process 'preempted nil)))))
 
 (defun speck-popup-menu-at-point (&optional at point)
   "Pop up speck menu.
@@ -3515,9 +3545,9 @@ incorrect word must appear at the right of `point'."
   (let ((posn (posn-at-point)))
     ;; Always jump back to `speck-marker'.
     (unwind-protect
-	(speck-popup-menu
-	 (list (list (car (posn-x-y posn)) (cdr (posn-x-y posn)))
-	       (posn-window posn)))
+        (speck-popup-menu
+         (list (list (car (posn-x-y posn)) (cdr (posn-x-y posn)))
+               (posn-window posn)))
       (speck-marker-goto))))
 
 (defun speck-popup-menu-previous (&optional arg)
@@ -3526,10 +3556,10 @@ With ARG n do this for nth such word preceding `point'."
   (interactive "p")
   (let ((overlay (speck-previous-overlay (or arg 1) '(speck-guess speck-miss))))
     (if overlay
-	(speck-popup-menu-at-point (overlay-start overlay) (point))
+        (speck-popup-menu-at-point (overlay-start overlay) (point))
       (let (message-log-max)
-	(message "Not found ...")
-	(ding)))))
+        (message "Not found ...")
+        (ding)))))
 
 (defun speck-popup-menu-next (&optional arg)
   "Popup menu for next word with guesses or miss.
@@ -3537,10 +3567,10 @@ With ARG n do this for nth such word following `point'."
   (interactive "p")
   (let ((overlay (speck-next-overlay (or arg 1) '(speck-guess speck-miss))))
     (if overlay
-	(speck-popup-menu-at-point (overlay-start overlay) (point))
+        (speck-popup-menu-at-point (overlay-start overlay) (point))
       (let (message-log-max)
-	(message "Not found ...")
-	(ding)))))
+        (message "Not found ...")
+        (ding)))))
 
 (defun speck-mouse-popup-menu (event)
   "Pop up speck menu at mouse-position.
@@ -3555,10 +3585,10 @@ Should be bound to a click event."
     (speck-marker-goto)))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;				   replace					
+;;
+;;;                                replace
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-key-help (command keys suffix)
   "Return string of keys in KEYS executing COMMAND.
 KEYS must be either `speck-replace-keys' or
@@ -3566,13 +3596,13 @@ KEYS must be either `speck-replace-keys' or
   (let ((string ""))
     (dolist (key keys)
       (when (eq command (car key))
-	(setq string
-	      (concat
-	       string
-	       (unless (string-equal string "") ", ") ; Looks better.
-	       (key-description (cdr key))))))
+        (setq string
+              (concat
+               string
+               (unless (string-equal string "") ", ") ; Looks better.
+               (key-description (cdr key))))))
     (if (string-equal string "")
-	""
+        ""
       (concat "  " string suffix)))) ; Prefix this with two spaces.
 
 (defun speck-keys-help (keys &optional first)
@@ -3582,14 +3612,14 @@ KEYS must be either `speck-replace-keys' or
    ;; allocate string space here, but after all this should be used only
    ;; sporadically.
    (speck-key-help 'accept keys
-		   (concat "  to accept the replacement and "
-			   (if first "query further occurrences" "continue querying") "\n"))
+                   (concat "  to accept the replacement and "
+                           (if first "query further occurrences" "continue querying") "\n"))
    (speck-key-help 'accept-and-quit keys
-		   "  to accept the replacement and quit querying\n")
+                   "  to accept the replacement and quit querying\n")
    (speck-key-help 'reject keys
-		   "  to reject the replacement and continue querying\n")
+                   "  to reject the replacement and continue querying\n")
    (speck-key-help 'reject-and-quit keys
-		   "  to reject the replacement and quit querying\n")
+                   "  to reject the replacement and quit querying\n")
    (speck-key-help 'forward keys "  to display the next replacement\n")
    (speck-key-help 'backward keys "  to display the previous replacement\n")
    (speck-key-help 'help keys "  to display this help\n")))
@@ -3602,18 +3632,18 @@ means put this property on REPLACE."
     (when overlay
       (delete-overlay overlay))
     (when (and (eq (marker-buffer speck-marker)
-		   (current-buffer))
-	       (<= from speck-marker)
-	       (<= speck-marker to))
+                   (current-buffer))
+               (<= from speck-marker)
+               (<= speck-marker to))
       (cond
        ((eq speck-replace-preserve-point 'before)
-	(setq move-to from))
+        (setq move-to from))
        ((and (eq speck-replace-preserve-point 'within)
-	     (<= from speck-marker)
-	     (<= speck-marker to)
-	     (< (- speck-marker from)
-		(length replace)))
-	(setq move-to (marker-position speck-marker)))
+             (<= from speck-marker)
+             (<= speck-marker to)
+             (< (- speck-marker from)
+                (length replace)))
+        (setq move-to (marker-position speck-marker)))
        (t (setq move-to (+ from (length replace))))))
     (delete-region from to)
     (goto-char from)
@@ -3632,20 +3662,20 @@ means put this property on REPLACE."
   (if offset
       (cond
        ((eq speck-replace-preserve-point 'before)
-	(overlay-put overlay 'display replace)
-	(goto-char from))
+        (overlay-put overlay 'display replace)
+        (goto-char from))
        ((and (eq speck-replace-preserve-point 'within)
-	     (< offset (length replace)))
-	(overlay-put
-	 overlay 'display
-	 (concat (substring replace 0 offset)
-		 (propertize
-		  (substring replace offset (1+ offset)) 'cursor t)
-		 (substring replace (1+ offset))))
-	(goto-char from))
+             (< offset (length replace)))
+        (overlay-put
+         overlay 'display
+         (concat (substring replace 0 offset)
+                 (propertize
+                  (substring replace offset (1+ offset)) 'cursor t)
+                 (substring replace (1+ offset))))
+        (goto-char from))
        (t
-	(overlay-put overlay 'display replace)
-	(goto-char to)))
+        (overlay-put overlay 'display replace)
+        (goto-char to)))
     (overlay-put overlay 'display replace)))
 
 (defun speck-replace (overlay)
@@ -3654,101 +3684,103 @@ means put this property on REPLACE."
     (when (and overlay process)
       (process-put process 'preempted t)
       (unwind-protect
-	  (let* ((from (overlay-start overlay))
-		 (property (when speck-multi (speck-get-speck from)))
-		 (to (overlay-end overlay))
-		 (offset (when (and (< from (point))
-				    (< (point) to))
-			   ;; Offset of `point' wrt `from'.
-			   (- (point) from)))
-		 (word (buffer-substring-no-properties from to))
-		 (guesses (speck-word from to word speck-multi))
-		 (text
-		  ;; We can't use any "`" or "'" here, these characters
-		  ;; may be part of the word or the replacement.  Hence
-		  ;; entirely rely on faces (`speck-query') to set them
-		  ;; apart from the rest.
-		  (substitute-command-keys
-		   (concat 
-		    "Replace %s"
-		    (when property " [%s]")
-		    " with %s ?  Type \\<speck-replace-map>\\[help] for help."))))
-	    (if (null guesses)
-		(progn
-		  (message "No corrections found")
-		  (ding))
-	      (let* ((replace (car guesses))
-		     (guess-vector (vconcat guesses))
-		     (guess-index 0)
-		     (guess-max (1- (length guess-vector)))
-		     (def 'forward)
-		     change query key)
-		(set-marker speck-marker (point))
-		(setq speck-marker-window (selected-window)) ; <----
-		(speck-replace-put-overlay overlay from to offset replace)
-		(overlay-put overlay 'face 'speck-query)
-		(unwind-protect
-		    (progn
-		      (while (memq def '(forward backward help))
-			(let ((message-log-max nil))
-			  ;; This message is also needed to avoid
-			  ;; echoing typed characters in the echo area
-			  ;; (see replace.el).
-			  (if property
-			      (message
-			       text (propertize word 'face 'speck-query)
-			       property (propertize replace 'face 'speck-query))
-			    (message
-			     text (propertize word 'face 'speck-query)
-			     (propertize replace 'face 'speck-query))))
-			(setq key (vector (read-event)))
-			(setq def (lookup-key speck-replace-map key))
-			(cond
-			 ((eq def 'accept)
-			  (setq change t)
-			  (setq query t))
-			 ((eq def 'accept-and-quit)
-			  (setq change t))
-			 ((memq def '(reject reject-and-quit)))
-			 ((eq def 'forward)
-			  (setq guess-index
-				(if (= guess-index guess-max) 0 (1+ guess-index)))
-			  (setq replace (aref guess-vector guess-index))
-			  (speck-replace-put-overlay overlay from to offset replace))
-			 ((eq def 'backward)
-			  (setq guess-index
-				(if (zerop guess-index) guess-max (1- guess-index)))
-			  (setq replace (aref guess-vector guess-index))
-			  (speck-replace-put-overlay overlay from to offset replace))
-			 ((eq def 'help)
-			  (with-output-to-temp-buffer "*Help*"
-			    (princ
-			     (concat
-			      "Replace `" word "' with `" replace "'?  Type\n\n"
-			      (speck-keys-help speck-replace-keys t)
-			      "\nAnything else will accept the replacement and reread as command.\n"))
-			    (with-current-buffer standard-output
-			      (help-mode))))
-			 (t
-			  ;; The mode-exited stuff is not clean but
-			  ;; let's try doing this as in `query-replace'.
-			  (setq this-command 'mode-exited)
-			  (setq unread-command-events
-				(append (listify-key-sequence key)
-					unread-command-events))
-			  (setq change t)))))
-		  (cond
-		   (change
-		    (speck-replace-word from to word replace overlay property))
-		   ((overlayp overlay)
-		    ;; Restore overlay properties.
-		    (overlay-put overlay 'display nil) ; Silly
-		    (overlay-put overlay 'face 'speck-guess)))
-		  (when (and query speck-replace-query)
-		    (speck-replace-query
-		     (downcase word) replace (or property speck-dictionary)))
-		  (speck-marker-goto)))))
-	(process-put process 'preempted nil)))))
+          (let* ((from (overlay-start overlay))
+                 (property (when speck-multi (speck-get-speck from)))
+                 (to (overlay-end overlay))
+                 (offset (when (and (< from (point))
+                                    (< (point) to))
+                           ;; Offset of `point' wrt `from'.
+                           (- (point) from)))
+                 (word (buffer-substring-no-properties from to))
+                 (guesses (speck-word from to word speck-multi))
+                 (text
+                  ;; We can't use any "`" or "'" here, these characters
+                  ;; may be part of the word or the replacement.  Hence
+                  ;; entirely rely on faces (`speck-query') to set them
+                  ;; apart from the rest.
+                  (substitute-command-keys
+                   (concat
+                    "Replace %s"
+                    (when property " [%s]")
+                    " with %s ?  Type \\<speck-replace-map>\\[help] for help."))))
+            (if (null guesses)
+                (progn
+                  (message "No corrections found")
+                  (ding))
+              (let* ((replace (car guesses))
+                     (guess-vector (vconcat guesses))
+                     (guess-index 0)
+                     (guess-max (1- (length guess-vector)))
+                     (def 'forward)
+                     change query key)
+                (set-marker speck-marker (point))
+                (setq speck-marker-window (selected-window)) ; <----
+                (speck-replace-put-overlay overlay from to offset replace)
+                (overlay-put overlay 'face 'speck-query)
+                (unwind-protect
+                    (progn
+                      (while (memq def '(forward backward help))
+                        (let ((message-log-max nil))
+                          ;; This message is also needed to avoid
+                          ;; echoing typed characters in the echo area
+                          ;; (see replace.el).
+                          (if property
+                              (message
+                               text (propertize word 'face 'speck-query)
+                               property (propertize replace 'face 'speck-query))
+                            (message
+                             text (propertize word 'face 'speck-query)
+                             (propertize replace 'face 'speck-query))))
+                        (setq key (vector (read-event)))
+                        (setq def (lookup-key speck-replace-map key))
+                        (cond
+                         ((eq def 'accept)
+                          (setq change t)
+                          (setq query t))
+                         ((eq def 'accept-and-quit)
+                          (setq change t))
+                         ((memq def '(reject reject-and-quit)))
+                         ((eq def 'forward)
+                          (setq guess-index
+                                (if (= guess-index guess-max) 0 (1+ guess-index)))
+                          (setq replace (aref guess-vector guess-index))
+                          (speck-replace-put-overlay overlay from to offset replace))
+                         ((eq def 'backward)
+                          (setq guess-index
+                                (if (zerop guess-index) guess-max (1- guess-index)))
+                          (setq replace (aref guess-vector guess-index))
+                          (speck-replace-put-overlay overlay from to offset replace))
+                         ((eq def 'help)
+                          (with-output-to-temp-buffer "*Help*"
+                            (princ
+                             (concat
+                              "Replace `" word "' with `" replace "'?  Type\n\n"
+                              (speck-keys-help speck-replace-keys t)
+                              "\nAnything else will accept the replacement and reread as command.\n"))
+                            (with-current-buffer standard-output
+                              (help-mode))))
+                         (t
+                          (when (or (not (functionp def))
+                                    (funcall def))
+                            ;; The mode-exited stuff is not clean but
+                            ;; let's try doing this as in `query-replace'.
+                            (setq this-command 'mode-exited)
+                            (setq unread-command-events
+                                  (append (listify-key-sequence key)
+                                          unread-command-events))
+                            (setq change t))))))
+                  (cond
+                   (change
+                    (speck-replace-word from to word replace overlay property))
+                   ((overlayp overlay)
+                    ;; Restore overlay properties.
+                    (overlay-put overlay 'display nil) ; Silly
+                    (overlay-put overlay 'face 'speck-guess)))
+                  (when (and query speck-replace-query)
+                    (speck-replace-query
+                     (downcase word) replace (or property speck-dictionary)))
+                  (speck-marker-goto)))))
+        (process-put process 'preempted nil)))))
 
 (defun speck-replace-previous (&optional arg)
   "Correct previous word with guesses in place.
@@ -3756,10 +3788,10 @@ With ARG n do this for nth such word preceding `point'."
   (interactive "p")
   (let ((overlay (speck-previous-overlay (or arg 1) '(speck-guess))))
     (if overlay
-	(speck-replace overlay)
+        (speck-replace overlay)
       (let (message-log-max)
-	(message "Not found ...")
-	(ding)))))
+        (message "Not found ...")
+        (ding)))))
 
 (defun speck-replace-next (&optional arg)
   "Correct next word with guesses in place.
@@ -3767,125 +3799,125 @@ With ARG n do this for nth such word following `point'."
   (interactive "p")
   (let ((overlay (speck-next-overlay (or arg 1) '(speck-guess))))
     (if overlay
-	(speck-replace overlay)
+        (speck-replace overlay)
       (let (message-log-max)
-	(message "Not found ...")
-	(ding)))))
+        (message "Not found ...")
+        (ding)))))
 
 (defun speck-replace-query (word replace original-property)
   "Query replace further occurrences of WORD by something like REPLACE.
 ORIGINAL-PROPERTY must match the speck property of the occurrence."
   (let ((regexp (concat "\\<" (regexp-quote word) "\\>"))
-	(query t)
-	(case-fold-search t)
-	(text
-	 (substitute-command-keys
-	  "Replace `%s' with `%s'?  Type \\<speck-replace-query-map>\\[help] for help.")))
+        (query t)
+        (case-fold-search t)
+        (text
+         (substitute-command-keys
+          "Replace `%s' with `%s'?  Type \\<speck-replace-query-map>\\[help] for help.")))
     ;; Consider widening here.
     ;; Consider using `undo-boundary' here.
     (goto-char (point-min))
     (while (and query (not (eobp))
-		(re-search-forward regexp nil t))
+                (re-search-forward regexp nil t))
       (let* ((from (match-beginning 0))
-	     (property (when speck-multi (speck-get-speck from)))
-	     (to (match-end 0))
-	     (word (buffer-substring-no-properties from to))
-	     (begin (line-beginning-position))
-	     (end (line-beginning-position 2))
-	     guesses tail)
-	(when (and (if property
-		       (equal property original-property)
-		     (eq speck-dictionary original-property))
-		   (not (and query-replace-skip-read-only
-			     ;; Ignore matches with read-only property.
-			     (text-property-not-all
-			      (match-beginning 0) (match-end 0)
-			      'read-only nil)))
-		   (save-excursion
-		     (and (goto-char from) (speck-syntactic-p)
-			  ;; The following ignores matches when ISPELL
-			  ;; doesn't deliver guesses.  This shouldn't
-			  ;; occur.
-			  (consp (setq guesses (speck-word from to word property))))))
-	  (when (setq tail (member-ignore-case replace guesses))
-	    ;; REPLACE is in `guesses'.
-	    (unless (eq guesses tail)
-	      ;; Move REPLACE to head of list.
-	      (setq guesses
-		    (cons (car tail)
-			  (delete (car tail) guesses)))))
-	  (let* ((replace (car guesses))
-		 (reps-vector (vconcat guesses))
-		 (reps-index 0)
-		 (reps-max (1- (length reps-vector)))
-		 (overlay (or (speck-overlay-at-point
-			       from '(speck-guess speck-miss))
-			      (make-overlay from to)))
-		 (def 'forward)
-		 change key)
-	    (overlay-put overlay 'specky t)
-	    (overlay-put overlay 'display replace)
-	    (overlay-put overlay 'face 'speck-query)
-	    (unwind-protect
-		(while (memq def '(forward backward help))
-		  (setq query nil)
-		  (setq def nil)
-		  (let ((message-log-max nil))
-		    ;; This message is needed to avoid echoing typed
-		    ;; characters in the echo area (see replace.el).
-		    (message text word replace))
-		  (setq key (vector (read-event)))
-		  (setq def (lookup-key speck-replace-query-map key))
-		  (cond
-		   ((eq def 'accept)
-		    (setq change t)
-		    (setq query t))
-		   ((eq def 'accept-and-quit)
-		    (setq change t))
-		   ((eq def 'reject)
-		    (setq query t))
-		   ((eq def 'reject-and-quit))
-		   ((eq def 'forward)
-		    (setq reps-index
-			  (if (= reps-index reps-max) 0 (1+ reps-index)))
-		    (setq replace (aref reps-vector reps-index))
-		    (overlay-put overlay 'display replace))
-		   ((eq def 'backward)
-		    (setq reps-index
-			  (if (zerop reps-index) reps-max (1- reps-index)))
-		    (setq replace (aref reps-vector reps-index))
-		    (overlay-put overlay 'display replace))
-		   ((eq def 'help)
-		    (with-output-to-temp-buffer "*Help*"
-		      (princ
-		       (concat
-			"Replace `" word "' with `" replace "'?  Type\n\n"
-			(speck-keys-help speck-replace-query-keys)
-			"\nAnything else will accept the replacement and reread as command.\n"))
-		      (with-current-buffer standard-output
-			(help-mode))))
-		   (t
-		    ;; The mode-exited stuff is not clean but let's try
-		    ;; doing this as in `query-replace'.
-		    (setq this-command 'mode-exited)
-		    (setq unread-command-events
-			  (append (listify-key-sequence key)
-				  unread-command-events))
-		    (setq change t))))
-	      (cond
-	       (change
-		(speck-replace-word from to word replace overlay property))
-	       ((overlayp overlay)
-		;; Install or restore overlay properties.
-		(overlay-put overlay 'display nil) ; Silly
-		(overlay-put overlay 'face 'speck-guess)))
-	      (unless query (speck-marker-goto)))))))))
+             (property (when speck-multi (speck-get-speck from)))
+             (to (match-end 0))
+             (word (buffer-substring-no-properties from to))
+             (begin (line-beginning-position))
+             (end (line-beginning-position 2))
+             guesses tail)
+        (when (and (if property
+                       (equal property original-property)
+                     (eq speck-dictionary original-property))
+                   (not (and query-replace-skip-read-only
+                             ;; Ignore matches with read-only property.
+                             (text-property-not-all
+                              (match-beginning 0) (match-end 0)
+                              'read-only nil)))
+                   (save-excursion
+                     (and (goto-char from) (speck-syntactic-p)
+                          ;; The following ignores matches when ISPELL
+                          ;; doesn't deliver guesses.  This shouldn't
+                          ;; occur.
+                          (consp (setq guesses (speck-word from to word property))))))
+          (when (setq tail (member-ignore-case replace guesses))
+            ;; REPLACE is in `guesses'.
+            (unless (eq guesses tail)
+              ;; Move REPLACE to head of list.
+              (setq guesses
+                    (cons (car tail)
+                          (delete (car tail) guesses)))))
+          (let* ((replace (car guesses))
+                 (reps-vector (vconcat guesses))
+                 (reps-index 0)
+                 (reps-max (1- (length reps-vector)))
+                 (overlay (or (speck-overlay-at-point
+                               from '(speck-guess speck-miss))
+                              (make-overlay from to)))
+                 (def 'forward)
+                 change key)
+            (overlay-put overlay 'specky t)
+            (overlay-put overlay 'display replace)
+            (overlay-put overlay 'face 'speck-query)
+            (unwind-protect
+                (while (memq def '(forward backward help))
+                  (setq query nil)
+                  (setq def nil)
+                  (let ((message-log-max nil))
+                    ;; This message is needed to avoid echoing typed
+                    ;; characters in the echo area (see replace.el).
+                    (message text word replace))
+                  (setq key (vector (read-event)))
+                  (setq def (lookup-key speck-replace-query-map key))
+                  (cond
+                   ((eq def 'accept)
+                    (setq change t)
+                    (setq query t))
+                   ((eq def 'accept-and-quit)
+                    (setq change t))
+                   ((eq def 'reject)
+                    (setq query t))
+                   ((eq def 'reject-and-quit))
+                   ((eq def 'forward)
+                    (setq reps-index
+                          (if (= reps-index reps-max) 0 (1+ reps-index)))
+                    (setq replace (aref reps-vector reps-index))
+                    (overlay-put overlay 'display replace))
+                   ((eq def 'backward)
+                    (setq reps-index
+                          (if (zerop reps-index) reps-max (1- reps-index)))
+                    (setq replace (aref reps-vector reps-index))
+                    (overlay-put overlay 'display replace))
+                   ((eq def 'help)
+                    (with-output-to-temp-buffer "*Help*"
+                      (princ
+                       (concat
+                        "Replace `" word "' with `" replace "'?  Type\n\n"
+                        (speck-keys-help speck-replace-query-keys)
+                        "\nAnything else will accept the replacement and reread as command.\n"))
+                      (with-current-buffer standard-output
+                        (help-mode))))
+                   (t
+                    ;; The mode-exited stuff is not clean but let's try
+                    ;; doing this as in `query-replace'.
+                    (setq this-command 'mode-exited)
+                    (setq unread-command-events
+                          (append (listify-key-sequence key)
+                                  unread-command-events))
+                    (setq change t))))
+              (cond
+               (change
+                (speck-replace-word from to word replace overlay property))
+               ((overlayp overlay)
+                ;; Install or restore overlay properties.
+                (overlay-put overlay 'display nil) ; Silly
+                (overlay-put overlay 'face 'speck-guess)))
+              (unless query (speck-marker-goto)))))))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			       region specking					
+;;
+;;;                            region specking
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-region () ; Put this somewhere else <--------
   "Speck region (in `transient-mark-mode' when the mark is active) or current buffer (otherwise)."
   (interactive)
@@ -3894,11 +3926,11 @@ ORIGINAL-PROPERTY must match the speck property of the occurrence."
     (save-restriction
       (widen)
       (if (and transient-mark-mode mark-active)
-	  (progn
-	    (setq start (min (point) (mark)))
-	    (setq end (max (point) (mark))))
-	(setq start (point-min))
-	(setq end (point-max)))
+          (progn
+            (setq start (min (point) (mark)))
+            (setq end (max (point) (mark))))
+        (setq start (point-min))
+        (setq end (point-max)))
       (speck-remove-all-properties)
       (speck-delete-overlays))))
 
@@ -3913,50 +3945,50 @@ ORIGINAL-PROPERTY must match the speck property of the occurrence."
   "Set Speck's filter mode."
   (interactive)
   (let ((filter-mode
-	 (completing-read
-	  (concat
-	   "Enter filter-mode (RET for default, SPC to complete): ")
-	  (list "Default" "None" "URL" "Email" "SGML" "TeX")
-	  nil t nil 'speck-filter-mode-history)))
+         (completing-read
+          (concat
+           "Enter filter-mode (RET for default, SPC to complete): ")
+          (list "Default" "None" "URL" "Email" "SGML" "TeX")
+          nil t nil 'speck-filter-mode-history)))
     (if (or (string-equal filter-mode "")
-	    (string-equal filter-mode "Default"))
-	;; Consider resetting to saved value here, maybe with prefix argument.
-	(setq filter-mode (default-value 'speck-filter-mode))
+            (string-equal filter-mode "Default"))
+        ;; Consider resetting to saved value here, maybe with prefix argument.
+        (setq filter-mode (default-value 'speck-filter-mode))
       (setq filter-mode (intern filter-mode)))
     (if (eq filter-mode speck-filter-mode)
-	(message "Filter-mode \"%s\" unchanged" filter-mode)
+        (message "Filter-mode \"%s\" unchanged" filter-mode)
       (setq speck-filter-mode filter-mode)
       (when speck-mode
-	(speck-deactivate)
-	;; Hunspell occasionally hangs when restarting, maybe the
-	;; following helps.
-	(sleep-for 0.1)
-	(setq speck-retain-local-variables t)
-	(speck-activate)))))
+        (speck-deactivate)
+        ;; Hunspell occasionally hangs when restarting, maybe the
+        ;; following helps.
+        (sleep-for 0.1)
+        (setq speck-retain-local-variables t)
+        (speck-activate)))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			       multi-dictionary					
+;;
+;;;                            multi-dictionary
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-multi-set-region (from to &optional dictionary)
   "Set 'speck property for region between FROM and TO to DICTIONARY.
-If DICTIONARY is nil or omitted remove speck property from region." 
+If DICTIONARY is nil or omitted remove speck property from region."
   (if speck-save-permanent
       ;; Make this a permanent change, not undoable.
       (with-buffer-prepared-for-specking
        (if dictionary
-	   (progn
-	     (setq speck-multi t)
-	     (speck-put-speck from to dictionary))
-	 (remove-text-properties from to '(speck nil)))
+           (progn
+             (setq speck-multi t)
+             (speck-put-speck from to dictionary))
+         (remove-text-properties from to '(speck nil)))
        (remove-text-properties from to '(specked nil))
        ;; Assert this gets saved before the buffer gets killed.
        (speck-kill-buffer-add))
     (if dictionary
-	(progn
-	  (setq speck-multi t)
-	  (speck-put-speck from to dictionary))
+        (progn
+          (setq speck-multi t)
+          (speck-put-speck from to dictionary))
       (remove-text-properties from to '(speck nil)))
     (with-buffer-prepared-for-specking
      (remove-text-properties from to '(specked nil))))
@@ -4005,73 +4037,73 @@ the dictionary for text that will be inserted by the next
 \(interactively called) command."
   (interactive "P")
   (let ((at (point))
-	(dictionary-names
-	 (cond
-	  ((eq speck-engine 'Aspell)
-	   speck-aspell-dictionary-names)
-	  ((eq speck-engine 'Hunspell)
-	   speck-hunspell-dictionary-names)
-	  ((eq speck-engine 'Ispell)
-	   speck-ispell-dictionary-names)))
-	from to dictionary-name)
+        (dictionary-names
+         (cond
+          ((eq speck-engine 'Aspell)
+           speck-aspell-dictionary-names)
+          ((eq speck-engine 'Hunspell)
+           speck-hunspell-dictionary-names)
+          ((eq speck-engine 'Ispell)
+           speck-ispell-dictionary-names)))
+        from to dictionary-name)
     (if (and transient-mark-mode mark-active)
-	(progn
-	  ;; If the mark is active use the region.
-	  (setq from (min (point) (mark)))
-	  (setq to (max (point) (mark))))
+        (progn
+          ;; If the mark is active use the region.
+          (setq from (min (point) (mark)))
+          (setq to (max (point) (mark))))
       ;; Otherwise set this up for things to come.
       (setq speck-multi-pre-property t))
     (cond
      ((and arg (not (numberp arg)))
       ;; Set to no-check.
       (if speck-multi-pre-property
-	  (setq speck-multi-pre-property '--)
-	(speck-multi-set-region from to '--))
+          (setq speck-multi-pre-property '--)
+        (speck-multi-set-region from to '--))
       (message "Reset to no-check"))
      ((and arg (zerop arg))
       ;; Reset to default.
       (if speck-multi-pre-property
-	  (setq speck-multi-pre-property 'default)
-	(speck-multi-set-region from to))
+          (setq speck-multi-pre-property 'default)
+        (speck-multi-set-region from to))
       (message "Reset to default"))
      ((and arg
-	   (setq dictionary-name
-		 (cdr (assoc arg speck-dictionary-names-alist))))
+           (setq dictionary-name
+                 (cdr (assoc arg speck-dictionary-names-alist))))
       ;; We have an entry for ARG in `speck-dictionary-names-alist', use
       ;; associated dictionary-name.
       (if (member dictionary-name dictionary-names)
-	  (let ((dictionary (intern dictionary-name)))
-	    (if speck-multi-pre-property
-		(setq speck-multi-pre-property dictionary)
-	      (speck-multi-set-region from to dictionary))
-	    (message "Set to dictionary \"%s\"" dictionary-name))
-	(setq speck-multi-pre-property nil)
-	(message "Can't find dictionary \"%s\"" dictionary-name)))
+          (let ((dictionary (intern dictionary-name)))
+            (if speck-multi-pre-property
+                (setq speck-multi-pre-property dictionary)
+              (speck-multi-set-region from to dictionary))
+            (message "Set to dictionary \"%s\"" dictionary-name))
+        (setq speck-multi-pre-property nil)
+        (message "Can't find dictionary \"%s\"" dictionary-name)))
      (t
       (setq dictionary-name (read-from-minibuffer "Dictionary: "))
       (cond
        ((or (not dictionary-name) (string-equal dictionary-name ""))
-	;; Reset to default.
-	(if speck-multi-pre-property
-	    (setq speck-multi-pre-property 'default)
-	  (speck-multi-set-region from to))
-	(message "Reset to default"))
+        ;; Reset to default.
+        (if speck-multi-pre-property
+            (setq speck-multi-pre-property 'default)
+          (speck-multi-set-region from to))
+        (message "Reset to default"))
        ((string-match "--" dictionary-name)
-	;; Set to no-check.
-	(if speck-multi-pre-property
-	    (setq speck-multi-pre-property '--)
-	  (speck-multi-set-region from to '--))
-	(message "Set to no-check"))
+        ;; Set to no-check.
+        (if speck-multi-pre-property
+            (setq speck-multi-pre-property '--)
+          (speck-multi-set-region from to '--))
+        (message "Set to no-check"))
        ((member dictionary-name dictionary-names)
-	(let ((dictionary (intern dictionary-name)))
-	  ;; Set dictionary for region.
-	  (if speck-multi-pre-property
-	      (setq speck-multi-pre-property dictionary)
-	    (speck-multi-set-region from to dictionary)
-	    (message "Set to dictionary \"%s\"" dictionary-name))))
+        (let ((dictionary (intern dictionary-name)))
+          ;; Set dictionary for region.
+          (if speck-multi-pre-property
+              (setq speck-multi-pre-property dictionary)
+            (speck-multi-set-region from to dictionary)
+            (message "Set to dictionary \"%s\"" dictionary-name))))
        (t
-	(setq speck-multi-pre-property nil)
-	(message "Can't find dictionary \"%s\"" dictionary-name)))))
+        (setq speck-multi-pre-property nil)
+        (message "Can't find dictionary \"%s\"" dictionary-name)))))
     (when speck-multi-pre-property
       (setq speck-multi t)
       ;; We can't do this earlier since `read-from-minibuffer' would
@@ -4086,102 +4118,102 @@ the dictionary for text that will be inserted by the next
   "Return list of annotations for encoding the region.
 FROM and TO denote start and end of the region for buffer BUFFER."
   (let ((from (or from (point-min)))
-	(to (or to (point-max)))
-	property list)
+        (to (or to (point-max)))
+        property list)
     (cond
      ((or (not speck-multi) (not (speck-save-confirm))))
      ((eq speck-multi-style 'eof)
       ;; This is certainly wrong for `to' /= `point-max'.
       (let ((start from))
-	(save-excursion
-	  (save-restriction
-	    (narrow-to-region from to)
-	    ;; Create `list' as (3 7 "fr" 234 256 "it" ...) that is a
-	    ;; list of <start end dictionary> triples.  Use strings to
-	    ;; encode language properties in order to `read' back and
-	    ;; subsequently `intern' them in a simple fashion.
-	    (while (setq from (text-property-not-all from to 'speck nil))
-	      (setq property (speck-get-speck from))
-	      (if (eq property '==)
-		  ;; Do not record `==' properties (we do record `--'
-		  ;; properties, though).
-		  (goto-char
-		   (setq from (or (next-single-property-change from 'speck)
-				  to)))
-		(setq list (cons from list))
-		(setq list (cons
-			    (progn
-			      (goto-char
-			       (setq from (or (next-single-property-change
-					       from 'speck)
-					      to)))
-			      from)
-			    list))
-		(setq list (cons property list))))
-	    (when list
-	      (setq list
-		    (list
-		     (cons
-		      to ; The position passed to `write-region-annotate-functions' ...
-		      (concat			; ... and the string.
-		       ;; The following will add a newline at eob unless
-		       ;; there's one.
-		       (unless (save-excursion (goto-char to) (bolp)) "\n")
-		       ;; Insert a comment starter, if possible, to
-		       ;; avoid that other applications choke at our
-		       ;; properties.
-		       (or comment-start "")
-		       ;; Add a `print'ed version of `list'.
-		       "<<speck-eof"
-		       (let (print-level print-length)
-			 (prin1-to-string (nreverse list)))
-		       ;; Mark this appropriately.
-		       "speck-eof>>"
-		       ;; Insert a comment ender or a newline
-		       (cond
-			((string-equal comment-end "") "\n")
-			((string-equal (substring comment-end -1) "\n")
-			 ;; Is this case reasonable?
-			 comment-end)
-			(t (concat comment-end "\n"))))))))))))
+        (save-excursion
+          (save-restriction
+            (narrow-to-region from to)
+            ;; Create `list' as (3 7 "fr" 234 256 "it" ...) that is a
+            ;; list of <start end dictionary> triples.  Use strings to
+            ;; encode language properties in order to `read' back and
+            ;; subsequently `intern' them in a simple fashion.
+            (while (setq from (text-property-not-all from to 'speck nil))
+              (setq property (speck-get-speck from))
+              (if (eq property '==)
+                  ;; Do not record `==' properties (we do record `--'
+                  ;; properties, though).
+                  (goto-char
+                   (setq from (or (next-single-property-change from 'speck)
+                                  to)))
+                (setq list (cons from list))
+                (setq list (cons
+                            (progn
+                              (goto-char
+                               (setq from (or (next-single-property-change
+                                               from 'speck)
+                                              to)))
+                              from)
+                            list))
+                (setq list (cons property list))))
+            (when list
+              (setq list
+                    (list
+                     (cons
+                      to ; The position passed to `write-region-annotate-functions' ...
+                      (concat                   ; ... and the string.
+                       ;; The following will add a newline at eob unless
+                       ;; there's one.
+                       (unless (save-excursion (goto-char to) (bolp)) "\n")
+                       ;; Insert a comment starter, if possible, to
+                       ;; avoid that other applications choke at our
+                       ;; properties.
+                       (or comment-start "")
+                       ;; Add a `print'ed version of `list'.
+                       "<<speck-eof"
+                       (let (print-level print-length)
+                         (prin1-to-string (nreverse list)))
+                       ;; Mark this appropriately.
+                       "speck-eof>>"
+                       ;; Insert a comment ender or a newline
+                       (cond
+                        ((string-equal comment-end "") "\n")
+                        ((string-equal (substring comment-end -1) "\n")
+                         ;; Is this case reasonable?
+                         comment-end)
+                        (t (concat comment-end "\n"))))))))))))
      (speck-multi-style
       (save-excursion
-	(save-restriction
-	  (narrow-to-region from to)
-	  (while (setq from (text-property-not-all from to 'speck nil))
-	    (setq property (speck-get-speck from))
-	    (if (eq property '==)
-		(goto-char
-		 (setq from (or (next-single-property-change from 'speck)
-				to)))
-	      (setq property (symbol-name property))
-	      ;; Disallow colons in Aspell's dictionary names.
-	      (setq list (cons (cons from (concat "<<speck-" property ":"))
-			       list))
-	      (goto-char
-	       (setq from (or (next-single-property-change from 'speck)
-			      to)))
-	      (setq list (cons (cons from (concat "speck-" property ">>"))
-			       list))))
-	  (when list
-	    (setq list (cons (cons (point-max) "<<speck-nil:speck-nil>>") list)))))))
+        (save-restriction
+          (narrow-to-region from to)
+          (while (setq from (text-property-not-all from to 'speck nil))
+            (setq property (speck-get-speck from))
+            (if (eq property '==)
+                (goto-char
+                 (setq from (or (next-single-property-change from 'speck)
+                                to)))
+              (setq property (symbol-name property))
+              ;; Disallow colons in Aspell's dictionary names.
+              (setq list (cons (cons from (concat "<<speck-" property ":"))
+                               list))
+              (goto-char
+               (setq from (or (next-single-property-change from 'speck)
+                              to)))
+              (setq list (cons (cons from (concat "speck-" property ">>"))
+                               list))))
+          (when list
+            (setq list (cons (cons (point-max) "<<speck-nil:speck-nil>>") list)))))))
     (when list
       ;; This should eliminate ourselves when `list' is empty.
       ;; Hopefully, a language called `nil' will not be invented ever.
       (cons
        (cons
-	(point-min)
-	(concat
-	 (when comment-start
-	   (concat comment-start " "))
-	 (if (eq speck-multi-style 'eof)
-	     "<<speck-bof:speck-eof>>"
-	   "<<speck-bof:speck-nil>>")
-	 (when comment-end
-	   (concat " " comment-end))
-	 (when (or (not comment-end)
-		   (not (string-equal comment-end "\n")))
-	   "\n")))
+        (point-min)
+        (concat
+         (when comment-start
+           (concat comment-start " "))
+         (if (eq speck-multi-style 'eof)
+             "<<speck-bof:speck-eof>>"
+           "<<speck-bof:speck-nil>>")
+         (when comment-end
+           (concat " " comment-end))
+         (when (or (not comment-end)
+                   (not (string-equal comment-end "\n")))
+           "\n")))
        (nreverse list)))))
 
 ;;;###autoload
@@ -4193,101 +4225,101 @@ BEGIN and END denote the region to convert."
    ;; making an entry when it's nil, the following must be largely
    ;; handled by `format-decode' or `insert-file-contents'.
    (let ((offset (- begin (point-min)))
-	 (undo-list buffer-undo-list)
-	 (inhibit-read-only t)
-	 (inhibit-point-motion-hooks t)
-	 (inhibit-modification-hooks t)
-	 (inhibit-field-text-motion t)
-	 first-change-hook after-change-functions
-	 style)
+         (undo-list buffer-undo-list)
+         (inhibit-read-only t)
+         (inhibit-point-motion-hooks t)
+         (inhibit-modification-hooks t)
+         (inhibit-field-text-motion t)
+         first-change-hook after-change-functions
+         style)
      (save-excursion
        (cond
-	((and (goto-char begin)
-	      (not (looking-at
-		    ".\\{,12\\}<<speck-bof:speck-\\(?:\\(eof\\)\\|nil>>\\)")))
-	 ;; This should not occur.
-	 (error "Speck annotations corrupted"))
-	((and (setq style (match-beginning 1))
-	      (not (speck-save-confirm))
-	      (if (yes-or-no-p "Modifying this buffer will lose speck multi information, continue? ")
-		  (save-restriction
-		    (narrow-to-region begin end)
-		    ;; Note: We do have to delete the line containing
-		    ;; our header here since otherwise format will ask
-		    ;; us forever.  If you want to see this line you
-		    ;; have to use `find-file-literally' instead.
-		    (delete-region begin (line-beginning-position 2))
-		    (point-max))
-		;; Better signal an error and quit.
-		(error "Canceled"))))
-	;; This is a fresh addition to assert that the user gets asked
-	;; in the speck-nil case as well.
-	((and (not style)
-	      (not (speck-save-confirm)))
-	 (if (yes-or-no-p "Modifying this buffer will lose speck multi information, continue? ")
-	     (save-restriction
-	       (narrow-to-region begin end)
-	       ;; Note: We do have to delete the line containing our
-	       ;; header here since otherwise format will ask us
-	       ;; forever.  If you want to see this line you have to use
-	       ;; `find-file-literally' instead.
-	       (delete-region begin (line-beginning-position 2))
-	       (point-max))
-	   (error "Canceled")))
-	(t
-	 (save-restriction
-	   (narrow-to-region begin end)
-	   ;; Delete this line.
-	   (delete-region begin (line-beginning-position 2))
-	   (setq speck-multi t)
-	   (add-to-list 'buffer-file-format 'speck)
-	   (if style
-	       ;; eof case
-	       (let (list)
-		 (goto-char (point-max))
-		 ;; We should be right after <<speck-eof(...)speck-eof>> here.
-		 (if (re-search-backward "speck-eof>>" nil t)
-		     (progn
-		       (backward-sexp)
-		       (setq list (read (current-buffer)))
-		       ;; If someone modified our text she's on her own.
-		       (delete-region
-			(line-beginning-position) (line-beginning-position 2))
-		       (if (zerop offset)
-			   ;; The "normal" or "reverting" case.
-			   (while list
-			     (speck-put-speck
-			      (pop list) (pop list) (pop list)))
-			 ;; The "insert-file" not at `point-min' case.
-			 (while list
-			   (speck-put-speck
-			    (+ (pop list) offset) (+ (pop list) offset)
-			    (pop list)))))
-		   (error "Speck annotations corrupted")))
-	     ;; nil case
-	     (let (from property)
-	       (goto-char (point-min))
-	       ;; Consider [:alpha:] here.
-	       (while (re-search-forward "<<speck-\\([a-zA-Z-_0-9]+\\):" nil t)
-		 (setq property (match-string-no-properties 1))
-		 (delete-region (match-beginning 0) (point))
-		 (setq from (point))
-		 (if (re-search-forward (concat "speck-" property ">>"))
-		     (progn
-		       (delete-region (match-beginning 0) (point))
-		       (speck-put-speck from (point) (intern property)))
-		   ;; The following message might not be very consolidating.
-		   (error
-		    (concat "Missing speck-" property ">>"))))))
-	   ;; Reset `buffer-undo-list', if possible.
-	   (unless undo-list (setq buffer-undo-list nil))
-	   (point-max))))))))
+        ((and (goto-char begin)
+              (not (looking-at
+                    ".\\{,12\\}<<speck-bof:speck-\\(?:\\(eof\\)\\|nil>>\\)")))
+         ;; This should not occur.
+         (error "Speck annotations corrupted"))
+        ((and (setq style (match-beginning 1))
+              (not (speck-save-confirm))
+              (if (yes-or-no-p "Modifying this buffer will lose speck multi information, continue? ")
+                  (save-restriction
+                    (narrow-to-region begin end)
+                    ;; Note: We do have to delete the line containing
+                    ;; our header here since otherwise format will ask
+                    ;; us forever.  If you want to see this line you
+                    ;; have to use `find-file-literally' instead.
+                    (delete-region begin (line-beginning-position 2))
+                    (point-max))
+                ;; Better signal an error and quit.
+                (error "Canceled"))))
+        ;; This is a fresh addition to assert that the user gets asked
+        ;; in the speck-nil case as well.
+        ((and (not style)
+              (not (speck-save-confirm)))
+         (if (yes-or-no-p "Modifying this buffer will lose speck multi information, continue? ")
+             (save-restriction
+               (narrow-to-region begin end)
+               ;; Note: We do have to delete the line containing our
+               ;; header here since otherwise format will ask us
+               ;; forever.  If you want to see this line you have to use
+               ;; `find-file-literally' instead.
+               (delete-region begin (line-beginning-position 2))
+               (point-max))
+           (error "Canceled")))
+        (t
+         (save-restriction
+           (narrow-to-region begin end)
+           ;; Delete this line.
+           (delete-region begin (line-beginning-position 2))
+           (setq speck-multi t)
+           (add-to-list 'buffer-file-format 'speck)
+           (if style
+               ;; eof case
+               (let (list)
+                 (goto-char (point-max))
+                 ;; We should be right after <<speck-eof(...)speck-eof>> here.
+                 (if (re-search-backward "speck-eof>>" nil t)
+                     (progn
+                       (backward-sexp)
+                       (setq list (read (current-buffer)))
+                       ;; If someone modified our text she's on her own.
+                       (delete-region
+                        (line-beginning-position) (line-beginning-position 2))
+                       (if (zerop offset)
+                           ;; The "normal" or "reverting" case.
+                           (while list
+                             (speck-put-speck
+                              (pop list) (pop list) (pop list)))
+                         ;; The "insert-file" not at `point-min' case.
+                         (while list
+                           (speck-put-speck
+                            (+ (pop list) offset) (+ (pop list) offset)
+                            (pop list)))))
+                   (error "Speck annotations corrupted")))
+             ;; nil case
+             (let (from property)
+               (goto-char (point-min))
+               ;; Consider [:alpha:] here.
+               (while (re-search-forward "<<speck-\\([a-zA-Z-_0-9]+\\):" nil t)
+                 (setq property (match-string-no-properties 1))
+                 (delete-region (match-beginning 0) (point))
+                 (setq from (point))
+                 (if (re-search-forward (concat "speck-" property ">>"))
+                     (progn
+                       (delete-region (match-beginning 0) (point))
+                       (speck-put-speck from (point) (intern property)))
+                   ;; The following message might not be very consolidating.
+                   (error
+                    (concat "Missing speck-" property ">>"))))))
+           ;; Reset `buffer-undo-list', if possible.
+           (unless undo-list (setq buffer-undo-list nil))
+           (point-max))))))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			    case auto-correction				
+;;
+;;;                         case auto-correction
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defun speck-auto-correct-case (old from to word)
   "Auto-correct case."
   (let (corrected guesses)
@@ -4295,69 +4327,69 @@ BEGIN and END denote the region to convert."
       ;; `point' must be after the colon.
       (forward-char)
       (while (re-search-forward "\\(.*?\\)\\(?:, \\|\n\n\\)" nil t)
-	(setq guesses (cons (match-string-no-properties 1) guesses)))
+        (setq guesses (cons (match-string-no-properties 1) guesses)))
       (setq guesses (nreverse guesses)))
     (cond
      ((eq speck-auto-correct-case 'two)
       (when (and (> (- to from) 1)
-		 ;; Replace `word' if downcasing its second letter
-		 ;; yields a word in `guesses'.
-		 (not (equal (aref word 0) (downcase (aref word 0))))
-		 (not (equal (aref word 1) (downcase (aref word 1)))))
-	(let ((replace (concat
-			(substring word 0 1)
-			(downcase (substring word 1 2))
-			(substring word 2))))
-	  (when (catch 'found
-		  (dolist (guess guesses)
-		    (when (string-equal replace guess)
-		      (throw 'found t))))
-	    (speck-replace-word
-	     from to word replace nil
-	     (when speck-multi (speck-get-speck from)))
-	    (setq corrected t)))))
+                 ;; Replace `word' if downcasing its second letter
+                 ;; yields a word in `guesses'.
+                 (not (equal (aref word 0) (downcase (aref word 0))))
+                 (not (equal (aref word 1) (downcase (aref word 1)))))
+        (let ((replace (concat
+                        (substring word 0 1)
+                        (downcase (substring word 1 2))
+                        (substring word 2))))
+          (when (catch 'found
+                  (dolist (guess guesses)
+                    (when (string-equal replace guess)
+                      (throw 'found t))))
+            (speck-replace-word
+             from to word replace nil
+             (when speck-multi (speck-get-speck from)))
+            (setq corrected t)))))
      ((eq speck-auto-correct-case 'one)
       ;; Replace `word' if changing its case yields a unique word in
       ;; `guesses'.
       (let ((cased (downcase word))
-	    replace)
-	(when (catch 'failed
-		(dolist (guess guesses replace)
-		  (when (eq (compare-strings
-			     cased 0 nil guess 0 nil t)
-			    t)
-		    (if replace
-			(throw 'failed nil)
-		      (setq replace guess)))))
-	  (speck-replace-word
-	   from to word replace nil
-	   (when speck-multi (speck-get-speck from)))
-	  (setq corrected t))))
+            replace)
+        (when (catch 'failed
+                (dolist (guess guesses replace)
+                  (when (eq (compare-strings
+                             cased 0 nil guess 0 nil t)
+                            t)
+                    (if replace
+                        (throw 'failed nil)
+                      (setq replace guess)))))
+          (speck-replace-word
+           from to word replace nil
+           (when speck-multi (speck-get-speck from)))
+          (setq corrected t))))
      ((eq speck-auto-correct-case t)
       ;; Replace `word' if changing its case yields a word in
       ;; `guesses'.
       (let* ((cased (downcase word))
-	     (replace
-	      (catch 'found
-		(dolist (guess guesses)
-		  (when (eq (compare-strings
-			     cased 0 nil guess 0 nil t)
-			    t)
-		    (throw 'found guess))))))
-	(when replace
-	  (speck-replace-word
-	   from to word replace nil
-	   (when speck-multi (speck-get-speck from)))
-	  (setq corrected t)))))
+             (replace
+              (catch 'found
+                (dolist (guess guesses)
+                  (when (eq (compare-strings
+                             cased 0 nil guess 0 nil t)
+                            t)
+                    (throw 'found guess))))))
+        (when replace
+          (speck-replace-word
+           from to word replace nil
+           (when speck-multi (speck-get-speck from)))
+          (setq corrected t)))))
     (when corrected
       (speck-put-property old to))
     corrected))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;		     auto-correct after a buffer change				
+;;
+;;;                  auto-correct after a buffer change
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defvar speck-auto-correct-regexp
   "\\(?:\\sw\\(#\\)[st]\\>\\)")
 
@@ -4367,47 +4399,47 @@ BEGIN and END denote the region to convert."
 (defun speck-auto-correct-after-change ()
   (save-excursion
     (when (and (eq this-command 'self-insert-command)
-	       (looking-back speck-auto-correct-regexp))
+               (looking-back speck-auto-correct-regexp (line-beginning-position)))
       (cond
        ((match-beginning 1)
-	(replace-match (aref speck-auto-correct-replace 1) nil nil nil 1))))))
+        (replace-match (aref speck-auto-correct-replace 1) nil nil nil 1))))))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;			    miscellaneous					
+;;
+;;;                         miscellaneous
 ;; _____________________________________________________________________________
-;; 										
+;;
 (defvar message-signature-separator)
 
 (defun speck-email-region ()
   "Reset regions for mail mode."
   (interactive)
   (let* ((body-start
-	  (save-excursion
-	    (goto-char (point-min))
-	    (re-search-forward
-	     (concat "^" (regexp-quote mail-header-separator) "$") nil t)
-	    (point)))
-	 (subject-start
-	  (when (> body-start (point-min))
-	    (save-excursion
-	      (goto-char (point-min))
-	      (when (re-search-forward "^Subject:" nil t)
-		(point)))))
-	 (subject-end
-	  (when subject-start
-	    (save-excursion
-	      (goto-char subject-start)
-	      (line-end-position))))
-	 (body-end
-	  (save-excursion
-	    (goto-char (point-max))
-	    (re-search-backward message-signature-separator nil t)
-	    (point))))
+          (save-excursion
+            (goto-char (point-min))
+            (re-search-forward
+             (concat "^" (regexp-quote mail-header-separator) "$") nil t)
+            (point)))
+         (subject-start
+          (when (> body-start (point-min))
+            (save-excursion
+              (goto-char (point-min))
+              (when (re-search-forward "^Subject:" nil t)
+                (point)))))
+         (subject-end
+          (when subject-start
+            (save-excursion
+              (goto-char subject-start)
+              (line-end-position))))
+         (body-end
+          (save-excursion
+            (goto-char (point-max))
+            (re-search-backward message-signature-separator nil t)
+            (point))))
     (if subject-end
-	(progn
-	  (speck-multi-set-region (point-min) subject-start '==)
-	  (speck-multi-set-region subject-end body-start '==))
+        (progn
+          (speck-multi-set-region (point-min) subject-start '==)
+          (speck-multi-set-region subject-end body-start '==))
       (speck-multi-set-region (point-min) body-start '==))
     (speck-multi-set-region body-end (point-max) '==)))
 
@@ -4422,44 +4454,44 @@ BEGIN and END denote the region to convert."
   (interactive "sOption: \n")
   (unwind-protect
       (progn
-	(process-put speck-process 'preempted t)
-	(with-current-buffer (process-buffer speck-process)
-	  (erase-buffer))
-	(process-send-string speck-process (concat "$$cr " option "\n"))
-	(accept-process-output speck-process 0.1)
-	(with-current-buffer (process-buffer speck-process)
-	  (message
-	   "Value of %s is: %s" option
-	   (buffer-substring
-	    (point-min)
-	    (progn
-	      (goto-char (point-max)) (skip-chars-backward "\n") (point))))))
+        (process-put speck-process 'preempted t)
+        (with-current-buffer (process-buffer speck-process)
+          (erase-buffer))
+        (process-send-string speck-process (concat "$$cr " option "\n"))
+        (accept-process-output speck-process 0.1)
+        (with-current-buffer (process-buffer speck-process)
+          (message
+           "Value of %s is: %s" option
+           (buffer-substring
+            (point-min)
+            (progn
+              (goto-char (point-max)) (skip-chars-backward "\n") (point))))))
     (process-put speck-process 'preempted nil)))
 
 (defun speck-set-option (option value)
   (interactive "sOption: \nsValue: ")
   (unwind-protect
       (progn
-	(process-put speck-process 'preempted t)
-	(with-current-buffer (process-buffer speck-process)
-	  (erase-buffer))
-	(process-send-string speck-process (concat "$$cs " option "," value "\n"))
-	(process-send-string speck-process (concat "$$cr " option "\n"))
-	(accept-process-output speck-process 0.1)
-	(with-current-buffer (process-buffer speck-process)
-	  (message
-	   "Value of %s set to: %s" option
-	   (buffer-substring
-	    (point-min)
-	    (progn
-	      (goto-char (point-max)) (skip-chars-backward "\n") (point))))))
+        (process-put speck-process 'preempted t)
+        (with-current-buffer (process-buffer speck-process)
+          (erase-buffer))
+        (process-send-string speck-process (concat "$$cs " option "," value "\n"))
+        (process-send-string speck-process (concat "$$cr " option "\n"))
+        (accept-process-output speck-process 0.1)
+        (with-current-buffer (process-buffer speck-process)
+          (message
+           "Value of %s set to: %s" option
+           (buffer-substring
+            (point-min)
+            (progn
+              (goto-char (point-max)) (skip-chars-backward "\n") (point))))))
     (process-put speck-process 'preempted nil)))
 
 ;; _____________________________________________________________________________
-;; 										
-;;;		       saving things to files					
+;;
+;;;                    saving things to files
 ;; _____________________________________________________________________________
-;; 										
+;;
 
 ;; The following may be asked even _after_ the user has answered "no" in
 ;; a "Buffer foo.changed modified; kill anyway? (yes or no) yes"
@@ -4472,7 +4504,7 @@ BEGIN and END denote the region to convert."
     (save-buffer))
   (setq speck-kill-buffer-query nil)
   (setq speck-kill-buffer-query-list
-	(delq (current-buffer) speck-kill-buffer-query-list))
+        (delq (current-buffer) speck-kill-buffer-query-list))
   (remove-hook 'kill-buffer-query-functions 'speck-kill-buffer-query t)
   t)
 
@@ -4483,7 +4515,7 @@ Called by `kill-emacs-query-functions'."
   (dolist (buffer speck-kill-buffer-query-list)
     (when (buffer-live-p buffer)
       (with-current-buffer buffer
-	(speck-kill-buffer-query))))
+        (speck-kill-buffer-query))))
   t)
 
 (defun speck-kill-buffer-add ()
@@ -4493,11 +4525,11 @@ Called by `kill-emacs-query-functions'."
     (setq speck-kill-buffer-query t)
     (unless (memq (current-buffer) speck-kill-buffer-query-list)
       (setq speck-kill-buffer-query-list
-	    (cons (current-buffer) speck-kill-buffer-query-list)))
+            (cons (current-buffer) speck-kill-buffer-query-list)))
     (add-hook 'kill-buffer-query-functions 'speck-kill-buffer-query nil t)
     (add-hook 'kill-emacs-query-functions 'speck-kill-emacs-query)))
 
-;; Parts of the following function were stolen from erc.el. 
+;; Parts of the following function were stolen from erc.el.
 (defun speck-insert-string-noundo (string)
   "As `insert' but don't allow undoing this and update `buffer-undo-list'.
 All items in the buffer-undo-list referencing a position after `point'
@@ -4508,27 +4540,27 @@ insertion."
      (insert string))
     (unless (or (zerop amount) (atom buffer-undo-list))
       (dolist (entry buffer-undo-list)
-	(cond
-	 ((and (integerp entry) (< (point) entry))
-	  ;; POSITION
-	  (incf entry amount))
-	 ((or (atom entry) (eq (car entry) t) (markerp (car entry)))
-	  ;; undo boundary: `nil'
-	  ;; change from "unmodified" status: (t HIGH . LOW)
-	  ;; marker adjustment: (MARKER . DISTANCE)
-	  nil)
-	 ((and (integerp (car entry)) (< (point) (car entry)))
-	  ;; insertion: (BEG . END)
-	  (incf (car entry) amount)
-	  (incf (cdr entry) amount))
-	 ((and (stringp (car entry)) (< (point) (cdr entry)))
-	  ;; deletion: (TEXT . POSITION)
-	  (incf (cdr entry) (if (natnump (cdr entry)) amount (- amount))))
-	 ((and (null (car entry)) (< (point) (car (nthcdr 3 entry))))
-	  ;; text property modification: (nil PROPERTY VALUE BEG . END)
-	  (let ((cons (nthcdr 3 entry)))
-	    (incf (car cons) amount)
-	    (incf (cdr cons) amount))))))))
+        (cond
+         ((and (integerp entry) (< (point) entry))
+          ;; POSITION
+          (incf entry amount))
+         ((or (atom entry) (eq (car entry) t) (markerp (car entry)))
+          ;; undo boundary: `nil'
+          ;; change from "unmodified" status: (t HIGH . LOW)
+          ;; marker adjustment: (MARKER . DISTANCE)
+          nil)
+         ((and (integerp (car entry)) (< (point) (car entry)))
+          ;; insertion: (BEG . END)
+          (incf (car entry) amount)
+          (incf (cdr entry) amount))
+         ((and (stringp (car entry)) (< (point) (cdr entry)))
+          ;; deletion: (TEXT . POSITION)
+          (incf (cdr entry) (if (natnump (cdr entry)) amount (- amount))))
+         ((and (null (car entry)) (< (point) (car (nthcdr 3 entry))))
+          ;; text property modification: (nil PROPERTY VALUE BEG . END)
+          (let ((cons (nthcdr 3 entry)))
+            (incf (car cons) amount)
+            (incf (cdr cons) amount))))))))
 
 (defun speck-save-string (string)
   "Insert STRING with `specked' and `==' properties set."
@@ -4551,200 +4583,200 @@ Optional argument DICTIONARY means save in dictionary specific section."
   (when (and speck-save-words (speck-save-confirm))
     (save-excursion
       (save-restriction
-	(widen)
-	(goto-char (point-max))
-	(let ((dictionary-name (when dictionary (symbol-name dictionary)))
-	      at string found case-fold-search)
-	  ;; Search for Local Words section.  The beginning of the last
-	  ;; line of that section must appear within the 3000 characters
-	  ;; limit.
-	  (cond
-	   ((re-search-backward speck-save-words-regexp (- (point-max) 3000) t)
-	    ;; `string' records any comment-start plus "local-words"
-	    ;; string.
-	    (let ((string (buffer-substring-no-properties
-			   (line-beginning-position) (match-end 0))))
-	      (setq at (line-beginning-position))
-	      (if dictionary-name
-		  ;; Search for an entry for this dictionary.
-		  (let ((regexp (concat
-				 "[ \t]+(" (regexp-quote dictionary-name) "):")))
-		    (while (and (progn
-				  (goto-char (match-end 0))
-				  (not (setq found (looking-at regexp))))
-				(progn
-				  (beginning-of-line)
-				  (re-search-backward
-				   speck-save-words-regexp
-				   (line-beginning-position 0) t))))
-		    (if found
-			;; Corresponding dictionary entry found.
-			(if (<= (+ (- (line-end-position)
-				      (line-beginning-position))
-				   ;; 80 is hard-coded here.
-				   (current-column) 1 (length word)) 80)
-			    ;; Insert `word' before first entry on this
-			    ;; line.
-			    (progn
-			      (goto-char (match-end 0))
-			      (skip-chars-forward " \t")
-			      (speck-save-string (concat word " ")))
-			  ;; Add word on new line.
-			  (forward-line)
-			  (speck-save-string (concat
-					      string " (" dictionary-name "): " word
-					      (when (stringp comment-end)
-						comment-end)))
-			  ;; Assert terminating newline.
-			  (unless (bolp) (speck-save-string "\n")))
-		      ;; No dictionary entry found, add one at end of
-		      ;; local words section.
-		      (goto-char at)
-		      ;; The following was `forward-line' before which
-		      ;; added the dictionary entry after an existing
-		      ;; file entry.  Don't do that (for the moment,
-		      ;; rather add it before the last dictionary entry,
-		      ;; if there's one).
-		      (beginning-of-line)
-		      (speck-save-string
-		       (concat string " (" dictionary-name "): "
-			       word (when (stringp comment-end) comment-end)))
-		      ;; Assert terminating newline.
-		      (unless (bolp) (speck-save-string "\n"))))
-		;; No dictionary.
-		(while (and (progn
-			      (goto-char (match-end 0))
-			      (not (setq found (looking-at ":"))))
-			    (progn
-			      (beginning-of-line)
-			      (re-search-backward
-			       speck-save-words-regexp
-			       (line-beginning-position 0) t))))
-		(if found
-		    ;; Corresponding dictionary entry found.
-		    (if (<= (+ (- (line-end-position) (line-beginning-position))
-			       ;; 80 is hard-coded here.
-			       (current-column) 1 (length word)) 80)
-			;; Insert `word' before first entry on this
-			;; line.
-			(progn
-			  (goto-char (match-end 0))
-			  (skip-chars-forward " \t")
-			  (speck-save-string (concat word " ")))
-		      ;; Add word on new line.
-		      (forward-line)
-		      (speck-save-string
-		       (concat string ": " word
-			       (when (stringp comment-end) comment-end)))
-		      ;; Assert terminating newline.
-		      (unless (bolp) (speck-save-string "\n")))
-		  ;; No dictionary entry found, add one at end of local
-		  ;; words section.
-		  (goto-char at)
-		  (forward-line)
-		  (speck-save-string
-		   (concat string ": " word
-			   (when (stringp comment-end) comment-end)))
-		  ;; Assert terminating newline.
-		  (unless (bolp) (speck-save-string "\n"))))
-	      t))
-	   ;; Go to minimum of known local positions.
-	   ((let* ((at (speck-min-of-list-and-point-max
-			(speck-local-positions))))
-	      (goto-char at)
-	      (speck-save-string (if (bolp) "\n" "\n\n"))
-	      (speck-save-string
-	       (concat speck-save-words-string
-		       (when dictionary-name (concat " (" dictionary-name ")"))
-		       ": " word "\n\n"))
-	      (forward-line -2)
-	      (when comment-start
-		(let ((comment-style 'plain))
-		  (comment-region
-		   (line-beginning-position) (line-end-position))))
-	      t))
-	   (t (error "Failed to add word"))))))))
+        (widen)
+        (goto-char (point-max))
+        (let ((dictionary-name (when dictionary (symbol-name dictionary)))
+              at string found case-fold-search)
+          ;; Search for Local Words section.  The beginning of the last
+          ;; line of that section must appear within the 3000 characters
+          ;; limit.
+          (cond
+           ((re-search-backward speck-save-words-regexp (- (point-max) 3000) t)
+            ;; `string' records any comment-start plus "local-words"
+            ;; string.
+            (let ((string (buffer-substring-no-properties
+                           (line-beginning-position) (match-end 0))))
+              (setq at (line-beginning-position))
+              (if dictionary-name
+                  ;; Search for an entry for this dictionary.
+                  (let ((regexp (concat
+                                 "[ \t]+(" (regexp-quote dictionary-name) "):")))
+                    (while (and (progn
+                                  (goto-char (match-end 0))
+                                  (not (setq found (looking-at regexp))))
+                                (progn
+                                  (beginning-of-line)
+                                  (re-search-backward
+                                   speck-save-words-regexp
+                                   (line-beginning-position 0) t))))
+                    (if found
+                        ;; Corresponding dictionary entry found.
+                        (if (<= (+ (- (line-end-position)
+                                      (line-beginning-position))
+                                   ;; 80 is hard-coded here.
+                                   (current-column) 1 (length word)) 80)
+                            ;; Insert `word' before first entry on this
+                            ;; line.
+                            (progn
+                              (goto-char (match-end 0))
+                              (skip-chars-forward " \t")
+                              (speck-save-string (concat word " ")))
+                          ;; Add word on new line.
+                          (forward-line)
+                          (speck-save-string (concat
+                                              string " (" dictionary-name "): " word
+                                              (when (stringp comment-end)
+                                                comment-end)))
+                          ;; Assert terminating newline.
+                          (unless (bolp) (speck-save-string "\n")))
+                      ;; No dictionary entry found, add one at end of
+                      ;; local words section.
+                      (goto-char at)
+                      ;; The following was `forward-line' before which
+                      ;; added the dictionary entry after an existing
+                      ;; file entry.  Don't do that (for the moment,
+                      ;; rather add it before the last dictionary entry,
+                      ;; if there's one).
+                      (beginning-of-line)
+                      (speck-save-string
+                       (concat string " (" dictionary-name "): "
+                               word (when (stringp comment-end) comment-end)))
+                      ;; Assert terminating newline.
+                      (unless (bolp) (speck-save-string "\n"))))
+                ;; No dictionary.
+                (while (and (progn
+                              (goto-char (match-end 0))
+                              (not (setq found (looking-at ":"))))
+                            (progn
+                              (beginning-of-line)
+                              (re-search-backward
+                               speck-save-words-regexp
+                               (line-beginning-position 0) t))))
+                (if found
+                    ;; Corresponding dictionary entry found.
+                    (if (<= (+ (- (line-end-position) (line-beginning-position))
+                               ;; 80 is hard-coded here.
+                               (current-column) 1 (length word)) 80)
+                        ;; Insert `word' before first entry on this
+                        ;; line.
+                        (progn
+                          (goto-char (match-end 0))
+                          (skip-chars-forward " \t")
+                          (speck-save-string (concat word " ")))
+                      ;; Add word on new line.
+                      (forward-line)
+                      (speck-save-string
+                       (concat string ": " word
+                               (when (stringp comment-end) comment-end)))
+                      ;; Assert terminating newline.
+                      (unless (bolp) (speck-save-string "\n")))
+                  ;; No dictionary entry found, add one at end of local
+                  ;; words section.
+                  (goto-char at)
+                  (forward-line)
+                  (speck-save-string
+                   (concat string ": " word
+                           (when (stringp comment-end) comment-end)))
+                  ;; Assert terminating newline.
+                  (unless (bolp) (speck-save-string "\n"))))
+              t))
+           ;; Go to minimum of known local positions.
+           ((let* ((at (speck-min-of-list-and-point-max
+                        (speck-local-positions))))
+              (goto-char at)
+              (speck-save-string (if (bolp) "\n" "\n\n"))
+              (speck-save-string
+               (concat speck-save-words-string
+                       (when dictionary-name (concat " (" dictionary-name ")"))
+                       ": " word "\n\n"))
+              (forward-line -2)
+              (when comment-start
+                (let ((comment-style 'plain))
+                  (comment-region
+                   (line-beginning-position) (line-end-position))))
+              t))
+           (t (error "Failed to add word"))))))))
 
 (defun speck-save-words-sort ()
   "Write entire Local Words section from `speck-hash-table'."
   (interactive)
   (let* ((comment-style 'plain)
-	 (comment-before (or comment-start ""))
-	 (comment-after comment-end)
-	 base-list other-lists string from at)
+         (comment-before (or comment-start ""))
+         (comment-after comment-end)
+         base-list other-lists string from at)
     (maphash
      (lambda (word value)
        (cond
-	((eq value 'file)
-	 (setq base-list (cons word base-list)))
-	((listp value)
-	 (let* ((dictionary (car value))
-		(list (assoc dictionary other-lists)))
-	   (if list
-	       (setcdr list (cons word (cdr list)))
-	     (setq other-lists
-		   (cons (list dictionary word) other-lists)))))))
+        ((eq value 'file)
+         (setq base-list (cons word base-list)))
+        ((listp value)
+         (let* ((dictionary (car value))
+                (list (assoc dictionary other-lists)))
+           (if list
+               (setcdr list (cons word (cdr list)))
+             (setq other-lists
+                   (cons (list dictionary word) other-lists)))))))
      speck-hash-table)
     (goto-char (point-max))
 
     ;; Apparently this will insert words somewhere at point-max,
     ;; probably after any local sections, fix that.
     (let ((area (speck-local-positions))
-	  to)
+          to)
       (if (nth 1 area)
-	  ;; Local Words section exists.
-	  (let ((regexp
-		 (concat "\\(?:" speck-save-words-regexp
-			 "\\)\\(?::\\|[ \t]*([^)]+):\\)"))
-		(bound (line-beginning-position 0))
-		case-fold-search)
-	    (setq to (point))
-	    (while (re-search-backward regexp bound t)
-	      ;; Search first entry.
-	      (setq bound (line-beginning-position 0)))
-	    ;; Delete all entries.
-	    (delete-region (line-beginning-position) to)
-	    (setq from (point)))
-	;; No Local Words section exists.
-	(setq from (speck-min-of-list-and-point-max
-		    (speck-local-positions)))))
+          ;; Local Words section exists.
+          (let ((regexp
+                 (concat "\\(?:" speck-save-words-regexp
+                         "\\)\\(?::\\|[ \t]*([^)]+):\\)"))
+                (bound (line-beginning-position 0))
+                case-fold-search)
+            (setq to (point))
+            (while (re-search-backward regexp bound t)
+              ;; Search first entry.
+              (setq bound (line-beginning-position 0)))
+            ;; Delete all entries.
+            (delete-region (line-beginning-position) to)
+            (setq from (point)))
+        ;; No Local Words section exists.
+        (setq from (speck-min-of-list-and-point-max
+                    (speck-local-positions)))))
     ;; Insert new one.
     (when base-list
       (save-restriction
-	(narrow-to-region from from)
-	(princ (sort base-list 'string-lessp) (current-buffer))
-	(delete-char -1)
-	(insert "\n")
-	(goto-char (point-min))
-	(delete-char 1)
-	(let* ((string (concat speck-save-words-string ": "))
-	       (fill-column (min 40 (- 80 (length string)))))
-	  (fill-region (point-min) (point-max))
-	  (goto-char (point-min))
-	  (while (not (eobp))
-	    (insert string)
-	    (comment-region
-	     (line-beginning-position) (line-end-position))
-	    (forward-line)))))
+        (narrow-to-region from from)
+        (princ (sort base-list 'string-lessp) (current-buffer))
+        (delete-char -1)
+        (insert "\n")
+        (goto-char (point-min))
+        (delete-char 1)
+        (let* ((string (concat speck-save-words-string ": "))
+               (fill-column (min 40 (- 80 (length string)))))
+          (fill-region (point-min) (point-max))
+          (goto-char (point-min))
+          (while (not (eobp))
+            (insert string)
+            (comment-region
+             (line-beginning-position) (line-end-position))
+            (forward-line)))))
     (when other-lists
       (dolist (list other-lists)
-	(save-restriction
-	  (narrow-to-region (point) (point))
-	  (princ (sort (cdr list) 'string-lessp) (current-buffer))
-	  (delete-char -1)
-	  (insert "\n")
-	  (goto-char (point-min))
-	  (delete-char 1)
-	  (let* ((string
-		  (concat speck-save-words-string " (" (car list) "): "))
-		 (fill-column (min 40 (- 80 (length string)))))
-	    (fill-region (point-min) (point-max))
-	    (goto-char (point-min))
-	    (while (not (eobp))
-	      (insert string)
-	      (comment-region
-	       (line-beginning-position) (line-end-position))
-	      (forward-line))))))
+        (save-restriction
+          (narrow-to-region (point) (point))
+          (princ (sort (cdr list) 'string-lessp) (current-buffer))
+          (delete-char -1)
+          (insert "\n")
+          (goto-char (point-min))
+          (delete-char 1)
+          (let* ((string
+                  (concat speck-save-words-string " (" (car list) "): "))
+                 (fill-column (min 40 (- 80 (length string)))))
+            (fill-region (point-min) (point-max))
+            (goto-char (point-min))
+            (while (not (eobp))
+              (insert string)
+              (comment-region
+               (line-beginning-position) (line-end-position))
+              (forward-line))))))
     ;; The following is not needed for a final writing, but for doing
     ;; this interactively.
     (when (< from (point))
@@ -4758,48 +4790,48 @@ Optional argument `placebo' non-nil means just assign speck properties."
     (save-restriction
       (widen)
       (let ((bound (- (point-max) 3000))
-	    (regexp speck-save-words-regexp)
-	    case-fold-search dictionary from to)
-	(goto-char (point-max))
-	(while (and speck-save-confirmed
-		    (re-search-backward regexp bound t)
-		    (speck-save-confirm))
-	  (setq regexp
-		(regexp-quote (buffer-substring-no-properties
-			       (line-beginning-position) (match-end 0))))
-	  ;; Set `from' and `bound' for next search, and `to' unless set.
-	  (setq from (line-beginning-position))
-	  (unless to (setq to (line-beginning-position 2)))
-	  (setq bound (line-beginning-position 0))
-	  (save-restriction
-	    (narrow-to-region (match-end 0) (line-end-position))
-	    (goto-char (point-max))
-	    (when (looking-back (concat comment-end-skip "[ \t]*"))
-	      ;; Strip comment end sequence.
-	      (narrow-to-region (point-min) (match-beginning 0)))
-	    (goto-char (point-min))
-	    ;; Check for dictionary.
-	    (cond
-	     ((looking-at ":[ \t]+")
-	      (setq dictionary nil))
-	     ((looking-at "[ \t]+(\\(\\w\\w[^)]*\\)):[ \t]+")
-	      ;; No dictionary.
-	      (setq dictionary (match-string-no-properties 1)))
-	     (t (error "Malformed local words section")))
-	    (goto-char (match-end 0))
-	    (unless placebo
-	      ;; Process remainder of line.
-	      (while (re-search-forward "[^ \t\f]+" nil t)
-		(speck-hash-restore
-		 (buffer-substring-no-properties
-		  (match-beginning 0) (match-end 0))
-		 (or dictionary 'file)))))
-	  ;; Search again.
-	  (goto-char from))
-	(when to
-	  ;; Mark local words as specked and ignorable.
-	  (with-buffer-prepared-for-specking
-	   (add-text-properties from to '(specked t speck ==))))))))
+            (regexp speck-save-words-regexp)
+            case-fold-search dictionary from to)
+        (goto-char (point-max))
+        (while (and speck-save-confirmed
+                    (re-search-backward regexp bound t)
+                    (speck-save-confirm))
+          (setq regexp
+                (regexp-quote (buffer-substring-no-properties
+                               (line-beginning-position) (match-end 0))))
+          ;; Set `from' and `bound' for next search, and `to' unless set.
+          (setq from (line-beginning-position))
+          (unless to (setq to (line-beginning-position 2)))
+          (setq bound (line-beginning-position 0))
+          (save-restriction
+            (narrow-to-region (match-end 0) (line-end-position))
+            (goto-char (point-max))
+            (when (looking-back (concat comment-end-skip "[ \t]*"))
+              ;; Strip comment end sequence.
+              (narrow-to-region (point-min) (match-beginning 0)))
+            (goto-char (point-min))
+            ;; Check for dictionary.
+            (cond
+             ((looking-at ":[ \t]+")
+              (setq dictionary nil))
+             ((looking-at "[ \t]+(\\(\\w\\w[^)]*\\)):[ \t]+")
+              ;; No dictionary.
+              (setq dictionary (match-string-no-properties 1)))
+             (t (error "Malformed local words section")))
+            (goto-char (match-end 0))
+            (unless placebo
+              ;; Process remainder of line.
+              (while (re-search-forward "[^ \t\f]+" nil t)
+                (speck-hash-restore
+                 (buffer-substring-no-properties
+                  (match-beginning 0) (match-end 0))
+                 (or dictionary 'file)))))
+          ;; Search again.
+          (goto-char from))
+        (when to
+          ;; Mark local words as specked and ignorable.
+          (with-buffer-prepared-for-specking
+           (add-text-properties from to '(specked t speck ==))))))))
 
 (defun speck-local-positions ()
   "Get positions of file local specifications for current buffer.
@@ -4812,57 +4844,57 @@ Return value is a list of six elements:
  5. Position before comments within 3000 characters limit or `point-max'
     (nil if at least one of the preceding elements is non-nil)."
   (let ((case-fold-search t)
-	;; case-folding is needed because `hack-local-variables' seeems
-	;; to allow it, it's not awfully nice, though.
-	(regexp
-	 (concat "\\(^\^L\\)"
-		 "\\|\\(" speck-save-words-regexp "\\)"
-		 "\\|\\(" speck-save-dictionary-regexp "\\)"
-		 "\\|\\(" speck-save-filter-mode-regexp "\\)"
-		 "\\|\\(Local " "Variables:\\)"))
-	(bound (max (- (point-max) 3000) (point-min)))
-	page-break words dictionary filter-mode variables state)
+        ;; case-folding is needed because `hack-local-variables' seeems
+        ;; to allow it, it's not awfully nice, though.
+        (regexp
+         (concat "\\(^\^L\\)"
+                 "\\|\\(" speck-save-words-regexp "\\)"
+                 "\\|\\(" speck-save-dictionary-regexp "\\)"
+                 "\\|\\(" speck-save-filter-mode-regexp "\\)"
+                 "\\|\\(Local " "Variables:\\)"))
+        (bound (max (- (point-max) 3000) (point-min)))
+        page-break words dictionary filter-mode variables state)
     (save-excursion
       (save-restriction
-	(widen)
-	(narrow-to-region bound (point-max))
-	(goto-char (point-max))
-	(set-match-data nil)
-	(while (and (not (and words dictionary filter-mode variables))
-		    (re-search-backward regexp nil t))
-	  (cond
-	   ((match-beginning 1)
-	    ;; A page-break outside any comment or string.
-	    (unless (or page-break
-			(let ((state (syntax-ppss (point))))
-			  (or (nth 3 state) (nth 4 state))))
-	      (setq page-break (line-beginning-position 2))))
-	   ((match-beginning 2)
-	    (unless words
-	      (setq words (line-beginning-position 2))))
-	   ((match-beginning 3)
-	    (setq dictionary (line-beginning-position)))
-	   ((match-beginning 4)
-	    (setq filter-mode (line-beginning-position)))
-	   ((match-beginning 5)
-	    (setq variables (line-beginning-position)))))
-	(if (or page-break words dictionary filter-mode variables)
-	    (list page-break words dictionary filter-mode variables nil)
-	  (widen)
-	  (narrow-to-region bound (point-max))
-	  (goto-char (point-max))
-	  (forward-comment (- (buffer-size)))
-	  ;; Are we always outside a comment here?
-	  (skip-chars-forward " \n\t\f")
-	  (skip-chars-backward " \t")
-	  (list nil nil nil nil nil
-		(if (and (bolp)
-			 ;; Avoid messing up an existing comment.
-			 (not (nth 4 (syntax-ppss (point)))))
-		    (point)
-		  ;; Before all comments at buffer-end within 3000
-		  ;; characters limit (hopefully).
-		  (point-max))))))))
+        (widen)
+        (narrow-to-region bound (point-max))
+        (goto-char (point-max))
+        (set-match-data nil)
+        (while (and (not (and words dictionary filter-mode variables))
+                    (re-search-backward regexp nil t))
+          (cond
+           ((match-beginning 1)
+            ;; A page-break outside any comment or string.
+            (unless (or page-break
+                        (let ((state (syntax-ppss (point))))
+                          (or (nth 3 state) (nth 4 state))))
+              (setq page-break (line-beginning-position 2))))
+           ((match-beginning 2)
+            (unless words
+              (setq words (line-beginning-position 2))))
+           ((match-beginning 3)
+            (setq dictionary (line-beginning-position)))
+           ((match-beginning 4)
+            (setq filter-mode (line-beginning-position)))
+           ((match-beginning 5)
+            (setq variables (line-beginning-position)))))
+        (if (or page-break words dictionary filter-mode variables)
+            (list page-break words dictionary filter-mode variables nil)
+          (widen)
+          (narrow-to-region bound (point-max))
+          (goto-char (point-max))
+          (forward-comment (- (buffer-size)))
+          ;; Are we always outside a comment here?
+          (skip-chars-forward " \n\t\f")
+          (skip-chars-backward " \t")
+          (list nil nil nil nil nil
+                (if (and (bolp)
+                         ;; Avoid messing up an existing comment.
+                         (not (nth 4 (syntax-ppss (point)))))
+                    (point)
+                  ;; Before all comments at buffer-end within 3000
+                  ;; characters limit (hopefully).
+                  (point-max))))))))
 
 (defun speck-min-of-list-and-point-max (list)
   "Return minimum of elements of list LIST.
@@ -4895,35 +4927,35 @@ element position \(counting from zero\) returned by
     (save-restriction
       (widen)
       (let* ((area (speck-local-positions))
-	     (min-of (speck-min-of-list-and-point-max area))
-	     at)
-	(narrow-to-region
-	 (or (nth elt area) min-of)
-	 (if (nth elt area)
-	     (save-excursion
-	       (goto-char (nth elt area))
-	       (line-beginning-position 2))
-	   min-of))
-	(goto-char (point-min))
-	(if (re-search-forward regexp nil t)
-	    ;; Replace old value.
-	    (progn
-	      (delete-region
-	       (progn (skip-chars-forward " \t") (point))
-	       (progn (skip-chars-forward "^ \t\n") (point)))
-	      (setq at (point))
-	      (insert value)
-	      (with-buffer-prepared-for-specking
-	       (speck-multi-set-region at (point) '--)))
-	  ;; Insert new value
-	  (setq at (point))
-	  (insert string " " value)
-	  (let* ((comment-style 'plain)
-		 (comment-start (or comment-start " ")))
-	    (comment-region (line-beginning-position) (point))
-	    (unless (bolp) (insert "\n"))
-	    (with-buffer-prepared-for-specking
-	     (speck-multi-set-region at (point) '--))))))))
+             (min-of (speck-min-of-list-and-point-max area))
+             at)
+        (narrow-to-region
+         (or (nth elt area) min-of)
+         (if (nth elt area)
+             (save-excursion
+               (goto-char (nth elt area))
+               (line-beginning-position 2))
+           min-of))
+        (goto-char (point-min))
+        (if (re-search-forward regexp nil t)
+            ;; Replace old value.
+            (progn
+              (delete-region
+               (progn (skip-chars-forward " \t") (point))
+               (progn (skip-chars-forward "^ \t\n") (point)))
+              (setq at (point))
+              (insert value)
+              (with-buffer-prepared-for-specking
+               (speck-multi-set-region at (point) '--)))
+          ;; Insert new value
+          (setq at (point))
+          (insert string " " value)
+          (let* ((comment-style 'plain)
+                 (comment-start (or comment-start " ")))
+            (comment-region (line-beginning-position) (point))
+            (unless (bolp) (insert "\n"))
+            (with-buffer-prepared-for-specking
+             (speck-multi-set-region at (point) '--))))))))
 
 (defun speck-restore-options (&optional placebo)
   "Restore variables from file.
@@ -4931,49 +4963,50 @@ Optional argument `placebo' non-nil means just assign speck
 properties."
   ;; placebo non-nil might clash with confirming, not serious but ...
   (let ((bound (- (point-max) 3000))
-	dictionary filter-mode)
+        dictionary filter-mode)
     (save-excursion
       ;; Dictionary.
       (goto-char (point-max))
       (when (and speck-save-confirmed
-		 (re-search-backward
-		  (concat "\\(?:" speck-save-dictionary-regexp
-			  "\\) *\\([^ \t\f\n\"]+\\)") bound t)
-		 (speck-save-confirm))
-	(with-buffer-prepared-for-specking
-	 (add-text-properties
-	  (line-beginning-position) (line-end-position)
-	  '(specked t speck ==)))
-	(unless placebo
-	  (setq dictionary (match-string-no-properties 1))
-	  (cond
-	   ((assoc dictionary (speck-aspell-dictionary-names-and-aliases))
-	    (setq speck-saved-dictionary (intern dictionary)))
-	   ((catch 'found
-	      (dolist (dictionary (speck-aspell-dictionary-names-and-aliases))
-		(when (member speck-saved-dictionary (nth 2 dictionary))
-		  (setq speck-saved-dictionary (intern (nth 0 dictionary)))
-		  (throw 'found t)))))
-	   ((assoc dictionary (speck-ispell-dictionary-alist))
-	    (setq speck-saved-dictionary (intern dictionary)))
-	   ((let ((entry (rassoc dictionary (speck-ispell-dictionary-alist))))
-	      (when entry
-		(setq speck-saved-dictionary (intern (car entry))))))
-	   (t
-	    (message "Invalid local dictionary %s" dictionary)))))
+                 (re-search-backward
+                  (concat "\\(?:" speck-save-dictionary-regexp
+                          "\\) *\\([^ \t\f\n\"]+\\)") bound t)
+                 (speck-save-confirm))
+        (with-buffer-prepared-for-specking
+         (add-text-properties
+          (line-beginning-position) (line-end-position)
+          '(specked t speck ==)))
+        (unless placebo
+          (setq dictionary (match-string-no-properties 1))
+          (cond
+           ((assoc dictionary (speck-aspell-dictionary-names-and-aliases))
+            (setq speck-saved-dictionary (intern dictionary)))
+           ((catch 'found
+              (dolist (dictionary (speck-aspell-dictionary-names-and-aliases))
+                (when (member speck-saved-dictionary (nth 2 dictionary))
+                  (setq speck-saved-dictionary (intern (nth 0 dictionary)))
+                  (throw 'found t)))))
+           ((assoc dictionary (speck-ispell-dictionary-alist))
+            (setq speck-saved-dictionary (intern dictionary)))
+           ((let ((entry (rassoc dictionary (speck-ispell-dictionary-alist))))
+              (when entry
+                (setq speck-saved-dictionary (intern (car entry))))))
+           (t
+            (message "Invalid local dictionary %s" dictionary)))))
       ;; Filter-mode.
       (goto-char (point-max))
       (when (and speck-save-confirmed
-		 (re-search-backward
-		  (concat "\\(?:" speck-save-filter-mode-regexp
-			  "\\) *\\([^ \t\f\n\"]+\\)") bound t)
-		 (speck-save-confirm))
-	(with-buffer-prepared-for-specking
-	 (add-text-properties
-	  (line-beginning-position) (line-end-position)
-	  '(specked t speck ==)))
-	(unless placebo
-	  (setq speck-saved-filter-mode (intern (match-string-no-properties 1))))))))
+                 (re-search-backward
+                  (concat "\\(?:" speck-save-filter-mode-regexp
+                          "\\) *\\([^ \t\f\n\"]+\\)") bound t)
+                 (speck-save-confirm))
+        (with-buffer-prepared-for-specking
+         (add-text-properties
+          (line-beginning-position) (line-end-position)
+          '(specked t speck ==)))
+        (unless placebo
+          (setq speck-saved-filter-mode (intern (match-string-no-properties 1))))))))
 
-;;;				 provide us					
+;;;                              provide us
 (provide 'speck)
+;;; speck.el ends here
