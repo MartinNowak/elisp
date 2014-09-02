@@ -1502,6 +1502,7 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;; ===========================================================================
 ;;; DMD Compilation Messages Patterns may be needed without having to load
 ;;; `d-mode' through make compilation for example.
+
 (add-to-list 'compilation-error-regexp-alist 'dmd)
 (add-to-list 'compilation-error-regexp-alist-alist
              `(dmd
@@ -1539,37 +1540,7 @@ save it in `ffap-file-at-point-line-number' variable."
                (8 'font-lock-comment-face)
                ))
 
-(progn
-  (defconst d-backtrace-regexp
-    (rx (: bol
-           "#" (group-n 9 (+ (in digit))) ": "
-           (group-n 2 (+ (not (in space))))
-           " line (" (group-n 3 (+ (in digit))) ")"
-           (? (: " in " (group-n 8 (+ nonl))))
-           eol)))
-  (defconst d-backtrace-entry
-    `(d-backtrace
-      ,d-backtrace-regexp            ;REGEXP
-      2                              ;FILE'th subexpression
-      3                              ;LINE'th subexpression
-      nil                            ;COLUMN'th subexpression
-      0                              ;TYPE: 0:info, 1:warning, 2/nil:error
-      nil                            ;HYPERLINK/TYPELINK'th named_subexpressions
-      ;; HIGHLIGHT...
-      (0 'default)
-      (1 'error)
-      (2 'font-lock-file-name-face)
-      (3 'compilation-line-number)
-      (4 'compilation-column-number)
-      (5 'compilation-error)
-      (6 'compilation-warning)
-      (7 'compilation-info)
-      (8 'font-lock-comment-face)
-      (9 'font-lock-number-face)
-      )
-    "Regexp matching of D module backtraces.")
-  (add-to-list 'compilation-error-regexp-alist-alist d-backtrace-entry)
-  (add-to-list 'compilation-error-regexp-alist 'd-backtrace))
+(require 'd-backtrace)
 
 ;;; ===========================================================================
 ;;; Highlight Swedish and C++ template "required from" in non-error.
@@ -2962,6 +2933,18 @@ And make sure that it really shows up!"
     )
   (when (require 'desktop-frame)        ;save window configuration within frame
     )
+  (progn
+    (add-to-list 'desktop-modes-not-to-save 'dired-mode)
+    (add-to-list 'desktop-modes-not-to-save 'Info-mode)
+    (add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
+    (add-to-list 'desktop-modes-not-to-save 'fundamental-mode))
+  (setq desktop-buffers-not-to-save
+        (concat "\\("
+                "\\` \\|"               ;starting with space
+                "\\`/p/avionics-\\|" ;slow NFS
+                "^nn\\.a[0-9]+\\|\\.log\\|(ftp)\\|^tags\\|^TAGS"
+                "\\|\\.emacs.*\\|\\.diary\\|\\.newsrc-dribble\\|\\.bbdb"
+	        "\\)$"))
   (setq desktop-save 'ask               ;always ask before saving desktop
         desktop-dirname (expand-file-name "~/.emacs.d/")
         desktop-base-file-name "desktop"
@@ -3003,7 +2986,7 @@ And make sure that it really shows up!"
           '(regexp-search-ring . 200)
           '(query-replace-history . 200)
           '(regexp-history . 200)
-          'kmacro-ring            ;macros are often time-consuming => unlimited
+          'kmacro-ring             ;macros are often time-consuming => unlimited
           'register-alist
 
           'Info-search-history
