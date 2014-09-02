@@ -1538,6 +1538,42 @@ save it in `ffap-file-at-point-line-number' variable."
                (8 'font-lock-comment-face)
                ))
 
+(add-to-list 'compilation-error-regexp-alist 'd-backtrace)
+
+(progn
+  (setq compilation-error-regexp-alist-alist
+        (delete-list-members compilation-error-regexp-alist-alist d-backtrace-entry))
+  (defconst d-backtrace-regexp
+    (rx (: bol
+           "#" (group-n 9 (+ (in digit))) ": "
+           (group-n 2 (+ (not (in space))))
+           " line (" (group-n 3 (+ (in digit))) ") in "
+           (group-n 8 (+ nonl))
+           eol)))
+  (defconst d-backtrace-entry
+    `(d-backtrace
+      ,d-backtrace-regexp            ;REGEXP
+      2                              ;FILE'th subexpression
+      3                              ;LINE'th subexpression
+      nil                            ;COLUMN'th subexpression
+      0                              ;TYPE: 0:info, 1:warning, 2/nil:error
+      nil                            ;HYPERLINK/TYPELINK'th named_subexpressions
+      ;; HIGHLIGHT...
+      (0 'default)
+      (1 'error)
+      (2 'font-lock-file-name-face)
+      (3 'compilation-line-number)
+      (4 'compilation-column-number)
+      (5 'compilation-error)
+      (6 'compilation-warning)
+      (7 'compilation-info)
+      (8 'font-lock-comment-face)
+      (9 'font-lock-number-face)
+      )
+    "Regexp matching of D module backtraces.")
+  (add-to-list 'compilation-error-regexp-alist-alist d-backtrace-entry))
+
+
 ;;; ===========================================================================
 ;;; Highlight Swedish and C++ template "required from" in non-error.
 (when nil                               ;TODO: Disturbs?
