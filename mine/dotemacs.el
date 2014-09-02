@@ -1538,17 +1538,13 @@ save it in `ffap-file-at-point-line-number' variable."
                (8 'font-lock-comment-face)
                ))
 
-(add-to-list 'compilation-error-regexp-alist 'd-backtrace)
-
 (progn
-  (setq compilation-error-regexp-alist-alist
-        (delete-list-members compilation-error-regexp-alist-alist d-backtrace-entry))
   (defconst d-backtrace-regexp
     (rx (: bol
            "#" (group-n 9 (+ (in digit))) ": "
            (group-n 2 (+ (not (in space))))
-           " line (" (group-n 3 (+ (in digit))) ") in "
-           (group-n 8 (+ nonl))
+           " line (" (group-n 3 (+ (in digit))) ")"
+           (? (: " in " (group-n 8 (+ nonl))))
            eol)))
   (defconst d-backtrace-entry
     `(d-backtrace
@@ -1571,8 +1567,8 @@ save it in `ffap-file-at-point-line-number' variable."
       (9 'font-lock-number-face)
       )
     "Regexp matching of D module backtraces.")
-  (add-to-list 'compilation-error-regexp-alist-alist d-backtrace-entry))
-
+  (add-to-list 'compilation-error-regexp-alist-alist d-backtrace-entry)
+  (add-to-list 'compilation-error-regexp-alist 'd-backtrace))
 
 ;;; ===========================================================================
 ;;; Highlight Swedish and C++ template "required from" in non-error.
@@ -1834,9 +1830,9 @@ See URL `http://dlang.org/'."
         (shrink-window-if-larger-than-buffer window)
         window)))
   ;; (setq display-buffer-alist nil)
-  (add-to-list 'display-buffer-alist
-               `(,(rx string-start (eval flycheck-error-list-buffer) string-end)
-                 (display-buffer-window-below-and-shrink . ((reusable-frames . t)))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              `(,(rx string-start (eval flycheck-error-list-buffer) string-end)
+  ;;                (display-buffer-window-below-and-shrink . ((reusable-frames . t)))))
 
   (when nil
     (dolist (hook '(c-mode-hook c++-mode-hook objc-mode-hook d-mode-hook
