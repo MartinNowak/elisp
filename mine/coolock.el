@@ -1990,7 +1990,7 @@ Return t if `forward-sexp' otherwise nil."
 
 (define-minor-mode cool-light-lock-mode
   "Cool Light Font Locking Mode."
-  :global t
+  :global nil
   :lighter " Cooler"
   ;;:group 'coolock
   (let ((activate cool-light-lock-mode))
@@ -2022,7 +2022,7 @@ Return t if `forward-sexp' otherwise nil."
 
 (define-minor-mode coolock-mode
   "Cool Font Locking Mode."
-  :global t
+  :global nil
   :lighter " Coolest"
   ;;:group 'coolock
   (let ((activate coolock-mode))
@@ -2080,7 +2080,7 @@ Return t if `forward-sexp' otherwise nil."
   (add-hook 'octave-mode-hook 'cool-light-lock-mode t)
   (add-hook 'python-mode-hook 'cool-light-lock-mode t)
   (add-hook 'scons-mode-hook 'cool-light-lock-mode t)
-  (add-hook 'ada-mode-hook 'coolock-mode t)
+  (add-hook 'ada-mode-hook 'cool-light-lock-mode t)
   ;;(add-hook 'sh-mode-hook 'coolock-mode t)
   (add-hook 'ruby-mode-hook 'coolock-mode t)
   (add-hook 'emacs-lisp-mode-hook 'coolock-mode t)

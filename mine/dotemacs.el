@@ -839,7 +839,8 @@
 (eload 'trashcans)                     ;Trash
 (eload 'shasum)                        ;SHA-Checksums
 (eload 'symbol-face)                   ;Symbol Specific Face
-(eload 'coolock)                       ;Cool Lock
+(when (eload 'coolock)                 ;Cool Lock
+  (coolock-load-in-specific-modes))
 ;;(eload 'longlines)                      ;Automatically Wrap 1Long Lines
 ;;(eload 'pgo-linkd nil t)		;Linkd
 (eload 'pgo-window)                    ;Window Operations
