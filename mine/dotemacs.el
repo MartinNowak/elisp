@@ -1105,6 +1105,51 @@ save it in `ffap-file-at-point-line-number' variable."
   (move-line-region-activate-hictx-advice)
   )
 
+;;; Generic Mode
+(when (require 'generic-x nil t)
+  (setq generic-extras-enable-list t) ;enable all generic modes, in fact!
+  (setq auto-mode-alist
+        (append '(
+                  ("Xresources\\'" . x-resource-generic-mode)
+                  ("Xmodmap\\'" . x-resource-generic-mode)
+                  ("gtags.conf\\'" . generic-mode)
+                  ("^XF86Config.*\\'" . default-generic-mode)
+                  ("xorg.conf\\'" . default-generic-mode)
+                  ("\\.dir_colors\\'" . default-generic-mode)
+                  ("\\.screenrc\\'" . default-generic-mode)
+                  ("\\.asoundrc\\'" . conf-mode) ;ALSA Configuration
+                  ("\\.xscreensaver\\'" . default-generic-mode)
+                  ("\\.fonts.cache-[0-9]+\\'" . default-generic-mode)
+                  ("\\.gtkrc.*\\'" . default-generic-mode)
+                  ("\\.egg-info\\'" . conf-mode)
+                  ("/mnt/*/WINDOWS.*/.*\\.inf\\'" . generic-mode)
+                  ("\\.doxygen\\'" . default-generic-mode)
+                  ("Doxyfile.tmpl\\'" . makefile-mode)
+                  ("Doxyfile\\'" . makefile-mode)
+                  ("_defconfig\\'" . sh-mode)
+                  ("DIR_COLORS\\'" . default-generic-mode)
+                  (".dir_colors\\'" . conf-mode)
+                  (".subversion/servers\\'" . conf-mode)
+                  ("/.hgignore\\'" . conf-mode)
+                  ("/.gitignore\\'" . conf-mode)
+                  ("/.cvsignore\\'" . conf-mode)
+                  ("/.bazaar/ignore\\'" . conf-mode)
+                  ("/openssl.cnf\\'" . conf-mode) ;ALSA Configuration
+                  )
+                auto-mode-alist))
+  (when nil                ;TODO: Enable
+    (define-generic-mode
+        'foo-mode                         ;; name of the mode to create
+      '("!!")                           ;; comments start with '!!'
+      '("account" "user"
+        "password")                     ;; some keywords
+      '(("=" . 'font-lock-operator)     ;; '=' is an operator
+        (";" . 'font-lock-builtin))     ;; ';' is a a built-in
+      '("\\.foo$")                      ;; files for which to activate this mode
+      nil                              ;; other functions to call
+      "A mode for foo files"            ;; doc string for this mode
+      )))
+
 ;;; ===========================================================================
 ;;; Hungry
 (when (eload 'hungry-delete (elsub "hungry-delete"))
@@ -4382,57 +4427,6 @@ Use PROMPT when querying the password."
       ))
 
   (eload 'fill-dwim)
-
-  ;; =============== Generic Mode ================================
-
-  ;; Fontify even more such as /etc/passwd, /etc/services, ~/.Xdefaults, ...
-  (when (require 'generic-x nil t)
-    (setq generic-extras-enable-list t) ;enable all generic modes, in fact!
-    (setq auto-mode-alist
-	  (append '(
-		    ("Xresources\\'" . x-resource-generic-mode)
-		    ("Xmodmap\\'" . x-resource-generic-mode)
-		    ("gtags.conf\\'" . generic-mode)
-		    ("^XF86Config.*\\'" . default-generic-mode)
-		    ("xorg.conf\\'" . default-generic-mode)
-		    ("\\.dir_colors\\'" . default-generic-mode)
-		    ("\\.screenrc\\'" . default-generic-mode)
-		    ("\\.asoundrc\\'" . conf-mode) ;ALSA Configuration
-		    ("\\.xscreensaver\\'" . default-generic-mode)
-		    ("\\.fonts.cache-[0-9]+\\'" . default-generic-mode)
-		    ("\\.gtkrc.*\\'" . default-generic-mode)
-		    ("\\.egg-info\\'" . conf-mode)
-		    ("/mnt/*/WINDOWS.*/.*\\.inf\\'" . generic-mode)
-		    ("\\.doxygen\\'" . default-generic-mode)
-		    ("Doxyfile.tmpl$" . makefile-mode)
-		    ("Doxyfile$" . makefile-mode)
-		    ("_defconfig\\'" . sh-mode)
-		    ("DIR_COLORS\\'" . default-generic-mode)
-		    (".dir_colors\\'" . conf-mode)
-		    (".subversion/servers\\'" . conf-mode)
-
-		    ("/.hgignore\\'" . conf-mode)
-		    ("/.gitignore\\'" . conf-mode)
-		    ("/.cvsignore\\'" . conf-mode)
-		    ("/.bazaar/ignore\\'" . conf-mode)
-		    ("/openssl.cnf\\'" . conf-mode) ;ALSA Configuration
-		    )
-		  auto-mode-alist))
-    )
-  ;; Defined new generic-modes
-  (when (require 'generic-x) ;; we need this
-    (when nil                ;TODO: Enable
-      (define-generic-mode
-	  'foo-mode                         ;; name of the mode to create
-	'("!!")                           ;; comments start with '!!'
-	'("account" "user"
-	  "password")                     ;; some keywords
-	'(("=" . 'font-lock-operator)     ;; '=' is an operator
-	  (";" . 'font-lock-builtin))     ;; ';' is a a built-in
-	'("\\.foo$")                      ;; files for which to activate this mode
-	nil                              ;; other functions to call
-	"A mode for foo files"            ;; doc string for this mode
-	)))
 
   ;; =============== (Natural) Language Tools ================================
 
