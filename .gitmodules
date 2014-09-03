@@ -76,3 +76,6 @@
 [submodule "yasnippet"]
 	path = yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git
+[submodule "demangle-mode"]
+	path = demangle-mode
+	url = https://github.com/liblit/demangle-mode.git
