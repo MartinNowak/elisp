@@ -511,11 +511,16 @@
 
 ;;; Search other file
 (when (require 'find-file nil t)
-  (add-to-list 'cc-other-file-alist '("\\.ads\\'" (".adb")))
-  (add-to-list 'cc-other-file-alist '("\\.adb\\'" (".ads")))
+  (defcustom ada-other-file-alist
+    '(("\\.ads\\'" (".adb"))
+      ("\\.adb\\'" (".ads")))
+    "See the description for the `ff-search-directories' variable."
+    :type '(repeat (list regexp (choice (repeat string) function)))
+    :group 'ff)
   (setq cc-search-directories '("."
 				"include" "src"
 				"../include" "../src"
+                                "root" "backend" "tk"  ;DMD
 				"/usr/include" "/usr/local/include/*"
 				"/System/Library/Frameworks" "/Library/Frameworks")))
 
