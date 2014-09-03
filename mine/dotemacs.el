@@ -510,13 +510,14 @@
                        (semantic-force-refresh))))
 
 ;;; Search other file
-(add-to-list 'cc-other-file-alist '("\\.ads\\'" (".adb")))
-(add-to-list 'cc-other-file-alist '("\\.adb\\'" (".ads")))
-(setq cc-search-directories '("."
-                              "include" "src"
-                              "../include" "../src"
-                              "/usr/include" "/usr/local/include/*"
-                              "/System/Library/Frameworks" "/Library/Frameworks"))
+(when (require 'find-file nil t)
+  (add-to-list 'cc-other-file-alist '("\\.ads\\'" (".adb")))
+  (add-to-list 'cc-other-file-alist '("\\.adb\\'" (".ads")))
+  (setq cc-search-directories '("."
+				"include" "src"
+				"../include" "../src"
+				"/usr/include" "/usr/local/include/*"
+				"/System/Library/Frameworks" "/Library/Frameworks")))
 
 ;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
