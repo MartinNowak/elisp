@@ -509,6 +509,15 @@
           (lambda () (when (fboundp 'semantic-force-refresh)
                        (semantic-force-refresh))))
 
+;;; Search other file
+(add-to-list 'cc-other-file-alist '("\\.ads\\'" (".adb")))
+(add-to-list 'cc-other-file-alist '("\\.adb\\'" (".ads")))
+(setq cc-search-directories '("."
+                              "include" "src"
+                              "../include" "../src"
+                              "/usr/include" "/usr/local/include/*"
+                              "/System/Library/Frameworks" "/Library/Frameworks"))
+
 ;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
 ;; http://www.emacswiki.org/emacs-en/ParEdit
@@ -914,10 +923,10 @@
     (let ((dir (expand-file-name default-directory))
           (buf (or (get-buffer "*shell*") (shell))))
       (goto-char (point-max))
-      (if (not (string= (buffer-name) "*shell*"))
+      (if (not (string-equal (buffer-name) "*shell*"))
           (switch-to-buffer-other-window buf))
       (message list-buffers-directory)
-      (if (not (string= (expand-file-name list-buffers-directory) dir))
+      (if (not (string-equal (expand-file-name list-buffers-directory) dir))
           (progn (comint-send-string (get-buffer-process buf)
                                      (concat "cd \"" dir "\"\r"))
                  (setq list-buffers-directory dir)))))
@@ -1404,6 +1413,17 @@ save it in `ffap-file-at-point-line-number' variable."
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
+
+;; The default mode for .h files is c-mode. This works reasonably well for C++
+;; headers, although it has incomplete syntax highlighting, but it’s much worse
+;; for Objective C, where you get things like parameters not lining up properly
+;; by their colons. You can handle this by adding a function to
+;; magic-mode-alist, like this:
+(defun in-objc-header? ()
+  (and (string-equal (file-name-extension buffer-file-name) "h")
+       (re-search-forward "@\\<interface\\>"
+                          magic-mode-regexp-match-limit t)))
+(add-to-list 'magic-mode-alist '(in-objc-header? . objc-mode))
 
 ;;; ===========================================================================
 ;; Swift
@@ -2919,7 +2939,7 @@ See: https://tex.stackexchange.com/questions/161717/all-lines-itemized-when-mark
   (defun TeX-toggle-shell-escape ()
     (interactive)
     (setq LaTeX-command (when (and (boundp 'LaTeX-command)
-                                   (string= LaTeX-command "latex"))
+                                   (string-equal LaTeX-command "latex"))
                           "latex -shell-escape" "latex")))
   )
 
@@ -3720,66 +3740,6 @@ If there is no expansion the command returned by
   ;; =============== Objective-C ================================
   ;; http://www.emacswiki.org/emacs-en/CcMode
 
-  ;; The default mode for .h files is c-mode. This works reasonably well for C++
-  ;; headers, although it has incomplete syntax highlighting, but it’s much worse
-  ;; for Objective C, where you get things like parameters not lining up properly
-  ;; by their colons. You can handle this by adding a function to
-  ;; magic-mode-alist, like this:
-  (add-to-list 'magic-mode-alist
-               `(,(lambda ()
-                    (and (string= (file-name-extension buffer-file-name) "h")
-                         (re-search-forward "@\\<interface\\>"
-                                            magic-mode-regexp-match-limit t)))
-                 . objc-mode))
-
-  ;; ff-find-other-file and friends
-  ;; find-file-other-file doesn’t work right, for two reasons.
-
-  ;; The first problem is that cc-other-file-alist doesn’t know about Obj-C++
-  ;; (.mm) files, and doesn’t know that .h files can be headers for .m and .mm
-  ;; files. To fix that:
-
-  (defun cc-fix-other-file-alist ()
-    (when (require 'find-file nil t)
-      (unless (boundp 'cc-other-file-alist)  ;if still not defined
-        (defvar cc-other-file-alist '(nil))) ;define it
-      ;; (push ".m" (cadr (assoc "\\.h\\'" cc-other-file-alist)))
-      ;; (push ".mm" (cadr (assoc "\\.h\\'" cc-other-file-alist)))
-      ;; (push '("\\.m\\'" (".h")) cc-other-file-alist)
-      ;; (push '("\\.mm\\'" (".h")) cc-other-file-alist)
-
-      ;; (setq cc-other-file-alist
-      ;;       '(("\\.cc\\'"  (".hh" ".h"))
-      ;;         ("\\.hh\\'"  (".cc" ".C"))
-
-      ;;         ("\\.c\\'"   (".h"))
-      ;;         ("\\.h\\'"   (".c" ".cc" ".C" ".CC" ".cxx" ".cpp" ".m" ".mm"))
-
-      ;;         ("\\.m\\'"    (".h"))
-      ;;         ("\\.mm\\'"    (".h"))
-
-      ;;         ("\\.C\\'"   (".H"  ".hh" ".h"))
-      ;;         ("\\.H\\'"   (".C"  ".CC"))
-
-      ;;         ("\\.CC\\'"  (".HH" ".H"  ".hh" ".h"))
-      ;;         ("\\.HH\\'"  (".CC"))
-
-      ;;         ("\\.c\\+\\+\\'" (".h++" ".hh" ".h"))
-      ;;         ("\\.h\\+\\+\\'" (".c++"))
-
-      ;;         ("\\.cpp\\'" (".hpp" ".hh" ".h"))
-      ;;         ("\\.hpp\\'" (".cpp"))
-
-      ;;         ("\\.cxx\\'" (".hxx" ".hh" ".h"))
-      ;;         ("\\.hxx\\'" (".cxx"))))
-      )
-    )
-
-  (add-hook 'c-mode-common-hook 'cc-fix-other-file-alist)
-
-  ;; The bigger problem is that the header-search algorithm doesn’t understand
-  ;; frameworks. So, <sys/types> properly finds /usr/include/sys/types, but
-  ;; <Foundation/Foundation.h> fails. To fix that:
 
   (defadvice ff-get-file-name (around ff-get-file-name-framework
                                       (search-dirs
@@ -3795,21 +3755,6 @@ If there is no expansion the command returned by
      ad-do-it))
   (ad-enable-advice 'ff-get-file-name 'around 'ff-get-file-name-framework)
   (ad-activate 'ff-get-file-name)
-
-  ;; Unfortunately, there are some libraries that effectively reimplement parts of
-  ;; find-file.el instead of using it, which means you may need to patch more
-  ;; functions if you use those libraries.
-
-  ;; Of course you’ll also want to add the framework paths to
-  ;; cc-search-directories. I used to have code to extract the gcc defaults for
-  ;; both include directories and framework directories at startup, but that turns
-  ;; out to be not much better than using the built-in defaults, because it
-  ;; doesn’t take into account the local values for the project(s) I work on. So
-  ;; now I just hard-code it in my .emacs, and then have project-specific files to
-  ;; eval as needed.
-
-  (setq cc-search-directories '("." "../../include" "../include" "/usr/include" "/usr/local/include/*"
-                                "/System/Library/Frameworks" "/Library/Frameworks"))
 
   ;; =============== Doxymacs: Doxygen ================================
   (when (load-file-if-exist (elsub "mine/doxymacs.elc"))
@@ -8148,8 +8093,8 @@ When called with a prefix argument, show the *trace-output* buffer."
           (goto-char bol-pos)
           (while (re-search-forward "/\\|\\\\" eol-pos t)
             (setq replace-count (+ replace-count 1))
-            (cond ((string= (match-string 0) "/") (replace-match "\\\\" nil nil))
-                  ((string= (match-string 0) "\\") (replace-match "/" nil nil)))
+            (cond ((string-equal (match-string 0) "/") (replace-match "\\\\" nil nil))
+                  ((string-equal (match-string 0) "\\") (replace-match "/" nil nil)))
             (message (format "%d changes made." replace-count)))))))
 
   ;; NOTE: This function does not work reliably, it works now for 2005
@@ -8250,10 +8195,10 @@ currently under the cursor."
                    (if (or word-at-point symbol-at-point)
                        (concat "Symbol (default \"" default "\"): ")
                      "Symbol (no default): "))))
-        (if (and (string= inp "") (not word-at-point) (not symbol-at-point))
+        (if (and (string-equal inp "") (not word-at-point) (not symbol-at-point))
             (message "You didn't enter a symbol!")
           (let ((search-type (if arg "full+text+search" "basic+search"))
-                (target-symbol (if (string= inp "") default inp)))
+                (target-symbol (if (string-equal inp "") default inp)))
             (browse-url (concat "http://lispdoc.com?q=" target-symbol
                                 "&search=" search-type))))))
 
