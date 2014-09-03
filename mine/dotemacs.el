@@ -1931,6 +1931,11 @@ See URL `http://dlang.org/'."
 (add-to-list 'auto-mode-alist '("\\.ll\\'" . llvm-mode))
 (add-to-list 'auto-mode-alist '("\\.td\\'" . tablegen-mode))
 
+;;; Demangle C++ Symbols
+(when (append-to-load-path (elsub "demangle-mode"))
+  (autoload 'demangle-mode "demangle-mode" nil t)
+  (add-hook 'llvm-mode-hook 'demangle-mode))
+
 ;;; ===========================================================================
 ;;; Google Go
 (autoload 'go-mode "go-mode" "\
