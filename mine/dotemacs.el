@@ -917,6 +917,7 @@
   "Start a new instance of eshell."
   (interactive)
   (eshell t))
+(defalias 'eshell-new 'new-eshell)
 (global-set-key [(control c) (shift ?s)] 'new-eshell)
 
 ;; Shell (Commands)
