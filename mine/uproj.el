@@ -510,7 +510,7 @@ VERSION default to version of gdb"
     ("Debug-ListGCAllocations"
      ("-debug" "-g" "-gs" "-vgc"))      ;DMD version >= 2.066
     ("Debug-Unittest-ListGCAllocations"
-     ("-debug" "-g" "-gs" "-unittest" "-vgc"))      ;DMD version >= 2.066
+     ("-debug" "-g" "-gs" "-vgc" "-unittest"))      ;DMD version >= 2.066
     ("Debug-Show-Thread-Locals"
      ("-vtls" "-debug" "-g" "-gs")) ;-gc
     ("Debug-Bounds-Check"
