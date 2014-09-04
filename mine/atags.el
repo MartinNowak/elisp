@@ -21,7 +21,7 @@
 (defvar atags-root-history '()
   "History of root directories that contain an Emacs Tags database.")
 (when (require 'desktop nil t) (add-to-list 'desktop-globals-to-save 'atags-root-history t))
-;; Use: (add-to-list 'atags-root-history "~/cognia")
+;; Use: (add-to-list 'atags-root-history "~/justcxx")
 
 (defcustom atags-schedule-delay 3
   "Delay after buffer save when tags update is
@@ -120,7 +120,7 @@ default (shallowest)."
          (caar (last hits))             ;select the top-most
        (car hits))                      ;otherwise only on to choose
      tags-type sync-flag)))
-;; Use: (progn (atags-update "~/cognia/" 'ectags) atags-schedule)
+;; Use: (progn (atags-update "~/justcxx/" 'ectags) atags-schedule)
 ;; Use: (progn (atags-update (elsub "mine/") 'ectags) atags-schedule)
 ;; Use: (atags-update "~/elisp/mine" 'ectags nil t)
 
@@ -137,7 +137,7 @@ default (shallowest)."
         (progn (ignore-errors (cancel-timer (cdr old)))
                (setcdr old new)) ;cancel timer and replace it
       (add-to-list 'atags-schedule `(,dir ,new) t)))) ;append to end
-;; Use: (atags-schedule-update-above-directory "~/cognia/" 'ectags)
+;; Use: (atags-schedule-update-above-directory "~/justcxx/" 'ectags)
 ;; Use: (atags-schedule-update-above-directory (elsub "mine/") 'ectags)
 
 (defun atags-flush-schedule (dir)

@@ -281,7 +281,7 @@ and Linkable Format)"
   (interactive "fFile to investigate: ")
   (file-magic-match filename "^ELF.*relocatable")
   )
-;; (file-magic-is-ELF-obj-p "~/cognia/bitv.o")
+;; (file-magic-is-ELF-obj-p "~/justcxx/bitv.o")
 
 (defun file-magic-is-executable-ELF-p (filename)
   "Return non-nil if FILENAME can be executed by you and is

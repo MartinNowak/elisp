@@ -39,11 +39,11 @@ Return elements of FILES as members of DIR."
 
 (eval-when-compile (assert-nil (directory-has-files-p "/etc/passwd" '("passwd" "hosts"))))
 ;; Use: (directory-has-files-p "/etc/" '("passwd" "hosts"))
-;; Use: (directory-has-files-p "~/cognia/vec2f" '("passwd" "hosts"))
-;; Use: (directory-has-files-p "~/cognia/" '("GPATH" "GRTAGS" "GSYMS" "GTAGS" "tags" "TAGS"))
-;; Use: (directory-has-files-p "~/cognia/" '("tags" "TAGS"))
-;; Use: (directory-has-files-p "~/cognia/" "tags")
-;; Use: (directory-has-files-p "~/cognia/" nil)
+;; Use: (directory-has-files-p "~/justcxx/vec2f" '("passwd" "hosts"))
+;; Use: (directory-has-files-p "~/justcxx/" '("GPATH" "GRTAGS" "GSYMS" "GTAGS" "tags" "TAGS"))
+;; Use: (directory-has-files-p "~/justcxx/" '("tags" "TAGS"))
+;; Use: (directory-has-files-p "~/justcxx/" "tags")
+;; Use: (directory-has-files-p "~/justcxx/" nil)
 
 (defun directory-has-all-p (dir file-list)
   "Return t if DIR is a directory and contains all the files in
@@ -55,9 +55,9 @@ FILE-LIST, nil otherwise."
       cont)))
 (defalias 'dir-all-subs-p 'directory-has-all-p)
 ;; Use: (directory-has-all-p "/etc/" '("passwd" "hosts")) => '("passwd" "hosts")
-;; Use: (directory-has-all-p "~/cognia/vec2f" '("passwd" "hosts")) => nil
-;; Use: (directory-has-all-p "~/cognia/" '("GPATH" "GRTAGS"))
-;; Use: (directory-has-all-p "~/cognia/" '("GPATH" "GRTAGS" "GSYMS" "GTAGS"))
+;; Use: (directory-has-all-p "~/justcxx/vec2f" '("passwd" "hosts")) => nil
+;; Use: (directory-has-all-p "~/justcxx/" '("GPATH" "GRTAGS"))
+;; Use: (directory-has-all-p "~/justcxx/" '("GPATH" "GRTAGS" "GSYMS" "GTAGS"))
 (defun directory-has-any-p (dir file-list)
   "Return t if DIR is a directory and contains any of the files
 in FILE-LIST, nil otherwise."

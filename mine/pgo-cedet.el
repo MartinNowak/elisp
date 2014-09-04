@@ -90,7 +90,7 @@
   ;; SemanticDb
   (when (require 'semantic/db nil t)
     (require 'semantic/db-typecache nil t)
-    (add-to-list 'semanticdb-project-roots "~/cognia")
+    (add-to-list 'semanticdb-project-roots "~/justcxx")
     (add-to-list 'semanticdb-project-roots "~/FOI/HISP")
     (when (boundp 'semanticdb-default-save-directory)
       (setq semanticdb-default-save-directory "~/.emacs.d/semanticdb")

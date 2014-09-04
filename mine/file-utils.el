@@ -102,7 +102,7 @@ UID defaults to current user"
 ;; Use: (file-inode-number "/bin/ls")
 ;; Use: (file-inode-number "/bin/grep")
 ;; Use: (file-inode-number "~/.emacs")
-;; Use: (file-inode-number "~/cognia/Makefile.am")
+;; Use: (file-inode-number "~/justcxx/Makefile.am")
 
 (defsubst file-device-number (filename)
   "Return file-system device number of the file FILENAME."
@@ -110,7 +110,7 @@ UID defaults to current user"
 ;; Use: (file-device-number "/bin/ls")
 ;; Use: (file-device-number "/bin/grep")
 ;; Use: (file-device-number "~/.emacs")
-;; Use: (file-device-number "~/cognia/Makefile.am")
+;; Use: (file-device-number "~/justcxx/Makefile.am")
 
 (defun file-in-directory-list-p (file dirlist)
   "Returns true if the file specified is contained within one of
@@ -182,7 +182,7 @@ current time. Return t if operation was permitted, nil otherwise."
 (defun file-relative-name-to-file (from to)
   (interactive "sFrom: sTo: ")
   (file-relative-name to (file-name-directory from)))
-;; Use: (file-relative-name-to-file "~/cognia/avg/utils.h" "~/cognia/utils.h")
+;; Use: (file-relative-name-to-file "~/justcxx/avg/utils.h" "~/justcxx/utils.h")
 
 ;; ---------------------------------------------------------------------------
 
@@ -355,8 +355,8 @@ window."
   (symbolp 'file-gnu-global-directory-p)
   (symbolp (lambda (x) x))
   (message "symbol-function:%s" (symbol-function 'file-gnu-global-directory-p))
-  (funcall 'file-gnu-global-directory-p "~/cognia/")
-  (file-gnu-global-directory-p "~/cognia/vec2f")
+  (funcall 'file-gnu-global-directory-p "~/justcxx/")
+  (file-gnu-global-directory-p "~/justcxx/vec2f")
   )
 
 ;; ---------------------------------------------------------------------------

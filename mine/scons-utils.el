@@ -25,7 +25,7 @@
                              nil t case-fold nil t nil 'string))
       (setq targets (cons hit targets)))
     targets))
-;; Use: (sconstruct-targets "~/cognia/SConstruct")
+;; Use: (sconstruct-targets "~/justcxx/SConstruct")
 ;; Use: (call-interactively 'sconstruct-targets)
 
 (defun directory-sconstruct-target-of-buffer (dir &optional source-file)

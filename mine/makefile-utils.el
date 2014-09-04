@@ -20,7 +20,7 @@
                   (string-equal (substring hit 0 1) "$"))
         (setq targets (cons hit targets))))
     targets))
-;; Use: (makefile-targets "~/cognia/GNUmakefile")
+;; Use: (makefile-targets "~/justcxx/GNUmakefile")
 ;; Use: (call-interactively 'makefile-targets)
 ;; Use: (makefile-targets "~/Work/phobos/Makefile")
 

@@ -35,7 +35,7 @@
   (shell-command "gcc -c -MD -E myio.hpp > /dev/null")
   ;; (parse-in-auto-build "myio.d")
   )
-;; TEST: Test-Driven: Kör C-c x på ~/cognia/tests/t_qsort.cpp
+;; TEST: Test-Driven: Kör C-c x på ~/justcxx/tests/t_qsort.cpp
 ;;
 
 ;;;###autoload
@@ -59,8 +59,8 @@
 ;; Use: (describe-hash-table 'dcache-gdirs)
 ;; Use: (describe-hash-table (gethash "/bin" dcache-gdirs))
 ;; Use: (describe-hash-table (gethash "~" dcache-gdirs))
-;; Use: (describe-hash-table (gethash "~/cognia" dcache-gdirs))
-;; Use: (describe-hash-table (gethash "~/cognia/CL" dcache-gdirs))
+;; Use: (describe-hash-table (gethash "~/justcxx" dcache-gdirs))
+;; Use: (describe-hash-table (gethash "~/justcxx/CL" dcache-gdirs))
 ;; Use: (describe-hash-table (gethash (elsub "mine") dcache-gdirs))
 ;; Use: (describe-hash-table (gethash (elsub "mine/tscan-tests") dcache-gdirs))
 ;; Use: (describe-hash-table (gethash "/usr/bin" dcache-gdirs))
@@ -936,8 +936,8 @@ If MATCH is non-nil, get only file names that match the regexp MATCH."
                          (assert-equal value
                                        (fcache-get-property fcache name)))))
 
-  (eval-when-compile (when (file-directory-p "~/cognia")
-                       (let* ((filename "~/cognia")
+  (eval-when-compile (when (file-directory-p "~/justcxx")
+                       (let* ((filename "~/justcxx")
                               (fcache (fcache-of filename))
                               (name :history)
                               (value "clean"))

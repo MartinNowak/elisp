@@ -501,8 +501,8 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
         (setq buffer-read-only t))))
   (with-current-buffer ectags-temp-buffer-name
     (ectags-scan-tags directory file-format tags-obarray tag-patt file-patt type-name multi-flag)))
-;; (eval-when-compile (ectags-scan-directory "~/cognia/semnet/" 'ectags-format-vi-full-raw))
-;; (ectags-scan-directory "~/cognia/" 'ectags-format-vi-full-raw)
+;; (eval-when-compile (ectags-scan-directory "~/justcxx/semnet/" 'ectags-format-vi-full-raw))
+;; (ectags-scan-directory "~/justcxx/" 'ectags-format-vi-full-raw)
 
 ;; (eval-when-compile
 ;;   (let ((tags-obarray (make-obarray 1000)))
@@ -570,8 +570,8 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
     (or tags-root                        ;either we found root
         (read-directory-name "Directory to generate tags from: " dir nil t)))) ;or we default to current
 ;; Use: (ectags-tags-file-directory)
-;; Use: (ectags-tags-file-directory "~/cognia/")
-;; Use: (ectags-tags-file-directory "~/cognia/semnet/")
+;; Use: (ectags-tags-file-directory "~/justcxx/")
+;; Use: (ectags-tags-file-directory "~/justcxx/semnet/")
 ;; Use: (ectags-tags-file-directory "~/pnw/")
 ;; Use: (ectags-tags-file-directory (elsub "others"))
 ;; Use: (ectags-tags-file-directory "/etc")

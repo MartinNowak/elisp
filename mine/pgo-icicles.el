@@ -42,7 +42,7 @@ Control Database."
       (not (member (file-name-nondirectory dir) vc-directory-exclusion-list)))
     (defalias 'non-vc-directory? 'non-vc-directory-p)
     ;; Use: (non-vc-diretory-p ".git")
-    ;; Use: (non-vc-diretory-p "~/cognia/.git")
+    ;; Use: (non-vc-diretory-p "~/justcxx/.git")
     ;; ToDo: (setq icicle-directory-predicate 'non-vc-diretory-p)
     (setq icicle-file-no-match-regexp
           (concat "/" (regexp-opt (append vc-directory-exclusion-list '(".deps" ".backups")))))

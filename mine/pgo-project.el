@@ -55,7 +55,7 @@
 
 (when (and nil (require 'mk-project nil t)) ;Lightweight project handling
 ;;;   (project-def "PNW"
-;;;         '((basedir "~/cognia/")
+;;;         '((basedir "~/justcxx/")
 ;;;           (src-patterns ("*.lisp" "*.c"))
 ;;;           (ignore-patterns ("*.elc" "*.o"))
 ;;;           (tags-file "~/pnw/TAGS")

@@ -53,7 +53,7 @@
 ;; TODO: Enable `vc-sort' when we there is a function say `vc-state-directory'.
 ;;       Try M-x find-library RET vc RET and then look for dir-status in the
 ;;       comment/doc at the beginning of the file for the "full" story. Use:
-;;       - (let ((default-directory "~/cognia/")) (vc-git-command nil 'async "." "status" "-s") (display-buffer "*vc*"))
+;;       - (let ((default-directory "~/justcxx/")) (vc-git-command nil 'async "." "status" "-s") (display-buffer "*vc*"))
 ;;         - "A " 'added (created)
 ;;         - "M " 'edited (modified)
 ;;         - " R" 'renamed
@@ -1354,7 +1354,7 @@ each directory or file."
 ;; Use: (tscan-directory "/etc" "\.d$")
 ;; Use: (tscan-directory "/etc" "file")
 ;; Use: (tscan-directory "/etc")
-;; Use: (tscan-directory "~/cognia")
+;; Use: (tscan-directory "~/justcxx")
 ;; Use: (tscan-directory (elsub "mine/tscan-tests"))
 
 (let ((dfmatch "file"))
@@ -1494,8 +1494,8 @@ value of `case-fold-search'."
   )
 ;; Use: (benchmark-run 1 (tscan-start "scan" (elsub "mine")))
 ;; Use: (benchmark-run 1 (rgrep "scan" nil (elsub "mine")))
-;; Use: (tscan-start "obj" "~/cognia/hui")
-;; Use: (tscan-start "xyz" "~/cognia/")
+;; Use: (tscan-start "obj" "~/justcxx/hui")
+;; Use: (tscan-start "xyz" "~/justcxx/")
 ;; Use: (tscan-start "/etc")
 ;; Use: (tscan-start "/etc" "plugin")
 ;; Use: (tscan-start "/etc/X11" "plugin")
@@ -1867,19 +1867,19 @@ containing any of these.
                                    nil nil)
 
     (query-replace-regexp-in-ftree "\\([^@]\\)todo:" "\\1@todo:"
-                                   (expand-file-name "~/cognia/pmdb/")
+                                   (expand-file-name "~/justcxx/pmdb/")
                                    t nil nil 'any
                                    dmatcher fmatcher
                                    t t)
 
     (query-replace-regexp-in-ftree "vTex" "vtex"
-                                   (expand-file-name "~/cognia/hui/")
+                                   (expand-file-name "~/justcxx/hui/")
                                    t nil nil 'any
                                    dmatcher fmatcher
                                    t t)
 
     (query-replace-regexp-in-ftree "vec" "vec"
-                                   (expand-file-name "~/cognia/")
+                                   (expand-file-name "~/justcxx/")
                                    t nil nil 'any
                                    dmatcher fmatcher
                                    t t)

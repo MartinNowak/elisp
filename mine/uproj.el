@@ -966,8 +966,8 @@ of jobs running with nicenessrity NICENESS."
           (fcache-add-to-history-tag fcache tag bdir))
         bdir)))))
 ;; Use: (compilation-read-root-directory "~/Work/MATLAB/EMD/EMDs/src")
-;; Use: (compilation-read-root-directory "~/cognia/semnet/")
-;; Use: (fcache-get-property (fcache-of "~/cognia/semnet/") :build-root)
+;; Use: (compilation-read-root-directory "~/justcxx/semnet/")
+;; Use: (fcache-get-property (fcache-of "~/justcxx/semnet/") :build-root)
 ;; Use: (fcache-get-property (fcache-of (expand-file-name "~/Work/MATLAB/EMD/EMDs/src")) :build-root)
 ;; Use: (fcache-get-properties (fcache-of (expand-file-name "~/Work/MATLAB/EMD/EMDs/src")))
 ;; Use: (compilation-read-root-directory "~/")
@@ -981,7 +981,7 @@ otherwise choose any target."
          (tag :build-file-history)
          (kexpr 'Build-Tool-Script) ;ftypes-build-script-file-keys, '(Makefile SConstruct)
          (hist (fcache-get-tag fcache tag))
-         ;; TODO: Replace or merge with: (trace-file-upwards "~/cognia/semnet/" 'Makefile nil nil 'name-recog)
+         ;; TODO: Replace or merge with: (trace-file-upwards "~/justcxx/semnet/" 'Makefile nil nil 'name-recog)
          (bfile (abbreviate-file-name
                  (let* ((files (directory-files-of-types directory kexpr 'name-recog)))
                    (when files
@@ -1005,9 +1005,9 @@ otherwise choose any target."
       ;; (expand-file-name bfile directory)
       )))
 ;; Use: (compilation-read-build-file "/etc")
-;; Use: (compilation-read-build-file "~/cognia")
+;; Use: (compilation-read-build-file "~/justcxx")
 
-;; (directory-files-of-types "~/cognia" 'Makefile 'name-recog)
+;; (directory-files-of-types "~/justcxx" 'Makefile 'name-recog)
 
 (defun compilation-read-build-target (&optional directory bfile targets default)
   "Read Build Target. If TARGETS are non-nil choose from it and
@@ -1052,8 +1052,8 @@ require match, otherwise choose any target."
       target)))
 ;; Use: (compilation-read-build-target "/tmp")
 ;; Use: (compilation-read-build-target "~/ware/emacs")
-;; Use: (compilation-read-build-target "~/cognia" "GNUmakefile")
-;; Use: (compilation-read-build-target "~/cognia" "SConstruct")
+;; Use: (compilation-read-build-target "~/justcxx" "GNUmakefile")
+;; Use: (compilation-read-build-target "~/justcxx" "SConstruct")
 ;; Use: (compilation-read-build-target "~/Work/phobos" "Makefile")
 
 (defun compilation-read-c++-library-suffix (&optional lang path)
@@ -1137,7 +1137,7 @@ Optionally searches PATH for libraries."
   "Determine kinds of builds that can be used at
 directory DIR."
   (completing-read "Type of build: " '("make" "bjam" "scons")))
-;; Use: (compilation-find-build-tools-at "~/cognia/")
+;; Use: (compilation-find-build-tools-at "~/justcxx/")
 
 (when nil
   (require 'compile- nil t)

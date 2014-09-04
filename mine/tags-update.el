@@ -76,7 +76,7 @@
                  (shell-command-silent-at (concat cmd (unless sync-flag "&")) directory out-buf err-buf))))))))
 ;; Use: (tags-update-at nil 'ectags)
 ;; Use: (tags-update-at nil 'all)
-;; Use: (tags-update-at "~/cognia/" 'all)
-;; Use: (tags-update-at "~/cognia/" 'ectags)
+;; Use: (tags-update-at "~/justcxx/" 'all)
+;; Use: (tags-update-at "~/justcxx/" 'ectags)
 
 (provide 'tags-update)

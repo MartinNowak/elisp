@@ -154,7 +154,7 @@ If TREE is non-nil status whole tree not just DIRECTORY."
         (Arch)
         (DARCS (process-lines-filtered "darcs" 'vc-darcs-state-string-code "status"))
         ))))
-;; Use: (vc-states "/home/per/Work/cognia/" nil t nil)
+;; Use: (vc-states "/home/per/Work/justcxx/" nil t nil)
 ;; Use: (vc-states (elsub "yasnippet") 'SVN)
 ;; Use: (vc-states (elsub "yasnippet") 'SVN nil t)
 ;; Use: (vc-states (elsub "yasnippet") 'SVN nil t)
@@ -207,7 +207,7 @@ If TREE is non-nil status whole tree not just DIRECTORY."
 ;; Use: (file-relative-name (elsub "icicles/icicles.el") (elsub "others"))
 
 ;; Use: (gethash "xyz" (vc-states-get (elsub "~/elisp/")))
-;; Use: (file-under-vc-directory-p "~/cognia/")
+;; Use: (file-under-vc-directory-p "~/justcxx/")
 
 (defun directory-cache-vc-state-subs (dirname &optional cached-only noerror match backend tree updates)
   "Scan and Cache VC-states of DIRNAME's sub-files or directories."

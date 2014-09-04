@@ -2,7 +2,7 @@
 ;;
 ;; Author: Per Nordlöw
 
-;; TODO: Fails: (cscan-file "~/cognia/semnet/know_dfmts.cpp" "file" nil t t 'unbox-txt 'clust nil nil t)
+;; TODO: Fails: (cscan-file "~/justcxx/semnet/know_dfmts.cpp" "file" nil t t 'unbox-txt 'clust nil nil t)
 
 ;; TODO: `cscan-directory', `cscan-file-tree'.
 ;; TODO: Remove use of hardcoded fcache formats (when comparing to `bcache') in `cscan-file-uncached'.
@@ -10,7 +10,7 @@
 ;; TODO: Do preliminary literal scanning of literal components of pattern before
 ;; continuing with syntactic analysis `syntax-ppss'.
 ;;
-;; TODO: This errors: (fcache-chase-links (fcache-of "~/cognia/boost/smart_enum.hpp"))
+;; TODO: This errors: (fcache-chase-links (fcache-of "~/justcxx/boost/smart_enum.hpp"))
 
 (require 'thingatpt-syntax)
 (require 'file-utils)
@@ -729,7 +729,7 @@ Related: `string-match'"
 (defalias 'buffer-cscan 'cscan-buffer)
 
 (when nil
-  (cscan-file "~/cognia/GNUmakefile"
+  (cscan-file "~/justcxx/GNUmakefile"
               (concat "^\\("
                       "[^[:space:]\n]*"
                       "\\):")
@@ -989,8 +989,8 @@ FILENAME."
 ;; Use: (cscan-file-uncached (elsub "mine/tscan-tests/regexp.txt") "File\\|Dir" nil t 'txt 'clust)
 ;; Use: (cscan-file-uncached (elsub "mine/tscan-tests/regexp.txt") "\\(File\\)\\|\\(Dir\\)" nil t 'txt 'clust)
 
-;; Use: (benchmark-run 1 (cscan-file-uncached "~/cognia/semnet/ob.hpp" "pob" nil nil   'txt t nil nil nil))
-;; Use: (benchmark-run 1 (cscan-file          "~/cognia/semnet/ob.hpp" "pob" nil nil t 'txt t nil t))
+;; Use: (benchmark-run 1 (cscan-file-uncached "~/justcxx/semnet/ob.hpp" "pob" nil nil   'txt t nil nil nil))
+;; Use: (benchmark-run 1 (cscan-file          "~/justcxx/semnet/ob.hpp" "pob" nil nil t 'txt t nil t))
 ;; Use: (benchmark-run 1 (cscan-file-uncached "/bin/ls" "\177ELF" 0 nil 'bin))
 ;; Use: (cscan-file-uncached "/etc/passwd" "x" nil nil 'txt t)
 ;; Use: (cscan-file-uncached "/etc/passwd" "a" nil nil 'txt 'clust)

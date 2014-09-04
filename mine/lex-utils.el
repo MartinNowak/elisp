@@ -157,7 +157,7 @@ associated with MODE."
     (unless end (setq end (point-max)))
     (semantic-lex start end depth length)))
 ;; Use: (lex-file "/usr/include/stdio.h" nil nil 10)
-;; Use: (lex-file "~/cognia/vec2f.h" nil nil 10)
+;; Use: (lex-file "~/justcxx/vec2f.h" nil nil 10)
 
 ;; ===========================================================================
 

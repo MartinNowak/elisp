@@ -151,7 +151,7 @@
                   ))))
         (setq l (delete nil l)))))))
 ;; Use: (file-productions (elsub "mine/pnw-dot-emacs.el")
-;; Use: (file-productions "~/cognia/semnet/alt.cpp")
+;; Use: (file-productions "~/justcxx/semnet/alt.cpp")
 
 (when nil
   (with-temp-buffer
@@ -2992,21 +2992,21 @@ all. File class PTYPE can be either 'dir, 'file, 'file-or-dir or nil for default
 ;; Use: (fmd-match-uncached "vec2f.cpp" '(C C++) 'name-recog)
 ;; Use: (fmd-match-uncached "vec2f.hpp" '(C++-Header C-Header) 'name-recog)
 ;; Use: (fmd-match-uncached "foo.cpp" '(C++-Header C-Header) 'name-recog)
-;; Use: (fmd-match-uncached "~/cognia/vec2.hpp" '(C++-Header) 'name-recog)
-;; Use: (fmd-match-uncached "~/cognia/vec2.hpp" '(C++-Header) 'name-and-contents-recog)
+;; Use: (fmd-match-uncached "~/justcxx/vec2.hpp" '(C++-Header) 'name-recog)
+;; Use: (fmd-match-uncached "~/justcxx/vec2.hpp" '(C++-Header) 'name-and-contents-recog)
 ;; Use: (fmd-match-uncached "/bin/ls" 'ELF 'contents-recog)
 ;; Use: (fmd-match-uncached "/usr/bin/emacs-snapshot-gtk" 'ELF 'contents-recog)
 ;; Use: (fmd-match-uncached "README" 'README 'name-recog)
 ;; Use: (fmd-match-uncached "README.NOW" 'README 'name-recog)
 ;; Use: (fmd-match-uncached "Changelog" 'Changelog 'name-recog)
 ;; Use: (fmd-match-uncached "Changelog.1" 'Changelog 'name-recog)
-;; Use: (fmd-match-uncached "~/cognia/" 'GNU-GLOBAL-Directory 'name-and-contents-recog) => t
-;; Use: (fmd-match-uncached "~/cognia/GTAGS" 'GNU-GLOBAL-Directory 'name-and-contents-recog) => nil
-;; Use: (fmd-match-uncached "~/cognia/GTAGS" 'Berkeley-DB 'contents-recog) => '(1 5)
-;; Use: (fmd-match-uncached "~/cognia/TAGS" 'Emacs-tags 'name-recog)
-;; Use: (fmd-match-uncached "~/cognia/TAGS" 'Emacs-tags 'name-and-contents-recog)
-;; Use: (fmd-match-uncached "~/cognia/.git" 'VC-Db-Dir 'contents-recog)
-;; Use: (fmd-match-uncached "~/cognia/" 'Version-Controlled-Directory 'name-or-contents-recog)
+;; Use: (fmd-match-uncached "~/justcxx/" 'GNU-GLOBAL-Directory 'name-and-contents-recog) => t
+;; Use: (fmd-match-uncached "~/justcxx/GTAGS" 'GNU-GLOBAL-Directory 'name-and-contents-recog) => nil
+;; Use: (fmd-match-uncached "~/justcxx/GTAGS" 'Berkeley-DB 'contents-recog) => '(1 5)
+;; Use: (fmd-match-uncached "~/justcxx/TAGS" 'Emacs-tags 'name-recog)
+;; Use: (fmd-match-uncached "~/justcxx/TAGS" 'Emacs-tags 'name-and-contents-recog)
+;; Use: (fmd-match-uncached "~/justcxx/.git" 'VC-Db-Dir 'contents-recog)
+;; Use: (fmd-match-uncached "~/justcxx/" 'Version-Controlled-Directory 'name-or-contents-recog)
 ;; Use: (fmd-match-uncached "~/.git" 'VC-Db-Dir 'name-recog)
 ;; Use: (fmd-match-uncached (elsub "mine/pnw-dot-emacs.elc") '(Emacs-Lisp-Compiled) 'contents-recog) =>
 ;; Use: (fmd-match-uncached "/usr/share/info/gzip.info.gz" 'GNU-zip) => t
@@ -3272,10 +3272,10 @@ If FULL is non-nil, return absolute file names.  Otherwise return names
               (lambda (x y)
                 (> (float-time (file-modification-time x))
                    (float-time (file-modification-time y)))))))))
-;; Use: (directory-files-of-types "~/cognia" 'Makefile)
-;; Use: (directory-files-of-types "~/cognia" 'Makefile nil nil t)
+;; Use: (directory-files-of-types "~/justcxx" 'Makefile)
+;; Use: (directory-files-of-types "~/justcxx" 'Makefile nil nil t)
 ;; Use: (directory-files-of-types "~/ware/emacs" 'Makefile)
-;; Use: (directory-files-of-types "~/cognia" 'Makefile nil 'type-and-file)
+;; Use: (directory-files-of-types "~/justcxx" 'Makefile nil 'type-and-file)
 ;; Use: (directory-files-of-types (elsub "others") 'Version-Controlled-Directory)
 
 ;; ---------------------------------------------------------------------------
@@ -3301,11 +3301,11 @@ If FULL is non-nil, return absolute file names.  Otherwise return names
   (let ((prompt "Find file (of type %s): ")
         (mustmatch t))
     (let ((kexpr '(ELF)))
-      (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr "~/cognia/" nil mustmatch))
+      (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr "~/justcxx/" nil mustmatch))
     (let ((kexpr '(C-Header)))
-      (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr "~/cognia/" nil mustmatch nil 'name-recog))
+      (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr "~/justcxx/" nil mustmatch nil 'name-recog))
     (let ((kexpr '(C++)))
-      (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr "~/cognia/" nil mustmatch nil 'name-recog))
+      (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr "~/justcxx/" nil mustmatch nil 'name-recog))
     (let ((kexpr '(Makefile)))
       (read-file-name-of-types (format prompt (mapconcat 'symbol-name kexpr ", ")) kexpr (elsub "mine") nil mustmatch nil 'name-recog))
     (let ((kexpr '(ELF)))
@@ -3347,14 +3347,14 @@ If FULL is non-nil, return absolute file names.  Otherwise return names
   "Return non-nil if FILENAME is a C Header file."
   (interactive "fFile to investigate: ")
   (file-match filename 'C-Header 'name-or-contents-recog cached-only noerror)) ;relaxed
-;; Use: (file-C-header-p "~/cognia/utils.h")
+;; Use: (file-C-header-p "~/justcxx/utils.h")
 
 ;; Note: magic: C program text
 (defun file-C-source-p (filename &optional cached-only noerror)
   "Return non-nil if FILENAME is a C Source file."
   (interactive "fFile to investigate: ")
   (file-match filename 'C-Source 'name-or-contents-recog cached-only noerror)) ;relaxed
-;; Use: (file-C-source-p "~/cognia/utils.c") => '(C-Source)
+;; Use: (file-C-source-p "~/justcxx/utils.c") => '(C-Source)
 ;; Use: (file-C-source-p "~/pnw/java/Sparse2DFloat.java") => nil
 
 ;; Note: magic: C++ program text
@@ -3362,12 +3362,12 @@ If FULL is non-nil, return absolute file names.  Otherwise return names
   "Return non-nil if FILENAME is a C++ Header file."
   (interactive "fFile to investigate: ")
   (file-match filename 'C++-Header 'name-or-contents-recog cached-only noerror)) ;relaxed
-;; Use: (file-C++-header-p "~/cognia/geometry/vec.hpp")
+;; Use: (file-C++-header-p "~/justcxx/geometry/vec.hpp")
 (defun file-C++-source-p (filename &optional cached-only noerror)
   "Return non-nil if FILENAME is a C++ Source file."
   (interactive "fFile to investigate: ")
   (file-match filename 'C++-Source 'name-or-contents-recog cached-only noerror)) ;relaxed
-;; Use: (file-C++-source-p "~/cognia/vec2.c")
+;; Use: (file-C++-source-p "~/justcxx/vec2.c")
 
 ;; Note: magic: D program text
 (defun file-D-source-p (filename &optional cached-only noerror)
@@ -3395,14 +3395,14 @@ If FULL is non-nil, return absolute file names.  Otherwise return names
   (interactive "fFile to investigate: ")
   (file-match filename '('Emacs-Backup 'Standard-Backup)
               'name-or-contents-recog cached-only noerror)) ;relaxed
-;; Use: (file-backup-p "~/cognia/utils.c~")
+;; Use: (file-backup-p "~/justcxx/utils.c~")
 ;; Use: (file-backup-p "/var/backups/passwd.bak")
 
 (defun file-ascii-p (filename &optional cached-only noerror)
   "Return non-nil if FILENAME contains ASCII codes only."
   (interactive "fFile to investigate: ")
   (file-magic-match filename "ASCII"))
-;; Use: (file-ascii-p "~/cognia/utils.c")
+;; Use: (file-ascii-p "~/justcxx/utils.c")
 
 ;; ---------------------------------------------------------------------------
 
@@ -3418,8 +3418,8 @@ Format) file"
   (interactive "fFile to investigate: ")
   (file-match filename 'Automake-generated (or recog 'contents-recog) cached-only noerror)
   )
-;; Use: (file-automake-generated-p "~/cognia/Makefile.in")
-;; Use: (file-automake-generated-p "~/cognia/Makefile")
+;; Use: (file-automake-generated-p "~/justcxx/Makefile.in")
+;; Use: (file-automake-generated-p "~/justcxx/Makefile")
 
 (defun file-ectags-p (filename &optional recog cached-only noerror)
   "Return non-nil if FILENAME is an Exuberant Ctags database
@@ -3429,7 +3429,7 @@ description of format."
   (interactive "fFile to investigate: ")
   (file-match filename 'Exuberant-Ctags (or recog 'contents-recog) cached-only noerror)
   )
-;; Use: (file-ectags-p "~/cognia/tags")
+;; Use: (file-ectags-p "~/justcxx/tags")
 
 ;; ---------------------------------------------------------------------------
 
@@ -3505,7 +3505,7 @@ matched."
   (and (file-directory-p dir)
        (file-match (expand-file-name "ID" dir)
                    'Idutils recog cached-only t)))
-;; Use: (file-idutils-root-directory-p "~/cognia/") => non-nil
+;; Use: (file-idutils-root-directory-p "~/justcxx/") => non-nil
 ;; Use: (file-idutils-root-directory-p "~/dummy/") => nil
 
 (defun file-etags-root-directory-p (dir &optional recog cached-only)
@@ -3513,7 +3513,7 @@ matched."
   (and (file-directory-p dir)
        (file-match (expand-file-name "TAGS" dir)
                    'Emacs-tags recog cached-only t)))
-;; (eval-when-compile (assert-nonnil (file-ectags-root-directory-p "~/cognia/")))
+;; (eval-when-compile (assert-nonnil (file-ectags-root-directory-p "~/justcxx/")))
 ;; Use: (file-etags-root-directory-p "~/dummy/") => nil
 
 (defun file-ectags-root-directory-p (dir &optional recog cached-only)
@@ -3522,7 +3522,7 @@ database."
   (and (file-directory-p dir)
        (file-match (expand-file-name "tags" dir)
                    'Exuberant-Ctags recog cached-only t)))
-;; Use: (file-ectags-root-directory-p "~/cognia/") => non-nil
+;; Use: (file-ectags-root-directory-p "~/justcxx/") => non-nil
 
 (defun file-etags-or-ectags-root-directory-p (dir &optional recog cached-only)
   "Return non-nil if directory DIR contains an Emacs tags or Exuberant
@@ -3533,13 +3533,13 @@ database."
            (file-match (expand-file-name "TAGS" dir)
                        'Emacs-tags recog cached-only t)
            )))
-;; Use: (file-ectags-root-directory-p "~/cognia/")
+;; Use: (file-ectags-root-directory-p "~/justcxx/")
 
 (defun file-gtags-root-directory-p (dir &optional recog cached-only noerror)
   "Return non-nil if directory DIR contains a GNU GLOBAL (gtags) database."
   (and (file-directory-p dir)
        (file-match dir 'GNU-GLOBAL-Directory recog cached-only t)))
-;; Use: (file-gtags-root-directory-p "~/cognia/")
+;; Use: (file-gtags-root-directory-p "~/justcxx/")
 ;; Use: (file-gtags-root-directory-p "~/ware/EWSim/")
 
 (defun file-cscope-root-directory-p (dir &optional recog cached-only noerror)
@@ -3548,7 +3548,7 @@ database."
        (directory-has-all-p dir '("cscope.out"
                                   "cscope.in.out"
                                   "cscope.po.out"))))
-;; Use: (file-cscope-root-directory-p "~/cognia/")
+;; Use: (file-cscope-root-directory-p "~/justcxx/")
 
 (defun file-tags-root-directory-p (&optional dir recog cached-only noerror)
   "Return non-nil if directory DIR contains any kind of tags database.
@@ -3563,22 +3563,22 @@ found."
    (file-cscope-root-directory-p dir recog cached-only noerror))
   )
 ;; Use: (file-tags-root-directory-p)
-;; Use: (file-tags-root-directory-p "~/cognia/")
-;; Use: (file-tags-root-directory-p "~/cognia/pmdb/")
+;; Use: (file-tags-root-directory-p "~/justcxx/")
+;; Use: (file-tags-root-directory-p "~/justcxx/pmdb/")
 
 ;; TODO: Use to help EDE figure out the project root directory using
 ;; `semanticdb-project-predicate-functions' defaults to `ede-directory-project-p'
 ;; `semanticdb-project-root-functions' defaults to `ede-toplevel-project-or-nil'
 ;; Note: Compare with:
-;; Use: (ede-toplevel-project-or-nil "~/cognia")
-;; Use: (ede-toplevel-project-or-nil "~/cognia/pmdb")
+;; Use: (ede-toplevel-project-or-nil "~/justcxx")
+;; Use: (ede-toplevel-project-or-nil "~/justcxx/pmdb")
 ;; Use: (ede-toplevel-project-or-nil "~/ware/emacs")
 ;; Use: (ede-directory-project-p "~/ware/gcc")
 ;; Use: (ede-directory-project-p "~/ware/valgrind")
 ;; Use: (ede-directory-project-p "~/ware/global")
 ;; Use: (ede-directory-project-p "~/ware/emacs")
-;; Use: (ede-directory-project-p "~/cognia")
-;; Use: (ede-directory-project-p "~/cognia/pmdb")
+;; Use: (ede-directory-project-p "~/justcxx")
+;; Use: (ede-directory-project-p "~/justcxx/pmdb")
 (defun file-project-root-directory-p (&optional dir recog cached-only noerror)
   "Return non-nil if directory DIR contains any kind of tags database.
 Returned value may be the type (as a string) of the tags database
@@ -3588,8 +3588,8 @@ found."
         ;;(file-tags-root-directory-p dir)
         )))
 ;; Use: (file-project-root-directory-p)
-;; Use: (file-project-root-directory-p "~/cognia")
-;; Use: (file-project-root-directory-p "~/cognia/semnet")
+;; Use: (file-project-root-directory-p "~/justcxx")
+;; Use: (file-project-root-directory-p "~/justcxx/semnet")
 
 (defun file-build-directory-p (&optional dir recog format)
   "Return non-nil if DIR contains a build file."
@@ -3599,8 +3599,8 @@ found."
 ;; Use: file-build-directory-p (&optional dir recog format)
 ;; Use: (file-build-directory-p "~/apt-source/tgt-1.0.17")
 
-;; Use: (file-match "~/cognia/GNUmakefile" 'Makefile)
-;; Use: (file-match "~/cognia/GNUmakefile" 'Build-Tool-Script)
+;; Use: (file-match "~/justcxx/GNUmakefile" 'Makefile)
+;; Use: (file-match "~/justcxx/GNUmakefile" 'Build-Tool-Script)
 ;; Use: (file-match "~/apt-source/tgt-1.0.17/Makefile" 'Build-Tool-Script)
 
 ;; ---------------------------------------------------------------------------
@@ -3618,8 +3618,8 @@ Does not care about current user privilegies."
        (file-match dir 'Editable-Dir recog cached-only noerror)))
 ;; Use: (file-editable-directory-p "/etc")
 ;; Use: (file-editable-directory-p "/etcx")
-;; Use: (file-editable-directory-p "~/cognia/.git") => nil
-;; Use: (file-editable-directory-p "~/cognia/autom4te.cache") => nil
+;; Use: (file-editable-directory-p "~/justcxx/.git") => nil
+;; Use: (file-editable-directory-p "~/justcxx/autom4te.cache") => nil
 ;; Use: (file-editable-directory-p "/usr/lib/xorg/extra-modules") => t
 
 ;; ---------------------------------------------------------------------------
@@ -3648,7 +3648,7 @@ Does not care about current user privilegies."
 ;; Use: (file-uneditable-regular-p "/windows/WINDOWS/explorer.exe") => '(Uneditable)
 ;; Use: (file-uneditable-regular-p "/bin/static-sh") => '(Uneditable ELF)
 ;; Use: (file-uneditable-regular-p "/usr/lib/xorg/extra-modules") => nil
-;; Use: (file-uneditable-regular-p "~/cognia/semnet/preg.cpp") => nil
+;; Use: (file-uneditable-regular-p "~/justcxx/semnet/preg.cpp") => nil
 
 (defun file-editable-regular-p (file &optional recog cached-only noerror)
   "Return non-nil if file FILE is an existing regular file which is *supposed to be manually edited*.
@@ -3659,17 +3659,17 @@ Does not care about current user privilegies."
 ;; Use: (file-editable-regular-p "/etc") => nil
 ;; Use: (file-editable-regular-p "/etcx") => nil
 ;; Use: (file-editable-regular-p "/etc/passwd") => '(Editable)
-;; Use: (file-editable-regular-p "~/cognia/.semantic.cache") => nil
-;; Use: (file-editable-regular-p "~/cognia/TAGS") => nil
-;; Use: (file-editable-regular-p "~/cognia/tags") => nil
-;; Use: (file-editable-regular-p "~/cognia/GTAGS") => nil
+;; Use: (file-editable-regular-p "~/justcxx/.semantic.cache") => nil
+;; Use: (file-editable-regular-p "~/justcxx/TAGS") => nil
+;; Use: (file-editable-regular-p "~/justcxx/tags") => nil
+;; Use: (file-editable-regular-p "~/justcxx/GTAGS") => nil
 ;; Use: (file-editable-regular-p "/root") => '(Editable)
 ;; Use: (file-editable-regular-p "/etc/X11/Xwrapper.config") => '(Editable)
 ;; Use: (file-editable-regular-p (elsub "mine/ectags.elc")) => nil
 ;; Use: (file-editable-regular-p "/windows/WINDOWS/explorer.exe") => nil
 ;; Use: (file-editable-regular-p "/usr/lib/vmware/isoimages/windows.iso") => nil
 ;; Use: (file-editable-regular-p "/usr/lib/xorg/extra-modules") => nil
-;; Use: (file-editable-regular-p "~/cognia/semnet/preg.cpp") => '(Editable)
+;; Use: (file-editable-regular-p "~/justcxx/semnet/preg.cpp") => '(Editable)
 
 ;; Use: (file-editable-regular-p (elsub "haskell-mode")) => nil
 ;; Use: (file-editable-directory-p (elsub "haskell-mode")) => t
@@ -3761,13 +3761,13 @@ CACHED-ONLY is non-nil only use that cached types."
 ;; Use: (file-type-names "/bin/ls" t)
 ;; Use: (file-type-names "/bin/ls")
 ;; Use: (file-type-names "/bin/nonbody")
-;; Use: (file-type-names "~/cognia")
+;; Use: (file-type-names "~/justcxx")
 ;; Use: (file-type-names "~/.emacs")
 ;; Use: (file-type-names "/bin/sh.distrib")
 ;; Use: (file-type-names "/bin/sh.distrib" t)
 ;; Use: (file-type-names "/bin/zcat")
 ;; Use: (file-type-names "/bin/zcat" t)
-;; Use: (file-type-names "~/cognia/utils.d" t)
+;; Use: (file-type-names "~/justcxx/utils.d" t)
 ;; Use: (benchmark-run 1 (file-type-names "/bin/ls"))
 ;; Use: (benchmark-run 1 (file-type-names "/bin/ls" t))
 ;; Use: (benchmark-run 1 (file-type-names "/bin/grep" t))
@@ -3802,17 +3802,17 @@ non-nil only try types that belong to that category."
            '("git grep < some regex >" url))
           )))
 ;; Use: (url-ops "/etc/")
-;; Use: (url-ops "~/cognia/utils.c")
-;; Use: (url-ops "~/cognia/tests/t_hash.cpp")
+;; Use: (url-ops "~/justcxx/utils.c")
+;; Use: (url-ops "~/justcxx/tests/t_hash.cpp")
 ;; Use: (url-ops "/bin/ls")
 ;; Use: (cadr (assq :debug (url-ops "/bin/ls")))
-;; Use: (url-ops "~/cognia/GNUmakefile")
-;; Use: (url-ops "~/cognia")
-;; Use: (url-ops "~/cognia/Makefile" "Build Tool Script Code" 'name-or-contents-recog)
-;; Use: (url-ops "~/cognia/Jamroot" "Build Tool Script Code" 'name-or-contents-recog)
-;; Use: (url-ops "~/cognia/SConstruct" "Build Tool Script Code" 'name-or-contents-recog)
-;; Use: (url-ops "~/cognia/utils.h" nil 'name-recog)
-;; Use: (assq :build (url-ops "~/cognia/utils.h" nil 'name-recog))
+;; Use: (url-ops "~/justcxx/GNUmakefile")
+;; Use: (url-ops "~/justcxx")
+;; Use: (url-ops "~/justcxx/Makefile" "Build Tool Script Code" 'name-or-contents-recog)
+;; Use: (url-ops "~/justcxx/Jamroot" "Build Tool Script Code" 'name-or-contents-recog)
+;; Use: (url-ops "~/justcxx/SConstruct" "Build Tool Script Code" 'name-or-contents-recog)
+;; Use: (url-ops "~/justcxx/utils.h" nil 'name-recog)
+;; Use: (assq :build (url-ops "~/justcxx/utils.h" nil 'name-recog))
 ;; Use: (url-ops "~/bin/pbuild")
 ;; Use: (url-ops "~/foo.cpp")
 
@@ -3885,7 +3885,7 @@ operate on FILENAME."
 ;; Use: (file-op "/bin/ls" :debug)
 ;; Use: (file-op "~/alt/i586-mingw32/bin/wxrc.exe" :execute)
 ;; Use: (file-op "/usr/include/stdio.h" :build nil 'name-or-contents-recog)
-;; Use: (file-op "~/cognia/utils.h" :build nil 'name-or-contents-recog)
+;; Use: (file-op "~/justcxx/utils.h" :build nil 'name-or-contents-recog)
 ;; Use: (file-op "~/bin/pbuild" :execute)
 ;; Use: (functionp (file-op "~/FOI/FOCUS/grus_default.m" :execute))
 ;; Use: (funcall (file-op "~/FOI/FOCUS/grus_default.m" :execute) "~/FOI/FOCUS/grus_default.m")
@@ -3964,7 +3964,7 @@ associated with FILENAME."
 (defun file-build-targets (filename)
   "Return build targets of FILENAME."
   '())
-;; (file-build-targets "~/cognia/tests/t_chash.cpp")
+;; (file-build-targets "~/justcxx/tests/t_chash.cpp")
 
 (defun file-set-breakpoint ()
   "Set breakpoint at cursor position in current buffer."
