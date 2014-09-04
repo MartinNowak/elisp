@@ -913,6 +913,11 @@
 ;; Disabled because it only does normal shell not eshell.
 ;; (when (require 'multi-eshell nil t)
 ;;   (global-set-key [(control c) (shift ?s)] 'multi-eshell))
+(defun new-eshell ()
+  "Start a new instance of eshell."
+  (interactive)
+  (eshell t))
+(global-set-key [(control c) (shift ?s)] 'new-eshell)
 
 ;; Shell (Commands)
 (eload 'shell-command-ext)              ;Shell Command
