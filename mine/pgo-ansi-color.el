@@ -19,7 +19,6 @@
 (when nil
   (add-hook 'eshell-preoutput-filter-functions 'ansi-color-filter-apply) ;remove from output
   (add-hook 'eshell-preoutput-filter-functions 'ansi-color-apply) ;very slow
-  (when (require 'multi-eshell nil t))
 
   ;; M-x term and M-x ansi-term do their own hilighting. It makes no
   ;; sense to add ansi-color to these modes. If you still want to

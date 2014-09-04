@@ -903,6 +903,10 @@
 (eload 'file-utils)                     ;File Utilities
 (eload 'file-xattr)                     ;File Extended Attributes
 
+;; Disabled because it only does normal shell not eshell.
+;; (when (require 'multi-eshell nil t)
+;;   (global-set-key [(control c) (shift ?s)] 'multi-eshell))
+
 ;; Shell (Commands)
 (eload 'shell-command-ext)              ;Shell Command
 (when nil
