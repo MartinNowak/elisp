@@ -782,6 +782,33 @@
                                          "@@" (* nonl) "@@" "\n")) . diff-mode))
 
 ;;; ===========================================================================
+;;; Simple Interface to Comparison: Windows, Buffers, Files, Directory, Trees
+
+(progn
+  (global-set-key [(control meta ?=)] 'compare-windows)
+  (define-prefix-command 'compare-map nil
+    (if t
+        "Compare: Buffers-[b/2,B/3,v], Files-[f,F], Regions-[r,R], Windows-[w], Dir-Trees-[t], Buffer==URL-[u]"
+      "Compare:\n  - Buffers-[b/2,B/3]\n  - Files-[f,F]\n  - Regions-[r,R]\n  - Windows-[w]\n  - Dir-Trees-[t]\n  - Buffer==URL-[u]"))
+  (global-set-key [(control ?=)] compare-map)
+  (unless (keymapp compare-map) (setq compare-map (make-sparse-keymap)))
+  (progn
+    (define-key compare-map "2" 'ediff-buffers)
+    (define-key compare-map "3" 'ediff-buffers3)
+    (define-key compare-map "b" 'ediff-buffers)
+    (define-key compare-map "B" 'ediff-buffers3)
+    (define-key compare-map "e" 'ediff-files)
+    (define-key compare-map "f" 'ediff-files)
+    (define-key compare-map "r" 'ediff-regions-linewise)
+    (define-key compare-map "R" 'ediff-regions-wordwise)
+    (define-key compare-map "v" 'vc-ediff-current-buffer-with-head)
+    (define-key compare-map "d" 'diff)
+    (define-key compare-map "w" 'compare-windows)
+    (define-key compare-map "t" 'ediff-trees)
+    (define-key compare-map "u" 'ediff-url)
+    ))
+
+;;; ===========================================================================
 ;;; ELP: Emacs Lisp Profiler
 (when (require 'elp nil t)
   (defalias 'elp-profile-function 'elp-instrument-function)
@@ -5091,31 +5118,6 @@ substring completion."
   ;;(setq-default ediff-highlight-all-diffs 'nil);; only hilight current diff:
   (autoload 'unidiff-mode "unidiff" "Editing unified format patches." t)
   (add-to-list 'auto-mode-alist '("\\.diff\\'" . unidiff-mode))
-
-  ;; Simple Interface to Comparison: Windows, Buffers, Files, Directory, Trees
-  (progn
-    (global-set-key [(control meta ?=)] 'compare-windows)
-    (define-prefix-command 'compare-map nil
-      (if t
-	  "Compare: Buffers-[b/2,B/3,v], Files-[f,F], Regions-[r,R], Windows-[w], Dir-Trees-[t], Buffer==URL-[u]"
-	"Compare:\n  - Buffers-[b/2,B/3]\n  - Files-[f,F]\n  - Regions-[r,R]\n  - Windows-[w]\n  - Dir-Trees-[t]\n  - Buffer==URL-[u]"))
-    (global-set-key [(control ?=)] compare-map)
-    (unless (keymapp compare-map) (setq compare-map (make-sparse-keymap)))
-    (progn
-      (define-key compare-map "2" 'ediff-buffers)
-      (define-key compare-map "3" 'ediff-buffers3)
-      (define-key compare-map "b" 'ediff-buffers)
-      (define-key compare-map "B" 'ediff-buffers3)
-      (define-key compare-map "e" 'ediff-files)
-      (define-key compare-map "f" 'ediff-files)
-      (define-key compare-map "r" 'ediff-regions-linewise)
-      (define-key compare-map "R" 'ediff-regions-wordwise)
-      (define-key compare-map "v" 'vc-ediff-current-buffer-with-head)
-      (define-key compare-map "d" 'diff)
-      (define-key compare-map "w" 'compare-windows)
-      (define-key compare-map "t" 'ediff-trees)
-      (define-key compare-map "u" 'ediff-url)
-      ))
 
   (eload 'tfs)                            ;MS Team Foundation Server commands for Emacs. See: http://www.emacswiki.org/emacs-en/MSTFS
 
