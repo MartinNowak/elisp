@@ -4,6 +4,7 @@
 ;;; Code:
 
 (require 'compile)
+(require 'power-utils)
 
 (defconst d-backtrace-regexp
   (rx (: bol

@@ -6,6 +6,7 @@
 ;;; Code:
 
 (require 'compile)
+(require 'power-utils)
 
 (defconst dmd-compilation-error-regexp
   (concat "^ *"
