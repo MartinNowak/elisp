@@ -8,9 +8,9 @@
 ;; Created: Fri Dec 15 10:44:14 1995
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Tue Apr 15 09:58:11 2014 (-0700)
+;; Last-Updated: Wed Sep  3 14:10:36 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 3404
+;;     Update #: 3411
 ;; URL: http://www.emacswiki.org/isearch+.el
 ;; Doc URL: http://www.emacswiki.org/IsearchPlus
 ;; Keywords: help, matching, internal, local
@@ -196,6 +196,7 @@
 ;;    `C-y C-w'    `isearchp-yank-word-or-char' (Emacs 22+)
 ;;    `C-y C-y'    `isearch-yank-kill'
 ;;    `C-y M-y'    `isearch-yank-pop' (Emacs 24+)
+;;    `C-z'        `isearchp-yank-char' (Emacs 22+)
 ;;    `M-c'        `isearch-toggle-case-fold'
 ;;    `M-e'        `isearch-edit-string'
 ;;    `M-g'        `isearchp-retrieve-last-quit-search'
@@ -369,8 +370,8 @@
 ;;  * `C-M-y' (`isearch-yank-secondary') yanks the secondary selection
 ;;    into the search string, if you also use library `second-sel.el'.
 ;;
-;;  * `C-c' (`isearchp-yank-char') yanks successive characters onto
-;;    the search string.
+;;  * `C-z' (`isearchp-yank-char') yanks successive characters onto
+;;    the search string.  This command is also bound to `C-y C-c'.
 ;;
 ;;  * `C-_' (`isearchp-yank-symbol-or-char') yanks successive symbols
 ;;    (or words or subwords or chars) into the search string.
@@ -522,6 +523,10 @@
 ;;
 ;;(@* "Change log")
 ;;
+;; 2014/09/03 dadams
+;;     Changed C-c binding for isearchp-yank-char to C-z.
+;; 2014/09/02 dadams
+;;     isearchp-replace-match: Temporary (?) fix for braindead Emacs 24.4 regression (bug #18388).
 ;; 2014/04/15 dadams
 ;;     isearch-printing-char: Update version test for Emacs 24.4 pretest - use version<.
 ;; 2014/01/10 dadams
@@ -1738,7 +1743,7 @@ With a numeric prefix arg, append that many copies of the character."
                                                                             string "")))))))))
 
 (when (fboundp 'isearch-yank-internal)  ; Emacs 22+
-  (defun isearchp-yank-char ()          ; Bound to `C-c' and `C-y C-c' in `isearch-mode-map'.
+  (defun isearchp-yank-char ()          ; Bound to `C-z' and `C-y C-c' in `isearch-mode-map'.
     "Yank next character from buffer onto search string.
 You can repeat this by hitting the last key again..."
     (interactive)
@@ -2434,6 +2439,16 @@ Treat the replacement string as does `query-replace-regexp'."
                (funcall (car compiled) (cdr compiled) (setq replace-count  (1+ replace-count)))
              compiled)
            (isearchp-replace-fixed-case-p (match-string 0)) isearchp-replace-literally nil (match-data))
+        (wrong-number-of-arguments
+         (condition-case isearchp-replace-match-2
+             (replace-match-maybe-edit
+              (if (consp compiled)
+                  (funcall (car compiled) (cdr compiled) (setq replace-count  (1+ replace-count)))
+                compiled)
+              (isearchp-replace-fixed-case-p (match-string 0)) isearchp-replace-literally nil (match-data)
+              nil)                      ; BACKWARD parameter for Emacs 24.4+ - see bug #18388
+           (buffer-read-only (ding) (isearchp-user-error "Buffer is read-only"))
+           (error (isearchp-user-error "No match for `%s'" isearchp-replacement))))
         (buffer-read-only (ding) (isearchp-user-error "Buffer is read-only"))
         (error (isearchp-user-error "No match for `%s'" isearchp-replacement)))))
 
@@ -2907,7 +2922,7 @@ Other Isearch+ Commands that Require Library `isearch-prop.el'
   (define-key isearch-mode-map "\M-sw"            'isearch-toggle-word))
 (define-key isearch-mode-map "\M-w"               'isearchp-kill-ring-save)
 (when (fboundp 'isearch-yank-internal)
-  (define-key isearch-mode-map "\C-c"             'isearchp-yank-char)
+  (define-key isearch-mode-map "\C-z"             'isearchp-yank-char)
   (define-key isearch-mode-map "\C-_"             'isearchp-yank-symbol-or-char)
   (define-key isearch-mode-map [(control ?\()]    'isearchp-yank-sexp-symbol-or-char))
 (when (and (fboundp 'goto-longest-line)  window-system) ; Defined in `misc-cmds.el'
