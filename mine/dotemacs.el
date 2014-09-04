@@ -78,7 +78,8 @@
   (tool-bar-mode -1))
 
 ;;; Show function context
-(which-function-mode 1)
+(when (which-function-mode 1))
+(add-hook 'd-mode-hook (lambda () (which-function-mode 1))) ;TODO: Why is this needed?
 
 ;;; ===========================================================================
 ;;; Auto-Reverting
