@@ -1591,46 +1591,8 @@ save it in `ffap-file-at-point-line-number' variable."
              '("dmd/src/.*\\.[ch]\\'" . c++-mode))
 
 ;;; ===========================================================================
-;;; DMD Compilation Messages Patterns may be needed without having to load
-;;; `d-mode' through make compilation for example.
 
-(add-to-list 'compilation-error-regexp-alist 'dmd)
-(add-to-list 'compilation-error-regexp-alist-alist
-             `(dmd
-               ,(concat "^ *"
-                        "\\(\\(?:[^@]+@\\)?\\)" ;1: Exception Name: core.exception.AssertError@
-                        "\\([^(]+?\\)"          ;2: File/Path
-                        "\\(?:-mixin-[0-9]+\\)?"
-                        "("
-                        "\\([0-9]+\\)" ;3: Line
-                        ",?\\([0-9]*\\" ;4: Column
-                        ")"
-                        "):"
-                        "\\s-*"
-                        "\\(\\(?:Error\\)?\\)"
-                        "\\(\\(?:Warning\\)?\\)"
-                        "\\(\\(?:Info\\|Remark\\)?\\)"
-                        "\\s-*"
-                        ":?"
-                        "\\s-*"
-                        "\\(.*\\)$")   ;REGEXP
-               2                       ;FILE'th subexpression
-               3                       ;LINE'th subexpression
-               4                       ;COLUMN'th subexpression
-               1 ;TYPE code: 0 means info, 1 means warning, 2 or nil means error
-               nil                  ;HYPERLINK/TYPELINK'th named_subexpressions
-               ;; HIGHLIGHT...
-               (0 'default)
-               (1 'error)
-               (2 'font-lock-file-name-face)
-               (3 'compilation-line-number)
-               (4 'compilation-column-number)
-               (5 'compilation-error)
-               (6 'compilation-warning)
-               (7 'compilation-info)
-               (8 'font-lock-comment-face)
-               ))
-
+(require 'dmd-compilation-error)
 (require 'd-backtrace)
 
 ;;; ===========================================================================
