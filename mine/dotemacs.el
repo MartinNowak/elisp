@@ -77,6 +77,9 @@
   (menu-bar-mode -1)
   (tool-bar-mode -1))
 
+;;; Show function context
+(which-function-mode 1)
+
 ;;; ===========================================================================
 ;;; Auto-Reverting
 ;; It's nice to have Visual Studio C++ behave the same way, so you don't get the
@@ -3322,7 +3325,6 @@ http://stackoverflow.com/questions/4924389/is-there-a-way-to-retain-the-undo-lis
 
   ;; =============== Imenu and `which-function-mode' ================================
 
-  ;;(which-function-mode -1)              ;NOTE: replaced by CEDET's Semantic.
   (eval-after-load "imenu" '(progn (eload 'imenu+))) ;Extensions to `imenu.el'
 
   (when nil
