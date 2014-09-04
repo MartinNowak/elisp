@@ -59,5 +59,15 @@
     (add-to-list 'compilation-error-regexp-alist 'dmd)))
 (dmd-compilation-error-install)
 
+(defun dmd-compilation-error-enable ()
+  "Enable dmd-compilation-error."
+  (interactive)
+  (add-to-list 'compilation-error-regexp-alist 'dmd))
+
+(defun dmd-compilation-error-disable ()
+  "Disable dmd-compilation-error."
+  (interactive)
+  (remove-from-list 'compilation-error-regexp-alist 'dmd))
+
 (provide 'dmd-compilation-error)
 ;;; dmd-compilation-error.el ends here

@@ -1661,6 +1661,13 @@ TODO: Why is this function slower than `sublist'?"
       start)))
 ;; Use: (let ((dummy '(a b c d e))) (nsublist dummy 2 4))
 
+(defun remove-from-list (list-var element)
+  "Delete members of LIST-VAR which are `equal' to ELEMENT.
+Opposite of `add-to-list'."
+  (set list-var
+       (delete element (symbol-value list-var))))
+;; (remove-from-list 'compilation-error-regexp-alist 'd-backtrace)
+
 ;; ---------------------------------------------------------------------------
 
 ;; Use: (let ((l (make-list 1000 nil))) (benchmark-run 1000 (nreverse l)))

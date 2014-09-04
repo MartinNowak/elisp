@@ -47,5 +47,15 @@
     (add-to-list 'compilation-error-regexp-alist 'd-backtrace)))
 (d-backtrace-install)
 
+(defun d-backtrace-enable ()
+  "Enable d-backtrace."
+  (interactive)
+  (add-to-list 'compilation-error-regexp-alist 'd-backtrace))
+
+(defun d-backtrace-disable ()
+  "Disable d-backtrace."
+  (interactive)
+  (remove-from-list 'compilation-error-regexp-alist 'd-backtrace))
+
 (provide 'd-backtrace)
 ;;; d-backtrace.el ends here
