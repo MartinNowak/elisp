@@ -3016,6 +3016,7 @@ And make sure that it really shows up!"
     (add-to-list 'desktop-modes-not-to-save 'fundamental-mode))
   (setq desktop-buffers-not-to-save
         (concat "\\("
+                "\\`\\*vc-dir\\*\\|"
                 "\\` \\|"               ;starting with space
                 "\\`/p/avionics-\\|" ;slow NFS
                 "^nn\\.a[0-9]+\\|\\.log\\|(ftp)\\|^tags\\|^TAGS"
