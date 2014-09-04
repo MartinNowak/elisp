@@ -43,10 +43,9 @@
     (if entry
         (setcdr entry
                 (cdr d-backtrace-entry))
-      (add-to-list 'compilation-error-regexp-alist-alist d-backtrace-entry))))
-;;; Use: (d-backtrace-install)
-
-(add-to-list 'compilation-error-regexp-alist 'd-backtrace)
+      (add-to-list 'compilation-error-regexp-alist-alist d-backtrace-entry))
+    (add-to-list 'compilation-error-regexp-alist 'd-backtrace)))
+(d-backtrace-install)
 
 (provide 'd-backtrace)
 ;;; d-backtrace.el ends here
