@@ -895,38 +895,41 @@ of jobs running with nicenessrity NICENESS."
                       (if (file-executable-p bfile)
                           bfile
                         (funcall (file-op bfile :execute) bfile))
-                      " -j " (number-to-string jobs)
-                      ;;" -C " dir
-                      (when type
-                        (let ((cf (expand-file-name "conf.mk" dir)))
-                          (if (and (file-regular-p cf)
-                                   (cscan-file cf "BUILD_TYPE"))
-                              (concat " BUILD_TYPE=" (downcase type))
-                            (let ((spec (assoc type (compilation-compiler-build-types compiler lang)))) ;lookup spec
-                              (when spec
-                                (let* ((make-vars (c-make-language-variables lang))
-                                       (cflags (second spec))
-                                       (ldflags (third spec)))
-                                  (concat
-                                   (when compiler
+                      (if (string-equal "dub.json"
+                                        (file-name-sans-directory bfile))
+                          ""
+                        (concat
+                         " -j " (number-to-string jobs)
+                         ;;" -C " dir
+                         (when type
+                           (let ((cf (expand-file-name "conf.mk" dir)))
+                             (if (and (file-regular-p cf)
+                                      (cscan-file cf "BUILD_TYPE"))
+                                 (concat " BUILD_TYPE=" (downcase type))
+                               (let ((spec (assoc type (compilation-compiler-build-types compiler lang)))) ;lookup spec
+                                 (when spec
+                                   (let* ((make-vars (c-make-language-variables lang))
+                                          (cflags (second spec))
+                                          (ldflags (third spec)))
                                      (concat
-                                      " CC='" compiler "'"
-                                      " CXX='" compiler "'"))
-                                   (when cflags
-                                     (let ((cflags-str (mapconcat 'identity cflags " ")))
-                                       (concat
-                                        " CFLAGS='" cflags-str "'"
-                                        " CXXFLAGS='" cflags-str "'"))) ;Can we reuse $CFLAGS here?
-                                   (when ldflags
-                                     (let ((ldflags-str (mapconcat 'identity ldflags " ")))
-                                       (concat
-                                        " LDFLAGS='" ldflags-str "'")))
-                                   )))))))
-                      " "
-                      (unless (and (string-equal target "all")
-                                   (string-equal (file-name-sans-directory bfile) "SConstruct")) ;empty argument on scons is same as make all
-                        target)
-                      )))
+                                      (when compiler
+                                        (concat
+                                         " CC='" compiler "'"
+                                         " CXX='" compiler "'"))
+                                      (when cflags
+                                        (let ((cflags-str (mapconcat 'identity cflags " ")))
+                                          (concat
+                                           " CFLAGS='" cflags-str "'"
+                                           " CXXFLAGS='" cflags-str "'"))) ;Can we reuse $CFLAGS here?
+                                      (when ldflags
+                                        (let ((ldflags-str (mapconcat 'identity ldflags " ")))
+                                          (concat
+                                           " LDFLAGS='" ldflags-str "'")))
+                                      )))))))
+                         " "
+                         (unless (and (string-equal target "all")
+                                      (string-equal (file-name-sans-directory bfile) "SConstruct")) ;empty argument on scons is same as make all
+                           target))))))
     (if host
         (concat "ssh " host " \"cd " dir "; LANG=" lang " " cmd "\"")
       cmd)))
@@ -1057,6 +1060,7 @@ require match, otherwise choose any target."
 ;; Use: (compilation-read-build-target "~/justcxx" "GNUmakefile")
 ;; Use: (compilation-read-build-target "~/justcxx" "SConstruct")
 ;; Use: (compilation-read-build-target "~/Work/phobos" "Makefile")
+;; Use: (compilation-read-build-target "~/justd")
 
 (defun compilation-read-c++-library-suffix (&optional lang path)
   "Read C++ Standard Library Suffix.

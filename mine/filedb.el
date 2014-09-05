@@ -644,11 +644,11 @@ key strings.
 
 (defconst ftypes-script-file-keys
   (append ftypes-executable-script-file-keys
-          '(SConstruct Rakefile Jamfile CMakeList.txt premake Makefile Automake-input Automake-cache Cook))
+          '(SConstruct Rakefile Jamfile CMakeList.txt premake Makefile Automake-input Automake-cache Cook DUB))
   "Script file type keys.")
 
 (defconst ftypes-build-script-file-keys
-  '(SConstruct Rakefile Jamfile CMakeList.txt premake Makefile Cook)
+  '(SConstruct Rakefile Jamfile CMakeList.txt premake Makefile Cook DUB)
   "Build Script file type keys.")
 
 (defconst c-deps-contents-begin-regexp
@@ -1366,7 +1366,8 @@ See http://oclint.org/"
                           waf
                           Cook
                           Visual-Studio-Makefile
-                          Visual-Studio-Solution))
+                          Visual-Studio-Solution
+                          DUB))
            nil nil nil)
 
   ;; See:
@@ -1440,6 +1441,11 @@ See http://oclint.org/"
                                                          (executable-find "make")) " -f " filename)))
                                  (:targets 'makefile-targets)
                                  (:convert-to-cook (lambda (filename) (concat "make2cook " filename)))))
+
+  (fmd-add 'DUB "DUB JSON Build" "Build Tool Script Code" 'txt
+           `(:name (lit "dub.json" full))
+           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+                                          (concat (executable-find "dub") " build")))))
 
   (fmd-add 'Visual-Studio-Makefile "Visual Studio NMake makefile" "Build Tool Script Code" 'txt
            `(:name (lit ("mak" "nmake") ext))
