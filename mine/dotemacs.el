@@ -1724,17 +1724,22 @@ match FILENAME."
 ;;; DCD
 (defun launch-dcd-server ()
   "Lauch DCD (D Completion Daemon)."
-  (let ((cmd "dcd-server"))
+  (let ((dmd (executable-find "dmd"))
+        (cmd "dcd-server"))
     (when (executable-find cmd)
       (start-process "DCD" nil cmd
                      (concat "-I" (expand-file-name "~/justd"))
+                     (expand-file-name "src"
+                                       (directory-file-name
+                                        (file-name-directory
+                                         dmd)))
                      (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))))
 ;; (when (executable-find "dcd-client")
 ;;   (start-process "dcd-set-paths" nil "dcd-client"
 ;;                  (concat "-I" (expand-file-name "~/justd"))))
 ;;; https://github.com/atilaneves/ac-dcd
 (defun d-mode-setup-dcd ()
-  (when (ignore-errors (load-file (elsub "ac-dcd/ac-dcd.elc")))
+  (when (load-file (elsub "ac-dcd/ac-dcd.elc"))
     (launch-dcd-server)
     (auto-complete-mode t)
     (yas-minor-mode-on)
@@ -1755,7 +1760,7 @@ match FILENAME."
 DMD version 2.066."
   (string-match "-vcolumns" (shell-command-to-string "dmd --help")))
 
-(defun d-mode-setup-pnw ()
+(defun d-mode-setup-generic ()
   ;;(add-to-list 'completion-at-point-functions 'dscanner-complete)
   (setq imenu-generic-expression nil)
 
@@ -1794,7 +1799,7 @@ See URL `http://dlang.org/'."
     (setq ffap-alist
           (append ffap-alist
                   '((d-mode . ffap-d-mode))))))
-(add-hook 'd-mode-hook 'd-mode-setup-pnw t)
+(add-hook 'd-mode-hook 'd-mode-setup-generic t)
 
 ;;; See: http://www.lunaryorn.com/2014/07/30/new-mode-line-support-in-flycheck.html
 (setq flycheck-mode-line
