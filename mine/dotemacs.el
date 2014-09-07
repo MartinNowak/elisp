@@ -1724,16 +1724,20 @@ match FILENAME."
 ;;; DCD
 (defun launch-dcd-server ()
   "Lauch DCD (D Completion Daemon)."
+  (interactive)
   (let ((dmd (executable-find "dmd"))
-        (cmd "dcd-server"))
-    (when (executable-find cmd)
-      (start-process "DCD" nil cmd
+        (dcd (executable-find "dcd-server")))
+    (when dcd
+      (start-process "DCD" nil dcd
                      (concat "-I" (expand-file-name "~/justd"))
-                     (expand-file-name "src"
-                                       (directory-file-name
-                                        (file-name-directory
-                                         dmd)))
-                     (concat "-I" (expand-file-name "~/opt/x86_64-unknown-linux-gnu/dmd/"))))))
+                     (concat "-I" (expand-file-name "src/druntime/import"
+                                                    (directory-file-name
+                                                     (file-name-directory
+                                                      dmd))))
+                     (concat "-I" (expand-file-name "src/phobos"
+                                                    (directory-file-name
+                                                     (file-name-directory
+                                                      dmd))))))))
 ;; (when (executable-find "dcd-client")
 ;;   (start-process "dcd-set-paths" nil "dcd-client"
 ;;                  (concat "-I" (expand-file-name "~/justd"))))
