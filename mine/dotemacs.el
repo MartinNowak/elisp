@@ -1796,6 +1796,7 @@ See URL `http://dlang.org/'."
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
   ;;            (require 'flycheck-d-unittest nil t))
   ;;   (setup-flycheck-d-unittest))
+  ;; TODO: Disabled for now...
   (setq flycheck-checkers
         (delq 'd-dmd-unittest flycheck-checkers))
 
