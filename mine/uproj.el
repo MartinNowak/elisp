@@ -535,6 +535,8 @@ VERSION default to version of gdb"
      ("-debug" "-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Unittest"
      ("-release" "-O" "-inline" "-w" "-wi" "-unittest"))
+    ("Release-NoBoundscheck-Unittest"
+     ("-release" "-boundscheck=off" "-O" "-inline" "-w" "-wi" "-unittest"))
     )
   "DMD Build Types.")
 (defconst dmd-default-build-type
