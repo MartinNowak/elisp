@@ -1739,7 +1739,11 @@ match FILENAME."
 ;;                  (concat "-I" (expand-file-name "~/justd"))))
 ;;; https://github.com/atilaneves/ac-dcd
 (defun d-mode-setup-dcd ()
-  (when (load-file (elsub "ac-dcd/ac-dcd.elc"))
+  (when (and
+         (when (append-to-load-path (elsub "flycheck-dmd-dub"))
+           (require 'flycheck-dmd-dub nil t))
+         (when (append-to-load-path (elsub "ac-dcd"))
+           (require 'ac-dcd nil t)))
     (launch-dcd-server)
     (auto-complete-mode t)
     (yas-minor-mode-on)
