@@ -55,10 +55,10 @@
 (append-to-load-path (elsub "others"))
 (append-to-load-path (elsub "mine"))
 
-(require 'faze)
-(require 'power-utils)
-(require 'def-unless)
-(require 'eload)
+(require 'faze nil t)
+(require 'power-utils nil t)
+(require 'def-unless nil t)
+(require 'eload nil t)
 
 ;;; ECB
 (append-to-load-path (elsub "ecb"))
@@ -1645,16 +1645,19 @@ match FILENAME."
 ;;; ===========================================================================
 ;;; FlyCheck
 
-(global-set-key [(control f7)] 'flycheck-previous-error)
-(global-set-key [(control f8)] 'flycheck-next-error)
-
-(defun flycheck-previous-error-repeatable (&optional n)
-  (flycheck-previous-error n))
-(repeatable-command-advice flycheck-previous-error-repeatable)
-
-(defun flycheck-next-error-repeatable (&optional n)
-  (flycheck-next-error n))
-(repeatable-command-advice flycheck-next-error-repeatable)
+(defun flycheck-set-repeatable-navigation ()
+  (global-set-key [(control f7)] 'flycheck-previous-error)
+  (global-set-key [(control f8)] 'flycheck-next-error)
+  ;; Make navigation repeatable
+  (defun flycheck-previous-error-repeatable (&optional n) (interactive) (flycheck-previous-error n))
+  (defun flycheck-next-error-repeatable (&optional n) (interactive) (flycheck-next-error n))
+  (repeatable-command-advice flycheck-previous-error-repeatable)
+  (repeatable-command-advice flycheck-next-error-repeatable)
+  (let ((map flycheck-command-map))
+    (define-key map "n" 'flycheck-next-error-repeatable)
+    (define-key map "p" 'flycheck-previous-error-repeatable)
+    map))
+(add-hook 'flycheck-mode-hook 'flycheck-set-repeatable-navigation t)
 
 ;;; Note: Disabled for now. Instead put std.cfg in ~/.config/cppcheck
 ;; (let ((cppcheck (executable-find "cppcheck")))
