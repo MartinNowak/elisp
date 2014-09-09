@@ -1648,6 +1648,14 @@ match FILENAME."
 (global-set-key [(control f7)] 'flycheck-previous-error)
 (global-set-key [(control f8)] 'flycheck-next-error)
 
+(defun flycheck-previous-error-repeatable (&optional n)
+  (flycheck-previous-error n))
+(repeatable-command-advice flycheck-previous-error-repeatable)
+
+(defun flycheck-next-error-repeatable (&optional n)
+  (flycheck-next-error n))
+(repeatable-command-advice flycheck-next-error-repeatable)
+
 ;;; Note: Disabled for now. Instead put std.cfg in ~/.config/cppcheck
 ;; (let ((cppcheck (executable-find "cppcheck")))
 ;;   (setenv "CFGDIR" (expand-file-name "cfg"
