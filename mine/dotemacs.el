@@ -1659,6 +1659,11 @@ match FILENAME."
     map))
 (add-hook 'flycheck-mode-hook 'flycheck-set-repeatable-navigation t)
 
+(defun flycheck-shellcheck-buffer-size-check ()
+  (when (> (buffer-size) 100000)
+    (add-to-list 'flycheck-disabled-checkers 'sh-shellcheck)))
+(add-hook 'flycheck-mode-hook 'flycheck-shellcheck-buffer-size-check t)
+
 ;;; Note: Disabled for now. Instead put std.cfg in ~/.config/cppcheck
 ;; (let ((cppcheck (executable-find "cppcheck")))
 ;;   (setenv "CFGDIR" (expand-file-name "cfg"
@@ -2386,10 +2391,11 @@ functions, and some types.  It also provides indentation that is
   (require 'inf-haskell nil t)
   (require 'haskell-ghci nil t)
   (require 'haskell-c nil t)
-  (turn-on-haskell-doc-mode)
+  (when (require 'haskell-doc nil t)
+    (turn-on-haskell-doc-mode))
   ;; Indentation
-  (turn-on-haskell-indentation)
-  ;;(turn-on-haskell-indent)
+  (when (require 'haskell-indent nil t)
+    (turn-on-haskell-indent))
   ;;(turn-on-haskell-simple-indent)
   ;;(turn-on-haskell-simple-indent)
   (haskell-setup-filladapt)
