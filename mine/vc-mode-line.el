@@ -4,7 +4,16 @@
 ;;; Commentary:
 ;;; Code:
 
+(defun file-changed (file))
+
+(defun vc-backend-cached (file)
+  "Cached version of `vc-backend' on FILE."
+  ;; TODO: Detect changes using `file-notify-add-watch' ...
+  (let ((watch (file-notify-add-watch file 'change 'file-changed)))
+    (vc-backend file)))
+
 (defun vc-svn-mode-line-string (&optional file)
+  "Get Fancy SVN `mode-line-string' from FILE."
   (let ((file (or file
                   (buffer-file-name))))
     (let* ((tag (vc-svn-branch-or-trunk-tag file))
@@ -15,6 +24,7 @@
               (propertize rev 'face 'font-lock-constant-face)))))
 
 (defun vc-fancy-mode-line-string (&optional file)
+  "Get Fancy `mode-line-string' from FILE."
   (let ((file (or file
                   (buffer-file-name))))
     (if (eq (vc-backend file) 'SVN)
@@ -22,8 +32,9 @@
       vc-mode)))
 
 (setcdr (assq 'vc-mode mode-line-format)
-        ;;'(vc-mode)
-        '((:eval (vc-fancy-mode-line-string))) ;TODO: Use vc-mode
+        '(vc-mode)
+        ;; TODO: Disabled until we have a implemented `vc-backend-cached'
+        ;; '((:eval (vc-fancy-mode-line-string))) ;TODO: Use vc-mode
         )
 
 (defun vc-svn-branch-or-trunk-tag (&optional filename)
