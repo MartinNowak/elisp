@@ -4,38 +4,13 @@
 ;;; Commentary:
 ;;; Code:
 
-(defun file-changed (file))
-
-(defun vc-backend-cached (file)
-  "Cached version of `vc-backend' on FILE."
-  ;; TODO: Detect changes using `file-notify-add-watch' ...
-  (let ((watch (file-notify-add-watch file 'change 'file-changed)))
-    (vc-backend file)))
-
 (defun vc-svn-mode-line-string (&optional file)
-  "Get Fancy SVN `mode-line-string' from FILE."
-  (let ((file (or file
-                  (buffer-file-name))))
-    (let* ((tag (vc-svn-branch-or-trunk-tag file))
-           (rev (vc-svn-working-revision file)))
-      (format "%s:%s@%s"
-              "SVN"
-              tag
-              (propertize rev 'face 'font-lock-constant-face)))))
-
-(defun vc-fancy-mode-line-string (&optional file)
-  "Get Fancy `mode-line-string' from FILE."
-  (let ((file (or file
-                  (buffer-file-name))))
-    (if (eq (vc-backend file) 'SVN)
-        (vc-svn-mode-line-string file)
-      vc-mode)))
-
-(setcdr (assq 'vc-mode mode-line-format)
-        '(vc-mode)
-        ;; TODO: Disabled until we have a implemented `vc-backend-cached'
-        ;; '((:eval (vc-fancy-mode-line-string))) ;TODO: Use vc-mode
-        )
+  "Get Fancy SVN `mode-line-string' from FILE.
+Maybe need to restart Emacs to make this be activated."
+  (let* ((file (or file (buffer-file-name)))
+         (tag (vc-svn-branch-or-trunk-tag file))
+         (rev (vc-svn-working-revision file)))
+    (format "%s:%s@%s" "SVN" tag (propertize rev 'face 'font-lock-constant-face))))
 
 (defun vc-svn-branch-or-trunk-tag (&optional filename)
   (let* ((filename (or filename
@@ -52,6 +27,16 @@
             (t
              nil)))))
 ;; Use: (vc-svn-branch-or-trunk-tag)
+
+;; OBS: Disabled because it suffices to define `vc-svn-mode-line-string' to make this work.
+;; (defun vc-fancy-mode-line-string (&optional file)
+;;   "Get Fancy `mode-line-string' from FILE."
+;;   (let ((file (or file
+;;                   (buffer-file-name))))
+;;     (if (eq (vc-backend file) 'SVN)
+;;         (vc-svn-mode-line-string file)
+;;       vc-mode)))
+;; (setcdr (assq 'vc-mode mode-line-format) '(vc-mode))
 
 (provide 'vc-mode-line)
 ;;; vc-mode-line.el ends here
