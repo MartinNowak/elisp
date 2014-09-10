@@ -46,6 +46,9 @@
   (defmacro Xlaunch (&rest x) (list 'if (eq window-system 'x) (cons 'progn x)))
   )
 
+;;; ANTLR
+(add-to-list 'auto-mode-alist '("\\.g[1-4]\\'" . antlr-mode)) ;from DGrammar/D.g4
+
 ;;; ===========================================================================
 ;;; CEDET
 ;;(load-file (elsub "mine/pgo-cedet.elc")) ;WARNING: Need this first!
