@@ -79,3 +79,6 @@
 [submodule "demangle-mode"]
 	path = demangle-mode
 	url = https://github.com/liblit/demangle-mode.git
+[submodule "emacs-async"]
+	path = emacs-async
+	url = https://github.com/jwiegley/emacs-async.git
