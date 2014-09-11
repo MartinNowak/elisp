@@ -991,7 +991,7 @@
 (defun sh-mode-setup-pnw ()
   ;; Disable imenu for now because it make editing of large shell scripts slow!
   (setq imenu-generic-expression nil))
-(add-hook 'sh-mode-hook 'sh-mode-setup-pnw t)
+(remove-hook 'sh-mode-hook 'sh-mode-setup-pnw)
 
 ;;; ===========================================================================
 ;;; Misc
