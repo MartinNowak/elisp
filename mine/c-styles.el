@@ -1,9 +1,11 @@
 ;;; c-styles.el --- Setup CC Mode Styles.
-;; Author: Per Nordlöw
+;;; Commentary:
+;;; Author: Per Nordlöw
+;;; Microsoft C,C++ Style
+;;; Here is a style that pretty much matches the observed style of
+;;; Microsoft (R)'s C and C++ code:
+;;; Code:
 
-;; Microsoft C,C++ Style
-;; Here is a style that pretty much matches the observed style of
-;; Microsoft (R)'s C and C++ code:
 (c-add-style "microsoft"
              '("stroustrup"
                (c-offsets-alist
