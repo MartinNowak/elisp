@@ -2031,9 +2031,12 @@ functions, and some types.  It also provides indentation that is
 ;;; auto-complete
 (append-to-load-path (elsub "auto-complete"))  ;enough for now
 (defun fix-auto-complete-keys ()
+  "See also: https://stackoverflow.com/questions/25782419/change-keybinding-for-auto-complete/25783341#25783341"
+  ;; (unset-key ac-completing-map [return])
+  ;; (when nil (ac-set-trigger-key [(meta return)]))
+  (unset-key ac-completing-map (kbd "RET"))
   (unset-key ac-completing-map [return])
-  (when nil
-    (ac-set-trigger-key [(meta return)])))
+  (define-key ac-completing-map [(control return)] 'ac-complete))
 (add-hook 'auto-complete-mode-hook 'fix-auto-complete-keys)
 
 (when nil
