@@ -2870,9 +2870,10 @@ functions, and some types.  It also provides indentation that is
   ;;   )
   )
 
-;;; Magit
+;;; Git/Magit
 (when (append-to-load-path (elsub "magit"))
-  (autoload 'magit-status "magit" "Magit Status."))
+  (autoload 'magit-status "magit" "Magit Status.")
+  (global-set-key [(control x) (G)] 'magit-push))
 (when (append-to-load-path (elsub "git-modes")))
 (when (append-to-load-path (elsub "magit-log-edit")))
 (when (append-to-load-path (elsub "org-magit")))
