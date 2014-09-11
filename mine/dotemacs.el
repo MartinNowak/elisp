@@ -46,6 +46,12 @@
   (defmacro Xlaunch (&rest x) (list 'if (eq window-system 'x) (cons 'progn x)))
   )
 
+;;; Needed by FlyCheck
+(let ((tmp (expand-file-name (user-login-name)
+                             "/var/tmp")))
+  (unless (file-directory-p tmp)
+    (make-directory tmp)))
+
 ;;; ANTLR
 (add-to-list 'auto-mode-alist '("\\.g[1-4]\\'" . antlr-mode)) ;from DGrammar/D.g4
 
@@ -2024,10 +2030,15 @@ functions, and some types.  It also provides indentation that is
 
 ;;; auto-complete
 (append-to-load-path (elsub "auto-complete"))  ;enough for now
+(defun fix-auto-complete-keys ()
+  (unset-key ac-completing-map [return])
+  (when nil
+    (ac-set-trigger-key [(meta return)])))
+(add-hook 'auto-complete-mode-hook 'fix-auto-complete-keys)
+
 (when nil
   (when (eload 'auto-complete (elsub "auto-complete"))
     (eload 'auto-complete-config (elsub "auto-complete-clang"))
-    (ac-set-trigger-key "RET")
 
     (defun my-ac-config ()
       (setq-default ac-sources '(ac-source-abbrev
