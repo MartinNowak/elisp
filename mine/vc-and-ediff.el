@@ -160,10 +160,9 @@
 
 ;; ---------------------------------------------------------------------------
 
-(unless (ignore-errors (load-file-if-exist (elsub "dvc/build/dvc-load.el")))
-  (message "Could not load DVC")) ;C-x V
-
 (when nil
+  (unless (ignore-errors (load-file-if-exist (elsub "dvc/build/dvc-load.el")))
+    (message "Could not load DVC"))    ;C-x V
 
   (when (require 'clearcase nil t)) ;(Rationals) ClearCase/Emacs integration. Homepage: http://members.verizon.net/kevin.a.esler/EmacsClearCase/
   (when (require 'vc-clearcase nil t))
