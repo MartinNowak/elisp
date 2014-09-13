@@ -886,7 +886,7 @@
 (eload 'primes)                        ;prime number support for Emacs Lisp library code
 (eload 'file-execute)                  ;Eval DWIM
 (eload 'file-dwim)                     ;Eval DWIM
-(eload 'fill-dwim)
+(eload 'fill-dwim)                      ;Fill DWIM
 (eload 'elisp-utils)                   ;Small useful snippets used in development of Emacs Lisp.
 (eload 'tab-utils)                     ;Tab Utils
 (eload 'rename-dwim)                    ;Renaming Enhancements
