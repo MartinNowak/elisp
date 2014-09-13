@@ -2648,8 +2648,9 @@ functions, and some types.  It also provides indentation that is
   (setq gud-zshdb-command-name "zshdb"))
 
 ;;; rocky/emacs-dbgr
-(when (and (append-to-load-path (elsub "emacs-dbgr"))
-           (require 'realgud nil t)))
+(when (append-to-load-path (elsub "emacs-dbgr"))
+  ;; TODO: Disabled require to speed up startup time: (require 'realgud nil t)
+  )
 
 ;;; Development Tools
 (eload 'file-magic)               ;file/magic code editing commands for Emacs
@@ -2888,6 +2889,7 @@ functions, and some types.  It also provides indentation that is
 ;;; Git/Magit
 (when (append-to-load-path (elsub "magit"))
   (autoload 'magit-status "magit" "Magit Status.")
+  (autoload 'magit-push "magit")
   (global-set-key [(control x) (G)] 'magit-push))
 (when (append-to-load-path (elsub "git-modes")))
 (when (append-to-load-path (elsub "magit-log-edit")))
