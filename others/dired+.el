@@ -8,9 +8,9 @@
 ;; Created: Fri Mar 19 15:58:58 1999
 ;; Version: 2013.07.23
 ;; Package-Requires: ()
-;; Last-Updated: Tue Sep  9 09:42:05 2014 (-0700)
+;; Last-Updated: Thu Sep 11 10:19:14 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 8143
+;;     Update #: 8198
 ;; URL: http://www.emacswiki.org/dired+.el
 ;; Doc URL: http://www.emacswiki.org/DiredPlus
 ;; Keywords: unix, mouse, directories, diredp, dired
@@ -228,6 +228,26 @@
 ;;    `M-$' advances the cursor, in addition to toggling like `$'.
 ;;    `C-u $' does hide/show all (what `M-$' does in vanilla Dired).
 ;;
+;;  Programmatically (but not interactively), vanilla Dired lets you
+;;  create a Dired listing with files and directories from arbitrary
+;;  locations, but you cannot insert (`i') such a directory, if it is
+;;  not in the same directory tree as the `default-directory' used to
+;;  create the Dired buffer.  `Dired+' has no such limitation.
+;;
+;;  `Dired+' also facilitates creating such buffers interactively:
+;;  just use a non-positive prefix arg (e.g., `C--') with `C-x d'
+;;  (`dired'), `C-x 4 d' (`dired-other-window'), or `C-x 5 d'
+;;  (`dired-other-frame').  You are then prompted for:
+;;
+;;  * the Dired buffer name (anything you like, not necessarily a
+;;    directory name) and
+;;
+;;  * the individual files or directories that you want listed.
+;;
+;;  A non-negative prefix arg still prompts you for the ls switches to
+;;  use. (So `C-0' does both: prompts for `ls' switches and for the
+;;  Dired buffer name and the files to list.)
+;;
 ;;  Some other libraries, such as `Bookmark+' and `Icicles', make it
 ;;  easy to create or re-create Dired buffers that list specific files
 ;;  and have a particular set of markings.  This can be handy for
@@ -340,7 +360,7 @@
 ;;    `diredp-image-dired-tag-file',
 ;;    `diredp-image-dired-tag-files-recursive',
 ;;    `diredp-insert-as-subdir', `diredp-insert-subdirs',
-;;    `diredp-insert-subdirs-recursive',
+;;    `diredp-insert-subdirs-recursive', `diredp-kill-this-tree',
 ;;    `diredp-list-marked-recursive', `diredp-load-this-file',
 ;;    `diredp-marked', `diredp-marked-other-window',
 ;;    `diredp-marked-recursive',
@@ -553,6 +573,12 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2014/09/11 dadams
+;;     Added: diredp-kill-this-tree.
+;;     diredp-menu-bar-immediate-menu, diredp-mouse-3-menu:
+;;       Added item for dired-kill-this-tree.
+;;       Corrected visible condition: expand-file-name, so ~/ compares with its expansion.
+;;     diredp-font-lock-keywords-1: Include period (.) for diredp(-compressed)-file-suffix.
 ;; 2014/09/09 dadams
 ;;     dired-get-filename: Hack for Emacs 20-22, to expand ~/...
 ;; 2014/09/07 dadams
@@ -2295,14 +2321,22 @@ A prefix argument ARG specifies files to use instead of those marked.
   '(menu-item "Compare..." diredp-ediff :help "Compare file at cursor with another file"))
 (define-key diredp-menu-bar-immediate-menu [separator-diff] '("--")) ; -------------------------
 
+(define-key diredp-menu-bar-immediate-menu [diredp-kill-this-tree]
+  '(menu-item "Remove This Inserted Subdir and Lower" diredp-kill-this-tree
+    :visible (and (fboundp 'diredp-kill-this-tree)
+              (not (equal
+                    (expand-file-name (dired-current-directory))
+                    (expand-file-name default-directory)))))) ; In subdir, not top.
 (define-key diredp-menu-bar-immediate-menu [dired-kill-subdir]
   '(menu-item "Remove This Inserted Subdir" dired-kill-subdir
-    :visible (not (equal (dired-current-directory) default-directory)))) ; In subdir, not top.
+    :visible (not (equal (expand-file-name (dired-current-directory))
+                         (expand-file-name default-directory))))) ; In subdir, not top.
 (define-key diredp-menu-bar-immediate-menu [diredp-dired-this-subdir]
   '(menu-item "Dired This Inserted Subdir (Tear Off)"
     (lambda () (interactive) (diredp-dired-this-subdir t))
     :visible (and (cdr dired-subdir-alist) ; First is current dir.  Must have at least one more.
-              (not (equal (dired-current-directory) default-directory))) ; Must be sub, not top.
+              (not (equal (expand-file-name (dired-current-directory))
+                          (expand-file-name default-directory)))) ; Must be sub, not top.
     :help "Open Dired for subdir at or above point, tearing it off if inserted"))
 (define-key diredp-menu-bar-immediate-menu [insert-subdir]
   '(menu-item "Insert This Subdir" dired-maybe-insert-subdir
@@ -2318,7 +2352,8 @@ A prefix argument ARG specifies files to use instead of those marked.
     :help "Go to the inserted listing of this subdirectory"))
 (define-key diredp-menu-bar-immediate-menu [separator-subdir] '("--" ; ------------------------
             :visible (or (atom (diredp-this-subdir)) ; Subdir line.
-                         (not (equal (dired-current-directory) default-directory))))) ; Not top.
+                         (not (equal (expand-file-name (dired-current-directory))
+                                     (expand-file-name default-directory)))))) ; Not top.
 
 (define-key diredp-menu-bar-immediate-menu [view]
   '(menu-item "View (Read Only)" dired-view-file
@@ -3432,7 +3467,8 @@ Don't forget to mention your Emacs and library versions."))
 (defface diredp-file-suffix
     '((((background dark)) (:foreground "#7474FFFF7474")) ; ~ light green
       (t                   (:foreground "DarkMagenta")))
-  "*Face used for file suffixes in Dired buffers."
+  "*Face used for file suffixes in Dired buffers.
+This means the `.' plus the file extension.  Example: `.elc'."
   :group 'Dired-Plus :group 'font-lock-highlighting-faces)
 (defvar diredp-file-suffix 'diredp-file-suffix)
 
@@ -3461,7 +3497,8 @@ In particular, inode number, number of hard links, and file size."
 (defface diredp-file-name
     '((((background dark)) (:foreground "Yellow"))
       (t                   (:foreground "Blue")))
-  "*Face used for file names (without suffixes) in Dired buffers."
+  "*Face used for file names (without suffixes) in Dired buffers.
+This means the base name.  It does not include the `.'."
   :group 'Dired-Plus :group 'font-lock-highlighting-faces)
 (defvar diredp-file-name 'diredp-file-name)
 
@@ -3477,7 +3514,8 @@ In particular, inode number, number of hard links, and file size."
 (defface diredp-compressed-file-suffix
     '((((background dark)) (:foreground "Blue"))
       (t                   (:foreground "Yellow")))
-  "*Face used for compressed file suffixes in Dired buffers."
+  "*Face used for compressed file suffixes in Dired buffers.
+This means the `.' plus the file extension.  Example: `.zip'."
   :group 'Dired-Plus :group 'font-lock-highlighting-faces)
 (defvar diredp-compressed-file-suffix 'diredp-compressed-file-suffix)
 
@@ -3573,7 +3611,7 @@ In particular, inode number, number of hard links, and file size."
    '("^  \\(.+:\\)$" 1 diredp-dir-heading) ; Directory headers
    '("^  wildcard.*$" 0 'default)       ; Override others, e.g. `l' for `diredp-other-priv'.
    '("^  (No match).*$" 0 'default)     ; Override others, e.g. `t' for `diredp-other-priv'.
-   '("[^ .]\\.\\([^. /]+\\)$" 1 diredp-file-suffix) ; Suffix
+   '("[^ .]\\(\\.[^. /]+\\)$" 1 diredp-file-suffix) ; Suffix, including `.'.
    '("\\([^ ]+\\) -> [^ ]+$" 1 diredp-symlink) ; Symbolic links
 
    ;; 1) Date/time and 2) filename w/o suffix.
@@ -3596,7 +3634,7 @@ In particular, inode number, number of hard links, and file size."
                                        "[*]?")        ; Allow for executable flag (*).
                  "\\|\\.\\(g?z\\|Z\\)[*]?\\)\\)$") ; Compressed.
          1 diredp-ignored-file-name t)
-   '("[^ .]\\.\\([bg]?[zZ]2?\\)[*]?$" 1 diredp-compressed-file-suffix t) ; Compressed (*.z)
+   '("[^ .]\\(\\.[bg]?[zZ]2?\\)[*]?$" 1 diredp-compressed-file-suffix t) ; Compressed (*.z)
    '("\\([*]\\)$" 1 diredp-executable-tag t) ; Executable (*)
    ;; Inode, hard-links, & file size (. and , are for the decimal point, depending on locale)
    ;; See comment for `directory-listing-before-filename-regexp' in `files.el' or `files+.el'.
@@ -4428,6 +4466,13 @@ Raise an error first if not in Dired mode."
   (unless (y-or-n-p (format "Act on ALL %s (or all marked if any) in and UNDER this dir? "
                             (or type 'files)))
     (error "OK, canceled")))
+
+;;;###autoload
+(when (> emacs-major-version 21)        ; Emacs 22+ has KILL-ROOT parameter.
+  (defun diredp-kill-this-tree ()
+    "Remove this subdir listing and lower listings."
+    (interactive)
+    (dired-kill-tree (dired-current-directory) nil 'KILL-ROOT)))
 
 ;;;###autoload
 (defun diredp-insert-subdirs (&optional switches) ; Bound to `M-i'
@@ -8382,8 +8427,10 @@ With non-nil prefix arg, mark them instead."
                                ["View (Read Only)" dired-view-file]
                                ["--" 'ignore ; -------------------------------------------------
                                 :visible (or (atom (diredp-this-subdir)) ; Subdir line.
-                                          (not (equal (dired-current-directory) ; Not top.
-                                                default-directory)))]
+                                          (not (equal (expand-file-name
+                                                       (dired-current-directory))
+                                                      (expand-file-name
+                                                        default-directory))))] ; Not top.
                                ["Insert This Subdir"
                                 (lambda () (interactive)
                                         (call-interactively #'dired-maybe-insert-subdir)
@@ -8403,12 +8450,21 @@ With non-nil prefix arg, mark them instead."
                                 :enable (atom (diredp-this-subdir))
                                 :keys "i"]
                                ["Remove This Inserted Subdir" dired-kill-subdir
-                                :visible (not (equal (dired-current-directory)
-                                               default-directory))] ; In subdir, not top.
+                                :visible (not (equal
+                                               (expand-file-name (dired-current-directory))
+                                               (expand-file-name
+                                                default-directory)))] ; In subdir, not top.
+                               ["Remove This Inserted Subdir and Lower" diredp-kill-this-tree
+                                :visible (and (fboundp 'diredp-kill-this-tree)
+                                          (not (equal
+                                                (expand-file-name (dired-current-directory))
+                                                (expand-file-name
+                                                 default-directory))))] ; In subdir, not top.
                                ["Dired This Inserted Subdir (Tear Off)"
                                 (lambda () (interactive) (diredp-dired-this-subdir t))
-                                :visible (not (equal (dired-current-directory)
-                                               default-directory))] ; In subdir, not top.
+                                :visible (not (equal (expand-file-name (dired-current-directory))
+                                                     (expand-file-name
+                                                      default-directory)))] ; In subdir, not top.
                                "--"     ; ------------------------------------------------------
                                ["Compare..." diredp-ediff]
                                ["Diff..." dired-diff]
