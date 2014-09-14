@@ -1865,6 +1865,13 @@ See URL `http://dlang.org/'."
       #'flycheck-display-error-messages-unless-error-buffer)
 ;;(eval-after-load "flycheck" '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
+;; https://github.com/flycheck/flycheck/issues/303
+(defun flycheck-error-list-shrink-to-fit ()
+  (let ((window (flycheck-get-error-list-window t)))
+    (with-selected-window window
+      (fit-window-to-buffer window 30))))
+(add-hook 'flycheck-error-list-after-refresh-hook 'flycheck-error-list-shrink-to-fit)
+
 (defun fix-flycheck-path ()
   (when (prepend-to-load-path (elsub "flycheck")) ;override flycheck
     (load-file (elsub "flycheck/flycheck.elc"))))
