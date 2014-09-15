@@ -295,6 +295,12 @@
     (add-hook hook 'highlight-symbol-mode t)))
 
 ;;; ===========================================================================
+;;; Highlight signature of current C/C++ function
+
+(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
+(add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode)
+
+;;; ===========================================================================
 ;;; Hide C Preprocessor ifdef regions
 ;;; See: https://stackoverflow.com/questions/641045/how-can-i-fold-ifdef-ifndef-blocks-in-emacs
 
@@ -3807,8 +3813,6 @@ If there is no expansion the command returned by
       (add-to-list 'auto-mode-alist '("\\.glade\\'" . glade-mode))
       ))
   (add-to-list 'auto-mode-alist '("\.glade\\'" . xml-mode))
-
-  (eload 'c-eldoc (elsub "c-eldoc") nil nil "git://github.com/cdkamat/c-eldoc.git") ;helpful description of the arguments to C functions
 
   ;; =============== Objective-C ================================
   ;; http://www.emacswiki.org/emacs-en/CcMode
