@@ -1863,12 +1863,13 @@ See URL `http://dlang.org/'."
           (`suspicious '(propertize " ?" 'face 'warning)))))
 
 ;; https://github.com/flycheck/flycheck/issues/302
-(defun flycheck-display-error-messages-unless-error-buffer (errors)
-  ;;(message "Here: %s" (get-buffer-window flycheck-error-list-buffer))
-  (unless (get-buffer-window flycheck-error-list-buffer)
-    (flycheck-display-error-messages errors)))
-(setq flycheck-display-errors-function
-      #'flycheck-display-error-messages-unless-error-buffer)
+(when nil                               ;NOTE: Builtin
+  (defun flycheck-display-error-messages-unless-error-buffer (errors)
+    ;;(message "Here: %s" (get-buffer-window flycheck-error-list-buffer))
+    (unless (get-buffer-window flycheck-error-list-buffer)
+      (flycheck-display-error-messages errors)))
+  (setq flycheck-display-errors-function
+        #'flycheck-display-error-messages-unless-error-buffer))
 ;;(eval-after-load "flycheck" '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
 ;; https://github.com/flycheck/flycheck/issues/303
