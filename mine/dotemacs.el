@@ -1585,8 +1585,16 @@ save it in `ffap-file-at-point-line-number' variable."
                 (template-args-cont . +)
                 (substatement-open . 0)
                 (statement-block-intro . +)
-                (arglist-cont-nonempty (c-lineup-gcc-asm-reg c-lineup-arglist)) ;NOTE: Not +
+                (arglist-cont-nonempty (c-lineup-cascaded-calls
+                                        c-lineup-gcc-asm-reg
+                                        c-lineup-arglist))
+                (statement-cont . c-lineup-cascaded-calls)
                 )))
+;;; See: https://stackoverflow.com/questions/25797945/adjusting-alignment-rules-for-ucfs-chains-in-d/25843155#25843155
+(defun d-turn-on-lineup-cascaded-calls ()
+  (add-to-list 'c-offsets-alist '(arglist-cont-nonempty . c-lineup-cascaded-calls))
+  (add-to-list 'c-offsets-alist '(statement-cont . c-lineup-cascaded-calls)))
+(add-hook 'd-mode-hook 'd-turn-on-lineup-cascaded-calls t)
 
 (defvar ffap-d-path
   (let ((arch (with-temp-buffer
@@ -2525,12 +2533,6 @@ functions, and some types.  It also provides indentation that is
 (autoload 'align-entire "align" "Align the selected region as if it were one alignment section." t)
 (global-set-key [(control meta \;)] 'align-regexp)
 (global-set-key [(control tab)] 'align-entire)
-
-;;; See: https://stackoverflow.com/questions/25797945/adjusting-alignment-rules-for-ucfs-chains-in-d/25843155#25843155
-(defun d-turn-on-lineup-cascaded-calls ()
-  (add-to-list 'c-offsets-alist '(arglist-cont-nonempty . c-lineup-cascaded-calls))
-  (add-to-list 'c-offsets-alist '(statement-cont . c-lineup-cascaded-calls)))
-(add-hook 'd-mode-hook 'd-turn-on-lineup-cascaded-calls t)
 
 (when nil
   (autoload 'align-let "align-let" nil t)
