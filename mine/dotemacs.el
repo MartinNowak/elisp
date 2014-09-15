@@ -2517,6 +2517,12 @@ functions, and some types.  It also provides indentation that is
 (global-set-key [(control meta \;)] 'align-regexp)
 (global-set-key [(control tab)] 'align-entire)
 
+;;; See: https://stackoverflow.com/questions/25797945/adjusting-alignment-rules-for-ucfs-chains-in-d/25843155#25843155
+(defun d-turn-on-lineup-cascaded-calls ()
+  (add-to-list 'c-offsets-alist '(arglist-cont-nonempty . c-lineup-cascaded-calls))
+  (add-to-list 'c-offsets-alist '(statement-cont . c-lineup-cascaded-calls)))
+(add-hook 'd-mode-hook 'd-turn-on-lineup-cascaded-calls t)
+
 (when nil
   (autoload 'align-let "align-let" nil t)
   (autoload 'align-let-keybinding "align-let" nil t)

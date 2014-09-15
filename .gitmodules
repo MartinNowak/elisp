@@ -82,3 +82,6 @@
 [submodule "emacs-async"]
 	path = emacs-async
 	url = https://github.com/jwiegley/emacs-async.git
+[submodule "c-eldoc"]
+	path = c-eldoc
+	url = https://github.com/nflath/c-eldoc.git
