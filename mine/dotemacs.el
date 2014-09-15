@@ -61,8 +61,8 @@
 ;;(load-file (elsub "minimal-cedet-config/minimial-cedet-config-pnw.el")) ;WARNING: Need this first!
 
 (load-file (elsub "mine/path-utils.elc"))
-(append-to-load-path (elsub "others"))
 (append-to-load-path (elsub "mine"))
+(append-to-load-path (elsub "others"))
 
 (require 'faze nil t)
 (require 'power-utils nil t)
