@@ -297,8 +297,10 @@
 ;;; ===========================================================================
 ;;; Highlight signature of current C/C++ function
 
-(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
-(add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode)
+(when (and (append-to-load-path (elsub "c-eldoc"))
+           (require 'c-eldoc nil t))
+  (add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
+  (add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode))
 
 ;;; ===========================================================================
 ;;; Hide C Preprocessor ifdef regions
