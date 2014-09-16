@@ -78,7 +78,8 @@
 ;; Garbage Collector: We have extra ram these days. Use 3 megs of
 ;; memory to speed up runtime a bit. This shaves off about 1/10 of a
 ;; second on startup.
-(setq gc-cons-threshold (max 3000000 gc-cons-threshold))
+(setq-default gc-cons-threshold
+              (max 20000000 gc-cons-threshold))
 (setq initial-major-mode 'text-mode) ;prevent *scratch* buffer from requring CEDET
 ;; (iswitchb-mode 1)
 
@@ -1592,7 +1593,7 @@ and compile-time parameters in function calls."
 
     (save-excursion
       (back-to-indentation)
-      (let ((operator (and (looking-at "\\.")
+      (let ((operator (and (looking-at "->\\|\\.")
                            (regexp-quote (match-string 0))))
             (stmt-start (c-langelem-pos langelem)) col)
 
