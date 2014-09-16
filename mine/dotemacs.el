@@ -1576,6 +1576,59 @@ save it in `ffap-file-at-point-line-number' variable."
                              (cdddr result)) ;skip first three elements
                      ))
     (insert (completing-read "Completion Member: " collection))))
+
+(defun d-lineup-cascaded-calls (langelem)
+  "This is a modified `c-lineup-cascaded-calls' function for the
+D programming language which accounts for optional parenthesis
+and compile-time parameters in function calls."
+
+  (if (and (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
+           (not (eq (c-langelem-2nd-pos c-syntactic-element)
+                    (c-most-enclosing-brace (c-parse-state)))))
+      ;; The innermost open paren is not our one, so don't do
+      ;; anything.  This can occur for arglist-cont-nonempty with
+      ;; nested arglist starts on the same line.
+      nil
+
+    (save-excursion
+      (back-to-indentation)
+      (let ((operator (and (looking-at "\\.")
+                           (regexp-quote (match-string 0))))
+            (stmt-start (c-langelem-pos langelem)) col)
+
+        (when (and operator
+                   (looking-at operator)
+                   (or (and
+                        (zerop (c-backward-token-2 1 t stmt-start))
+                        (eq (char-after) ?\()
+                        (zerop (c-backward-token-2 2 t stmt-start))
+                        (looking-at operator))
+                       (and
+                        (zerop (c-backward-token-2 1 t stmt-start))
+                        (looking-at operator))
+                       (and
+                        (zerop (c-backward-token-2 1 t stmt-start))
+                        (looking-at operator))
+                       )
+                   )
+          (setq col (current-column))
+
+          (while (or (and
+                      (zerop (c-backward-token-2 1 t stmt-start))
+                      (eq (char-after) ?\()
+                      (zerop (c-backward-token-2 2 t stmt-start))
+                      (looking-at operator))
+                     (and
+                      (zerop (c-backward-token-2 1 t stmt-start))
+                      (looking-at operator))
+                     (and
+                      (zerop (c-backward-token-2 1 t stmt-start))
+                      (looking-at operator))
+                     )
+            (setq col (current-column)))
+
+          (vector col))))))
+
 (c-add-style "D"
              '("stroustrup"
                (c-offsets-alist
@@ -1585,15 +1638,15 @@ save it in `ffap-file-at-point-line-number' variable."
                 (template-args-cont . +)
                 (substatement-open . 0)
                 (statement-block-intro . +)
-                (arglist-cont-nonempty (c-lineup-cascaded-calls
+                (arglist-cont-nonempty (d-lineup-cascaded-calls
                                         c-lineup-gcc-asm-reg
                                         c-lineup-arglist))
-                (statement-cont . c-lineup-cascaded-calls)
+                (statement-cont . d-lineup-cascaded-calls)
                 )))
 ;;; See: https://stackoverflow.com/questions/25797945/adjusting-alignment-rules-for-ucfs-chains-in-d/25843155#25843155
 (defun d-turn-on-lineup-cascaded-calls ()
-  (add-to-list 'c-offsets-alist '(arglist-cont-nonempty . c-lineup-cascaded-calls))
-  (add-to-list 'c-offsets-alist '(statement-cont . c-lineup-cascaded-calls)))
+  (add-to-list 'c-offsets-alist '(arglist-cont-nonempty . d-lineup-cascaded-calls))
+  (add-to-list 'c-offsets-alist '(statement-cont . d-lineup-cascaded-calls)))
 (add-hook 'd-mode-hook 'd-turn-on-lineup-cascaded-calls t)
 
 (defvar ffap-d-path
