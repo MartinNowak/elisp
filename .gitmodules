@@ -85,3 +85,6 @@
 [submodule "c-eldoc"]
 	path = c-eldoc
 	url = https://github.com/nflath/c-eldoc.git
+[submodule "flx"]
+	path = flx
+	url = https://github.com/lewang/flx.git
