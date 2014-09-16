@@ -1690,6 +1690,16 @@ match FILENAME."
     (add-to-list 'flycheck-disabled-checkers 'sh-shellcheck)))
 (add-hook 'flycheck-mode-hook 'flycheck-shellcheck-buffer-size-check t)
 
+(defun flycheck-pylint-configure-messages ()
+  "Configure flycheck pylint enabled and disabled messages."
+  (setq-default flycheck-pylint-enabled-messages-string nil
+                flycheck-pylint-disabled-messages-string '("C0301"
+                                                           "C0103"
+                                                           "missing-docstring"
+                                                           "invalid-name"
+                                                           "unnecessary-semicolon")))
+(add-hook 'flycheck-mode-hook 'flycheck-pylint-configure-messages t)
+
 ;;; Note: Disabled for now. Instead put std.cfg in ~/.config/cppcheck
 ;; (let ((cppcheck (executable-find "cppcheck")))
 ;;   (setenv "CFGDIR" (expand-file-name "cfg"
