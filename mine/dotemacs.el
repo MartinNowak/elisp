@@ -1700,8 +1700,12 @@ match FILENAME."
 
 (defconst flycheck-common-include-path
   (list
-   "./public" "./include"
-   "../public" "../include")
+   "./public"
+   "./include"
+   "../public"
+   "../include"
+   "../../public"
+   "../../include")
   "Flycheck include path common for many languages.")
 
 (defun setup-flycheck-common-stuff ()
