@@ -170,6 +170,10 @@ Currently supported through GCC's flags -MD."
 ;; Use: (d-file-imports "~/justd/fs.d")
 ;; Use: (d-file-imports "~/justd/fs.d" t)
 
+(defvar ddemangle-executable
+  (executable-find "ddemangle")
+  "D ddemangle executable.")
+
 ;; TODO: Make use of argument ON-SUCCESS or merge with `auto-build-file-finished-callback' logic.
 (defun auto-build-c-common-file (compiler lang filename
                                           &optional on-success build-type std out-filename cflags libs use-ccache gen-deps try-last)
@@ -318,21 +322,17 @@ Currently supported through GCC's flags -MD."
                                out-filename
 
                                ;; demangle symbols in linker error messages
-                               (when nil
-                                 (when (equal lang "d")
-                                   (let ((ddemangle (executable-find "ddemangle")))
-                                     (when ddemangle
-                                       ;; http://stackoverflow.com/questions/16497317/piping-both-stdout-and-stderr-in-bash
-                                       (concat " 2>&1 | ddemangle"))
-                                     )))
-                               )))
+                               (when (and (equal lang "d")
+                                          ddemangle-executable)
+                                 ;; http://stackoverflow.com/questions/16497317/piping-both-stdout-and-stderr-in-bash
+                                 (concat " 2>&1 | ddemangle")))))
 
           ;; Store compilation states locally in compilation buffer variables
           (set (make-local-variable 'compilation-build-type) build-type)
           (set (make-local-variable 'compilation-out-filename) out-filename)
           (set (make-local-variable 'compilation-cflags) cflags)
           (set (make-local-variable 'compilation-libs) libs)
-          (set (make-local-variable 'compilation-error-regexp-alist) (cond (is-dmd '(dmd))
+          (set (make-local-variable 'compilation-error-regexp-alist) (cond (is-dmd '(dmd gnu))
                                                                            (is-gnu '(gnu))
                                                                            (t compilation-error-regexp-alist)))
 
