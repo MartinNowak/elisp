@@ -1739,6 +1739,14 @@ match FILENAME."
     map))
 (add-hook 'flycheck-mode-hook 'flycheck-set-repeatable-navigation t)
 
+;; Highlight navigation hits
+(defadvice flycheck-error-list-previous-error (after ctx-flash-flycheck-previous-error activate)
+  (hictx-line (buffer-window flycheck-error-list-source-buffer)
+              nil nil hictx-new-window-timeout))
+(defadvice flycheck-error-list-next-error (after ctx-flash-flycheck-next-error activate)
+  (hictx-line (buffer-window flycheck-error-list-source-buffer)
+              nil nil hictx-new-window-timeout))
+
 (defun flycheck-shellcheck-buffer-size-check ()
   (when (> (buffer-size) 100000)
     (add-to-list 'flycheck-disabled-checkers 'sh-shellcheck)))
