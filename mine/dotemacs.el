@@ -3269,24 +3269,32 @@ See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-fo
 
 (uniquify-environment-variable "PATH")
 
-;; Start Emacs Server
-;; C-x # runs the command `server-edit' to complete an emacsclient edit.
-(when (require 'server nil t)
-  ;; (let ((tmpfile "/tmp/emacs1000"))
-  ;;  (when (file-exists-p tmpfile)
-  ;;    (shell-command (concat "chmod 700 " tmpfile))))                                        ;https://groups.google.com/forum/?fromgroups=#!topic/gnu.emacs.bug/5Ge23R7WSMQ
-  (setq server-host (getenv "HOSTNAME")
-        server-use-tcp t)                ;make it possible to reach Emacs from other hosts
-  (server-force-delete)
-  (server-start t)
-  (when (functionp 'server-edit)
-    (repeatable-command-advice server-edit)))
+;;; ===========================================================================
+;;; Start Emacs Server
+;;; C-x # runs the command `server-edit' to complete an emacsclient edit.
+
+(defun server-start-dwim ()
+  (when (require 'server nil t)
+    ;; (let ((tmpfile "/tmp/emacs1000"))
+    ;;  (when (file-exists-p tmpfile)
+    ;;    (shell-command (concat "chmod 700 " tmpfile))))                                        ;https://groups.google.com/forum/?fromgroups=#!topic/gnu.emacs.bug/5Ge23R7WSMQ
+    (setq server-host (getenv "HOSTNAME")
+          server-use-tcp t)    ;make it possible to reach Emacs from other hosts
+    (server-force-delete)
+    (server-start)
+    (when (and (functionp 'server-edit)
+               (fboundp 'repeatable-command-advice))
+      (repeatable-command-advice server-edit))))
+(add-hook 'after-init-hook 'server-start-dwim t)
+
 ;; If you are already running an instance of Emacs in --daemon mode then you can
 ;; wrap the code in something like:
 (when (and (daemonp)
 	   (eload 'edit-server))
   (when (fboundp 'edit-server-start)
     (edit-server-start)))
+
+;;; ===========================================================================
 
 ;; =========================================== Inactives =====================================
 ;; =========================================== Inactives =====================================
