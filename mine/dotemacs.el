@@ -891,7 +891,7 @@
 (eload 'benchmarks)                    ;Various Key Performance Benchmarks of Emacs Lisp
 (eload 'pgo-eldoc)                     ;ELDoc
 (eload 'process-utils)                 ;Async Handling of Processes
-;; (eload 'alert-tags)                    ;Alert tags
+(eload 'alert-tags)                    ;Alert tags
 (eload 'primes)                        ;prime number support for Emacs Lisp library code
 (eload 'file-execute)                  ;Eval DWIM
 (eload 'file-dwim)                     ;Eval DWIM
