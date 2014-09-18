@@ -1758,6 +1758,7 @@ match FILENAME."
   (setq-default flycheck-pylint-enabled-messages-string nil
                 flycheck-pylint-disabled-messages-string '("C0103" "C0301" "C0303"
                                                            "R0903" "R0913" "R0914" "R0915"
+                                                           "W0511"
                                                            "missing-docstring"
                                                            "invalid-name"
                                                            "unnecessary-semicolon")))
