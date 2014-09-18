@@ -793,6 +793,7 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
     (if (region-active-p)
         (let ((beg (region-beginning))
               (end (region-end)))
+          (replace-string (concat symbol ".") "" nil beg end)
           (kill-region beg end)
           (setq kill (car kill-ring))
           ))
