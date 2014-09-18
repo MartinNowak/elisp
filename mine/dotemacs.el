@@ -1579,9 +1579,10 @@ save it in `ffap-file-at-point-line-number' variable."
     (insert (completing-read "Completion Member: " collection))))
 
 (defun d-lineup-cascaded-calls (langelem)
-  "This is a modified `c-lineup-cascaded-calls' function for the
-D programming language which accounts for optional parenthesis
-and compile-time parameters in function calls."
+  "This is a modified variant of `c-lineup-cascaded-calls'
+function for the D programming language which accounts for
+optional parenthesis and compile-time parameters in function
+calls."
 
   (if (and (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
            (not (eq (c-langelem-2nd-pos c-syntactic-element)
