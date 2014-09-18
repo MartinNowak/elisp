@@ -28,6 +28,14 @@
 ;; Use: (gcc-optimizers "gdc")
 ;; Use: (gcc-optimizers "gcc")
 
+(defun gcc-cpp-defines ()
+  (shell-command-to-string "gcc -dM -E -x c /dev/null"))
+;; Use: (gcc-cpp-defines)
+
+(defun gcc-cpp-defines-list ()
+  (split-string (gcc-cpp-defines) "\n"))
+;; Use: (gcc-cpp-defines-list)
+
 (defun gcc-options (&optional type exec)
   "Get Compiler options of TYPE as list of (OPTION/FLAG . DOC)."
   (let* ((type (if type (capitalize type)
