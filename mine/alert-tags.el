@@ -1,5 +1,7 @@
 ;;; alert-tags.el --- Syntax Highlight Special Comment Tags.
-;; Author: Per Nordlöw
+;;; Commentary:
+;;; Author: Per Nordlöw
+;;; Code:
 
 (defgroup alert-tags nil
   "Alert-Tags."
@@ -71,6 +73,7 @@
 
 ;; ToDo: Use only inside comments!
 (defun alert-tags-font-locking ()
+  "Activate font-locking of alert-tags."
   (font-lock-add-keywords
    nil
    (list
@@ -122,3 +125,4 @@
 (add-hook 'emacs-lisp-mode-hook 'emacs-lisp-header-font-locking t)
 
 (provide 'alert-tags)
+;;; alert-tags.el ends here
