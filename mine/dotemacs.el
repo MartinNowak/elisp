@@ -3140,15 +3140,20 @@ And make sure that it really shows up!"
 (when t
   ;; session.el may have changed this
   (desktop-save-mode 1) ;; save the desktop file automatically if it already exists
+
   (when (require 'frame-restore) ;save/restore frame size & position at shutdown/startup
     )
+
   (when (require 'desktop-frame)        ;save window configuration within frame
     )
+
+  ;; See: http://www.emacswiki.org/emacs/DeskTop#toc2
   (progn
     (add-to-list 'desktop-modes-not-to-save 'dired-mode)
     (add-to-list 'desktop-modes-not-to-save 'Info-mode)
     (add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
-    (add-to-list 'desktop-modes-not-to-save 'fundamental-mode))
+    (add-to-list 'desktop-modes-not-to-save 'fundamental-mode)
+    (add-to-list 'desktop-modes-not-to-save 'magit-mode))
   (setq desktop-buffers-not-to-save
         (concat "\\("
                 "\\`\\*vc-dir\\*\\|"
@@ -3157,6 +3162,23 @@ And make sure that it really shows up!"
                 "^nn\\.a[0-9]+\\|\\.log\\|(ftp)\\|^tags\\|^TAGS"
                 "\\|\\.emacs.*\\|\\.diary\\|\\.newsrc-dribble\\|\\.bbdb"
 	        "\\)$"))
+
+  ;; See: http://www.emacswiki.org/emacs/DeskTop#toc4
+  ;; TODO: This doesn't work as expected.
+  (defun emacs-process-p (pid)
+    "If pid is the process ID of an emacs process, return t, else nil.
+Also returns nil if pid is nil."
+    (when pid
+      (let ((attributes (process-attributes pid)) (cmd))
+        (dolist (attr attributes)
+          (if (string= "comm" (car attr))
+              (setq cmd (cdr attr))))
+        (if (and cmd (or (string= "emacs" cmd) (string= "emacs.exe" cmd))) t))))
+  (defadvice desktop-owner (after pry-from-cold-dead-hands activate)
+    "Don't allow dead emacsen to own the desktop file."
+    (when (not (emacs-process-p ad-return-value))
+      (setq ad-return-value nil)))
+
   (setq desktop-save 'ask               ;always ask before saving desktop
         desktop-dirname (expand-file-name "~/.emacs.d/")
         desktop-base-file-name "desktop"
