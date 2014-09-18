@@ -786,6 +786,32 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
              (end-of-line))
       )))
 
+(defun d-insert-with-stub (symbol)
+  "Insert a D \"with\" Statement."
+  (interactive "s(Qualified) Symbol: ")
+  (let (kill)
+    (if (region-active-p)
+        (let ((beg (region-beginning))
+              (end (region-end)))
+          (kill-region beg end)
+          (setq kill (car kill-ring))
+          ))
+    (insert-indented "with (" symbol ")")
+    (c-insert-open-brace)
+    (insert-indented "\n")
+    (when kill
+      (c-insert-indented-kill kill))
+    (insert-indented "\n")
+    (c-insert-close-brace)
+    (insert-indented "\n")
+    (if (zerop (length symbol))
+        (progn (c-backward-token-balanced 2)
+               (down-list))
+      (progn (forward-line -2)
+             (c-indent-command)
+             (end-of-line))
+      )))
+
 (defun c-insert-do-while-stub (expression)
   "Insert a C/C++ \"do while\" Statement."
   (interactive "sCondition: ")
@@ -854,6 +880,7 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
     ("if-else" c-insert-if-else-stub)
     ("for" c-insert-for-stub)
     ("while" c-insert-while-stub)
+    ("with" d-insert-with-stub)
     ("do" c-insert-do-while-stub)
     ("switch" c-insert-switch-stub)
     "--"
@@ -3301,6 +3328,7 @@ This menu will get created automatically if you have the `easymenu' package.")
     ["if-else ()" c-insert-if-else-stub t]
     ["while ()" c-insert-while-stub t]
     ["do-while ()" c-insert-do-while-stub t]
+    ["with ()" d-insert-while-stub t]
     ["switch ()" c-insert-switch-stub t]
     ["for ()" c-insert-for-stub t]
     ["foreach ()" d-insert-foreach-stub t]
@@ -3761,6 +3789,7 @@ This command assumes point is not in a string or comment."
   (charedit-local-set-key ?i 'c-insert-if-stub 'code)
   (charedit-local-set-key ?I 'c-insert-if-else-stub 'code)
   (charedit-local-set-key ?w 'c-insert-while-stub 'code)
+  (charedit-local-set-key ?W 'd-insert-with-stub 'code)
   (charedit-local-set-key ?s 'c-insert-switch-stub 'code)
   (charedit-local-set-key ?d 'c-insert-do-while-stub 'code)
   (charedit-local-set-key ?f 'c-insert-for-stub 'code)
