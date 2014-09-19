@@ -21,11 +21,14 @@ Maybe need to restart Emacs to make this be activated."
                                              filename)))))
     (when url
       (cond ((string-match-p "/trunk" url)
-             (propertize "trunk" 'face 'error))
+             (propertize "trunk"
+                         'face 'error))
             ((string-match "/branches/\\([^/]+\\)" url)
-             (propertize (match-string 1 url) 'face 'warning))
+             (propertize (match-string 1 url)
+                         'face 'warning))
             (t
-             nil)))))
+             (propertize (car (last (split-string url "/")))
+                         'face 'error))))))
 ;; Use: (vc-svn-branch-or-trunk-tag)
 
 ;; OBS: Disabled because it suffices to define `vc-svn-mode-line-string' to make this work.
