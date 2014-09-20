@@ -244,90 +244,93 @@ Currently supported through GCC's flags -MD."
                                compiler
                              (executable-find compiler))))
         (with-current-buffer
-            (let ((default-directory (file-name-directory filename)))
-              (compile (concat (when (and use-ccache
-                                          ccache-exec)
-                                 (concat ccache-exec " "))
+            (let* ((default-directory (file-name-directory filename))
+                   (command (concat (when (and use-ccache
+                                               ccache-exec)
+                                      (concat ccache-exec " "))
 
-                               compiler
+                                    compiler
 
-                               ;; Use -vcolumns argument if present as string in compiler binary
-                               (when (and is-dmd
-                                          (cscan-file full-compiler "vcolumns"))
-                                 " -vcolumns")
+                                    ;; use -vcolumns argument if present as string in compiler binary
+                                    (when (and is-dmd
+                                               (cscan-file full-compiler "vcolumns"))
+                                      " -vcolumns")
 
-                               (unless (or is-dmd
-                                           is-ldmd2)
-                                 (concat " -x " lang)) ;language
-                               (unless (or is-dmd
-                                           is-ldmd2
-                                           is-gdc)
-                                 (when (and std
-                                            (not (eq std 'skip))
-                                            (not (eq std 'none)))
-                                   (concat " -std=" std))) ;standard
+                                    (unless (or is-dmd
+                                                is-ldmd2)
+                                      (concat " -x " lang)) ;language
+                                    (unless (or is-dmd
+                                                is-ldmd2
+                                                is-gdc)
+                                      (when (and std
+                                                 (not (eq std 'skip))
+                                                 (not (eq std 'none)))
+                                        (concat " -std=" std))) ;standard
 
-                               (when (and (not (string-equal lang "d"))
-                                          (require 'endianess nil t))
-                                 (concat " -DCONFIG_" (upcase (endianess)) "_ENDIAN"))
+                                    (when (and (not (string-equal lang "d"))
+                                               (require 'endianess nil t))
+                                      (concat " -DCONFIG_" (upcase (endianess)) "_ENDIAN"))
 
-                               (unless (string-equal (downcase lang) "d")
-                                 (when include-main-macro
-                                   " -D__MAIN__"))
+                                    (unless (string-equal (downcase lang) "d")
+                                      (when include-main-macro
+                                        " -D__MAIN__"))
 
-                               " " cflags ;compilation flags
+                                    " " cflags ;compilation flags
 
-                               (let ((flags (compilation-build-type-flags
-                                             compiler build-type (file-name-directory out-filename) t)))
-                                 (when flags
-                                   " " (mapconcat 'identity flags " ")))
+                                    (let ((flags (compilation-build-type-flags
+                                                  compiler build-type (file-name-directory out-filename) t)))
+                                      (when flags
+                                        " " (mapconcat 'identity flags " ")))
 
-                               (when warn-flags
-                                 (concat " " (mapconcat 'identity warn-flags " ")))
+                                    (when warn-flags
+                                      (concat " " (mapconcat 'identity warn-flags " ")))
 
-                               " " (unless has-main
-                                     (cond ((string-equal lang "d")
-                                            "-main") ;add default main() (e.g. for unittesting)
-                                           (t
-                                            "-c"))) ;if no main compile as object
-                               (when (and (or gen-deps
-                                              c-auto-gen-deps)
-                                          (or (string-match "gcc" compiler)
-                                              (string-match "clang" compiler))) ;TODO: Will clang support this?
-                                 (concat " -MD -MF " out-filename ".dep"))
+                                    " " (unless has-main
+                                          (cond ((string-equal lang "d")
+                                                 "-main") ;add default main() (e.g. for unittesting)
+                                                (t
+                                                 "-c"))) ;if no main compile as object
+                                    (when (and (or gen-deps
+                                                   c-auto-gen-deps)
+                                               (or (string-match "gcc" compiler)
+                                                   (string-match "clang" compiler))) ;TODO: Will clang support this?
+                                      (concat " -MD -MF " out-filename ".dep"))
 
-                               ;; Compiled file
-                               " " (file-name-nondirectory filename)
+                                    ;; compiled file
+                                    " " (file-name-nondirectory filename)
 
-                               ;; Imported Local Files
-                               (let ((local-imports (delete (expand-file-name filename)
-                                                            (d-file-imports filename t))))
-                                 (when local-imports
-                                   (concat " " (mapconcat 'identity local-imports " "))))
+                                    ;; imported local files
+                                    (let ((local-imports (delete (expand-file-name filename)
+                                                                 (d-file-imports filename t))))
+                                      (when local-imports
+                                        (concat " " (mapconcat 'identity local-imports " "))))
 
-                               ;; Libraries
-                               (when libs
-                                 (concat " " libs))
+                                    ;; libraries
+                                    (when libs
+                                      (concat " " libs))
 
-                               ;; Threading
-                               (unless (or is-dmd
-                                           is-ldmd2)
-                                 " -lpthread")
+                                    ;; threading
+                                    (unless (or is-dmd
+                                                is-ldmd2)
+                                      " -lpthread")
 
-                               ;; Output filename
-                               (if (or is-dmd
-                                       is-ldmd2)
-                                   " -of"
-                                 " -o ")
-                               out-filename
+                                    ;; output filename
+                                    (if (or is-dmd
+                                            is-ldmd2)
+                                        " -of"
+                                      " -o ")
+                                    out-filename
 
-                               ;; demangle symbols in linker error messages
-                               (when (and (equal lang "d")
-                                          ddemangle-executable)
-                                 ;; http://stackoverflow.com/questions/16497317/piping-both-stdout-and-stderr-in-bash
-                                 (concat " 2>&1 | ddemangle")))))
+                                    )))
+              (compile ;; demangle symbols in linker error messages
+               (if (and (equal lang "d")
+                        ddemangle-executable)
+                   ;; see: http://stackoverflow.com/questions/16497317/piping-both-stdout-and-stderr-in-bash
+                   ;; see: https://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+                   (concat "set -o pipefail && " command " 2>&1 | ddemangle")
+                 command)))
 
-          ;; Store compilation states locally in compilation buffer variables
+          ;; store compilation states locally in compilation buffer variables
           (set (make-local-variable 'compilation-build-type) build-type)
           (set (make-local-variable 'compilation-out-filename) out-filename)
           (set (make-local-variable 'compilation-cflags) cflags)
