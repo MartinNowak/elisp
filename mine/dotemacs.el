@@ -2992,6 +2992,7 @@ functions, and some types.  It also provides indentation that is
 (when (append-to-load-path (elsub "magit"))
   (autoload 'magit-status "magit" "Magit Status.")
   (autoload 'magit-push "magit")
+  (defalias 'vc-push 'magit-push)
   (global-set-key [(control x) (G)] 'magit-push))
 (when (append-to-load-path (elsub "git-modes")))
 (when (append-to-load-path (elsub "magit-log-edit")))
