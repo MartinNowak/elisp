@@ -528,15 +528,15 @@ VERSION default to version of gdb"
     ("Release"
      ("-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-NoBoundscheck"
-     ("-release" "-boundscheck=off" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-release" "-O" "-inline" "-boundscheck=off" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Without-BoundscheckSafeOnly"
-     ("-release" "-boundscheck=safeonly" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-release" "-O" "-inline" "-boundscheck=safeonly" "-w" "-wi")) ;Do we need "-m64"?
     ("Debug-Release"
      ("-debug" "-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Unittest"
      ("-release" "-O" "-inline" "-w" "-wi" "-unittest"))
     ("Release-NoBoundscheck-Unittest"
-     ("-release" "-boundscheck=off" "-O" "-inline" "-w" "-wi" "-unittest"))
+     ("-release" "-O" "-inline" "-boundscheck=off" "-w" "-wi" "-unittest"))
     )
   "DMD Build Types.")
 (defconst dmd-default-build-type
