@@ -256,8 +256,8 @@ Currently supported through GCC's flags -MD."
                                                (cscan-file full-compiler "vcolumns"))
                                       " -vcolumns")
 
-                                    (when is-dmd
-                                      " -v")  ;show whole template instantiation stack
+                                    ;; (when is-dmd
+                                    ;;   " -v")  ;show whole template instantiation stack
 
                                     (unless (or is-dmd
                                                 is-ldmd2)
