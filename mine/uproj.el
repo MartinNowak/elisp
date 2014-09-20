@@ -503,22 +503,28 @@ VERSION default to version of gdb"
 ;;; DMD
 (defconst dmd-documentation-flag nil "Flags that we should generate documentation using DMD.")
 (defconst dmd-build-types
-  `(("Debug-Boundscheck-Unittest"
+  `(("Debug-Unittest"
+     ("-debug" "-g" "-gs" "-unittest"))
+    ("Debug-Unittest-Verbose"
+     ("-debug" "-g" "-gs" "-unittest" "-v"))
+    ("Debug-Boundscheck-Unittest"
      ("-debug" "-g" "-gs" "-unittest")) ;-gc
+    ("Debug-Boundscheck-Unittest-Verbose"
+     ("-debug" "-g" "-gs" "-unittest" "-v")) ;-gc
     ("Debug"
      ("-debug" "-g" "-gs")) ;-gc
     ("Debug-ListGCAllocations"
      ("-debug" "-g" "-gs" "-vgc"))      ;DMD version >= 2.066
     ("Debug-Unittest-ListGCAllocations"
      ("-debug" "-g" "-gs" "-vgc" "-unittest"))      ;DMD version >= 2.066
+    ("Debug-Unittest-ListGCAllocations-Verbose"
+     ("-debug" "-g" "-gs" "-vgc" "-unittest" "-v"))      ;DMD version >= 2.066
     ("Debug-Show-Thread-Locals"
      ("-vtls" "-debug" "-g" "-gs")) ;-gc
     ("Debug-Bounds-Check"
      ("-debug" "-g" "-gs"));-gc
     ("Unittest"
      ("-unittest"))
-    ("Debug-Unittest"
-     ("-debug" "-g" "-gs" "-unittest")) ;-gc
     ("Profile"
      ("-profile"))
     ("Debug-Profile"
