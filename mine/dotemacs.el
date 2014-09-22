@@ -1187,6 +1187,7 @@ save it in `ffap-file-at-point-line-number' variable."
                   (".subversion/servers\\'" . conf-mode)
                   ("/.hgignore\\'" . conf-mode)
                   ("/.gitignore\\'" . conf-mode)
+                  ("/.gitconfig\\'" . conf-mode)
                   ("/.cvsignore\\'" . conf-mode)
                   ("/.bazaar/ignore\\'" . conf-mode)
                   ("/openssl.cnf\\'" . conf-mode) ;ALSA Configuration
