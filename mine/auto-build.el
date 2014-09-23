@@ -331,7 +331,7 @@ Currently supported through GCC's flags -MD."
                    ;; see: http://stackoverflow.com/questions/16497317/piping-both-stdout-and-stderr-in-bash
                    ;; see: https://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
                    (concat "set -o pipefail && " command " 2>&1 | ddemangle")
-                 command)))
+                 command) t))
 
           ;; store compilation states locally in compilation buffer variables
           (set (make-local-variable 'compilation-build-type) build-type)
