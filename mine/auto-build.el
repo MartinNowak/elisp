@@ -413,7 +413,7 @@ Currently supported through GCC's flags -MD."
                              " " filename
                              (when libs
                                (concat " " libs))
-                             " -o " out-filename)))
+                             " -o " out-filename) t))
         (if has-main
             (set (make-local-variable 'compilation-executee) out-filename) ;signal execution on finish
           (when (boundp 'compilation-executee)
