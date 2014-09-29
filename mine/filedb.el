@@ -1445,7 +1445,7 @@ See http://oclint.org/"
   (fmd-add 'DUB "DUB JSON Build" "Build Tool Script Code" 'txt
            `(:name (lit "dub.json" full))
            'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
-                                          (concat (executable-find "dub") " build")))))
+                                          (executable-find "dub")))))
 
   (fmd-add 'Visual-Studio-Makefile "Visual Studio NMake makefile" "Build Tool Script Code" 'txt
            `(:name (lit ("mak" "nmake") ext))
