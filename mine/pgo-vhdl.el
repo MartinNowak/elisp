@@ -85,8 +85,8 @@ If C-u is given as prefix argument: the command line can be edited."
       (setq cmd-line (read-string "Compile cmd: " cmd-line)))
     (compile cmd-line)))
 
-                                        ;-- vhdl-sim-directory: "../../sim/"
-                                        ;-- vhdl-compiler-options: "-93 -quiet"
+;;-- vhdl-sim-directory: "../../sim/"
+;;-- vhdl-compiler-options: "-93 -quiet"
 
 (defun vhdl-activate-new-font-lock-settings ()
   (interactive)
