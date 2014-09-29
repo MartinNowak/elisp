@@ -91,3 +91,6 @@
 [submodule "fish"]
 	path = fish
 	url = https://github.com/wwwjfy/emacs-fish.git
+[submodule "dirswitch"]
+	path = dirswitch
+	url = https://github.com/mickeynp/dirswitch.el.git
