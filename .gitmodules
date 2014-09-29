@@ -88,3 +88,6 @@
 [submodule "flx"]
 	path = flx
 	url = https://github.com/lewang/flx.git
+[submodule "fish"]
+	path = fish
+	url = https://github.com/wwwjfy/emacs-fish.git
