@@ -1707,16 +1707,18 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     `(
       (:lang Python :expr (: "copy(" ,X ")") :import copy)
       (:lang Ruby :expr (: "" ,X ".dup"))
-      (:lang D :expr (: "dup(" ,X ")"))
-      )) "Return of Shallow Copy X.")
+      (:lang D :expr (: (or "dup"
+                            "idup") "(" ,X ")"))))
+  "Return of Shallow Copy X.")
 
 (defconst relangs-deep-copy
   (lambda (X)
     `(
       (:lang Python :expr (: "deepcopy(" ,X ")") :import copy)
       (:lang Ruby :expr (: "x.clone"))
-      (:lang D :expr (: "deepdup(" ,X ")"))
-      )) "Return of Deep Copy X.")
+      (:lang D :expr (: (or "deepdup"
+                            "deepidup") "(" ,X ")"))))
+  "Return of Deep Copy X.")
 
 (defconst relangs-uniquify-elements
   (lambda (X)
