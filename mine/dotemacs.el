@@ -1788,13 +1788,14 @@ match FILENAME."
    "../include"
    "../../public"
    "../../include")
-  "Flycheck include path common for many languages.")
+  "Flycheck include paths common for many languages.")
 
 (defun setup-flycheck-common-stuff ()
   ;; Generic
   (let ((std-path flycheck-common-include-path))
     (setq flycheck-clang-include-path std-path
-          flycheck-dmd-include-path std-path
+          flycheck-dmd-include-path (append std-path
+                                            '(".." "../.." "../../..")) ;DUB examples often import from parents
           flycheck-gcc-include-path std-path
           flycheck-gfortran-include-path std-path
           flycheck-gnat-include-path std-path)
