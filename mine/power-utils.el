@@ -751,27 +751,42 @@ This commands either calls `just-one-space' or `delete-blank-lines'."
   (local-set-key [(control shift meta e)] 'end-of-list)
   )
 
+;;; -------- sexp navigation --------
+
 (defun forward-sexp-safe (&optional arg)
   (interactive "^p")
   (unless (ignore-errors (forward-sexp arg) t)
-    (message "After last sexp")
-    ;; (sit-for 1)
+    (message "After last sexp") ;(sit-for 1)
     (ding)))
 (global-set-key [(control meta ?f)] 'forward-sexp-safe)
-
 (defun backward-sexp-safe (&optional arg)
   (interactive "^p")
   (unless (ignore-errors (backward-sexp arg) t)
-    (message "Before first sexp")
-    ;; (sit-for 1)
+    (message "Before first sexp") ;(sit-for 1)
     (ding)))
 (global-set-key [(control meta ?b)] 'backward-sexp-safe)
+
+;;; -------- list navigation --------
+
+(defun forward-list-safe (&optional arg)
+  (interactive "^p")
+  (unless (ignore-errors (forward-list arg) t)
+    (message "After last list") ;(sit-for 1)
+    (ding)))
+(global-set-key [(control meta ?n)] 'forward-list-safe)
+(defun backward-list-safe (&optional arg)
+  (interactive "^p")
+  (unless (ignore-errors (backward-list arg) t)
+    (message "Before first list") ;(sit-for 1)
+    (ding)))
+(global-set-key [(control meta ?p)] 'backward-list-safe)
+
+;;; -------- marking --------
 
 (defun mark-sexp-safe (&optional arg allow-extend)
   (interactive "P\np")
   (unless (ignore-errors (mark-sexp arg allow-extend) t)
-    (message "All sexp marked")
-    ;; (sit-for 1)
+    (message "All sexp marked") ;(sit-for 1)
     (ding)))
 (global-set-key [(control meta ?\ )] 'mark-sexp-safe)
 
@@ -783,7 +798,7 @@ This commands either calls `just-one-space' or `delete-blank-lines'."
     (ding)))
 (global-set-key [(meta ?W)] 'mark-word-safe)
 
-;;; -------- Skipping Chars --------
+;;; -------- skipping chars --------
 
 (defun skip-chars-forward-ia (string &optional lim)
   "Move point forward, stopping before a char that is not in STRING."
@@ -797,7 +812,7 @@ This commands either calls `just-one-space' or `delete-blank-lines'."
   (skip-chars-backward string lim)
   )
 
-;;; -------- Skipping Whitespace --------
+;;; -------- skipping whitespace --------
 
 (defsubst skip-whitespace-forward (&optional lim)
   "Move point forward, stopping before a char that is not whitespace."
