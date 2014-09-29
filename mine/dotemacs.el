@@ -983,6 +983,12 @@
 (eload 'pgo-ansi-color)
 
 ;;; ===========================================================================
+;;; FISH Shell
+(when (append-to-load-path (elsub "fish"))
+  (add-to-list 'auto-mode-alist '("\\.fish\\'" . fish-mode))
+  (add-to-list 'interpreter-mode-alist '("fish" . fish-mode)))
+
+;;; ===========================================================================
 ;;; NeoTree
 (when (append-to-load-path (elsub "neotree"))
   (autoload 'neotree "neotree" "File Tree Mode" t))
