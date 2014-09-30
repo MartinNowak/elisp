@@ -6,6 +6,7 @@
 (defvar cc-derived-modes
   '(c-mode c++-mode objc-mode java-mode csharp-mode d-mode)
   "List of C-like modes.")
+(defalias 'cc-like-modes 'cc-derived-modes)
 
 (defun cc-derived-mode-p (&optional mode)
   "Return non-nil if MODE is a c-like mode, meaning member of `cc-derived-modes'.
