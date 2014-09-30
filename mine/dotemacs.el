@@ -1763,14 +1763,28 @@ match FILENAME."
 
 (defun flycheck-pylint-configure-messages ()
   "Configure flycheck pylint enabled and disabled messages."
-  (setq-default flycheck-pylint-enabled-messages-string nil
-                flycheck-pylint-disabled-messages-string '("C0103" "C0301" "C0303"
-                                                           "R0903" "R0913" "R0914" "R0915"
-                                                           "W0511"
-                                                           "missing-docstring"
-                                                           "invalid-name"
-                                                           "unnecessary-semicolon")))
+  (when (eq major-mode 'python-mode)
+    (setq-default flycheck-pylint-enabled-messages-string nil
+                  flycheck-pylint-disabled-messages-string '("C0103" "C0301" "C0303"
+                                                             "R0903" "R0913" "R0914" "R0915"
+                                                             "W0511"
+                                                             "missing-docstring"
+                                                             "invalid-name"
+                                                             "unnecessary-semicolon"))))
 (add-hook 'flycheck-mode-hook 'flycheck-pylint-configure-messages t)
+
+(defun flycheck-pylint-setup-pythonpath ()
+  "Configure flycheck pylint PYTHONPATH."
+  (let ((scons-executable (executable-find "scons"))
+        (name "PYTHONPATH"))
+    (setenv name (concat (uniquify-environment-path-string (getenv name))
+                         ":"
+                         (expand-file-name
+                          "lib/scons"
+                          (file-name-directory
+                           (directory-file-name
+                            (file-name-directory scons-executable))))))))
+(add-hook 'flycheck-mode-hook 'flycheck-pylint-setup-pythonpath t)
 
 ;;; Note: Disabled for now. Instead put std.cfg in ~/.config/cppcheck
 ;; (let ((cppcheck (executable-find "cppcheck")))
