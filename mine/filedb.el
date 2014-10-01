@@ -292,7 +292,7 @@ Error if that is void."
      ))
   )
 
-(defun file-debug-with-gdb (filename build-type compilation-window working-directory &optional args)
+(defun file-debug-with-gdb (filename build-type compilation-window cwd &optional args)
   (ignore-errors
     (let ((filename (expand-file-name filename))) ;NOTE: GDB needs this!
       (gdb (concat gud-gdb-command-name
@@ -783,7 +783,7 @@ See http://oclint.org/"
                    :contents (lit "\xca\xfe\xba\xbe" 0) ;"cafebabe"
                    :precog contents-recog)
            nil 'gen '((:execute "java")
-                      (:debug (lambda (filename &optional build-type compilation-window working-directory args)
+                      (:debug (lambda (filename &optional build-type compilation-window cwd args)
                                 (jdb (concat gud-jdb-command-name " " filename))))))
 
   (fmd-add 'JavaScript "JavaScript Code" "Script Code"
@@ -800,10 +800,10 @@ See http://oclint.org/"
            '(:name (lit "m" ext)
                    :content (lit "function" 0))
            'matlab-mode 'man
-           '((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           '((:execute (lambda (filename &optional build-type compilation-window cwd args)
                          (find-file filename)
                          (matlab-shell-save-and-go)))
-             (:profile (lambda (filename &optional build-type compilation-window working-directory args)
+             (:profile (lambda (filename &optional build-type compilation-window cwd args)
                          (find-file filename)
                          (save-window-excursion
                            (matlab-shell-collect-command-output "profile on"))
@@ -817,15 +817,15 @@ See http://oclint.org/"
                                       dir)))
                            )
                          ))
-             (:execute-shell (lambda (filename &optional build-type compilation-window working-directory args)
+             (:execute-shell (lambda (filename &optional build-type compilation-window cwd args)
                                (shell-command-silent
                                 (concat "matlab -nodisplay < "
                                         filename))))
-             ;; (:profile-shell (lambda (filename &optional build-type compilation-window working-directory args)
+             ;; (:profile-shell (lambda (filename &optional build-type compilation-window cwd args)
              ;;                   (shell-command-silent
              ;;                    (concat "matlab -nodisplay < "
              ;;                            filename))))
-             (:debug (lambda (filename &optional build-type compilation-window working-directory args)
+             (:debug (lambda (filename &optional build-type compilation-window cwd args)
                        ))
              (:check "mlint")))
   ;; TODO: Activate ".m" extension and distinguish from Matlab by checking, for example, comment style.
@@ -878,7 +878,7 @@ See http://oclint.org/"
                    :extend Shell-Script)
            'sh-mode 'man
            '((:execute "bash")
-             (:debug (lambda (filename &optional build-type compilation-window working-directory args)
+             (:debug (lambda (filename &optional build-type compilation-window cwd args)
                        (bashdb (concat gud-bashdb-command-name " " filename))))))
 
   (fmd-add 'Csh-Script "csh" "Script Code" 'txt
@@ -908,7 +908,7 @@ See http://oclint.org/"
                    :precog name-or-contents-recog)
            'sh-mode 'man
            '((:execute "sh")
-             (:debug (lambda (filename &optional build-type compilation-window working-directory args)
+             (:debug (lambda (filename &optional build-type compilation-window cwd args)
                        (bashdb (concat gud-bashdb-command-name " " filename))))))
 
   ;; Compile Languages
@@ -949,7 +949,7 @@ See http://oclint.org/"
            'c-mode 'man `((:build auto-build-c-file)
                           (:indent "indent")
                           (:preprocess "gcc -E")
-                          (:cppcheck (lambda (filename &optional build-type compilation-window working-directory args)
+                          (:cppcheck (lambda (filename &optional build-type compilation-window cwd args)
                                        (compile (concat "cppcheck" " " filename))))
                           (:oclint oclint)
                           ))
@@ -965,7 +965,7 @@ See http://oclint.org/"
            'c++-mode 'man `((:build auto-build-c++-file)
                             (:indent "indent")
                             (:preprocess "g++ -E")
-                            (:cppcheck (lambda (filename &optional build-type compilation-window working-directory args)
+                            (:cppcheck (lambda (filename &optional build-type compilation-window cwd args)
                                          (compile (concat "cppcheck" " " filename))))
                             (:oclint oclint)
                             ))
@@ -1021,7 +1021,7 @@ See http://oclint.org/"
              (:execute (executable-find "rdmd"))
              (:execute-alt "dmd -run")
              (:generate-interface-file "dmd -H") ;http://dlang.org/dmd-linux.html#interface_files
-             (:build-library (lambda (filename &optional build-type compilation-window working-directory args)
+             (:build-library (lambda (filename &optional build-type compilation-window cwd args)
                                (concat "dmd -lib " (mapconcat files))))
              )
            nil "http://www.digitalmars.com/d/") ;D Programming Language
@@ -1118,10 +1118,10 @@ See http://oclint.org/"
            `(:name (lit ("py" "python") ext)
                    :contents (re "#![[:space:]]*\\(/usr/bin/python\\|/usr/bin/env[[:space:]]+python\\)\\([0-9.]?\\)" 0 nil ,fmd-script-type-magic-limit)
                    :precog name-or-contents-recog)
-           'python-mode 'man `((:build (lambda (filename &optional build-type compilation-window working-directory args)
+           'python-mode 'man `((:build (lambda (filename &optional build-type compilation-window cwd args)
                                          ;; TODO: Use wine python.exe setup.py py2exe[/color] to build Window binaries.
                                          ))
-                               (:execute (lambda (filename &optional build-type compilation-window working-directory args)
+                               (:execute (lambda (filename &optional build-type compilation-window cwd args)
                                            (find-file filename)
                                            ;; TODO: Choose between pypy.* or python.* using `read-executables-filename'.
                                            (if (region-active-p)
@@ -1134,11 +1134,11 @@ See http://oclint.org/"
                                ;; \see http://wiki.python.org/moin/DebuggingWithGdb
                                ;; \see https://fedoraproject.org/wiki/Features/EasierPythonDebugging
                                ;; \see http://bugs.python.org/issue8032
-                               (:debug-gdb (lambda (filename &optional build-type compilation-window working-directory args)
+                               (:debug-gdb (lambda (filename &optional build-type compilation-window cwd args)
                                              (gdb (concat "gdb python ")) ;and (gdb) run <PROGRAMNAME>.py <ARGUMENTS>
                                              ;; or command-line: gdb python <PID-OF-RUNNING-PROCESS>
                                              ))
-                               (:convert-to-c++ (lambda (filename &optional build-type compilation-window working-directory args)
+                               (:convert-to-c++ (lambda (filename &optional build-type compilation-window cwd args)
                                                   (compile (concat "pythran" " " filename args)) ;at git://github.com/serge-sans-paille/pythran.git
                                                   ))
                                ))
@@ -1188,7 +1188,7 @@ See http://oclint.org/"
            `(:name (lit ("perl") ext)
                    :contents (re "#![[:space:]]*/usr/bin/perl" 0 nil ,fmd-script-type-magic-limit)
                    :precog name-or-contents-recog)
-           'perl-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'perl-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                          (concat "perl -cw " filename)))))
 
   (fmd-add 'Ruby "Ruby" "Script Code"
@@ -1196,7 +1196,7 @@ See http://oclint.org/"
            `(:name (lit ("ruby" "rb") ext)
                    :contents (re "#![[:space:]]*/usr/bin/ruby" 0 nil ,fmd-script-type-magic-limit)
                    :precog name-or-contents-recog)
-           'ruby-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'ruby-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                          (concat "ruby -cw " filename)))))
 
   (fmd-add 'Lua "Lua" "Script Code"
@@ -1221,16 +1221,16 @@ See http://oclint.org/"
            `(:name (lit ("hs" "lhs") ext))
            'haskell-mode 'man
            `( ;;(:build auto-build-haskell-file)
-             (:load (lambda (filename &optional build-type compilation-window working-directory args)
+             (:load (lambda (filename &optional build-type compilation-window cwd args)
                       (find-file filename)
                       (call-interactively 'inferior-haskell-load-file)))
-             (:reload (lambda (filename &optional build-type compilation-window working-directory args)
+             (:reload (lambda (filename &optional build-type compilation-window cwd args)
                         (find-file filename)
                         (call-interactively 'inferior-haskell-reload-file)))
-             (:execute (lambda (filename &optional build-type compilation-window working-directory args)
+             (:execute (lambda (filename &optional build-type compilation-window cwd args)
                          (find-file filename)
                          (call-interactively 'inferior-haskell-load-and-run)))
-             (:check (lambda (filename &optional build-type compilation-window working-directory args)
+             (:check (lambda (filename &optional build-type compilation-window cwd args)
                        (find-file filename)
                        (call-interactively 'hs-lint)
                        ;; (call-interactively 'haskell-check)
@@ -1274,11 +1274,11 @@ See http://oclint.org/"
   (fmd-add 'config_spec "config_spec" "Markup Source Code" 'txt
            `(:name (lit "config_spec.xml" full)
                    :specialize XML)
-           'xml-mode 'man `((:wact (lambda (filename &optional build-type compilation-window working-directory args)
+           'xml-mode 'man `((:wact (lambda (filename &optional build-type compilation-window cwd args)
                                      (let ((cmd (read-wact-command)))
                                        (when (executable-find "wact")
                                          (mapconcat 'identify '("wact" cmd "-c" filename) " ")))))
-                            (:sort (lambda (filename &optional build-type compilation-window working-directory args)
+                            (:sort (lambda (filename &optional build-type compilation-window cwd args)
                                      (when (executable-find "sort_config_spec.py")
                                        (mapconcat 'identify '("sort_config_spec.py" "-c" filename) " "))))))
   (fmd-add 'KML "KML" "Keyhole Markup Language" 'txt
@@ -1376,19 +1376,19 @@ See http://oclint.org/"
   (fmd-add 'SConstruct "Build Tool Script Code" "Build Tool Script Code" 'txt
 
            `(:name (lit "SConstruct" full))
-           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                           (concat (executable-find "scons") " -f " filename)))
                               (:targets 'sconstruct-targets)))
   (fmd-add 'SConscript "Build Tool Script Code" "Build Tool Script Code" 'txt
 
            `(:name (lit "SConscript" full))
-           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                           (concat (executable-find "scons") " -f " filename)))
                               (:targets 'sconstruct-targets)))
   (fmd-add 'Rakefile "Build Tool Script Code" "Build Tool Script Code" 'txt
 
            `(:name (re "[rR]akefile.*" full))
-           'rake-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'rake-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                          (concat (executable-find "rake") " -f " filename)))))
   (fmd-add 'Jamfile "Build Tool Script Code" "Build Tool Script Code" 'txt
 
@@ -1399,11 +1399,11 @@ See http://oclint.org/"
                                      "^install "
                                      "^explicit ") (any code))
                    :precog name-recog)
-           'bjam-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'bjam-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                          (concat "bjam" " " filename)))))
   (fmd-add 'CMakeList.txt "Build Tool Script Code" "Build Tool Script Code" 'txt
            `(:name (lit "CMakeList.txt" full))
-           'cmake-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'cmake-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                           (concat "cmake "
                                                   (file-name-directory filename) ;CMake wants the directory
                                                   )))))
@@ -1417,13 +1417,13 @@ See http://oclint.org/"
                        (lit "cook" ext)
                        (re ("cook[.]?rc") ext))
                    :precog name-recog)
-           'cook-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'cook-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                          (concat (executable-find "cook") " -Book " filename)))
                              (:targets 'cook-targets)))
 
   (fmd-add 'waf "WAF" "Build Tool Script Code" 'txt
            `(:name (lit "wscript" full))
-           'python-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'python-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                            (concat (executable-find "waf") " -f " filename)))))
 
   (fmd-add 'Makefile "Build Tool Script Code" "Build Tool Script Code" 'txt
@@ -1435,7 +1435,7 @@ See http://oclint.org/"
                        full)
                    :contents (re "^[[:space:]]*\\(?:[a-zA-Z0-9-_y]+\\):[[:space:]]$" any)
                    :precog name-recog)
-           'makefile-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'makefile-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                              (concat (or ;; TODO: Enable when we know how to check whether (executable-find "remake") is available on remote compilation host
                                                          (executable-find "gmake")
                                                          (executable-find "make")) " -f " filename)))
@@ -1444,18 +1444,18 @@ See http://oclint.org/"
 
   (fmd-add 'DUB "DUB JSON Build" "Build Tool Script Code" 'txt
            `(:name (lit "dub.json" full))
-           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           'scons-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                                           (executable-find "dub")))))
 
   (fmd-add 'Visual-Studio-Makefile "Visual Studio NMake makefile" "Build Tool Script Code" 'txt
            `(:name (lit ("mak" "nmake") ext))
            'nmake-mode 'man
-           `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                          (concat "nmake.exe /f " filename)))))
   (fmd-add 'Visual-Studio-Solution "Build Tool Script Code" "Build Tool Script Code" 'txt
            `(:name (lit ("sln" "suo") ext))
            'vcmake-mode 'man
-           `((:execute (lambda (filename &optional build-type compilation-window working-directory args)
+           `((:execute (lambda (filename &optional build-type compilation-window cwd args)
                          (concat "vcmake.exe /f " filename)))))
 
   ;; Documentation Tool
@@ -1675,7 +1675,7 @@ See http://oclint.org/"
                             (when (executable-find "gdb")
                               `((:debug file-debug-with-gdb)))
                             (when (executable-find "valgrind")
-                              `((:check-and-debug (lambda (filename &optional build-type compilation-window working-directory args)
+                              `((:check-and-debug (lambda (filename &optional build-type compilation-window cwd args)
                                                     (when (require 'valgrind nil t)
                                                       (valgrind-gdb-run filename args))))))
                             (when (executable-find "strace")
@@ -1687,13 +1687,13 @@ See http://oclint.org/"
                             (when (executable-find "ltrace")
                               `((:strace file-execute-through-ltrace)))
                             (when (executable-find "valgrind")
-                              `((:check (lambda (filename &optional build-type compilation-window working-directory args)
+                              `((:check (lambda (filename &optional build-type compilation-window cwd args)
                                           (when (require 'valgrind nil t)
                                             (valgrind-run filename args))))))
                             (when (executable-find "perf")
                               `((:perf file-execute-through-perf)))
                             (when (executable-find "oprofile")
-                              `((:profile (lambda (filename &optional build-type compilation-window working-directory args)
+                              `((:profile (lambda (filename &optional build-type compilation-window cwd args)
                                             (when (require 'oprofile nil t)
                                               (oprofile-start-single filename args))))))
                             (when (executable-find "optirun")
@@ -1754,7 +1754,7 @@ See http://oclint.org/"
            `(:name (re ("gp?ch") ext)
                    :contents (re "gpch\\([Co+O]\\)\\([0-9]\\{3\\}\\)" 0) ;either C,Objective-C,C++ or Objective-C++ and 3-digit version
                    :precog contents-recog
-                   :matches (lambda (filename &optional build-type compilation-window working-directory args)
+                   :matches (lambda (filename &optional build-type compilation-window cwd args)
                               ;;(language version)
                               (concat (let ((ch (string-to-char (match-string 1))))
                                         (case ch
@@ -1862,11 +1862,11 @@ See http://oclint.org/"
            nil 'gen nil)
   (fmd-add 'Version-Controlled-Directory "VC" "VC" 'dir `file-vc-root-directory-p
            nil 'man
-           `((:vc-dir (lambda (filename &optional build-type compilation-window working-directory args) (vc-dir filename)))
-             (:vc-update (lambda (filename &optional build-type compilation-window working-directory args) (vc-update filename)))))
+           `((:vc-dir (lambda (filename &optional build-type compilation-window cwd args) (vc-dir filename)))
+             (:vc-update (lambda (filename &optional build-type compilation-window cwd args) (vc-update filename)))))
 
   (fmd-add 'Ubuntu-Mirror-Root "Ubuntu Mirror" "Ubuntu Mirror" 'dir `file-ubuntu-mirror-root-directory-p
-           nil 'gen `((:sync (lambda (filename &optional build-type compilation-window working-directory args)
+           nil 'gen `((:sync (lambda (filename &optional build-type compilation-window cwd args)
                                (shell-command (format "debmirror %s "
                                                       (faze (file-name-directory filename) 'file)))))))
 
@@ -2151,14 +2151,14 @@ See http://oclint.org/"
   (fmd-add 'AR "AR" "Archive" 'bin
            `(:name (lit ("ar") ext))
            nil 'gen
-           `((:extract (lambda (filename &optional build-type compilation-window working-directory args) (format "ar xf %s " filename)))
-             (:list (lambda (filename &optional build-type compilation-window working-directory args) (format "ar tf %s " filename)))))
+           `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "ar xf %s " filename)))
+             (:list (lambda (filename &optional build-type compilation-window cwd args) (format "ar tf %s " filename)))))
   (fmd-add 'TAR '("TAR" "Tape Archive") "Archive" 'bin
            `(:name (lit ("tar") ext)
                    :contents (lit ("ustar") 257))
            nil 'gen
-           `((:extract (lambda (filename &optional build-type compilation-window working-directory args) (format "tar xf %s " filename)))
-             (:list (lambda (filename &optional build-type compilation-window working-directory args) (format "tar tf %s " filename)))))
+           `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "tar xf %s " filename)))
+             (:list (lambda (filename &optional build-type compilation-window cwd args) (format "tar tf %s " filename)))))
 
   ;; TODO: Defiene `GZIP-TAR' `BZIP-TAR' `XZ-TAR' and turn `Compressed-TAR' into a `:generalize' of these.
   (fmd-add 'Compressed-TAR '("Compressed-TAR" "Compressed Tape Archive") "Compressed-Archive" 'bin
@@ -2168,21 +2168,21 @@ See http://oclint.org/"
                          ) ext)
                    )
            nil 'gen
-           `((:extract (lambda (filename &optional build-type compilation-window working-directory args) (format "tar xf %s " filename)))
-             (:list (lambda (filename &optional build-type compilation-window working-directory args) (format "tar tf %s " filename)))))
+           `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "tar xf %s " filename)))
+             (:list (lambda (filename &optional build-type compilation-window cwd args) (format "tar tf %s " filename)))))
   (fmd-add 'JAR '("JAR" "Java Archive") "Archive" 'bin
            `(:name (lit ("jar") ext))
            nil 'gen
-           `((:extract (lambda (filename &optional build-type compilation-window working-directory args) (format "jar xf %s " filename)))
-             (:list (lambda (filename &optional build-type compilation-window working-directory args) (format "tar xf %s " filename)))))
+           `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "jar xf %s " filename)))
+             (:list (lambda (filename &optional build-type compilation-window cwd args) (format "tar xf %s " filename)))))
 
   ;; TODO: Support File Set: X.rar, x.r00, x.r01, x.r02, ... and check that their name and content-CRC32 matches contents of X.sfv
   ;; Use function `file-rar-set-count'
   (fmd-add 'RAR '("RAR" "RAR Archive") "Archive" 'bin
            `(:name (lit ("rar") ext))
            nil 'gen
-           `((:extract (lambda (filename &optional build-type compilation-window working-directory args) (format "rar e %s " filename)))
-             (:list (lambda (filename &optional build-type compilation-window working-directory args) (format "rar l %s " filename)))))
+           `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "rar e %s " filename)))
+             (:list (lambda (filename &optional build-type compilation-window cwd args) (format "rar l %s " filename)))))
   (fmd-add 'Archive "Archive" "Group" 't `(:generalize (AR TAR JAR RAR))
            nil 'gen nil)
   (fmd-add 'Compressed-Archive "Compressed-Archive" "Group" 't `(:generalize (Compressed-TAR))

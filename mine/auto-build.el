@@ -99,16 +99,25 @@ Currently supported through GCC's flags -MD."
 
 (defun auto-build-file-finished-callback (buffer-or-name &optional compile-status)
   "Handle result of Build in BUFFER-OR-NAME."
-  (with-current-buffer buffer-or-name
-    (cond ((string= compile-status "finished\n")
-           (when (and (boundp 'compilation-executee) ;if we should execute on compile finish
-                      compilation-executee)          ;and non-nil
-             (file-dwim compilation-executee
-                        'ask            ;choose query or :execute
-                        nil nil (get-buffer-window buffer-or-name) nil compilation-build-type 'ask)))
-          ((string= compile-status "exited abnormally with code 1\n")
-           (message "Scan for error: undefined reference to 'SYMBOL_NAME and look them up apt- or lib-symbol-hash.")
-           ))))
+  (let ((try-last (and (boundp 'compilation-try-last)
+                       compilation-try-last)))
+    (with-current-buffer buffer-or-name
+      (cond ((string= compile-status "finished\n")
+             (when (and (boundp 'compilation-executee) ;if we should execute on compile finish
+                        compilation-executee)          ;and non-nil
+               (file-dwim compilation-executee
+                          (if try-last 'try-last 'ask)       ;choose query or :execute
+                          (if try-last 'try-last nil)
+                          nil
+                          (get-buffer-window buffer-or-name)
+                          nil
+                          compilation-build-type
+                          (if try-last
+                              'try-last
+                            'ask))))
+            ((string= compile-status "exited abnormally with code 1\n")
+             (message "Scan for error: undefined reference to 'SYMBOL_NAME and look them up apt- or lib-symbol-hash.")
+             )))))
 (add-hook 'compilation-finish-functions 'auto-build-file-finished-callback t)
 
 (require 'misc-fns)
@@ -335,6 +344,7 @@ Currently supported through GCC's flags -MD."
                  command) comint))
 
           ;; store compilation states locally in compilation buffer variables
+          (set (make-local-variable 'compilation-try-last) try-last)
           (set (make-local-variable 'compilation-build-type) build-type)
           (set (make-local-variable 'compilation-out-filename) out-filename)
           (set (make-local-variable 'compilation-cflags) cflags)

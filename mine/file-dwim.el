@@ -33,7 +33,7 @@
 ;; ---------------------------------------------------------------------------
 
 ;; TODO: Do `process-send-string' by binding it locally in `process-buffer'.
-(defun file-dwim (filename &optional op args display-output compilation-window source-file build-type working-directory)
+(defun file-dwim (filename &optional op args display-output compilation-window source-file build-type cwd)
   "Apply operation (Operate) OP on FILENAME.
 If op is `ask' read it.
 If op is `try-last' try getting the last cached.
@@ -60,8 +60,8 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                    (fboundp opfun)      ;and it is a function
                    (functionp opfun)    ;and it is a anonymous function (lambda)
                    )
-              (funcall opfun filename build-type compilation-window working-directory args) ;call it
-            (file-execute filename nil args display-output compilation-window source-file nil nil build-type working-directory)
+              (funcall opfun filename build-type compilation-window cwd args) ;call it
+            (file-execute filename nil args display-output compilation-window source-file nil nil build-type cwd)
             )))
     (message "File %s has no operations" (faze filename 'file))))
 (global-set-key [(control c) (f)] 'file-dwim)

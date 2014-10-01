@@ -174,7 +174,7 @@
 
 (defun read-file-execute-args (filename)
   "Read execution arguments of FILENAME."
-  (let* ((prop :execute-args)
+  (let* ((prop :exec-args)
          (fcache (fcache-of filename))
          (history (fcache-get-property fcache prop)) ;recent history element
          (args
@@ -192,47 +192,47 @@
       (fcache-add-to-history-property fcache prop args))
     args))
 ;; Use: (read-file-execute-args "/bin/ls")
-;; (fcache-get-property (fcache-of "/bin/ls") :execute-args)
+;; (fcache-get-property (fcache-of "/bin/ls") :exec-args)
 
-(defun file-execute-without-filter (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-without-filter (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "Execute program file"))
-  (file-execute filename nil args nil compilation-window nil nil nil build-type working-directory))
+  (file-execute filename nil args nil compilation-window nil nil nil build-type cwd))
 
-(defun file-execute-through-strace (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-through-strace (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "STrace program file"))
   (file-execute filename "strace" (delq nil (append
                                              '("-f") ;include forked processes
-                                             args)) nil compilation-window nil nil nil build-type working-directory))
+                                             args)) nil compilation-window nil nil nil build-type cwd))
 
-(defun file-execute-through-ltrace (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-through-ltrace (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "LTrace program file"))
   (file-execute filename "ltrace"
                 (delq nil (append
                            '("-f")      ;include forked processes
                            args))
-                nil compilation-window nil nil nil build-type working-directory))
+                nil compilation-window nil nil nil build-type cwd))
 
-(defun file-execute-through-perf (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-through-perf (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "Perf program file"))
   (let* ((cmds '("record"
                  "stat"))
          (cmd (completing-read "Perf command: " cmds nil nil nil nil (car cmds))))
     (file-execute filename (list "perf" cmd)
                   (delq nil args)
-                  nil compilation-window nil nil nil build-type working-directory)
+                  nil compilation-window nil nil nil build-type cwd)
     (start-process "perf" "*perf-report*" (executable-find "perf") "report")
     ))
 
-(defun file-execute-through-optirun (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-through-optirun (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "Optirun program file"))
-  (file-execute filename "optirun" args nil compilation-window nil nil nil build-type working-directory))
+  (file-execute filename "optirun" args nil compilation-window nil nil nil build-type cwd))
 
-(defun file-execute-through-oprofile-optirun (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-through-oprofile-optirun (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "Oprofile-Optirun program file"))
   (file-execute filename (list "oprofile"
-                               "optirun") args nil compilation-window nil nil nil build-type working-directory))
+                               "optirun") args nil compilation-window nil nil nil build-type cwd))
 
-(defun file-execute-through-apitrace (filename build-type compilation-window working-directory &rest args)
+(defun file-execute-through-apitrace (filename build-type compilation-window cwd &rest args)
   (interactive (read-file-name-debuggable "Apitrace program file"))
   (let* ((api (completing-read (format "Trace 3D Graphics API%s: "
                                        " (default gl)")
@@ -252,14 +252,14 @@
     (file-execute filename
                   (list "apitrace" "trace" (concat "--api=" api) (concat "--output=" output-file))
                   args
-                  nil compilation-window nil nil output-file build-type working-directory)))
+                  nil compilation-window nil nil output-file build-type cwd)))
 ;; Use: (call-interactively 'file-execute-through-apitrace)
 ;; Use: (file-execute-through-apitrace (executable-find "/usr/bin/glxinfo"))
 ;; Use: (file-execute-through-apitrace (executable-find "~/tmp/glxinfo"))
 
 (make-variable-buffer-local 'compilation-search-path)
 
-(defun file-execute (filename &optional prefix args display-output compilation-window source-file threaded output-file build-type working-directory)
+(defun file-execute (filename &optional prefix args display-output compilation-window source-file threaded output-file build-type cwd)
   "Execute FILENAME.
 Optionally execute through the process PREFIX, typically \"[sl]trace\" or (PRE-FILTER-COMMAND PRE-FILTER-ARGS).
 Optionally display output buffer if DISPLAY-OUTPUT is non-nil.
@@ -279,23 +279,33 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                             (cdr prefix)))
 
          (fcache (fcache-of filename))
-         (tag :working-directory)
-         (fcached-working-directory-hist (fcache-get-tag fcache tag))
-         (working-directory (if (eq working-directory 'ask)
-                                (read-directory-name "Working Directory: " nil
-                                                     (first fcached-working-directory-hist) t)
-                              working-directory))
 
-         (args (cond ((eq args 'skip)                   ;if args is `skip'
+         (cwd-hist (fcache-get-tag fcache :exec-cwd))
+         (cwd (cond ((eq cwd 'try-last)
+                     (first cwd-hist))
+                    ((eq cwd 'ask)
+                     (read-directory-name "Working Directory: " nil
+                                          (first cwd-hist) t))
+                    (t
+                     cwd)))
+
+         (args-hist (fcache-get-tag fcache :exec-args))
+         (args (cond ((or (eq 'try-last args)
+                          (memq 'try-last args)  ;TODO needed because args becomes '(try-last) sometimes
+                          )
+                      (first args-hist))
+                     ((eq args 'skip)                   ;if args is `skip'
                       nil)                              ;don't ask for them
                      (args                              ;if args given
                       args)                             ;use them
                      (t                                 ;if no args given
                       (read-file-execute-args filename) ;ask for them
                       ))))
-    (when (and fcache
-               working-directory)
-      (fcache-add-to-history-tag fcache tag working-directory))
+    (when fcache
+      (when cwd
+        (fcache-add-to-history-tag fcache :exec-cwd cwd))
+      (when args
+        (fcache-add-to-history-tag fcache :exec-args args)))
 
     ;; See: http://www.haskell.org/ghc/docs/latest/html/users_guide/using-smp.html
     (when (and source-file
@@ -317,7 +327,7 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
      ((file-executable-p filename)      ;if filename is executable
       ;; just execute it
       (let* ((default-directory
-               (or working-directory
+               (or cwd
                    (file-name-directory filename) ;go to directory containing l`filename'
                    default-directory))
              (buffer-name (concat "*" (or pre-filter "exec") "-*" filename)))

@@ -1369,7 +1369,7 @@ number of (concurrent) build processes."
 
 ;; ---------------------------------------------------------------------------
 
-(defun uproj-do-target (&optional filename args build-type run-flag compilation-window working-directory)
+(defun uproj-do-target (&optional filename args build-type run-flag compilation-window cwd)
   "Debug or Execute Recent Build (Project) under DIR.
 Also rebuild recent project if needed."
   (interactive (list (read-file-name "Run file: ")
@@ -1380,17 +1380,17 @@ Also rebuild recent project if needed."
     (if (file-executable-p filename)
         (let ((threaded (and build-type
                              (string-match "Threaded" build-type)))
-              (working-directory (if (eq working-directory 'ask)
+              (cwd (if (eq cwd 'ask)
                                      (read-directory-name "Working Directory: ")
-                                   working-directory)))
+                                   cwd)))
           (cond ((eq run-flag 'debug)   ;(string-match "Debug" build-type)
                  (or (file-debug-single filename args t) ;be silent if no debugger available an
                      (file-execute filename nil args nil compilation-window nil threaded))) ;try to execute it instead
                 ((and build-type
                       (string-match "Release" build-type))
-                 (file-execute filename nil args nil compilation-window nil threaded nil nil working-directory))
+                 (file-execute filename nil args nil compilation-window nil threaded nil nil cwd))
                 (t ;; 'ask
-                 (file-dwim filename 'ask args nil nil nil nil working-directory))
+                 (file-dwim filename 'ask args nil nil nil nil cwd))
                 ))
       (message "Target %s built is not executable" (faze filename 'file)))))
 (defalias 'uproj-exec 'uproj-do-target)
