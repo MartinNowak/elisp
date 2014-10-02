@@ -1776,4 +1776,12 @@ Opposite of `add-to-list'."
 
 (defalias 'minibuffer-active 'minibufferp)
 
+;; See also: http://irreal.org/blog/?p=3259
+;; (defun make-random-tree (nodes)
+;;   (let (tree)
+;;     (do ((n 1 (1+ n)))
+;;         ((= n nodes) (reverse tree))
+;;       (push (list (random n) n) tree))))
+;; (make-random-tree nodes)
+
 (provide 'power-utils)
