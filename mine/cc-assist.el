@@ -432,7 +432,10 @@ C-Style variant of `paredit-wrap-round'."
   (interactive)
   (save-excursion
     (if (region-active-p)
-        (c-wrap-region)
+        (let ((beg (region-beginning))
+              (end (region-end)))
+          (c-wrap-region)
+          (indent-region beg end))
       (paredit-wrap-sexp 1 ?\( ?\))
       (when (require 'hictx nil t)
         (hictx-sexp-afpt)))))

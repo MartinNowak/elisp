@@ -11,7 +11,9 @@
               (fboundp 'py-indent-line))
          (py-indent-line))
         (t
-         (indent-for-tab-command arg))))
+         (indent-for-tab-command (if (eq major-mode 'python-mode)
+                                     nil
+                                   arg)))))
 
 (defun indent-dwim (&optional arg)
   "Indent Do What I Mean (DWIM).
