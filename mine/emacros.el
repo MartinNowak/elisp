@@ -105,7 +105,8 @@ nil otherwise."
 Otherwise, returns the initial substring of the current mode name up to but
 not including the first slash."
   (downcase
-   (let ((slash-pos-in-mode-name (string-match "/" mode-name)))
+   (let* ((mode-name (symbol-name major-mode))
+          (slash-pos-in-mode-name (string-match "/" mode-name)))
      (if slash-pos-in-mode-name
          (substring mode-name 0 slash-pos-in-mode-name)
        mode-name))))
