@@ -1166,6 +1166,24 @@ save it in `ffap-file-at-point-line-number' variable."
   (move-line-region-activate-hictx-advice)
   )
 
+;;; Graphviz dot
+(defun graphviz-mode-fix-keybindings ()
+  "Correct keybindings in `graphviz-dot-mode'."
+  (when (boundp 'graphviz-dot-mode-map)
+    (let ((map graphviz-dot-mode-map))
+      (define-key map "\C-c\C-c" 'compile)
+      (define-key map "\C-c\C-v" 'graphviz-dot-view)
+      (define-key map "\C-c\C-p" 'graphviz-dot-preview)
+      )))
+(when (append-to-load-path (elsub "graphviz-dot-mode"))
+  (add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
+  (add-to-list 'auto-mode-alist '("\\.gv\\'" . graphviz-dot-mode))
+  (autoload 'graphviz-dot-mode "graphviz-dot-mode" "ELK Test" t)
+  (add-hook 'graphviz-dot-mode-hook 'graphviz-mode-fix-keybindings t)
+  (defalias 'graphviz-mode 'graphviz-dot-mode)
+  (defalias 'dot-mode 'graphviz-dot-mode)
+  (defalias 'gv-mode 'graphviz-dot-mode))
+
 ;;; Generic Mode
 (when (require 'generic-x nil t)
   (setq generic-extras-enable-list t) ;enable all generic modes, in fact!
@@ -8813,9 +8831,6 @@ currently under the cursor."
                       auto-mode-alist))))
 
   (eload 'pgo-multiple-modes)
-
-  ;; graphviz-dot-mode.el --- Mode for the dot-language used by graphviz (att).
-  (load-file-if-exist (elsub "graphviz-dot-mode.elc"))
 
   ;; jump-or-exec.el -------- Jump to a buffer or create it.
   (load-file-if-exist (elsub "jump-or-exec.elc"))
