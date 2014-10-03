@@ -94,3 +94,6 @@
 [submodule "dirswitch"]
 	path = dirswitch
 	url = https://github.com/mickeynp/dirswitch.el.git
+[submodule "graphviz-dot-mode"]
+	path = graphviz-dot-mode
+	url = https://github.com/ppareit/graphviz-dot-mode.git
