@@ -555,6 +555,13 @@ VERSION default to version of gdb"
   (caar dmd-build-types)
   "DMD Default Build Type.")
 
+(defconst ldc-build-types
+  dmd-build-types
+  "LDC Build Types.")
+(defconst ldc-default-build-type
+  dmd-default-build-type
+  "DMD Default Build Type.")
+
 ;;; GHC
 (defconst ghc-build-types
   `(("Debug" ("-debug"))
@@ -694,6 +701,7 @@ Picks completions from `exec-path'."
                     ((string-prefix-p "gdmd" compiler) dmd-build-types)
                     ((string-prefix-p "ldmd2" compiler) dmd-build-types)
                     ((string-prefix-p "dmd" compiler) dmd-build-types)
+                    ((string-prefix-p "ldc" compiler) ldc-build-types)
                     ((string-prefix-p "ghc" compiler) ghc-build-types)
                     ((string-prefix-p "gccgo" compiler) gccgo-build-types)
                     (t nil)))))))
@@ -757,6 +765,8 @@ COMPILER can be either `gcc', `clang', `gdc', `gdmd', `ghc', `ldc', `ldmd2'."
                                "AddressSanitized-Debug")
                               ((string-match "dmd" compiler)
                                dmd-default-build-type)
+                              ((string-match "ldc" compiler)
+                               ldc-default-build-type)
                               ((string-match "gdc" compiler)
                                gdc-default-build-type)
                               ((string-match "ghc" compiler)
@@ -1102,6 +1112,8 @@ Optionally searches PATH for libraries."
                                gdc-build-types)
                               ((string-match "dmd" compiler)
                                dmd-build-types)
+                              ((string-match "ldc" compiler)
+                               ldc-build-types)
                               (t
                                gcc-build-types))
                         nil t nil nil default))
