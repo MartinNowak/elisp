@@ -57,9 +57,12 @@
   (interactive "*P")
   (if (and slick-kill-active
            (memq last-command '(copy-region-as-kill
+                                slick-copy-region-as-kill
                                 kill-ring-save
+                                slick-kill-ring-save
                                 kill-region
-                                yank )))
+                                slick-kill-region
+                                yank)))
       (save-excursion (bol)
                       (prog1 (yank rest)
                         (incf slick-yank-count)
