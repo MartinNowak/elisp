@@ -115,6 +115,7 @@
                    "gdc"               ;GCC Frontend
                    "gdmd"              ;Wrapper script for GDC that emulates DMD
                    "ldc"                ;LLVM Frontend
+                   "ldc2"               ;LLVM Frontend
                    "ldmd2"              ;LLVM Frontend with DMD-like interface
                    )
        )
