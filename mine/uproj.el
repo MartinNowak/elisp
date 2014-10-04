@@ -556,7 +556,47 @@ VERSION default to version of gdb"
   "DMD Default Build Type.")
 
 (defconst ldc-build-types
-  dmd-build-types
+  `(("Debug-Unittest"
+     ("-debug" "-g" "-gs" "-unittest"))
+    ("Debug-Unittest-Verbose"
+     ("-debug" "-g" "-gs" "-unittest" "-v"))
+    ("Debug-Boundscheck-Unittest"
+     ("-debug" "-g" "-gs" "-unittest")) ;-gc
+    ("Debug-Boundscheck-Unittest-Verbose"
+     ("-debug" "-g" "-gs" "-unittest" "-v")) ;-gc
+    ("Debug"
+     ("-debug" "-g" "-gs")) ;-gc
+    ("Debug-ListGCAllocations"
+     ("-debug" "-g" "-gs" "-vgc"))      ;DMD version >= 2.066
+    ("Debug-Unittest-ListGCAllocations"
+     ("-debug" "-g" "-gs" "-vgc" "-unittest"))      ;DMD version >= 2.066
+    ("Debug-Unittest-ListGCAllocations-Verbose"
+     ("-debug" "-g" "-gs" "-vgc" "-unittest" "-v"))      ;DMD version >= 2.066
+    ("Debug-Show-Thread-Locals"
+     ("-vtls" "-debug" "-g" "-gs")) ;-gc
+    ("Debug-Bounds-Check"
+     ("-debug" "-g" "-gs"));-gc
+    ("Unittest"
+     ("-unittest"))
+    ("Profile"
+     ("-profile"))
+    ("Debug-Profile"
+     ("-debug" "-g" "-gs" "-profile"))       ;-gc
+    ("Release-Profile"
+     ("-release" "-Os" "-inline" "-w" "-wi"))
+    ("Release"
+     ("-release" "-Os" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+    ("Release-NoBoundscheck"
+     ("-release" "-Os" "-inline" "-boundscheck=off" "-w" "-wi")) ;Do we need "-m64"?
+    ("Release-Without-BoundscheckSafeOnly"
+     ("-release" "-Os" "-inline" "-boundscheck=safeonly" "-w" "-wi")) ;Do we need "-m64"?
+    ("Debug-Release"
+     ("-debug" "-release" "-Os" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+    ("Release-Unittest"
+     ("-release" "-Os" "-inline" "-w" "-wi" "-unittest"))
+    ("Release-NoBoundscheck-Unittest"
+     ("-release" "-Os" "-inline" "-boundscheck=off" "-w" "-wi" "-unittest"))
+    )
   "LDC Build Types.")
 (defconst ldc-default-build-type
   dmd-default-build-type
