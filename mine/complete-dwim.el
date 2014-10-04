@@ -41,6 +41,20 @@
 (defvar complete-dwim-repeats 0
   "Repeat counter for `complete-dwim'.")
 
+(defun complete-semantic-dwim ()
+  (and (fboundp 'semantic-active-p)
+       (semantic-active-p)
+       (fboundp 'semantic-ia-completing-read-symbol-and-maybe-show-summary)
+       (progn
+         (ignore-errors
+           (semantic-ia-completing-read-symbol-and-maybe-show-summary))
+         ;;(semantic-complete-analyze-inline) ;and if any complete them
+         )
+       ;; (fboundp 'semantic-mode) ;if Semantic online
+       ;; (fboundp 'semantic-analyze-possible-completions) ;if Semantic online
+       ;; (semantic-analyze-possible-completions (point)) ;analyze completions
+       ))
+
 ;;; See: http://www.emacsblog.org/2007/03/12/tab-completion-everywhere/
 (defun complete-dwim (arg &optional no-repeat)
   "A unification of completion, next navigation, indentation and
@@ -115,30 +129,18 @@ using a menu, which default to `completing-read."
 
    ;; In Code
    ((and (at-syntax-code-p)             ;in code (not in comment nor string)
-         (unless (or (and (cc-derived-mode-p)
-                          (c-try-expand-stub-bfpt)))
-           (or
-            (and (fboundp 'semantic-active-p)
-                 (semantic-active-p)
-                 (fboundp 'semantic-ia-completing-read-symbol-and-maybe-show-summary)
-                 (progn
-                   (ignore-errors
-                     (semantic-ia-completing-read-symbol-and-maybe-show-summary))
-                   ;;(semantic-complete-analyze-inline) ;and if any complete them
-                   )
-                 ;; (fboundp 'semantic-mode) ;if Semantic online
-                 ;; (fboundp 'semantic-analyze-possible-completions) ;if Semantic online
-                 ;; (semantic-analyze-possible-completions (point)) ;analyze completions
-                 )
-            (cond ((eq major-mode 'emacs-lisp-mode)
-                   (complete-symbol-dwim))
-                  ((eq major-mode 'python-mode)
-                   (if (fboundp 'py-shell-complete)
-                       (py-shell-complete) ;python-mode
-                     (python-shell-completion-complete-at-point)))
-                  (t
-                   (call-interactively 'hippie-expand))
-                  )))))
+         (or ;; (and (cc-derived-mode-p)
+             ;;      (c-try-expand-stub-bfpt))
+             (complete-semantic-dwim)
+             (cond ((eq major-mode 'emacs-lisp-mode)
+                    (complete-symbol-dwim))
+                   ((eq major-mode 'python-mode)
+                    (if (fboundp 'py-shell-complete)
+                        (py-shell-complete) ;python-mode
+                      (python-shell-completion-complete-at-point)))
+                   (t
+                    (call-interactively 'hippie-expand))
+                   ))))
    (nil                                 ;inserting a YASnippet
     (yas/next-field-group))
    ;; ((semantic-completion-inline-active-p)

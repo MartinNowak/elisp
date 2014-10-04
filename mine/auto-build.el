@@ -312,6 +312,9 @@ Currently supported through GCC's flags -MD."
                                     ;; compiled file
                                     " " (file-name-nondirectory filename)
 
+                                    ;; import paths
+                                    " -I.. -I../.. -I../../.."
+
                                     ;; imported local files
                                     (let ((local-imports (delete (expand-file-name filename)
                                                                  (d-file-imports filename t))))
