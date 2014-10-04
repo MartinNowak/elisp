@@ -583,19 +583,23 @@ VERSION default to version of gdb"
     ("Debug-Profile"
      ("-debug" "-g" "-gs" "-profile"))       ;-gc
     ("Release-Profile"
-     ("-release" "-Os" "-inline" "-w" "-wi"))
+     ("-release" "-O" "-inline" "-w" "-wi"))
     ("Release"
-     ("-release" "-Os" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-NoBoundscheck"
-     ("-release" "-Os" "-inline" "-boundscheck=off" "-w" "-wi")) ;Do we need "-m64"?
+     ("-release" "-O" "-inline" "-boundscheck=off" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Without-BoundscheckSafeOnly"
-     ("-release" "-Os" "-inline" "-boundscheck=safeonly" "-w" "-wi")) ;Do we need "-m64"?
+     ("-release" "-O" "-inline" "-boundscheck=safeonly" "-w" "-wi")) ;Do we need "-m64"?
     ("Debug-Release"
-     ("-debug" "-release" "-Os" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-debug" "-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Unittest"
-     ("-release" "-Os" "-inline" "-w" "-wi" "-unittest"))
+     ("-release" "-O" "-inline" "-w" "-wi" "-unittest"))
     ("Release-NoBoundscheck-Unittest"
-     ("-release" "-Os" "-inline" "-boundscheck=off" "-w" "-wi" "-unittest"))
+     ("-release" "-O" "-inline" "-boundscheck=off" "-w" "-wi" "-unittest"))
+    ("Release-LTO-NoBoundscheck-Unittest"
+     ("-release" "-O5" "-inline" "-boundscheck=off" "-w" "-wi" "-unittest"))
+    ("Release-LTO-Boundscheck-Unittest"
+     ("-release" "-O5" "-inline" "-boundscheck=on" "-w" "-wi" "-unittest"))
     )
   "LDC Build Types.")
 (defconst ldc-default-build-type
