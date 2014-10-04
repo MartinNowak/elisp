@@ -192,6 +192,11 @@ http://stackoverflow.com/questions/13525774/clang-and-float128-bug-error"
                            ("Warnings-As-Errors" ("-w")))
   "DMD Warn Types. First element becomes default.")
 
+(defconst ldc-warn-types `(("Warnings-As-Message" ("-wi"))
+                           ("Warnings-GC-As-Message" ("-wi" "-vgc"))
+                           ("Warnings-As-Errors" ("-w")))
+  "LDC Warn Types. First element becomes default.")
+
 ;; Haskell Standards
 (defcustom haskell-std-types `("Haskell-1.0"
                                "Haskell-98"
@@ -1114,6 +1119,7 @@ Optionally searches PATH for libraries."
                       ((string-match "ghc" compiler) ghc-warn-types)
                       ((string-match "gdc" compiler) gdc-warn-types)
                       ((string-match "dmd" compiler) dmd-warn-types)
+                      ((string-match "ldc" compiler) ldc-warn-types)
                       (t gcc-warn-types)))
          (default (or default (caar types)))
          (heads (mapcar (lambda (type)
@@ -1136,6 +1142,7 @@ Optionally searches PATH for libraries."
 ;; Use: (compilation-read-warn-type-flags "ghc")
 ;; Use: (compilation-read-warn-type-flags "gdc")
 ;; Use: (compilation-read-warn-type-flags "gcc")
+;; Use: (compilation-read-warn-type-flags "ldc")
 
 ;; ---------------------------------------------------------------------------
 

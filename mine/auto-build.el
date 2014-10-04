@@ -241,6 +241,7 @@ Currently supported through GCC's flags -MD."
                                          "objective-c" "objective-c++"))
                            (executable-find "ccache")))
             (is-dmd (string-match "dmd" compiler))
+            (is-ldc (string-match "ldc" compiler))
             (is-ldmd2 (string-match "ldmd2" compiler))
             (is-gdc (string-match "gdc" compiler))
             (is-gnu (or (string-match "gdc" compiler)
@@ -262,7 +263,8 @@ Currently supported through GCC's flags -MD."
                                     compiler
 
                                     ;; use -vcolumns argument if present as string in compiler binary
-                                    (when (and is-dmd
+                                    (when (and (or is-dmd
+                                                   is-ldc)
                                                (cscan-file full-compiler "vcolumns"))
                                       " -vcolumns")
 
@@ -270,9 +272,11 @@ Currently supported through GCC's flags -MD."
                                     ;;   " -v")  ;show whole template instantiation stack
 
                                     (unless (or is-dmd
+                                                is-ldc
                                                 is-ldmd2)
                                       (concat " -x " lang)) ;language
                                     (unless (or is-dmd
+                                                is-ldc
                                                 is-ldmd2
                                                 is-gdc)
                                       (when (and std
@@ -327,11 +331,13 @@ Currently supported through GCC's flags -MD."
 
                                     ;; threading
                                     (unless (or is-dmd
+                                                is-ldc
                                                 is-ldmd2)
                                       " -lpthread")
 
                                     ;; output filename
                                     (if (or is-dmd
+                                            is-ldc
                                             is-ldmd2)
                                         " -of"
                                       " -o ")
