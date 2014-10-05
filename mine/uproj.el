@@ -557,31 +557,31 @@ VERSION default to version of gdb"
 
 (defconst ldc-build-types
   `(("Debug-Unittest"
-     ("-debug" "-g" "-gs" "-unittest"))
+     ("-d-debug" "-g" "-unittest"))
     ("Debug-Unittest-Verbose"
-     ("-debug" "-g" "-gs" "-unittest" "-v"))
+     ("-d-debug" "-g" "-unittest" "-v"))
     ("Debug-Boundscheck-Unittest"
-     ("-debug" "-g" "-gs" "-unittest")) ;-gc
+     ("-d-debug" "-g" "-unittest")) ;-gc
     ("Debug-Boundscheck-Unittest-Verbose"
-     ("-debug" "-g" "-gs" "-unittest" "-v")) ;-gc
+     ("-d-debug" "-g" "-unittest" "-v")) ;-gc
     ("Debug"
-     ("-debug" "-g" "-gs")) ;-gc
+     ("-d-debug" "-g")) ;-gc
     ("Debug-ListGCAllocations"
-     ("-debug" "-g" "-gs" "-vgc"))      ;DMD version >= 2.066
+     ("-d-debug" "-g" "-vgc"))      ;DMD version >= 2.066
     ("Debug-Unittest-ListGCAllocations"
-     ("-debug" "-g" "-gs" "-vgc" "-unittest"))      ;DMD version >= 2.066
+     ("-d-debug" "-g" "-vgc" "-unittest"))      ;DMD version >= 2.066
     ("Debug-Unittest-ListGCAllocations-Verbose"
-     ("-debug" "-g" "-gs" "-vgc" "-unittest" "-v"))      ;DMD version >= 2.066
+     ("-d-debug" "-g" "-vgc" "-unittest" "-v"))      ;DMD version >= 2.066
     ("Debug-Show-Thread-Locals"
-     ("-vtls" "-debug" "-g" "-gs")) ;-gc
+     ("-vtls" "-d-debug" "-g")) ;-gc
     ("Debug-Bounds-Check"
-     ("-debug" "-g" "-gs"));-gc
+     ("-d-debug" "-g"));-gc
     ("Unittest"
      ("-unittest"))
     ("Profile"
      ("-profile"))
     ("Debug-Profile"
-     ("-debug" "-g" "-gs" "-profile"))       ;-gc
+     ("-d-debug" "-g" "-profile"))       ;-gc
     ("Release-Profile"
      ("-release" "-O" "-inline" "-w" "-wi"))
     ("Release"
@@ -591,7 +591,7 @@ VERSION default to version of gdb"
     ("Release-Without-BoundscheckSafeOnly"
      ("-release" "-O" "-inline" "-boundscheck=safeonly" "-w" "-wi")) ;Do we need "-m64"?
     ("Debug-Release"
-     ("-debug" "-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
+     ("-d-debug" "-release" "-O" "-inline" "-w" "-wi")) ;Do we need "-m64"?
     ("Release-Unittest"
      ("-release" "-O" "-inline" "-w" "-wi" "-unittest"))
     ("Release-NoBoundscheck-Unittest"
