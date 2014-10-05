@@ -585,6 +585,17 @@ X defaults to :related"
 ;; Use: (relangs-limits-maximum "int")
 ;; Use: (relangs-limits-maximum "float")
 
+(defun relangs-size_t ()
+  "Size Type."
+  (lambda (expr)
+    `((:lang (C C++ D) :expr "size_t"))))
+
+(defun relangs-signed-size_t ()
+  "Signed Size Type."
+  (lambda (expr)
+    `((:lang (C C++) :expr "ssize_t")
+      (:lang D :expr "ptrdiff_t"))))
+
 (defun relangs-byte-sizeof-type ()
   "Byte Size of EXPR."
   (lambda (expr)
