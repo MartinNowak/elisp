@@ -1996,6 +1996,7 @@ Return t if `forward-sexp' otherwise nil."
   (let ((activate cool-light-lock-mode))
     ;; Most
     (when (memq major-mode (append cc-derived-modes
+                                   '(rust-mode)
                                    '(python-mode scons-mode)
                                    '(matlab-mode octave-mode)
                                    '(go-mode)))
@@ -2074,8 +2075,10 @@ Return t if `forward-sexp' otherwise nil."
   (add-hook 'c++-mode-hook 'cool-light-lock-mode t)
   (add-hook 'objc-mode-hook 'cool-light-lock-mode t)
   (add-hook 'd-mode-hook 'cool-light-lock-mode t)
+  (add-hook 'rust-mode-hook 'cool-light-lock-mode t)
   (add-hook 'glsl-mode-hook 'cool-light-lock-mode t)
   (add-hook 'go-mode-hook 'cool-light-lock-mode t)
+
   (add-hook 'matlab-mode-hook 'cool-light-lock-mode t)
   (add-hook 'octave-mode-hook 'cool-light-lock-mode t)
   (add-hook 'python-mode-hook 'cool-light-lock-mode t)
