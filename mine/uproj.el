@@ -1024,7 +1024,8 @@ of jobs running with nicenessrity NICENESS."
                                              (car (trace-directory-upwards
                                                    (lambda (dir)
                                                      (and
-                                                      (file-project-root-directory-p dir)
+                                                      ;; Previously used `file-build-directory-p'
+                                                      (file-build-directory-p dir)
                                                       (or
                                                        (not use-buffer-name) ;either don't require match
                                                        buffer-file-name
@@ -1040,6 +1041,7 @@ of jobs running with nicenessrity NICENESS."
         bdir)))))
 ;; Use: (compilation-read-root-directory "~/Work/MATLAB/EMD/EMDs/src")
 ;; Use: (compilation-read-root-directory "~/justcxx/semnet/")
+;; Use: (compilation-read-root-directory "~/justd/cn5query/")
 ;; Use: (fcache-get-property (fcache-of "~/justcxx/semnet/") :build-root)
 ;; Use: (fcache-get-property (fcache-of (expand-file-name "~/Work/MATLAB/EMD/EMDs/src")) :build-root)
 ;; Use: (fcache-get-properties (fcache-of (expand-file-name "~/Work/MATLAB/EMD/EMDs/src")))

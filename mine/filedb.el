@@ -3604,6 +3604,7 @@ found."
                             t))
 ;; Use: file-build-directory-p (&optional dir recog format)
 ;; Use: (file-build-directory-p "~/apt-source/tgt-1.0.17")
+;; Use: (file-build-directory-p "~/justd/cn5query")
 
 ;; Use: (file-match "~/justcxx/GNUmakefile" 'Makefile)
 ;; Use: (file-match "~/justcxx/GNUmakefile" 'Build-Tool-Script)
