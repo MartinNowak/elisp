@@ -959,13 +959,15 @@ of jobs running with nicenessrity NICENESS."
          (niceness (or niceness compilation-niceness))
          (lang (or lang "c"))
          (compiler (or compiler (compilation-default-build-compiler lang)))
+         (dub-flag (string-equal "dub.json" (file-name-sans-directory bfile)))
          (cmd (concat "\\nice -n " (number-to-string niceness) " "
                       (if (file-executable-p bfile)
                           bfile
                         (funcall (file-op bfile :execute) bfile))
-                      (if (string-equal "dub.json"
-                                        (file-name-sans-directory bfile))
-                          ""
+                      (if dub-flag
+                          (concat ""
+                                  (when compiler
+                                    (concat " --compiler=" compiler)))
                         (concat
                          " -j " (number-to-string jobs)
                          ;;" -C " dir
@@ -1355,8 +1357,11 @@ directory DIR."
          (bfile (compilation-read-build-file directory))
          (target (compilation-read-build-target directory bfile))
          (clean (string-equal target "clean")) ;check if we are cleaning up
+         (lang (if (string-match "dub\\.json" bfile)
+                   "d"
+                 nil))
          (compiler (unless clean
-                     (compilation-read-compiler)))
+                     (compilation-read-compiler lang)))
          (build-type (unless clean
                        (compilation-read-build-type)))
          (options (unless clean
