@@ -8,9 +8,9 @@
 ;; Created: Fri Dec 15 10:44:14 1995
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Wed Sep  3 14:10:36 2014 (-0700)
+;; Last-Updated: Wed Oct  8 15:25:01 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 3411
+;;     Update #: 3434
 ;; URL: http://www.emacswiki.org/isearch+.el
 ;; Doc URL: http://www.emacswiki.org/IsearchPlus
 ;; Keywords: help, matching, internal, local
@@ -75,8 +75,9 @@
 ;;
 ;;  Commands defined here:
 ;;
-;;    `isearchp-act-on-demand' (Emacs 22+), `isearch-char-by-name'
-;;    (Emacs 23-24.3), `isearchp-cycle-mismatch-removal',
+;;    `isearchp-act-on-demand' (Emacs 22+),
+;;    `isearchp-append-register', `isearch-char-by-name' (Emacs
+;;    23-24.3), `isearchp-cycle-mismatch-removal',
 ;;    `isearchp-fontify-buffer-now', `isearchp-init-edit',
 ;;    `isearchp-open-recursive-edit' (Emacs 22+),
 ;;    `isearchp-retrieve-last-quit-search',
@@ -187,6 +188,7 @@
 ;;    `C-h'        `isearch-mode-help'
 ;;    `C-x n'      `isearchp-toggle-region-restriction' (Emacs 24.3+)
 ;;    `C-x o'      `isearchp-open-recursive-edit' (Emacs 22+)
+;;    `C-x r g'    `isearchp-append-register'
 ;;    `C-x 8 RET'  `isearch-char-by-name' (Emacs 23-24.3)
 ;;    `C-y C-_'    `isearchp-yank-symbol-or-char' (Emacs 22+)
 ;;    `C-y C-('    `isearchp-yank-sexp-symbol-or-char' (Emacs 22+)
@@ -256,8 +258,8 @@
 ;;      automatically set the region around the last search target.
 ;;    - Command `isearchp-toggle-set-region', bound to `C-SPC' during
 ;;      isearch - toggle `isearchp-set-region-flag'.
-;;    - Command `set-region-around-search-target' - manually set the
-;;      region around the last search target.
+;;    - Command `isearchp-set-region-around-search-target' - manually
+;;      set the region around the last search target.
 ;;
 ;;  * When you visit a search hit, you can perform an action on it.
 ;;    Use `C-M-RET' (command `isearchp-act-on-demand' - Emacs 22+
@@ -305,7 +307,7 @@
 ;;
 ;;    (NOTE: To use a prefix arg within Isearch, you must set
 ;;    `isearch-allow-prefix' (if available) or `isearch-allow-scroll'
-;;    to non-nil.)
+;;    to non-`nil'.)
 ;;
 ;;  * When you use on-demand replacement (with `C-M-RET') the
 ;;    replacement text can be either inserted literally, as is, or
@@ -367,6 +369,15 @@
 ;;    string, so you can append it to whatever you are already
 ;;    searching for.
 ;;
+;;  * `C-x r g' (`isearchp-append-register') appends the contents of a
+;;    register to the search string.  You are prompted for the
+;;    register to use.  This is the same key that is bound globally to
+;;    `insert-register'.  If you want this key to instead exit Isearch
+;;    and insert the register in the buffer, then define this key in
+;;    `isearch-mode-map' as `nil' (i.e., unbind it), and optionally
+;;    bind `isearchp-append-register' to a different key in
+;;    `isearch-mode-map'.
+;;
 ;;  * `C-M-y' (`isearch-yank-secondary') yanks the secondary selection
 ;;    into the search string, if you also use library `second-sel.el'.
 ;;
@@ -419,7 +430,7 @@
 ;;    editing session, where you can do anything you like (including
 ;;    search for something different).  Using `C-M-c' closes the
 ;;    recursive editing session and resumes the search (from the
-;;    current position when you hit `C-M-c').
+;;    current position where you hit `C-M-c').
 ;;
 ;;  * Highlighting of the mismatched portion of your search string in
 ;;    the minibuffer.  This is the portion that is removed if you do
@@ -440,7 +451,7 @@
 ;;                     text.  You can always see your last input, even
 ;;                     if it is a mismatch.  And it is available for
 ;;                     editing using `M-e'.
-;;    nil            - Your current input is appended, even if the
+;;    `nil'          - Your current input is appended, even if the
 ;;                     previous input has a mismatched portion.
 ;;    anything else  - Your current input is ignored (removed) if it
 ;;                     causes a mismatch.  The search string always
@@ -455,20 +466,20 @@
 ;;    `M-c' (case-sensitivity) and `M-s i' (matching hidden text).
 ;;
 ;;  * `M-c' (`isearch-toggle-case-fold') toggles case sensitivity.  If
-;;    option `isearchp-toggle-option-flag' is non-nil then it toggles
-;;    option `isearchp-case-fold' to change the sensitivity from now
-;;    on.  Otherwise, the option value is not changed, so the effect
-;;    is for the current search only.
+;;    option `isearchp-toggle-option-flag' is non-`nil' then it
+;;    toggles option `isearchp-case-fold' to change the sensitivity
+;;    from now on.  Otherwise, the option value is not changed, so the
+;;    effect is for the current search only.
 ;;
 ;;  * `M-s i' (`isearch-toggle-invisible') toggles invisible-text
-;;    sensitivity.  If option `isearchp-toggle-option-flag' is non-nil
-;;    then it toggles option `search-invisible' to change the
-;;    sensitivity from now on.  Otherwise, the option value is not
+;;    sensitivity.  If option `isearchp-toggle-option-flag' is
+;;    non-`nil' then it toggles option `search-invisible' to change
+;;    the sensitivity from now on.  Otherwise, the option value is not
 ;;    changed, so the effect is for the current search only.
 ;;
 ;;  * `C-+' (`isearchp-toggle-search-invisible') toggles the value of
 ;;    option `search-invisible'.  The effect is like that of `M-s i'
-;;    with no prefix argument and with non-nil
+;;    with no prefix argument and with non-`nil'
 ;;    `isearchp-toggle-option-flag'.
 ;;
 ;;  * Other bindings during Isearch:
@@ -523,6 +534,8 @@
 ;;
 ;;(@* "Change log")
 ;;
+;; 2014/10/08 dadams
+;;     Added: isearchp-append-register.  Bound to C-x r g.
 ;; 2014/09/03 dadams
 ;;     Changed C-c binding for isearchp-yank-char to C-z.
 ;; 2014/09/02 dadams
@@ -1815,6 +1828,17 @@ in another Emacs session."
   (sit-for 1)
   (isearch-update))
 
+(defun isearchp-append-register ()      ; Bound to `C-x r g', the same as `insert-register' globally.
+  "Insert register contents at point in search string.
+You are prompted for the register to use."
+  (interactive)
+  (let ((current-prefix-arg  t)
+        string)
+    (with-temp-buffer
+      (call-interactively 'insert-register)
+      (setq string  (buffer-substring (point-min) (point-max))))
+    (isearch-yank-string string)))
+
 (defun isearchp-retrieve-last-quit-search () ; Bound to `M-g' in `isearch-mode-map'.
   "Insert last successful search string from when you hit `C-g' in Isearch.
 Bound to `\\<isearch-mode-map>\\[isearchp-retrieve-last-quit-search]' during Isearch."
@@ -2942,6 +2966,8 @@ Other Isearch+ Commands that Require Library `isearch-prop.el'
   (when (> emacs-major-version 22)      ; Emacs 23+ (supports Unicode)
     (define-key isearch-mode-map "\C-x8"          nil)
     (define-key isearch-mode-map "\C-x8\r"        'isearch-char-by-name)))
+
+(define-key isearch-mode-map "\C-xrg" 'isearchp-append-register)
 
 (define-key isearch-mode-map "\C-y"               nil) ; Put all yanking commands on prefix `C-y'.
 (when (fboundp 'isearch-yank-internal)
