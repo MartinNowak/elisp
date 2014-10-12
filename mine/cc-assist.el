@@ -315,7 +315,7 @@ replaced by underscores."
       ((c-mode c++-mode)
        "int argc, const char * argv[], const char * envp[]")
       (d-mode
-       "string args[]"))))
+       "string[] args"))))
 
 ;; Insertion of C/C++ Code Template using Skeletons EmacsWiki:
 ;; SkeletonMode: http://www.emacswiki.org/cgi-bin/wiki/SkeletonMode
