@@ -1417,13 +1417,13 @@ number of (concurrent) build processes."
   (unless dir (setq dir uproj-last-build-dir))
   (if dir
       (let* ((default-directory dir)
-             (compilation-directory dir)
+             ;; (compilation-directory dir)
              (process-environment
               (cons (concat "LANGUAGE=" (or process-language "en")) ;default to english compilation language
                     process-environment))
              (comint t))
         (if uproj-last-build-command
-            (compile (concat "pushd >/dev/null " compilation-directory " && "
+            (compile (concat "pushd >/dev/null " dir " && "
                              uproj-last-build-command)
                      comint)
           (message "No last project build command")
