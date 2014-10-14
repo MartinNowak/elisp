@@ -890,6 +890,9 @@ COMPILER can be either `gcc', `clang', `gdc', `gdmd', `ghc', `ldc', `ldmd2'."
 (defvar uproj-last-build-host nil "Last Build Host.")
 (add-to-list 'desktop-globals-to-save 'uproj-last-build-host t)
 
+(defvar uproj-last-build-command nil "Last Build Command.")
+(add-to-list 'desktop-globals-to-save 'uproj-last-build-command t)
+
 (defvar uproj-build-dir-history nil "Build Directory History.")
 (add-to-list 'desktop-globals-to-save 'uproj-build-dir-history t)
 (defvar uproj-build-compiler-history nil "Build Compiler History.")
@@ -1291,9 +1294,9 @@ directory DIR."
              (cons (concat "LANGUAGE=" (or ,process-language "en")) ;default to english compilation language
                    process-environment))
             (comint t))
-       (compile
-        (c-make-compile-command ,dir ,bfile ,target ,lang ,compiler ,type ,jobs ,niceness ,host)
-        comint))))
+       (compile (setq uproj-last-build-command
+                      (c-make-compile-command ,dir ,bfile ,target ,lang ,compiler ,type ,jobs ,niceness ,host))
+                comint))))
 
 (defvar uproj-local-run-flag nil
   "Local flags for running build target.")
@@ -1413,11 +1416,19 @@ number of (concurrent) build processes."
   (interactive)
   (unless dir (setq dir uproj-last-build-dir))
   (if dir
-      (let* ((default-directory (or dir uproj-last-build-dir)) ;at to DIR if given
+      (let* ((default-directory dir)
+             (compilation-directory dir)
              (process-environment
               (cons (concat "LANGUAGE=" (or process-language "en")) ;default to english compilation language
-                    process-environment)))
-        (call-interactively 'recompile))
+                    process-environment))
+             (comint t))
+        (if uproj-last-build-command
+            (compile (concat "pushd >/dev/null " compilation-directory " && "
+                             uproj-last-build-command)
+                     comint)
+          (message "No last project build command")
+          (ding)) ;(call-interactively 'recompile)
+        )
     (call-interactively 'uproj-build-and-maybe-run-target)))
 
 (defun uproj-build-and-maybe-run-target (&optional dir bfile target compiler type flags jobs niceness process-language host)
