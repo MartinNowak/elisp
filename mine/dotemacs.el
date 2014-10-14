@@ -1133,6 +1133,23 @@ save it in `ffap-file-at-point-line-number' variable."
   (add-hook 'emacs-lisp-mode-hook 'elk-test-assert-lock))
 
 ;;; ===========================================================================
+;;; SmallTalk
+
+(autoload 'smalltalk-mode "smalltalk-mode" "SmallTalk" t)
+(add-to-list 'auto-mode-alist '("\\.st\\'" . smalltalk-mode))
+
+;; duplicate zip files' setup for star files or fall back on archive-mode, which
+;; scans file contents to determine type so is safe to use
+(push (cons "\\.star\\'"
+	    (catch 'archive-mode
+	      (dolist (mode-assoc auto-mode-alist 'archive-mode)
+		(and (string-match (car mode-assoc) "Starfile.zip")
+		     (functionp (cdr mode-assoc))
+		     (throw 'archive-mode (cdr mode-assoc))))))
+      auto-mode-alist)
+(push "\\.star\\'" inhibit-first-line-modes-suffixes)
+
+;;; ===========================================================================
 ;;; CC-Mode
 (eload 'cc-patterns nil "cc-patterns.el") ;C,C++ Patterns
 (eload 'cc-assist nil "cc-assist.el") ;Coding Assistance for C,C++, and others.
@@ -2353,10 +2370,14 @@ functions, and some types.  It also provides indentation that is
     (eload 'ipython)
     (eload 'anything-ipython)))
 
-
 (add-hook 'python-mode-hook 'python-mode-add-charedits t)
 
-
+;;; https://tkf.github.io/emacs-jedi/latest/
+(when (require 'jedi nil t)
+  (jedi:install-server)
+  (add-hook 'python-mode-hook 'jedi:setup)
+  ;; (setq jedi:complete-on-dot t)          ; optional
+  )
 
 ;;; ===========================================================================
 ;;; SCons
