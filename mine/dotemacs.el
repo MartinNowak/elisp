@@ -1801,8 +1801,9 @@ match FILENAME."
   "Configure flycheck pylint enabled and disabled messages."
   (when (eq major-mode 'python-mode)
     (setq-default flycheck-pylint-enabled-messages-string nil
-                  flycheck-pylint-disabled-messages-string '("C0103" "C0301" "C0303"
-                                                             "R0903" "R0913" "R0914" "R0915"
+                  flycheck-pylint-disabled-messages-string '("C0103" "C0301" "C0302" "C0303" "C0321"
+                                                             "R0903" "R0904"
+                                                             "R0913" "R0914" "R0915"
                                                              "W0511"
                                                              "missing-docstring"
                                                              "invalid-name"
