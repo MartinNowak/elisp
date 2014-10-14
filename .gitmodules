@@ -97,3 +97,6 @@
 [submodule "graphviz-dot-mode"]
 	path = graphviz-dot-mode
 	url = https://github.com/ppareit/graphviz-dot-mode.git
+[submodule "wolfram-mode"]
+	path = wolfram-mode
+	url = https://github.com/kawabata/wolfram-mode.git
