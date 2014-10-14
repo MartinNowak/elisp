@@ -1770,6 +1770,7 @@ match FILENAME."
 ;;; FlyCheck
 
 (defun flycheck-set-repeatable-navigation ()
+  (global-set-key [(control f6)] 'flycheck-first-error)
   (global-set-key [(control f7)] 'flycheck-previous-error)
   (global-set-key [(control f8)] 'flycheck-next-error)
   ;; Make navigation repeatable
