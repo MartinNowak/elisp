@@ -1289,9 +1289,11 @@ directory DIR."
                                   default-directory)) ;at to DIR if given
             (process-environment
              (cons (concat "LANGUAGE=" (or ,process-language "en")) ;default to english compilation language
-                   process-environment)))
+                   process-environment))
+            (comint t))
        (compile
-        (c-make-compile-command ,dir ,bfile ,target ,lang ,compiler ,type ,jobs ,niceness ,host) t))))
+        (c-make-compile-command ,dir ,bfile ,target ,lang ,compiler ,type ,jobs ,niceness ,host)
+        comint))))
 
 (defvar uproj-local-run-flag nil
   "Local flags for running build target.")

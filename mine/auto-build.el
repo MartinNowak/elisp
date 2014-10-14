@@ -421,7 +421,7 @@ Currently supported through GCC's flags -MD."
                                    (c-output-object compiler filename build-type))))
       (with-current-buffer
           (let ((split-height-threshold 1) ;force vertical split
-                )
+                (comint t))
             (compile (concat compiler
                              " " cflags   ;compilation flags
                              (when (string-match "^ghc" compiler)
@@ -432,7 +432,7 @@ Currently supported through GCC's flags -MD."
                              " " filename
                              (when libs
                                (concat " " libs))
-                             " -o " out-filename) t))
+                             " -o " out-filename) comint))
         (if has-main
             (set (make-local-variable 'compilation-executee) out-filename) ;signal execution on finish
           (when (boundp 'compilation-executee)
