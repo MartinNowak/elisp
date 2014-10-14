@@ -1463,6 +1463,14 @@ save it in `ffap-file-at-point-line-number' variable."
   (autoload 'br-mdc "br-mdc" "Modelica Class Browsing" t))
 
 ;;; ===========================================================================
+;;; Wolfram (Mathematic)
+(when (append-to-load-path (elsub "wolfram-mode"))
+  (autoload 'wolfram-mode "wolfram-mode" nil t)
+  (autoload 'run-wolfram "wolfram-mode" nil t)
+  ;; (setq wolfram-program "/Applications/Mathematica.app/Contents/MacOS/MathKernel")
+  (add-to-list 'auto-mode-alist '("\\.wolf$" . wolfram-mode)))
+
+;;; ===========================================================================
 ;;; Android: http://www.emacswiki.org/emacs-en/GoogleAndroid. CEDET uses it
 (when (append-to-load-path (elsub "android-mode"))
   (autoload 'android-mode "android-mode" "Android Project Management mode." t)
