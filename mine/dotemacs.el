@@ -1464,6 +1464,8 @@ save it in `ffap-file-at-point-line-number' variable."
 
 ;;; ===========================================================================
 ;;; Wolfram (Mathematic)
+;;; See also: https://github.com/kawabata/wolfram-mode
+;;; See also: https://github.com/melton1968/math
 (when (append-to-load-path (elsub "wolfram-mode"))
   (autoload 'wolfram-mode "wolfram-mode" nil t)
   (autoload 'run-wolfram "wolfram-mode" nil t)
