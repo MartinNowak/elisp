@@ -96,10 +96,10 @@
          ;; AutoComplete development version.
          ("auto-complete development version" nil nil
           (
-           "https://raw.github.com/auto-complete/popup-el/master/popup.el"
-           "https://raw.github.com/auto-complete/fuzzy-el/master/fuzzy.el"
-           "https://raw.github.com/auto-complete/auto-complete/master/auto-complete.el"
-           "https://raw.github.com/auto-complete/auto-complete/master/auto-complete-config.el"
+           "https://raw.githubusercontent.com/auto-complete/popup-el/master/popup.el"
+           "https://raw.githubusercontent.com/auto-complete/fuzzy-el/master/fuzzy.el"
+           "https://raw.githubusercontent.com/auto-complete/auto-complete/master/auto-complete.el"
+           "https://raw.githubusercontent.com/auto-complete/auto-complete/master/auto-complete-config.el"
            ))
          ;; Anything
          ("anything-minimal" nil nil
@@ -107,6 +107,11 @@
            "http://www.emacswiki.org/emacs/download/anything.el" ; Main library
            "http://www.emacswiki.org/emacs/download/anything-match-plugin.el" ; Matching algorithm humanely
            "http://www.emacswiki.org/emacs/download/anything-config.el" ; Configuration for anything.el
+           ))
+         ("anything-kyr" nil nil
+          (
+           "http://www.emacswiki.org/emacs/download/anything.el" ; Main library
+           "http://www.emacswiki.org/emacs/download/anything-kyr.el" ; 
            ))
          ("anything-completion-minimal" nil nil
           (

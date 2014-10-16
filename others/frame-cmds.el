@@ -7,11 +7,10 @@
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Mar  5 16:30:45 1996
 ;; Version: 0
-;; Package-Requires: ()
 ;; Package-Requires: ((frame-fns "0"))
-;; Last-Updated: Tue Jul 22 09:55:42 2014 (-0700)
+;; Last-Updated: Wed Oct 15 18:00:48 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 2984
+;;     Update #: 2993
 ;; URL: http://www.emacswiki.org/frame-cmds.el
 ;; Doc URL: http://emacswiki.org/FrameModes
 ;; Doc URL: http://www.emacswiki.org/OneOnOneEmacs
@@ -273,6 +272,10 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2014/10/15 dadams
+;;     window-mgr-title-bar-pixel-height: Added default value for ns (Next).  Thx to Nate Eagleson.
+;; 2014/10/13 dadams
+;;     Removed extra, empty Package-Requires.
 ;; 2014/07/21 dadams
 ;;     Do not redefine delete-window - just advise it.
 ;;     delete/iconify-window: Just use delete-window, not old-delete-window.
@@ -538,6 +541,7 @@
 ;; in `thumb-frm.el'.
 
 ;; Quiet byte-compiler.
+(defvar 1on1-minibuffer-frame)          ; In `oneonone.el'
 (defvar mac-tool-bar-display-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -590,7 +594,10 @@ Candidates include `jump-to-frame-config-register' and `show-buffer-menu'."
                  (function :tag "Another function"))
   :group 'Frame-Commands)
 
-(defcustom window-mgr-title-bar-pixel-height (if (eq window-system 'mac) 22 27)
+;; Use `cond', not `case', for Emacs 20 byte-compiler.
+(defcustom window-mgr-title-bar-pixel-height (cond ((eq window-system 'mac) 22)
+						   ((eq window-system 'ns)  40)
+						   (t  27))
   "*Height of frame title bar provided by the window manager, in pixels.
 You might alternatively call this constant the title-bar \"width\" or
 \"thickness\".  There is no way for Emacs to determine this, so you
@@ -1226,9 +1233,9 @@ With a negative prefix arg, toggle horizontally.
 
 When toggling both directions, each is toggled from its last maximize
 or restore state.  This means that using this after
-`maximize-horizontal', `maximize-vertical', `toggle-max-horizontal',
-or `toggle-max-vertical' does not necessarily just reverse the effect
-of that command.
+`maximize-frame-horizontally', `maximize-frame-vertically',
+`toggle-max-frame-horizontally', or `toggle-max-frame-vertically' does
+not necessarily just reverse the effect of that command.
 
 In Lisp code:
  DIRECTION is the direction: `horizontal', `vertical', or `both'.

@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Thu Sep 18 08:18:17 2014 (-0700)
+;; Last-Updated: Wed Oct 15 11:24:53 2014 (-0700)
 ;;           By: dradams
-;;     Update #: 11283
+;;     Update #: 11288
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -1131,6 +1131,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-cmd2.el'")
 ;;
+;; 2014/10/15 dadams
+;;     icicle-imenu-1: Add contents of imenu-after-jump-hook to icicle-search-hook.
 ;; 2014/09/02 dadams
 ;;     icicle-search-replace-match: Temporary (?) fix for braindead Emacs 24.4 regression (bug #18388).
 ;; 2014/08/31 dadams
@@ -7433,6 +7435,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-opt.el'")
 ;;
+;; 2014/09/24 dadams
+;;     icicle-custom-themes-update-flag: Added missing :type and :group.
 ;; 2014/09/15 dadams
 ;;     icicle-top-level-key-bindings: Do not bind icicle-dired* if Dired+ is loaded (it has better).
 ;; 2014/08/29 dadams
