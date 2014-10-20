@@ -94,10 +94,16 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
 (defun dired-marked-files-dwim (&optional arg)
   "Execute current file or all marked (or next ARG) files."
   (interactive "P")
-  (delq nil (mapcar (lambda (file)
-                      (when (file-regular-p file)
-                        (file-dwim file)))
-                    (dired-get-marked-files nil arg))))
+  (let ((files (dired-get-marked-files nil arg)))
+    (unless (delq nil (mapcar (lambda (file)
+                                (when (file-regular-p file)
+                                  (file-dwim file)))
+                              files))
+      (message "No regular files to evaluate in %s "
+               (mapcar (lambda (file-name)
+                         (faze file-name 'file))
+                       files))
+      (ding))))
 
 ;; TODO: Use `(url-ops FILENAME)' and input result it to `read-char-spec'.
 ;; TODO: Do we need special handling for ELF files?
