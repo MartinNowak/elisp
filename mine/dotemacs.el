@@ -3389,7 +3389,7 @@ See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-fo
     ;;    (shell-command (concat "chmod 700 " tmpfile))))                                        ;https://groups.google.com/forum/?fromgroups=#!topic/gnu.emacs.bug/5Ge23R7WSMQ
     (setq server-host (getenv "HOSTNAME")
           server-use-tcp t)    ;make it possible to reach Emacs from other hosts
-    (server-force-delete)
+    ;; (server-force-delete)
     (server-start)
     (when (and (functionp 'server-edit)
                (fboundp 'repeatable-command-advice))
