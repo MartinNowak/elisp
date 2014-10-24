@@ -941,6 +941,8 @@
 (global-set-key [(control c) (shift ?s)] 'new-eshell)
 
 ;; Shell (Commands)
+(eload 'shell-command)
+(eload 'bash-completion)
 (eload 'shell-command-ext)              ;Shell Command
 (when nil
   (eload 'background)             ;Interface to background jobs
