@@ -416,32 +416,36 @@ X defaults to :related"
   (lambda ()
     `((:lang (C C++) :expr "long")    ;TODO: case on architecure type
       (:lang Swift :expr "Long")
-      (:lang D :expr "int")
+      (:lang D :expr "long")
       (:lang Ada :expr (| "Long_Integer"
                           "Interfaces.C.long"))
-      )) "Signed 32-Bit Integer Type.")
+      (:lang Rust :expr "i64")
+      )) "Signed 64-Bit Integer Type.")
 
 (defconst relangs-unsigned-long
   (lambda ()
     `((:lang (C C++ Java) :expr "unsigned long") ;TODO: case on architecure type
       (:lang Swift :expr "ULong")
-      (:lang (D C\#) :expr "uint")
+      (:lang (D C\#) :expr "ulong")
       (:lang Ada :expr "Interfaces.C.unsigned_long")
-      )) "Unsigned 32-bit Integer Type.")
+      (:lang Rust :expr "u64")
+      )) "Unsigned 64-bit Integer Type.")
 
 (defconst relangs-long-long
   (lambda ()
     `((:lang (C C++) :expr "long long")
-      (:lang (C\# D) :expr "long")
+      (:lang C\# :expr "long long")
+      (:lang D :expr "cent")
       (:lang Ada :expr "Long_Long_Integer")
-      (:lang Rust :expr "i64")
-      )) "Signed 64-bit Integer Type.")
+      (:lang Rust :expr "s128")
+      )) "Signed 128-bit Integer Type.")
 (defconst relangs-unsigned-long-long
   (lambda ()
     `((:lang (C C++) :expr (: "unsigned" "long" "long"))
-      (:lang (C\# D) :expr "ulong")
-      (:lang Rust :expr "u64")
-      )) "Unsigned 64-bit Integer Type.")
+      (:lang C\# :expr "ulonglong")
+      (:lang D :expr "ucent")
+      (:lang Rust :expr "u128")
+      )) "Unsigned 128-bit Integer Type.")
 
 (defconst relangs-single-precision-floating-point
   (lambda ()
