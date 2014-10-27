@@ -1866,13 +1866,13 @@ match FILENAME."
           flycheck-gnat-include-path std-path)
 
     ;; Set C++ Standard
-    (cond ((eq major-mode '(c-mode))
+    (cond ((memq major-mode '(c-mode))
            (setq flycheck-gcc-language-standard "c99"
                  flycheck-clang-language-standard "c99"))
-          ((eq major-mode '(c++-mode))
+          ((memq major-mode '(c++-mode))
            (setq flycheck-gcc-language-standard "c++11"
                  flycheck-clang-language-standard "c++11"))
-          ;; ((eq major-mode '(objc-mode))
+          ;; ((memq major-mode '(objc-mode))
           ;;  (setq flycheck-gcc-language-standard "c99"))
           )
 
@@ -1892,7 +1892,7 @@ match FILENAME."
           (add-to-list 'flycheck-clang-definitions "TARGET_LINUX"))))
 
     ;; Ada (GNAT)
-    (when (eq major-mode 'ada-mode)
+    (when (memq major-mode '(ada-mode))
       (let ((cs (trace-file-upwards "." "config_spec.xml")))
         (when cs
           (let* ((top (car cs))
