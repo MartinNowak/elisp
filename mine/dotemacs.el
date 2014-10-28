@@ -810,7 +810,7 @@
 ;;; ===========================================================================
 ;;; Lightweight alternative to emerge/ediff.
 ;; (autoload 'smerge-mode "smerge-mode" nil t)
-(defun try-smerge-conflicts ()
+(defun smerge-try-conflicts ()
   "Enter smerge-mode if buffer contains vc merge conflicts.
 You can now enter ediff with C-c ^ E."
   (save-excursion
@@ -822,7 +822,7 @@ You can now enter ediff with C-c ^ E."
 (defadvice smerge-prev (after ctx-flash-highlight-symbol-prev activate) (hictx-line)) (ad-activate 'smerge-prev)
 (defadvice smerge-next (after ctx-flash-highlight-symbol-prev activate) (hictx-line)) (ad-activate 'smerge-next)
 
-;;(add-hook 'find-file-hooks 'try-smerge-conflicts t)
+;;(add-hook 'find-file-hooks 'smerge-try-conflicts t)
 
 ;;; ===========================================================================
 ;;; ELP: Emacs Lisp Profiler
