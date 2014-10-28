@@ -808,6 +808,23 @@
     ))
 
 ;;; ===========================================================================
+;;; Lightweight alternative to emerge/ediff.
+;; (autoload 'smerge-mode "smerge-mode" nil t)
+(defun try-smerge-conflicts ()
+  "Enter smerge-mode if buffer contains vc merge conflicts.
+You can now enter ediff with C-c ^ E."
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " nil t)
+      (smerge-mode 1))))
+(global-set-key [(control shift f7)] 'smerge-prev)
+(global-set-key [(control shift f8)] 'smerge-next)
+(defadvice smerge-prev (after ctx-flash-highlight-symbol-prev activate) (hictx-line)) (ad-activate 'smerge-prev)
+(defadvice smerge-next (after ctx-flash-highlight-symbol-prev activate) (hictx-line)) (ad-activate 'smerge-next)
+
+;;(add-hook 'find-file-hooks 'try-smerge-conflicts t)
+
+;;; ===========================================================================
 ;;; ELP: Emacs Lisp Profiler
 (when (require 'elp nil t)
   (defalias 'elp-profile-function 'elp-instrument-function)
@@ -5352,17 +5369,6 @@ substring completion."
   ;; See: http://www.emacswiki.org/emacs-en/EmergeDiff
   ;; (when (require 'emerge nil t))
   (setq emerge-diff-options "--ignore-all-space")
-
-  ;; Lightweight alternative to emerge/ediff.
-  (autoload 'smerge-mode "smerge-mode" nil t)
-  (defun try-smerge-conflicts ()
-    "Enter smerge-mode if buffer contains vc merge conflicts.
-You can now enter ediff with C-c ^ E."
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " nil t)
-	(smerge-mode 1))))
-  ;;(add-hook 'find-file-hooks 'try-smerge-conflicts t)
 
   ;; =============== Chat ================================
 
