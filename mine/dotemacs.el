@@ -496,7 +496,12 @@
   (define-key global-map [(shift meta left)] 'windmove-left-safe)
   (define-key global-map [(shift meta right)] 'windmove-right-safe)
   (define-key global-map [(shift meta up)] 'windmove-up-safe)
-  (define-key global-map [(shift meta down)] 'windmove-down-safe))
+  (define-key global-map [(shift meta down)] 'windmove-down-safe)
+  (when (require 'repeatable nil t)
+    (repeatable-command-advice windmove-left-safe)
+    (repeatable-command-advice windmove-right-safe)
+    (repeatable-command-advice windmove-up-safe)
+    (repeatable-command-advice windmove-down-safe)))
 
 ;;; ===========================================================================
 ;;; My Stuff

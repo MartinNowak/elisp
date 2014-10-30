@@ -203,14 +203,6 @@ See http://superuser.com/questions/132225/how-to-get-back-to-an-active-minibuffe
 ;; Make window switching a little easier. C-x-o is a pain.
 ;;; See: http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/b7ec9f5a2d155c3e?hl=en
 (when (require 'windmove nil t)
-  (when pnw-me?
-    (windmove-default-keybindings 'shift))
-  (when nil                             ;TODO: Disabled because this fails
-    (when (require 'repeatable nil t)
-      (repeatable-command-advice windmove-left)
-      (repeatable-command-advice windmove-right)
-      (repeatable-command-advice windmove-up)
-      (repeatable-command-advice windmove-down)))
   (when nil
     (global-unset-key "\C-t") ;Unbind C-t. I don't really care about transposing chars.
     (define-prefix-command 'ctrl-t-prefix) ;Turn C-t into a prefix key
