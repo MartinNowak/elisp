@@ -537,7 +537,9 @@
 (autoload 'paredit-mode "paredit" "Minor mode for pseudo-structurally editing Lisp code." t)
 (dolist (hook (list
 	       ;; 'c-mode-common-hook 'haskell-mode-hook 'maxima-mode-hook 'ielm-mode-hook
-	       'emacs-lisp-mode-hook 'lisp-interaction-mode-hook 'lisp-mode-hook
+	       'emacs-lisp-mode-hook
+               ;; NOTE too annoying to here 'lisp-interaction-mode-hook
+               'lisp-mode-hook
 	       ))
   (add-hook hook (lambda ()
 		   (paredit-mode 1)
