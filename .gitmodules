@@ -100,3 +100,6 @@
 [submodule "wolfram-mode"]
 	path = wolfram-mode
 	url = https://github.com/kawabata/wolfram-mode.git
+[submodule "lua-mode"]
+	path = lua-mode
+	url = https://github.com/immerrr/lua-mode.git
