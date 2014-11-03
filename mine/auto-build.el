@@ -228,31 +228,32 @@ Currently supported through GCC's flags -MD."
                              (val (fcache-get-tag fcache tag)))
                         (or (when try-last val)
                             (fcache-set-tag fcache tag
-                                            (compilation-read-warn-type-flags compiler))))) ;TODO: Use `compilation-read-warn-type' and lookup flags afterwards
+                                            (compilation-read-warn-type-flags
+                                             compiler))))) ;TODO: Use `compilation-read-warn-type' and lookup flags afterwards
           (has-main (file-main-function filename lang)))
       (unless out-filename (setq out-filename
                                  (if (or has-main
                                          (string-equal lang "d"))
                                      (auto-build-output-program compiler filename build-type)
                                    (c-output-object compiler filename build-type))))
-      (let ((split-height-threshold 1)  ;force vertical split
-            (ccache-exec (when (member (downcase lang)
-                                       '("c" "c++"
-                                         "objective-c" "objective-c++"))
-                           (executable-find "ccache")))
-            (is-dmd (string-match "dmd" compiler))
-            (is-ldc (string-match "ldc" compiler))
-            (is-ldmd2 (string-match "ldmd2" compiler))
-            (is-gdc (string-match "gdc" compiler))
-            (is-gnu (or (string-match "gdc" compiler)
-                        (string-match "gcc" compiler)
-                        (string-match "g++" compiler)
-                        (string-match "gcj" compiler)
-                        (string-match "gfortan" compiler)
-                        (string-match "gnat" compiler)))
-            (full-compiler (if (file-exists-p compiler)
-                               compiler
-                             (executable-find compiler))))
+      (let* ((split-height-threshold 1)  ;force vertical split
+             (ccache-exec (when (member (downcase lang)
+                                        '("c" "c++"
+                                          "objective-c" "objective-c++"))
+                            (executable-find "ccache")))
+             (is-dmd (string-match "dmd" compiler))
+             (is-ldc (string-match "ldc" compiler))
+             (is-ldmd2 (string-match "ldmd2" compiler))
+             (is-gdc (string-match "gdc" compiler))
+             (is-gnu (or (string-match "gdc" compiler)
+                         (string-match "gcc" compiler)
+                         (string-match "g++" compiler)
+                         (string-match "gcj" compiler)
+                         (string-match "gfortan" compiler)
+                         (string-match "gnat" compiler)))
+             (full-compiler (if (file-exists-p compiler)
+                                compiler
+                              (executable-find compiler))))
         (with-current-buffer
             (let* ((default-directory (file-name-directory filename))
                    (comint t)
@@ -358,9 +359,14 @@ Currently supported through GCC's flags -MD."
           (set (make-local-variable 'compilation-out-filename) out-filename)
           (set (make-local-variable 'compilation-cflags) cflags)
           (set (make-local-variable 'compilation-libs) libs)
-          (set (make-local-variable 'compilation-error-regexp-alist) (cond (is-dmd '(dmd gnu))
-                                                                           (is-gnu '(gnu))
-                                                                           (t compilation-error-regexp-alist)))
+          (set (make-local-variable
+                'compilation-error-regexp-alist)
+               (cond (is-dmd '(dmd gnu))
+                     (is-ldmd2 '(dmd))
+                     (is-ldc '(gnu))
+                     (is-gdc '(gnu))
+                     (is-gnu '(gnu))
+                     (t compilation-error-regexp-alist)))
 
           (if (or has-main
                   (string-equal lang "d"))
