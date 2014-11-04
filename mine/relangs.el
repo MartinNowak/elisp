@@ -146,57 +146,57 @@ X defaults to :related"
 
 (defconst relangs-cast-to-type
   (lambda (expr type)
-    `((:lang D :expr (: "cast" "!" type "(" expr ")"))
-      (:lang C :expr (: "(" type ")" expr))
+    `((:lang D :expr (: "cast" "!" ,type "(" ,expr ")"))
+      (:lang C :expr (: "(" ,type ")" ,expr))
       (:lang C++ :expr (: (| "static_cast"
                              "reinterpret_cast"
                              "dynamic_cast"
-                             "const_cast") "<" type ">" "(" expr ")"))
-      (:lang Swift :expr (: type "(" expr ")"))
+                             "const_cast") "<" ,type ">" "(" ,expr ")"))
+      (:lang Swift :expr (: ,type "(" ,expr ")"))
       )) "Convert (Cast) EXPR to type TYPE.")
 
 (defconst relangs-convert-to-string
   (lambda (expr)
-    `((:lang C++ :expr (: "boost:lexical_cast<std::string>(" expr ")"))
-      (:lang C++11 :expr (: "std::to_string(" expr ")"))
-      (:lang D :expr (: "to!string(" expr ")"))
-      (:lang Python-2 :expr (: "str(" expr ")"))
+    `((:lang C++ :expr (: "boost:lexical_cast<std::string>(" ,expr ")"))
+      (:lang C++11 :expr (: "std::to_string(" ,expr ")"))
+      (:lang D :expr (: "to!string(" ,expr ")"))
+      (:lang Python-2 :expr (: "str(" ,expr ")"))
       )) "Convert (Cast) EXPR to a string.")
 
 (defconst relangs-to-string-conversion-member
   (lambda (expr)
-    `((:lang (D) :expr (: "toString(" expr ")"))
+    `((:lang (D) :expr (: "toString(" ,expr ")"))
       )) "To String Conversion of expression EXPR.")
 
 (defconst relangs-convert-to-wstring
   (lambda (expr)
-    `((:lang C++11 :expr (: "std::to_wstring(" expr ")"))
-      (:lang D :expr (: "to!wstring(" expr ")"))
+    `((:lang C++11 :expr (: "std::to_wstring(" ,expr ")"))
+      (:lang D :expr (: "to!wstring(" ,expr ")"))
       )) "Convert EXPR to a UTF-16 wide string.")
 
 (defconst relangs-print
   (lambda (expr)
-    `((:lang C :expr (: "puts(" expr ")") :if ("isstring(expr)"))
+    `((:lang C :expr (: "puts(" ,expr ")") :if ("isstring(expr)"))
       (:lang C++ :expr (: "std::cout << " expr))
       (:lang D :expr (: "write(" (+ expr) ")"))
       (:lang Rust :expr (: "std::io::print(" (+ expr) ")"))
       (:lang Python-2 :expr (: "print" _ expr))
-      (:lang Python-2.6 :expr (: "PrettyPrinter(indent=1, depth=None, with=80).pprint(" expr ")") :import "pprint")
-      (:lang Python :expr (: "print(" expr ")") ) ;to make it easier to redirect prints in servers
-      (:lang Java :expr (: "System.out.println(" expr ")"))
-      (:lang Lisp :expr (| ("(message " expr ")")
-                           ("(error " expr ")")))
-      (:lang Matlab :expr (: "display(" expr ")"))
+      (:lang Python-2.6 :expr (: "PrettyPrinter(indent=1, depth=None, with=80).pprint(" ,expr ")") :import "pprint")
+      (:lang Python :expr (: "print(" ,expr ")") ) ;to make it easier to redirect prints in servers
+      (:lang Java :expr (: "System.out.println(" ,expr ")"))
+      (:lang Lisp :expr (| ("(message " ,expr ")")
+                           ("(error " ,expr ")")))
+      (:lang Matlab :expr (: "display(" ,expr ")"))
       (:lang Shell :expr (: "echo " expr))
       (:lang Swift :expr (: "print(" (+ expr) ")"))
       )) "Print Expression EXPR.")
 
 (defconst relangs-print-line
   (lambda (expr)
-    `((:lang C++ :expr (: "std::cout << " expr " << std::endl"))
-      (:lang Rust :expr (: "std::io::println(" (+ expr) ")"))
-      (:lang D :expr (: "writeln(" (+ expr) ")"))
-      (:lang Swift :expr (: "println(" (+ expr) ")"))
+    `((:lang C++ :expr (: "std::cout << " ,expr " << std::endl"))
+      (:lang Rust :expr (: "std::io::println(" (+ ,expr) ")"))
+      (:lang D :expr (: "writeln(" (+ ,expr) ")"))
+      (:lang Swift :expr (: "println(" (+ ,expr) ")"))
       )) "Print EXPR on a separate line.")
 
 (defconst relangs-begins-with
@@ -619,8 +619,8 @@ X defaults to :related"
 (defun relangs-byte-sizeof-type ()
   "Byte Size of EXPR."
   (lambda (expr)
-    `((:lang (C C++ D) :expr (: "sizeof" "(" expr ")"))
-      (:lang D :expr (: expr ".sizeof"))))) ;TODO: Automatically brace around char*
+    `((:lang (C C++ D) :expr (: "sizeof" "(" ,expr ")"))
+      (:lang D :expr (: ,expr ".sizeof"))))) ;TODO: Automatically brace around char*
 ;; Use: (relangs-byte-sizeof-type)
 ;; Use: (relangs-byte-sizeof-type "double")
 
