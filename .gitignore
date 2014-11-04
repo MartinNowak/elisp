@@ -8,3 +8,5 @@ semantic.cache
 /python-mode/.bzr
 .undo
 .trash
+
+relangs.elc
