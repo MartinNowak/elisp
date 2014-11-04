@@ -144,13 +144,29 @@ X defaults to :related"
       (:lang D      :expr (: "std.file.mkdirRecursive" _ "(" ,dir _ ")") :import "std.file")
       )) "Make directory DIR including its parents.")
 
+(defconst relangs-cast-to-type
+  (lambda (expr type)
+    `((:lang D :expr (: "cast" "!" type "(" expr ")"))
+      (:lang C :expr (: "(" type ")" expr))
+      (:lang C++ :expr (: (| "static_cast"
+                             "reinterpret_cast"
+                             "dynamic_cast"
+                             "const_cast") "<" type ">" "(" expr ")"))
+      (:lang Swift :expr (: type "(" expr ")"))
+      )) "Convert (Cast) EXPR to type TYPE.")
+
 (defconst relangs-convert-to-string
   (lambda (expr)
     `((:lang C++ :expr (: "boost:lexical_cast<std::string>(" expr ")"))
       (:lang C++11 :expr (: "std::to_string(" expr ")"))
       (:lang D :expr (: "to!string(" expr ")"))
       (:lang Python-2 :expr (: "str(" expr ")"))
-      )) "Convert EXPR to a string.")
+      )) "Convert (Cast) EXPR to a string.")
+
+(defconst relangs-to-string-conversion-member
+  (lambda (expr)
+    `((:lang (D) :expr (: "toString(" expr ")"))
+      )) "To String Conversion of expression EXPR.")
 
 (defconst relangs-convert-to-wstring
   (lambda (expr)
@@ -807,13 +823,6 @@ See
     `((:lang (C++) :expr "std::cmp")
       (:lang (Python) :expr "__cmp__")
       )) "Compare/Sig")
-
-(defconst relangs-to-string-conversion
-  (lambda (expr)
-    `((:lang (C++) :expr (: "boost::lexical_cast<std::string>(" expr ")"))
-      (:lang (D) :expr (: "toString(" expr ")"))
-      (:lang (Python) :expr (: "str(" expr ")"))
-      )) "To String Conversion of expression EXPR.")
 
 ;;; Relational
 (defconst relangs-relational-less-than
