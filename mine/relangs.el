@@ -704,11 +704,11 @@ See
       (:lang Ada :expr ("access" ,type))
       )) "Reference to TYPE.")
 
-(defconst relangs-address-of-instance
+(defconst relangs-reference-of-instance
   (lambda (variable)
-    `((:lang (C C++ D) :expr ("&" ,variable))
+    `((:lang (C C++ D Swift) :expr ("&" ,variable))
       (:lang Ada :expr (,variable "'access"))
-      )) "Address of Instance VARIABLE.")
+      )) "Address (Reference) of Instance VARIABLE.")
 
 (defconst relangs-function-definition
   (lambda (name args body)
