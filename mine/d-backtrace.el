@@ -38,7 +38,7 @@
 
 (defun d-backtrace-install ()
   "Install d-backtrace."
-  ;; TODO: Functionize this
+  ;; TODO Functionize this
   (let ((entry (assq 'd-backtrace
                      compilation-error-regexp-alist-alist)))
     (if entry

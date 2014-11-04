@@ -2,7 +2,7 @@
 ;; If region is inactive, copy and cut will operate on the current line, as if
 ;; the current line is currently selected.
 ;; See: http://www.emacswiki.org/emacs-en/SlickCopy
-;; TODO: Integrate with auto-indent-mode.el at https://github.com/mlf176f2/auto-indent-mode.el/
+;; TODO Integrate with auto-indent-mode.el at https://github.com/mlf176f2/auto-indent-mode.el/
 
 (defgroup slick-edit nil
   "Productivity Enhancements to killing and yanking."

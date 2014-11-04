@@ -13,7 +13,7 @@ X can be either a string, symbol or list of such elements."
          (intern (downcase (symbol-name x))))
         ((listp x)
          (mapcar 'downcase-any x))
-        ;; TODO: Activate
+        ;; TODO Activate
         ;; ((vectorp x)
         ;;  (list-to-vector (mapcar 'downcase-any x)))
         ))

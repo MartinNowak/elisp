@@ -1,12 +1,12 @@
 ;;; obarray-utils.el ---
 ;; Author: Per Nordlöw
 
-;; TODO: Merge with obarray-fns.el?
+;; TODO Merge with obarray-fns.el?
 
 (defun make-obarray (num)
   "Construct an obarray suitable for storing NUM number of
 objects."
-  (make-vector (+ num 1) 0)) ;TODO: Reuse this-or-next-power-of-two-plus-one() is good guess for a prime.
+  (make-vector (+ num 1) 0)) ;TODO Reuse this-or-next-power-of-two-plus-one() is good guess for a prime.
 ;; Use: (make-obarray 10)
 ;; Test: (benchmark-run 10 (make-obarray 1000000))
 ;; Test: (benchmark-run 10 (make-vector 1000000 0))
@@ -39,7 +39,7 @@ Optional arg OB is an obarray, which defaults to the global variable
 ;; Use: (obarray-length)
 ;; Use: (benchmark-run 1 (obarray-length))
 
-;; TODO: Generalize `propname' to `plist` and remove STRING.
+;; TODO Generalize `propname' to `plist` and remove STRING.
 (defun obarray-equal (string &optional propname kind-char scope ob)
   "Seek a match for STRING in `ob''.
 Return a list of matches as strings (keys)."
@@ -85,13 +85,13 @@ Return a list of matches as strings (keys)."
 ;; use: (obarray-match-regexp "pOb\\'" :name ?f nil *ectags*)
 ;; use: (obarray-match-regexp "pOb\\'" :name ?c nil *ectags*)
 
-;; TODO: Generalize `propname' to `plist` and remove STRING.
+;; TODO Generalize `propname' to `plist` and remove STRING.
 (defun obarray-match-string (string &optional propname match-type kind-char scope ob)
   ""
   (case match-type
-    (exact                ;TODO: Reuse `all-completions' to improve performance.
+    (exact                ;TODO Reuse `all-completions' to improve performance.
      (obarray-equal string propname kind-char scope ob))
-    (prefix               ;TODO: Reuse `all-completions' to improve performance.
+    (prefix               ;TODO Reuse `all-completions' to improve performance.
      (obarray-match-regexp (concat "\\`" (regexp-quote string)) propname kind-char scope ob))
     (partial
      (obarray-match-regexp (regexp-quote string) propname kind-char scope ob))

@@ -229,7 +229,7 @@
 ;;            - minor formatting updates
 ;; 24/03/2001 - initial version.  Pretty lame.  Need some help.
 
-;; TODO:
+;; TODO
 ;;
 ;; - Create overlays such that for example @c id is displayed as an teletype id. Reuse this highlighter in doc snarfing tools used by semantic.
 ;; - better end-user documentation
@@ -488,7 +488,7 @@ Key bindings:
           ;; Enable/Disable according to arg
           (> (prefix-numeric-value arg) 0)))
   (when doxymacs-mode
-    (when nil                           ;TODO: Fix this!
+    (when nil                           ;TODO Fix this!
       (when (boundp 'filladapt-token-table)
         (add-to-list 'filladapt-token-table
                      `(,(concat "[@\\]" "\\(" "t?param" "\\(?:" _*
@@ -505,7 +505,7 @@ Key bindings:
 (defvar doxymacs-mode-map (make-sparse-keymap)
   "Keymap for doxymacs minor mode.")
 
-(when nil                                  ;TODO: Change prefix!
+(when nil                                  ;TODO Change prefix!
   (define-key doxymacs-mode-map "\C-cD?" 'doxymacs-lookup)
   (define-key doxymacs-mode-map "\C-cDr" 'doxymacs-rescan-tags)
 

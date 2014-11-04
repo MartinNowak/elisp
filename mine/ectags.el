@@ -4,10 +4,10 @@
 ;; Author: Per Nordlöw <per.nordlow@gmail.com>
 ;; Maintainer: Per Nordlöw <per.nordlow@gmail.com>
 
-;; TODO: Use `completion-extra-properties' to display extra properties such as function doc etc.
+;; TODO Use `completion-extra-properties' to display extra properties such as function doc etc.
 ;; FIXME: class tags are not put in their namespaces for example semnet::filesystem::Dir'c is stored only as Dir'c
-;; TODO: Why does (symbol-plist (intern-soft "bob'f" *ectags*)) have `:path' property?
-;; TODO: M-. should wait for current ectags async process to finish before
+;; TODO Why does (symbol-plist (intern-soft "bob'f" *ectags*)) have `:path' property?
+;; TODO M-. should wait for current ectags async process to finish before
 ;; parsing it file using `call-process' and
 ;; `comint-output-filter-functions'. See:
 ;; http://stackoverflow.com/questions/3572532/how-to-wait-for-capture-aysnchronous-shell-command-output-in-emacs-lisp
@@ -332,12 +332,12 @@ sorted alphabetically."
     "Update ectags for deletion of FILENAME."
     (ectags-unregister-tag-file filename))
 
-;; TODO: Does put-text-property() after we have concatted everything improve performance?
-;; TODO: Highlight words before "::" in font-lock-type-face. Search for "\w::"
+;; TODO Does put-text-property() after we have concatted everything improve performance?
+;; TODO Highlight words before "::" in font-lock-type-face. Search for "\w::"
 
-;; TODO: Add `:type' attribute to variables by scanning `tag-addr' from tag_name to beginning, filtering out variable qualifier keywords such as `static'.
-;; TODO: Enables: g_oreg->set_tag will then complete to pReg::set_tag() and not also to Ob::set_tag()
-;; TODO: BUG: find-ectag at `g_pob_undefined___' gives error:
+;; TODO Add `:type' attribute to variables by scanning `tag-addr' from tag_name to beginning, filtering out variable qualifier keywords such as `static'.
+;; TODO Enables: g_oreg->set_tag will then complete to pReg::set_tag() and not also to Ob::set_tag()
+;; TODO BUG: find-ectag at `g_pob_undefined___' gives error:
 ;;       `find-ectag': Wrong type argument: integer-or-marker-p, nil
 (defun ectags-scan-tags (root &optional file-format tags-obarray tag-patt file-patt type-name multi-flag)
   "Scan for Exuberant Ctags in Current Buffer for the tag
@@ -412,7 +412,7 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
         (when tag-signature
           (setq tag-key (concat tag-key tag-signature))) ;append signature
 
-        ;; TODO: Uniquify using signature
+        ;; TODO Uniquify using signature
         ;; Note: duplicates handling: uniquify overloadabled function names using signature
         (when (zerop dup)     ;if not just another duplicate
           (forward-line)      ;need to go to beginning of next line
@@ -428,7 +428,7 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
           )
 
         ;; fontify tag-kind char string
-        ;; TODO: Use: (string (+ ?Ⓐ (- ?b ?a)))
+        ;; TODO Use: (string (+ ?Ⓐ (- ?b ?a)))
         (when tag-kind (put-text-property 0 1 'face '(:inherit shadow :box -1) tag-kind))
 
         (if (and (or (null tag-patt) (string-match tag-patt tag-key))
@@ -508,7 +508,7 @@ OBA. NMATCH can be either 'exact, 'prefix, 'suffix, 'partial."
 ;;   (let ((tags-obarray (make-obarray 1000)))
 ;;     (ectags-scan-directory "/usr/include/c++/4.7/vector" 'ectags-format-vi-full-raw tags-obarray)))
 
-;; TODO: colorize scope as type
+;; TODO colorize scope as type
 (when (string-match (concat "\\(?:\\([[:alnum:]_]+\\)::\\)"
                             "\\(?:\\([[:alnum:]_]+\\)::\\)?"
                             "\\(?:\\([[:alnum:]_]+\\)::\\)?"
@@ -587,7 +587,7 @@ context."
       (if dir-flag
           (ectags-scan-directory root 'ectags-format-vi-full-raw *ectags*)
         (unless (file-regular-p (expand-file-name "tags" root)) ;if no tags yet
-          (atags-update root 'Exuberant-Ctags nil t)                     ;create it. TODO: sync-flag doesn't work when I delete (elsub "mine/tags").
+          (atags-update root 'Exuberant-Ctags nil t)                     ;create it. TODO sync-flag doesn't work when I delete (elsub "mine/tags").
           )
         (visit-ectags-table root))
       *ectags*)))
@@ -690,7 +690,7 @@ property to read defaulting its value to DEFAULT."
                (icicle-define-sort-command "by ectag signature" ectags-signature-less-p "Sort completion candidates by signatures."))
   )
 
-;; TODO: Use: http://www.emacswiki.org/emacs/Icicles_-_Customization_and_General_Tips#toc55 to dynamically create Completion Candidate Name
+;; TODO Use: http://www.emacswiki.org/emacs/Icicles_-_Customization_and_General_Tips#toc55 to dynamically create Completion Candidate Name
 
 ;; ---------------------------------------------------------------------------
 
@@ -883,7 +883,7 @@ Use as `icicle-candidate-help-fn' for `find-ectag'."
 (add-to-list 'desktop-globals-to-save 'find-tag-history t)
 (add-to-list 'desktop-globals-to-save 'find-ectag-history t)
 
-;;; TODO: Support kind `argument' having values `variable' and `function', `type', `class'
+;;; TODO Support kind `argument' having values `variable' and `function', `type', `class'
 (defun read-ectag-key (&optional prompt require-match kind default)
   "Read an `*ectags*' tag key string."
   (let* ( ;;(icicle-transform-function 'ectags-transform-function)
@@ -891,7 +891,7 @@ Use as `icicle-candidate-help-fn' for `find-ectag'."
          (icicle-candidate-help-fn 'icicle-find-ectag-help)
          ;;(icicle-sort-functions-alist ectags-sort-commands)
          (defs (when nil                ;NOTE: Disabled for now because too slow for large projects
-                 (ectags-default-tags-at-point 'symbol :name)) ;partial tag name matches. TODO: Use lazy.
+                 (ectags-default-tags-at-point 'symbol :name)) ;partial tag name matches. TODO Use lazy.
            )
          (defs-num (cond ((stringp defs) 1)
                          ((listp defs) (length defs))))
@@ -1014,7 +1014,7 @@ move there; currently supports `:name', `:namespace',
                                   (if regexp-flag 'regexp 'symbol-string-at-point)
                                   t
                                   nil
-                                  nil ;;TODO: Make M-return work in `multi-read-thing' with `read-ectag-name-or-key' as `read-fn' argument.
+                                  nil ;;TODO Make M-return work in `multi-read-thing' with `read-ectag-name-or-key' as `read-fn' argument.
                                   ))
 
          (from-to (strip-common-prefix-suffix-from-string-list thing 'ask))
@@ -1094,10 +1094,10 @@ symbol, without scope (in more conservative languages)."
   (let* ((eldoc-sym (c-eldoc-function (- (point) 1000))))
     (let ((hits (obarray-match-regexp eldoc-sym)))
       (if (> (length hits) 0)
-          (ectag-signature (car hits))  ;TODO: Check this!
+          (ectag-signature (car hits))  ;TODO Check this!
         (format "Unknown %s " eldoc-sym)))))
 
-;; TODO: Activate eldoc support.
+;; TODO Activate eldoc support.
 (when nil
   (defun ectags-eldoc-print-current-scoped-symbol-info ()
     "Try to find the meaning of the symbol in the current scope. Probably only useful for cpp mode"
@@ -1107,11 +1107,11 @@ symbol, without scope (in more conservative languages)."
       (when eldoc-sym
         (let ((hits (obarray-match-regexp (format "%s::%s" eldoc-scope eldoc-sym))))
           (if (> (length hits) 0)
-              (format "%s::%s %s" eldoc-scope eldoc-sym (ectag-signature (car hits))) ;TODO: Check this!
+              (format "%s::%s %s" eldoc-scope eldoc-sym (ectag-signature (car hits))) ;TODO Check this!
             (progn
               (setq hits (obarray-match-regexp eldoc-sym)) ;try without scope
               (if (> (length hits) 0)
-                  (format "%s %s" eldoc-sym (ectag-signature (car hits))) ;TODO: Check hits
+                  (format "%s %s" eldoc-sym (ectag-signature (car hits))) ;TODO Check hits
                 (when eldoc-scope
                   (format "Scope %s " eldoc-scope))
                 (format "Unknown %s " eldoc-sym))))))))

@@ -42,7 +42,7 @@ may span multiple lines. FORMAT can be either `grep', `emacs' or t."
                            t-str))
              )))))))
 (defalias 'relex-string-ws 'relax-lexical-whitespace-in-string)
-;; TODO: Fix this!
+;; TODO Fix this!
 ;; Use: (relax-lexical-whitespace-in-string "ob->vis" 'c-mode t)
 ;; Use: (relax-lexical-whitespace-in-string "f" 'c-mode)
 ;; Use: (relax-lexical-whitespace-in-string "f" 'c++-mode)

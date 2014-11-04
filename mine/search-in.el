@@ -2,7 +2,7 @@
 ;; Author: Per Nordlöw
 ;; Created: tis nov  3 10:09:06 2009 (+0100)
 
-;; TODO: Add these as modes in `isearch-mode-map' and `query-replace-map'.
+;; TODO Add these as modes in `isearch-mode-map' and `query-replace-map'.
 (defun search-in-syntax-code (forward string &optional bound noerror count)
   "Search for STRING outside comments and strings.
 FORWARD non-nil means search forward, else search backwards.  See

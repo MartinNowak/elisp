@@ -2,10 +2,10 @@
 ;; Author: Per Nordlöw
 
 ;; C-h och F1 Display Mode-Local  Operations When `mark-active-p'.
-;;; TODO: Use (recent-keys),
-;;; TODO: Use: (command-history), `last-command', `last-command-event', `this-command'.
+;;; TODO Use (recent-keys),
+;;; TODO Use: (command-history), `last-command', `last-command-event', `this-command'.
 
-;;; TODO: for single and double quote inserts:
+;;; TODO for single and double quote inserts:
 ;;; Check if we are inside a and exit in that case. using `.*-comment-p'. `.*-string-p'.
 
 (require 'power-utils)

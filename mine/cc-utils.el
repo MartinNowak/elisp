@@ -12,12 +12,12 @@
   "Return non-nil if MODE is a c-like mode, meaning member of `cc-derived-modes'.
 MODE defaults to `major-mode'."
   (if mode
-      (when (memq mode cc-derived-modes) t) ;TODO: Get this list from cc-mode sources instead.
+      (when (memq mode cc-derived-modes) t) ;TODO Get this list from cc-mode sources instead.
     c-buffer-is-cc-mode))
 ;; Use: (cc-derived-mode-p 'c-mode)
 ;; Use: (cc-derived-mode-p)
 
-;; TODO: Use `semantic-current-tag', semantic/ctxt semantic-ctxt-current-...
+;; TODO Use `semantic-current-tag', semantic/ctxt semantic-ctxt-current-...
 (defun c-beginning-of-topmost-intro-p ()
   (interactive)
   "Return t if point is at the beginning of a definition."

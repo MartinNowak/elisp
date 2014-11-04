@@ -26,7 +26,7 @@
 ;; Indenting C Preprocessor (CPP) Statements such as
 ;; (#ifdef, #else, ...).
 
-;;; TODO: Fix the following bug and enable:
+;;; TODO Fix the following bug and enable:
 ;; Debugger entered--Lisp error: (error "Invalid search bound (wrong side of point)")
 ;; re-search-forward("^[ 	]*#[ 	]*\\(.*\\)" 536 t)
 ;; ppindent-region(510 536 0)

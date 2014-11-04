@@ -179,7 +179,7 @@ state transition is typically triggered by a character read."
                    (if (and (looking-at (concat regexp-ordinary-char-regexp "+")) ;one or more number of ordinary chars
                             (> (match-length 0) 0))
                        (progn
-                         ;; TODO: if next char c1 fullfils (memq c1 '(?? ?* ?+)) push all but last to string and push last on stack
+                         ;; TODO if next char c1 fullfils (memq c1 '(?? ?* ?+)) push all but last to string and push last on stack
                          (goto-char (match-end 0)) ;goto end of string
                          (push (match-string-no-properties 0) tree) ;list as is
                          )

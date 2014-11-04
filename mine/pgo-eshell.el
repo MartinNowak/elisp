@@ -20,7 +20,7 @@
   ;; Use: (eshell-read-aliases-list)
   (add-hook 'eshell-alias-load-hook 'eshell-fix-aliases-list)
   )
-;; TODO: Doesn't currently work.
+;; TODO Doesn't currently work.
 ;;(setq eshell-aliases-file "~/.emacs.d/eshell/alias")
 
 ;;; EshellNavigation

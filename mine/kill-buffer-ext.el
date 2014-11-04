@@ -58,7 +58,7 @@ space."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Use ediff instead.
+;; TODO Use ediff instead.
 (defun diff-buffer-with-associated-file ()
   "View the differences between BUFFER and its associated file.
 This requires the external program \"diff\" to be in your `exec-path'.

@@ -322,7 +322,7 @@ Several variables affect how the hiding is done:
   ;; Genernally there is no need to call itself recursively since there should originally
   ;; exists no un-merged regions; however, if a part of the file is hidden with 'hide-ifdef-lines'
   ;; as nil while another part with 't, this case happens.
-  ;; TODO: should we merge? or just create a container overlay? -- this can prevent hideif-show-ifdef
+  ;; TODO should we merge? or just create a container overlay? -- this can prevent hideif-show-ifdef
   ;; expand too many since there is only a big overlay exists there without any smaller overlays.
   "Merge nearby ifdef regions to form a bigger overlay. This will decrease the
 total number of overlays created."
@@ -545,7 +545,7 @@ that form should be displayed.")
               (push
                (or (cdr (assoc token hif-token-alist))
                    (if (string-equal token "defined") 'hif-defined)
-                   ;; TODO:
+                   ;; TODO
                    ;; 1. postfix 'l', 'll', 'ul' and 'ull'
                    ;; 2. floating number formats
                    ;; 3. 098 is interpreted as octal conversion error
@@ -679,7 +679,7 @@ subsitituted"
                               (hif-macro-supply-arguments tok parmlist)
                               tok expand_list)))
                        (setq remains (cons hif-token hif-token-list))
-                       result)) ;; TODO: check if properly pushed
+                       result)) ;; TODO check if properly pushed
                  ;; Argument list is nil, direct expansion
                  (setq rep (hif-expand-token-list
                             (caddr rep) ;; Macro's token list
@@ -926,7 +926,7 @@ is applied when invoking macros to prevent self-referencing macros."
 (defun hif-define-macro (parmlist token-body)
   "A marker for defined macro with arguments, cannot be evaluated alone with
 no parameters inputed."
-  ;;TODO: input arguments at run time, use minibuffer to query all arguments
+  ;;TODO input arguments at run time, use minibuffer to query all arguments
   (error
    "Argumented macro cannot be evaluated without passing any parameter."))
 

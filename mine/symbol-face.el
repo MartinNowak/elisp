@@ -22,7 +22,7 @@ definition face instead of reference face."
        ((functionp fn) ;lisp (standard) function
         (if def 'font-lock-function-name-face
           (if quoted 'font-lock-quoted-function-name-face 'font-lock-function-call-face)))
-       (t   ;macro. TODO: Check in on Google Groups post http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/1a20b5a9228fdb8b# why this doesn't work.
+       (t   ;macro. TODO Check in on Google Groups post http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/1a20b5a9228fdb8b# why this doesn't work.
         (if def 'font-lock-macro-name-face
           (if quoted 'font-lock-quoted-macro-name-face 'font-lock-macro-call-face)))
        )))
@@ -31,7 +31,7 @@ definition face instead of reference face."
    ((boundp sym)            ;variable reference
     (if def 'font-lock-variable-name-face
       (if quoted 'font-lock-quoted-variable-ref-face 'font-lock-variable-ref-face)))
-   (t (if quoted 'italic))  ;others. TODO: In comments this should be `font-lock-symbol-ref-face'
+   (t (if quoted 'italic))  ;others. TODO In comments this should be `font-lock-symbol-ref-face'
    ))
 ;; Use: (elisp-symbol-face 'find-file)
 ;; Use: (elisp-symbol-face 'benchmark-run nil t)

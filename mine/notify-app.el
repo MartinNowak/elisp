@@ -14,7 +14,7 @@ http://www.freedesktop.org/wiki/Specifications/sound-theme-spec
 for sample sound names."
   (interactive)
   (when sound
-    ;; TODO: Use `start-proces' instead.
+    ;; TODO Use `start-proces' instead.
     (shell-command
      (concat "canberra-gtk-play "
              (when (file-regular-p sound)

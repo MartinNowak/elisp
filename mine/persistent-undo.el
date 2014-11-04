@@ -1,6 +1,6 @@
 ;;; persistent-undo.el --- Persistent Undo.
-;; TODO: Merge with undohist.el
-;; TODO: Store along with file-checksum to prevent errors.
+;; TODO Merge with undohist.el
+;; TODO Store along with file-checksum to prevent errors.
 
 (defvar handling-undo-saving nil)
 
@@ -61,7 +61,7 @@
           (set sym val)
           (message "Loaded undo from file %s" (faze filename 'file)))))))
 
-;;; TODO: Remove bug generating error: save-undo: Apparently circular structure being printed
+;;; TODO Remove bug generating error: save-undo: Apparently circular structure being printed
 ;; (add-hook 'write-file-functions 'save-undo)
 ;;(add-hook 'after-save-hook 'save-undo t)
 ;;(add-hook 'write-file-functions 'save-undo t)

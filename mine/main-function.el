@@ -13,7 +13,7 @@
   (let ((filename (or filename
                       buffer-file-name)))
     (and (file-match filename '(C C++ Objective-C D) 'name-recog)
-         (cscan-file filename c-like-main-function-regexp nil t)))) ;TODO: Set `cscan-file' argument `ctx' to `code' when this logic in cscan is fixed
+         (cscan-file filename c-like-main-function-regexp nil t)))) ;TODO Set `cscan-file' argument `ctx' to `code' when this logic in cscan is fixed
 ;; (file-c-main-function "~/justcxx/tests/t_semnet.cpp")
 ;; Use: (file-c-main-function "~/justd/fs.d")
 ;; Use: (file-c-main-function "~/justd/test/t_array.d")

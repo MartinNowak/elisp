@@ -9,12 +9,12 @@
 (defun find-file-root-maybe (dirname &optional uid)
   (when (and (file-directory-p dirname) ;directory
              (not (file-accessible-directory-p dirname))) ;not accessible by current user
-    ;; TODO: ...
+    ;; TODO ...
     ))
 
 ;; ---------------------------------------------------------------------------
 
-;;; TODO: Support bright backgrounds using thise format
+;;; TODO Support bright backgrounds using thise format
 (when nil
  '((((class color) (min-colors 88) (background dark)) (:foreground "DarkGreen"))
    (((class color) (min-colors 88) (background light)) (:foreground "LightGreen"))))
@@ -49,8 +49,8 @@ file as root."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Make this work better.
-;; TODO: When opening existing unreadable files/dir owned by UID use some
+;; TODO Make this work better.
+;; TODO When opening existing unreadable files/dir owned by UID use some
 ;; TRAMP-hook, for example /root/.bashrc.
 
 (defvar post-ro-edit-hook nil
@@ -65,13 +65,13 @@ file as root."
                                1 nil)
         (let ((p (point)))
           (let ((sudo-url (concat "/sudo::" buffer-file-name)))
-            ;; TODO: If sudo-url is already opened in another buffer switch to that buffer
+            ;; TODO If sudo-url is already opened in another buffer switch to that buffer
             ;;(message "vis:%s" (find-buffer-visiting sudo-url))
             (find-alternate-file sudo-url)) ;open with sudo instead
           (goto-char p) ;goto same point in reopened file so that pending changes occurr at right position
           (unwind-protect (run-hooks 'post-ro-edit-hook))
           )
-      ;; TODO: drop-all pending buffers inserts
+      ;; TODO drop-all pending buffers inserts
       (setq buffer-read-only t) (message "Made buffer read-only")
       (remove-hook 'first-change-hook 'post-ro-edit-hook t) ;NOTE: This prevents infinite loop of calling `post-ro-edit-hook'.
       )))
@@ -154,7 +154,7 @@ file as root."
     "*Prompt for a log entry in `find-file-root-log' after saving a root file.
    This function is suitable to add to `find-file-root-hook'."
     (add-hook 'after-save-hook 'find-file-root-log-do-it 'append 'local))
-  ;; TODO: This is really annoying. Disable for now.
+  ;; TODO This is really annoying. Disable for now.
   ;;(add-hook 'find-file-root-hook 'find-file-root-log-on-save)
   )
 

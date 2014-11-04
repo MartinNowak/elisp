@@ -2,33 +2,33 @@
 
 ;; Author: Per Nordlöw
 
-;; TODO: Convert make-variable-buffer-local to fcache-set/get-property especially in uproj.el
-;; TODO: Remove non-existent files using `fcache-exists-p' when iterating dcache contents.
-;; TODO: When package has matured to all needed features make functions inline using `defsubst'.
-;; TODO: In `dcache-of': Iterate `new-subs' and reuse those that have the same name as in `old-subs'.
-;; TODO: In `find-file-hook' and `after-save-hook' cache `major-mode' and `file-sha1sum' of (buffer-file-name) and `object-sha1sum'
-;; TODO: Use `file-modes' in tramp related stuff?
-;; TODO: What do we gain defining new classes for fcache and dcache vectors?
+;; TODO Convert make-variable-buffer-local to fcache-set/get-property especially in uproj.el
+;; TODO Remove non-existent files using `fcache-exists-p' when iterating dcache contents.
+;; TODO When package has matured to all needed features make functions inline using `defsubst'.
+;; TODO In `dcache-of': Iterate `new-subs' and reuse those that have the same name as in `old-subs'.
+;; TODO In `find-file-hook' and `after-save-hook' cache `major-mode' and `file-sha1sum' of (buffer-file-name) and `object-sha1sum'
+;; TODO Use `file-modes' in tramp related stuff?
+;; TODO What do we gain defining new classes for fcache and dcache vectors?
 ;; Note: (mtime-num (+ (* 65536 (car mtime)) (cadr mtime))) ;current mod-time as a number.
-;; TODO: : Merge with semanticdb:
+;; TODO : Merge with semanticdb:
 ;;       - mtime => lastmodtime
 ;;       - fsize => fsize
 ;;
 ;; Warning: For 64-bit Emacs ints integers are 61-bit so we can pack mtime into one integer.
 ;;
-;; TODO: Tag access time in `dcache-di-atime' in `dcache-of' using `float-time'.
+;; TODO Tag access time in `dcache-di-atime' in `dcache-of' using `float-time'.
 ;;       Then `do-on-idle' `maphash' move flush unused elements of dcache-gdir to disk using `print.*' to .emacs/fcache/.
 ;;
-;; TODO: `fcache-fi-deps' is a list of strings, that are, if found, resolved to fcaches themselves.
-;; TODO: Or use hash-table `fcache-fi-props' that maps "deps" to list of strings.
-;; TODO: Optionally use sha1 if (subrp (intern-soft "sha1")) as an fcache-member.
+;; TODO `fcache-fi-deps' is a list of strings, that are, if found, resolved to fcaches themselves.
+;; TODO Or use hash-table `fcache-fi-props' that maps "deps" to list of strings.
+;; TODO Optionally use sha1 if (subrp (intern-soft "sha1")) as an fcache-member.
 
 (require 'elk-test)
 (require 'benchmarks)
 
 (when (or (fboundp 'file-watch)
           (fboundp 'file-unwatch))
-  (warn "TODO: Support file-watch and file-unwatch in fcache.el!"))
+  (warn "TODO Support file-watch and file-unwatch in fcache.el!"))
 
 (defun fcache-deps (fcache)
   "Get dependencies for FCACHE as a list of fcaches."
@@ -48,7 +48,7 @@
 (define-hash-table-test 'string-hash 'string-equal 'sxhash)
 
 (defun dcache-make-default ()
-  (make-hash-table :size 1031           ;TODO: Is this a good default value?
+  (make-hash-table :size 1031           ;TODO Is this a good default value?
                    :test 'string-hash))
 
 (defvar dcache-gdirs
@@ -613,10 +613,10 @@ If RECURSE is non-nil calculate recursive tree size of DCACHE."
                   (fcache-readable value))
          ;;(message "Recursing into %s" (faze (fcache-full-fname value) 'file))
          (setq subs-fsize (+ subs-fsize (dcache-dir-subs-fsize-sum
-                                         (dcache-of (fcache-full-fname value)) ;TODO: Optimize?
+                                         (dcache-of (fcache-full-fname value)) ;TODO Optimize?
                                          t)))))
      subs)
-    ;; TODO: Store `fsizes' in `dcache' and use at top of
+    ;; TODO Store `fsizes' in `dcache' and use at top of
     ;; `dcache-dir-subs-fsize-sum'?
     (if (eq recurse 'separate)
         (cons fsizes subs-fsize)
@@ -705,7 +705,7 @@ found in directory DIRNAME, otherwise error."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Add caching!
+;; TODO Add caching!
 (defun fcache-dir-files (dirname &optional full match cached-only)
   "Get subs in directory DIRNAME as a list.
 If MATCH is non-nil, get only file names that match the regexp MATCH."
@@ -715,7 +715,7 @@ If MATCH is non-nil, get only file names that match the regexp MATCH."
        (when (or (not match)            ;either no matcher
                  (string-match match key)) ;or match
          (when full
-           ;; TODO: concat is much faster than `expand-file-name'. Check that
+           ;; TODO concat is much faster than `expand-file-name'. Check that
            ;; this works for a remote (TRAMP) `dirname' aswell.
            (setq key (concat dirname "/" key)))
          (if subs
@@ -739,12 +739,12 @@ If MATCH is non-nil, get only file names that match the regexp MATCH."
                                                &optional ok-if-already-exists keep-time preserve-uid-gid preserve-selinux-context) activate)
   "Copy dcache and fcache from FILE to NEWNAME."
   ad-do-it
-  ;; TODO: Handle case when newname is a directory.
+  ;; TODO Handle case when newname is a directory.
   (let ((fcache (fcache-of file t)))
     (when fcache
       (fcache-copy-cb fcache file newname))))
 
-(when nil                               ;TODO: This fails on other host
+(when nil                               ;TODO This fails on other host
   (let* ((wdir "/tmp")                  ;working directory
          (f1 "A")
          (f2 "B")
@@ -834,7 +834,7 @@ If MATCH is non-nil, get only file names that match the regexp MATCH."
   "Default common directory for storing file caches."
   :group 'dfcache)
 
-;; TODO: Merge with Semantic(DB)
+;; TODO Merge with Semantic(DB)
 (defun fcache-save (directory)
   (interactive "DSave in directory: ")
   "Save File System Cache of DIRECTORY defaulting to `default-directory'."
@@ -856,7 +856,7 @@ If MATCH is non-nil, get only file names that match the regexp MATCH."
 ;; Use: (fcache-save "/bin")
 ;; Use: (fcache-save (elsub "mine/"))
 
-;; TODO: Merge with Semantic(DB)
+;; TODO Merge with Semantic(DB)
 (defun fcache-load (directory)
   "Load File System Cache of DIRECTORY defaulting to `default-directory'."
   (let ((cache-file (expand-file-name fcache-default-file-name directory)))

@@ -37,7 +37,7 @@
          (use-start-process t)
          )
     ;;(message "Updating %s in %s..." tags-type directory)
-    ;; TODO: Reuse filedb.el Makefile name pattern here using new function `directory-file-of-type'.
+    ;; TODO Reuse filedb.el Makefile name pattern here using new function `directory-file-of-type'.
     (cond ((or (cscan-file-maybe (expand-file-name "GNUmakefile" directory) tgt-pattern)
                (cscan-file-maybe (expand-file-name "makefile" directory) tgt-pattern)
                (cscan-file-maybe (expand-file-name "Makefile" directory) tgt-pattern))

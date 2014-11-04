@@ -1,7 +1,7 @@
 ;;; relex-isearch.el --- Relax Lexical Whitespace in I-Search String.
 ;; Author: Per Nordlöw
-;; TODO: Error during redisplay: (eval (replace-regexp-in-string "%" "%%" (gethash (selected-window) which-func-table which-func-unknown))) signalled (wrong-type-argument arrayp nil) [8 times]
-;; TODO: Merge with flex-isearch.el
+;; TODO Error during redisplay: (eval (replace-regexp-in-string "%" "%%" (gethash (selected-window) which-func-table which-func-unknown))) signalled (wrong-type-argument arrayp nil) [8 times]
+;; TODO Merge with flex-isearch.el
 
 (require 'relex)
 
@@ -103,7 +103,7 @@
   (interactive)
   (setq isearch-rlws (not isearch-rlws))
   (if isearch-rlws (setq isearch-regexp nil)) ;Note: We can't yet combine rlws with regexps
-  ;;(if isearch-regexp (setq isearch-word nil)) ;TODO: Surround rlws expr with word boundaries
+  ;;(if isearch-regexp (setq isearch-word nil)) ;TODO Surround rlws expr with word boundaries
   (setq isearch-success t
         isearch-adjusted t)
   (let ((message-log-max nil))

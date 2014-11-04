@@ -102,7 +102,7 @@ ask user if there are several alternatives, nil pick the
 default (shallowest)."
   (interactive "DDirectory: ")
   (unless dir (setq dir default-directory))
-  ;; TODO: Find top-most tags directory and schedule with run-with-(idle-)timer
+  ;; TODO Find top-most tags directory and schedule with run-with-(idle-)timer
   (let ((entry (assoc dir atags-schedule)))
     (when entry
       (setcdr entry '(nil))))            ;remove timer but keep directory
@@ -128,7 +128,7 @@ default (shallowest)."
   "Update all kinds of tags databases above directory DIR."
   (interactive "DDirectory: ")
   (unless dir (setq dir default-directory))
-  ;; TODO: Find top-most tags directory and schedule with run-with-(idle-)timer
+  ;; TODO Find top-most tags directory and schedule with run-with-(idle-)timer
   (let ((old (assoc dir atags-schedule)) ;old timer
         (new (run-with-timer atags-schedule-delay
                              nil

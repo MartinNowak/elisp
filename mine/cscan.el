@@ -2,15 +2,15 @@
 ;;
 ;; Author: Per Nordlöw
 
-;; TODO: Fails: (cscan-file "~/justcxx/semnet/know_dfmts.cpp" "file" nil t t 'unbox-txt 'clust nil nil t)
+;; TODO Fails: (cscan-file "~/justcxx/semnet/know_dfmts.cpp" "file" nil t t 'unbox-txt 'clust nil nil t)
 
-;; TODO: `cscan-directory', `cscan-file-tree'.
-;; TODO: Remove use of hardcoded fcache formats (when comparing to `bcache') in `cscan-file-uncached'.
+;; TODO `cscan-directory', `cscan-file-tree'.
+;; TODO Remove use of hardcoded fcache formats (when comparing to `bcache') in `cscan-file-uncached'.
 
-;; TODO: Do preliminary literal scanning of literal components of pattern before
+;; TODO Do preliminary literal scanning of literal components of pattern before
 ;; continuing with syntactic analysis `syntax-ppss'.
 ;;
-;; TODO: This errors: (fcache-chase-links (fcache-of "~/justcxx/boost/smart_enum.hpp"))
+;; TODO This errors: (fcache-chase-links (fcache-of "~/justcxx/boost/smart_enum.hpp"))
 
 (require 'thingatpt-syntax)
 (require 'file-utils)
@@ -37,7 +37,7 @@
          (and (= (match-beginning mnum) (point-min))
               (= (match-end mnum) (point-max))))
 
-        ;; syntax contexts. TODO: Reuse my own logic for this.
+        ;; syntax contexts. TODO Reuse my own logic for this.
         (code
          (and (at-syntax-code-p (match-beginning mnum))
               (at-syntax-code-p (match-end mnum))))
@@ -75,7 +75,7 @@ CTX can be a symbol, number or a list of these."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Optimize this by using file-type-hash to check if current-buffer is binary.
+;; TODO Optimize this by using file-type-hash to check if current-buffer is binary.
 (defun cscan-beginning-of-hit-context ()
   "Goto beginning of scan hit context. Return if beginning of
 line, otherwise nil (binary data was found)."
@@ -86,7 +86,7 @@ line, otherwise nil (binary data was found)."
     (forward-char) nil))
 ;; Use:(cscan-beginning-of-hit-context)
 
-;; TODO: Optimize this by using file-type-hash to check if current-buffer is binary.
+;; TODO Optimize this by using file-type-hash to check if current-buffer is binary.
 (defun cscan-end-of-hit-context ()
   "Goto end of scan hit context. Return t if end of line was
 found, otherwise nil (binary data was found)."
@@ -255,7 +255,7 @@ found, otherwise nil (binary data was found)."
         (list (cdr (assoc name cscan-delim-group-names)))))
     (let ((name (logand cluster-code cscan-lex-mask)))
       (when (neq name 0)
-        ;; TODO: Specialize `cscan-lex-symbol-reference-group' to C/C++ Keywords.
+        ;; TODO Specialize `cscan-lex-symbol-reference-group' to C/C++ Keywords.
         (list (cdr (assoc name cscan-lex-group-names)))))
     ) ","))
 ;; Use: (cscan-cluster-title (logior cscan-syntax-code-group cscan-case-lower-group cscan-delim-word-group))
@@ -638,7 +638,7 @@ Related: `string-match'"
                   (let* ((ppss
                           (when nil ;Note: Disabled for now because its performance sucks!
                             (let ((p (point)))
-                              (prog1 (syntax-ppss hbeg) ;TODO: Reuse 'string in ctx using eq or memq. This is costly!
+                              (prog1 (syntax-ppss hbeg) ;TODO Reuse 'string in ctx using eq or memq. This is costly!
                                 (goto-char p)))))
 
                          ;; See: http://www.gnu.org/software/emacs/manual/html_node/elisp/Syntax-Class-Table.html
@@ -753,7 +753,7 @@ Related: `string-match'"
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Use `buffer-file-type' to detect file contents type.
+;; TODO Use `buffer-file-type' to detect file contents type.
 (defun insert-file-contents-for-cscan (filename &optional visit beg end replace)
   "Like `insert-file-contents', but disables hooks not needed for cscan operations."
   (let ((format-alist nil)
@@ -782,7 +782,7 @@ Related: `string-match'"
 ;; ---------------------------------------------------------------------------
 
 ;; Buffer Cache
-;; TODO: Benchmark performance improvement on remote files (TRAMP).
+;; TODO Benchmark performance improvement on remote files (TRAMP).
 (defvar cscan-txt-cache nil "List of format ([FILENAME MTIME FSIZE BEG END] BUFFER).")
 (defvar cscan-bin-cache nil "List of format ([FILENAME MTIME FSIZE BEG END] BUFFER).")
 (defvar cscan-unbox-txt-cache nil "List of format ([FILENAME MTIME FSIZE BEG END] BUFFER).")
@@ -895,13 +895,13 @@ FILENAME."
           )
       (setq beg 0
             end limit))
-     ;; only at beginning `beg'. TODO: regexp case
+     ;; only at beginning `beg'. TODO regexp case
      ((or (and (symbolp ctx) (eq 'beg ctx))
           (and (listp ctx) (memq 'beg ctx)))
       (setq beg 0
             end (length key))           ;insert key-beginning
       )
-     ;; only at end `end'. TODO: regexp case
+     ;; only at end `end'. TODO regexp case
      ((or (and (symbolp ctx) (eq 'end ctx))
           (and (listp ctx) (memq 'end ctx)))
       (let ((fsize (fcache-or-file-fsize fcache filename))
@@ -915,7 +915,7 @@ FILENAME."
                 end fsize               ;insert key-end
                 ctx 'beg))              ;start from beginning of file-region
         ))
-     ;; only at number offset `ctx'. TODO: regexp case
+     ;; only at number offset `ctx'. TODO regexp case
      ((numberp ctx)    ;context is a number => search forward from that position
       (let ((fsize (fcache-or-file-fsize fcache filename))
             (keylen (length key)))
@@ -933,7 +933,7 @@ FILENAME."
      ;; only whole/full/complete file
      ((eq 'full ctx)                    ;key must equal whole file contents
       (if regexp-flag
-          (setq beg 0 end limit) ;TODO: Insert string prefix of regexp and search for that at beginning
+          (setq beg 0 end limit) ;TODO Insert string prefix of regexp and search for that at beginning
         (let ((fsize (fcache-or-file-fsize fcache filename)))
           (when (= fsize (length key))
             (setq beg 0 end (length key)))))) ;Note: We let key override limit here!
@@ -947,7 +947,7 @@ FILENAME."
                    (not (eq (car-safe (detect-coding-string key)) 'undecided)) ;key 7-bit clean
                    (not (file-remote-p filename)) ;file is remote
                    (= (shell-command (concat "grep -q " key " " filename)) 0))) ;and grep returns 0 meaning a hit
-      (if (and nil ;TODO: Disabled for now because this is too slow. Can we make this faster?
+      (if (and nil ;TODO Disabled for now because this is too slow. Can we make this faster?
                (eq count 'clust))
           ;; clustering needs mode-specific (syntax-table) information so
           (save-excursion
@@ -1006,7 +1006,7 @@ FILENAME."
 ;; Use: (cscan-file-uncached "/usr/share/applications/nautilus.desktop" "[Desktop Entry]" '(beg end) nil 'txt) => nil
 ;; Use: (cscan-file-uncached "/bin/zcat" "#!.*/bin/bash" 'beg t 'txt 32)
 
-;; TODO: Make this work!
+;; TODO Make this work!
 ;; Use: (cscan-file-uncached (elsub "mine/tscan-tests/COPYING.gz.link") "file" nil nil 'txt 'clust)
 ;; Use: (cscan-file-cached (elsub "mine/tscan-tests/COPYING.gz.link") "file" nil nil nil 'txt 'clust)
 
@@ -1026,7 +1026,7 @@ FILENAME."
 ;; Use: (benchmark-cscan-file-uncached "/usr/bin/gcc" "gcc")
 ;; Use: (benchmark-cscan-file-uncached "/usr/bin/gcc" "g")
 
-;;; TODO: make hit a cons
+;;; TODO make hit a cons
 (defun cscan-fcache (filename fcache key &optional ctx regexp-flag case-fold decoding count limit hit-format cache-empty)
   "Same as `cscan-file-uncached' but uses the package
 `fcache' to cache match result (hits). If CACHE-EMPTY is non-nil
@@ -1047,7 +1047,7 @@ we log empty hits aswell."
                                                     fcache))) ;new match
                 )
               (when (or hit cache-empty) ;if we either have a hit or want to log empty hits aswell
-                ;; TODO: (if scans (nconc scans hit) setq...)
+                ;; TODO (if scans (nconc scans hit) setq...)
                 (fcache-set-scans fcache (cons `(,akey . ,hit) ;prepend new hit result
                                                scans))) ;to list of previous hits
               ))

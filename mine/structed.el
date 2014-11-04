@@ -3,7 +3,7 @@
 ;; Idea: Any edit operation should leave code in a syntactially correct (parseable) state.
 ;; Author: Per Nordlöw <per.nordlow@gmail.com>
 
-;; TODO:
+;; TODO
 ;; `c-arg-position-and-count' when not at end of arglist
 ;;
 ;; - Predicate Functions
@@ -201,7 +201,7 @@ argument list."
                                    (c-end-of-arglist))
                    0)))
     (when (called-interactively-p 'any)
-      (message "List has %s elements" count)) ;TODO: Refine "List" to Function.
+      (message "List has %s elements" count)) ;TODO Refine "List" to Function.
     count))
 
 (defun c-arg-position ()
@@ -282,20 +282,20 @@ Same as `mark-sexp' but with `forward-sexp-safe' replaced with
            (yank)
            (unless (looking-at (rx (* (in space ?\n))
                                    (in ")}"))) ;if not at end of list
-             (insert "," (make-string c-function-comma-arg-spacing ?\ ))))) ;TODO: Use `just-one-space' instead.
+             (insert "," (make-string c-function-comma-arg-spacing ?\ ))))) ;TODO Use `just-one-space' instead.
         ((not (save-excursion (c-end-of-arg))) ;if already at end of arg
          ;; append
          (let ((post (looking-at (rx (* (in space ?\n))
                                      (in ")}"))))) ;if arguments after point
-           (insert "," (make-string c-function-comma-arg-spacing ?\ )) ;TODO: Use `just-one-space' instead.
+           (insert "," (make-string c-function-comma-arg-spacing ?\ )) ;TODO Use `just-one-space' instead.
            (yank)
            (when c-standardize-token-ws-flag
              (fixup-whitespace))))
         (t                              ;if inside an argument
          ;; split current argument at cursor and insert there
-         (insert "," (make-string c-function-comma-arg-spacing ?\ )) ;TODO: Use `just-one-space' instead.
+         (insert "," (make-string c-function-comma-arg-spacing ?\ )) ;TODO Use `just-one-space' instead.
          (yank)
-         (insert "," (make-string c-function-comma-arg-spacing ?\ )) ;TODO: Use `just-one-space' instead.
+         (insert "," (make-string c-function-comma-arg-spacing ?\ )) ;TODO Use `just-one-space' instead.
          (when c-standardize-token-ws-flag
            (fixup-whitespace))
          )))
@@ -303,7 +303,7 @@ Same as `mark-sexp' but with `forward-sexp-safe' replaced with
 (defun c-backward-kill-arg-exp (&optional skip-separators)
   "Kill the argument expression following point.
 If SKIP-SEPARATORS is non-nil don't delete any separators."
-  (interactive "P")                     ;TODO: Support prefix argument
+  (interactive "P")                     ;TODO Support prefix argument
   (skip-whitespace-forward)
   (let ((beg (point)))
     (if (or (c-beginning-of-arg)
@@ -320,7 +320,7 @@ If SKIP-SEPARATORS is non-nil don't delete any separators."
 (defun c-forward-kill-arg-exp (&optional skip-separators)
   "Kill the argument expression following point.
 If SKIP-SEPARATORS is non-nil don't delete any separators."
-  (interactive "P")                     ;TODO: Support prefix argument
+  (interactive "P")                     ;TODO Support prefix argument
   (let ((beg (point)))
     (if (or (c-end-of-arg)
             (c-forward-arg)) ;;(< beg (point))
@@ -497,7 +497,7 @@ Indexing is same as for `c-goto-arg'."
          (q (progn (skip-chars-backward " \t\n")
                    (if (cc-derived-mode-p)
                        (c-backward-token-2 count balanced limit)
-                     (backward-sexp-safe count)) ;TODO: Fix!
+                     (backward-sexp-safe count)) ;TODO Fix!
                    (unless past-ws
                      (skip-chars-forward " \t\n"))
                    (point))))
@@ -512,7 +512,7 @@ Indexing is same as for `c-goto-arg'."
          (q (progn (skip-chars-forward " \t\n")
                    (if (cc-derived-mode-p)
                        (c-forward-token-2 count balanced limit)
-                     (forward-sexp-safe count)) ;TODO: Fix!
+                     (forward-sexp-safe count)) ;TODO Fix!
                    (unless past-ws
                      (skip-chars-backward " \t\n"))
                    (point))))

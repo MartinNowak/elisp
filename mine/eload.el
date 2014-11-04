@@ -4,7 +4,7 @@
 ;; Note: This has to be placed in front of all other loads in order
 ;; to be used as often as possible.
 ;; See: http://www.emacswiki.org/cgi-bin/wiki/AutoRecompile
-(when nil        ;Note: TODO: Disabled because it doesn't work with require!
+(when nil        ;Note: TODO Disabled because it doesn't work with require!
   (when (eload 'byte-code-cache)
     ;; So that we can transfer compiled stuff when we move our installation.
     (setq bcc-cache-directory (elsub "byte-cache"))
@@ -18,7 +18,7 @@
 (defun eload (feature &optional dir src file-url vc-repos load-flag)
   "Auto-compile FEATURE library source and then require FEATURE if its online.
 Build (Install) software SRC in directory DIR optionally first
-downloading it from FILE-URL or through VC-REPOS. TODO: Merge
+downloading it from FILE-URL or through VC-REPOS. TODO Merge
 with package install-elisp.el and byte-code-cache.el."
   (when dir
     (append-to-load-path dir))
@@ -30,7 +30,7 @@ with package install-elisp.el and byte-code-cache.el."
   "Auto-compile FEATURE library source and then require FEATURE if its online.
 Build (Install) software SRC in directory DIR (defaulting to
 `default-directory') optionally first downloading it from
-FILE-URL or through VC-REPOS. TODO: Merge with package
+FILE-URL or through VC-REPOS. TODO Merge with package
 install-elisp.el and byte-code-cache.el.
 If LOAD-FLAG is 'ask' ask for it."
   (when nil

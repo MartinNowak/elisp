@@ -100,7 +100,7 @@
 
 ;;; Code:
 
-;;; TODO: Don't show hint for single character commands.
+;;; TODO Don't show hint for single character commands.
 
 (require 'advice)
 

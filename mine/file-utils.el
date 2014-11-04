@@ -341,7 +341,7 @@ window."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Make this stricter by checking file contents aswell by reusing matchers for "GNU GLOBAL GTAGS", etc...!
+;; TODO Make this stricter by checking file contents aswell by reusing matchers for "GNU GLOBAL GTAGS", etc...!
 (defun file-gnu-global-directory-p (dir)
   "Return non-nil if directory DIR contains a GNU GLOBAL
   Database."

@@ -81,7 +81,7 @@
 ;;;###autoload
 (defun mdabbrev-expand ()
   "dabbrev-like completion, but in the middle (or beginning/end) of a word."
-  ;; TODO: If no mdabbrev expand at all possible then auto-insert
+  ;; TODO If no mdabbrev expand at all possible then auto-insert
   ;; space set dabbrev-flag and call dabbrev-expand instead.
   (interactive)
   (when (or mdabbrev-start-over (not (equal this-command last-command)))

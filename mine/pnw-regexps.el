@@ -511,7 +511,7 @@
 
 ;; Common UNIX Programs
 
-;; TODO: Replace with by scanning `exec-path' and add results to a file-name
+;; TODO Replace with by scanning `exec-path' and add results to a file-name
 ;; hash-table. Already exists?
 (defconst unix-programs-list
   (list "ls" "cp" "rm" "mv"

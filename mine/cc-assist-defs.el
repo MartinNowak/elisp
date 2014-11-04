@@ -1,5 +1,5 @@
 ;;; cc-assist-defs.el --- Definitions for C++ STL/Boost Assistance.
-;; TODO: (defgroup c++ify-assist)
+;; TODO (defgroup c++ify-assist)
 
 (defconst c++-iostream-classes
   '(
@@ -245,7 +245,7 @@
                                                                     &optional
                                                                     (Compare comp))
                                                                    )))
-    ;; TODO: Use second-sel
+    ;; TODO Use second-sel
     ("std::partial_sort_copy" [partial_sort_copy] "<algorithm>" (:doc "Copy and partially sort a range of elements"
                                                                       :sign ((RandomAccessIterator
                                                                               (InputIterator first) (InputIterator last)
@@ -469,7 +469,7 @@ http://gcc.gnu.org/onlinedocs/libstdc++/manual/bk01pt03ch18s03.html#parallel_mod
   "C++ Boost Compiler Configuration Constants. Defined in sub-directory
   boost/config/select_compiler_config.hpp.")
 
-;; TODO: Define function that Lookup these by cpp-only compiling using a given compiler command and check the output.
+;; TODO Define function that Lookup these by cpp-only compiling using a given compiler command and check the output.
 
 (defconst c++-smart-pointers
   '(
@@ -484,8 +484,8 @@ http://gcc.gnu.org/onlinedocs/libstdc++/manual/bk01pt03ch18s03.html#parallel_mod
     ("std::weak_ptr" [weak_ptr] "<memory>" (:doc "Non-owning observers of an object owned by shared_ptr." :std c++11) 'class-template)
     )
   "C++11 Smart Pointers. See https://secure.wikimedia.org/wikipedia/en/wiki/Smart_pointer#C.2B.2B_Smart_Pointers")
-;; TODO: C++-0x moves the std::tr1::shared_ptr smart pointer to the std namespace and adds support for make_shared() and allocate_shared().
-;; TODO: Support make_shared() and allocate_shared().
+;; TODO C++-0x moves the std::tr1::shared_ptr smart pointer to the std namespace and adds support for make_shared() and allocate_shared().
+;; TODO Support make_shared() and allocate_shared().
 
 (defconst c++-amp-containers
   '(

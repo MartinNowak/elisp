@@ -99,7 +99,7 @@
 (defconst ddoc-font-lock-keywords
   (list
    (cons (concat "\\$(\\(\\sw+\\)")
-         '((1 font-lock-keyword-face t) ;TODO: Add highlighter function for
+         '((1 font-lock-keyword-face t) ;TODO Add highlighter function for
                                         ;BUGZILLA in font-lock-warning-face and
                                         ;parsing to matching rparen
            ))

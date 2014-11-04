@@ -172,7 +172,7 @@ If TREE is non-nil status whole tree not just DIRECTORY."
 ;; Use: (vc-states "~/elisp/" nil t)
 
 (defun vc-states-forget-directory-fcache (fcache)
-  (fcache-set-property fcache :vc-states nil)) ;TODO: Better to remove it completely from plist?
+  (fcache-set-property fcache :vc-states nil)) ;TODO Better to remove it completely from plist?
 (defun vc-states-forget-directory (directory)
   ;;(message "Forgot vc-states of %s" directory)
   (vc-states-forget-directory-fcache (fcache-of directory)))

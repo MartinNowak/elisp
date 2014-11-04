@@ -49,7 +49,7 @@
                " *" "$"
                )
               '((1 'font-lock-time-face t)
-                (2 'font-lock-function-call-face t) ;TODO: Add button to "man:ls".
+                (2 'font-lock-function-call-face t) ;TODO Add button to "man:ls".
                 (3 'font-lock-operator-assignment-face t)
                 (4 'font-lock-constant-face t)
                 (5 'font-lock-comment-face t)

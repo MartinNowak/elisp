@@ -31,7 +31,7 @@
   "MATLAB Comment Do What I Mean (DWIM)."
   (interactive "*P")
   (if (use-region-p)
-      ;; TODO: if whole region begins with whitespace plus comment
+      ;; TODO if whole region begins with whitespace plus comment
       ;; character uncomment-region
       (comment-dwim arg)
     (matlab-comment))
@@ -159,7 +159,7 @@ If TRIM is non-nil mark end is not extended to a complete line."
   (when (require 'mlint nil t)
     (add-hook 'matlab-mode-hook 'mlint-minor-mode t)
 
-    ;; easier keys. TODO: Perhaps use M-g n/p as well?
+    ;; easier keys. TODO Perhaps use M-g n/p as well?
     (let ((map mlint-minor-mode-map))
       (define-key map [(control meta ?,) (n)] 'mlint-next-buffer)
       (define-key map [(control meta ?,) (p)] 'mlint-prev-buffer)

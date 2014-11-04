@@ -9,7 +9,7 @@
 (defcustom pnw/use-icicles t
   "Flags whether or not to load icicles upon startup." :type 'boolean :group 'pnw-options)
 
-;; TODO: Fix this!
+;; TODO Fix this!
 (defvar minibuffer-local-must-match-filename-map minibuffer-local-must-match-map)
 
 ;; icicles: replaces ido, mcomplete, icomplete

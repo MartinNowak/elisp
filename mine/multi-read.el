@@ -73,7 +73,7 @@ An empty string (RET) terminates the read loop."
 (defun read-rx (prompt)
   "Read rx using PROMPT."
   (interactive)
-  ;; TODO: Implement!
+  ;; TODO Implement!
   )
 
 (defun multi-read-thing-done ()
@@ -91,7 +91,7 @@ An empty string (RET) terminates the read loop."
   (let ((things nil))
     (let (thing)
       (let ((minibuffer-local-map minibuffer-local-map)) ;temporary override
-        ;; TODO: This is really ugly! If we break before `minibuffer-local-map' is
+        ;; TODO This is really ugly! If we break before `minibuffer-local-map' is
         ;; restored it will be changed globally!
         (define-key minibuffer-local-map (kbd "<M-return>") 'exit-minibuffer)
         (define-key minibuffer-local-map (kbd "<return>") 'multi-read-thing-done)
@@ -119,7 +119,7 @@ An empty string (RET) terminates the read loop."
                          (funcall (or read-fn 'read-regexp-at-point)
                                   (concat (or prompt "Regexp") post-prompt)))
                         ((eq type 'rx)
-                         (funcall (or read-fn 'read-rx) ;TODO: Implement `read-rx'. Extend `rx' format to support semantic patterns such as functions.
+                         (funcall (or read-fn 'read-rx) ;TODO Implement `read-rx'. Extend `rx' format to support semantic patterns such as functions.
                                   (concat (or prompt "Rx") post-prompt)))
                         ((eq type 'file)
                          (funcall (or read-fn 'read-file-name)

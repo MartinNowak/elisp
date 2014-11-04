@@ -1,15 +1,15 @@
 ;;; auto-deb.el --- Auto-Complete and Install Queries of Files provided by Debian/Ubuntu Packages.
 ;; Author: Per Nordlöw
 
-;; TODO: Call (apt-query-system-executables nil nil t) using `start-process'
+;; TODO Call (apt-query-system-executables nil nil t) using `start-process'
 ;; upon load of auto-deb package and do parsing in completion callback.
 
 ;; - Use [[shell:apt-file search -x "^/usr/bin/.*"]]
 ;; - Build hash-table from regexp to hits.
 
-;; TODO: Convert `re-search-forward' loop into a single call and iterate match-list instead.
+;; TODO Convert `re-search-forward' loop into a single call and iterate match-list instead.
 
-;; TODO: Add hash-table for executables along with `apt-executables-cache'. Use
+;; TODO Add hash-table for executables along with `apt-executables-cache'. Use
 ;; it to highlight executables in sh-mode.
 
 (defun auto-deb-parse-output (sbuf &optional file-assoc)
@@ -44,7 +44,7 @@ FILE-ASSOC is non-nil and (PACKAGE FILES...) otherwise."
                   (setq pkgs (list hit))
                   )))))
         ;; (when file-status
-        ;;   ;; TODO: Call "dpkg-query -l" on all the cars of PKGS.
+        ;;   ;; TODO Call "dpkg-query -l" on all the cars of PKGS.
         ;;   )
         pkgs))))
 
@@ -54,7 +54,7 @@ Uses `dpkg-query'. If NO-WARN is non-nil suppress any warning
 messages."
   (save-window-excursion
     (let* ((sbuf (get-buffer-create "*dpkg-query-buf*"))
-           ;; TODO: Use "dpkg-query -W -f='${Status}\n' PKG1 PKG2 ..."
+           ;; TODO Use "dpkg-query -W -f='${Status}\n' PKG1 PKG2 ..."
            (status (shell-command (concat "dpkg-query -S " "\"" file-wc "\"") sbuf))
            pkgs)                          ;list of packages
       (if (= status 0)
@@ -115,7 +115,7 @@ messages."
     (when (or (not query)
               (y-or-n-p (format "Install %s (using APT)" (faze pkgs-name 'pkg))))
       (if (and
-           nil                        ;TODO: Disabled for now!
+           nil                        ;TODO Disabled for now!
            (require 'sudo nil t)
            (fboundp 'sudo-start-process))
           (sudo-start-process "apt-install"
@@ -202,7 +202,7 @@ HEADER-FILE). If DIRS is a list search those aswell."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Make work for files in new non-existing directories for
+;; TODO Make work for files in new non-existing directories for
 ;; example "/etc/mdadm/mdadm.conf".
 (defun query-insert-apt-file ()
   "Query auto-install of APT package that provides `buffer-file-name'."
@@ -276,9 +276,9 @@ names matches the regular expression FILE-REGEXP."
 
 ;; ---------------------------------------------------------------------------
 
-;;; TODO: Try using easy_install X: Should return non-zero
-;;; TODO: Try using cabal list and X and then cabal install X
-;;; TODO: Add advice on `executable-find'.
+;;; TODO Try using easy_install X: Should return non-zero
+;;; TODO Try using cabal list and X and then cabal install X
+;;; TODO Add advice on `executable-find'.
 (defun executable-find-auto-install-on-demand (command &optional pkgs)
   "Execute COMMAND.
 If command is not installed query to install it (on demand)."
@@ -316,7 +316,7 @@ FULL can be either `nil,' `t' or `full-duplicates'."
                   (apt-query-executables nil nil t)))
          (prompt (or prompt (if cache "Executable (in APT): " "Executable: ")))
          (cache (append (when include-sans-directory
-                          ;; TODO: Replace with special combination of a new
+                          ;; TODO Replace with special combination of a new
                           ;; completion-style `completion-sansdir-.*' and partial
                           ;; completion prepended to `completion-styles-cycle-alist'.
                           ;; SEE: https://groups.google.com/forum/?hl=sv#!topic/gnu.emacs.help/LFYZDE3A7dU
@@ -338,7 +338,7 @@ FULL can be either `nil,' `t' or `full-duplicates'."
                                    (remove "/bin"
                                            (remove "/usr/sbin"
                                                    (remove "/usr/bin"
-                                                           exec-path))))) ;TODO: Sync this with `apt-executables-path-prefix-regexp'.
+                                                           exec-path))))) ;TODO Sync this with `apt-executables-path-prefix-regexp'.
                (extra-exec (when extra-path
                              (multi-directory-files extra-path t)))
                (hit (completing-read prompt

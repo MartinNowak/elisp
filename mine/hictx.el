@@ -1,13 +1,13 @@
 ;;; hictx.el --- Highlight Operation Result or Context.
 ;; Author: Per Nordlöw
 ;;
-;; TODO: Use ideas from `volatile-highlights' and `eval-sexp-fu' if relevant.
-;; TODO: See: http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/25024cc86611ea35#
-;; TODO: Call the function `hictx-add-default-advice' to activate default context highlighters.
-;; TODO: Notify hictx.el to author of nav-flash
-;; TODO: Highlight region of `kmacro-end-or-call-macro-dwim' and `kmacro-call-macro'.
-;; TODO: Generalize hictx-XXX with higher-order function (defun hictx-at (move-fun)).
-;; TODO: Reuse functions in `highlight.el'
+;; TODO Use ideas from `volatile-highlights' and `eval-sexp-fu' if relevant.
+;; TODO See: http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/25024cc86611ea35#
+;; TODO Call the function `hictx-add-default-advice' to activate default context highlighters.
+;; TODO Notify hictx.el to author of nav-flash
+;; TODO Highlight region of `kmacro-end-or-call-macro-dwim' and `kmacro-call-macro'.
+;; TODO Generalize hictx-XXX with higher-order function (defun hictx-at (move-fun)).
+;; TODO Reuse functions in `highlight.el'
 
 (require 'timer)
 (require 'power-utils)
@@ -80,7 +80,7 @@ buffers and if nil default to `current-buffer'."
 ;; Use: (hictx-delete t "*fMessages*") => error
 
 ;; See: http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/1a9678d00146647c
-;; TODO: Add `delay' and use this in `previous-line' and `next-line' advice.
+;; TODO Add `delay' and use this in `previous-line' and `next-line' advice.
 (defun hictx-generic (&optional start end window face duration delay keep-last sync-flag)
   "Highlight region from START to END with FACE in WINDOW for
 DURATION seconds. START defaults to beginning of line, END to end

@@ -1,6 +1,6 @@
 ;;; fill-dwim.el --- Fill Do What I Mean.
 
-;; TODO: Enbale and merge with definitions in nxhtml/util/ourcomments-util.el
+;; TODO Enbale and merge with definitions in nxhtml/util/ourcomments-util.el
 
 ;; See: http://www.emacswiki.org/emacs-en/UnfillRegion
 (defun unfill-region (from to)

@@ -16,7 +16,7 @@
 ;; Use: (cscan-file "~/.gdb/printers/.svn/entries" svn-entries-regexp 0 t nil nil t nil 'string)
 
 (defun tscan-directory-svn-string (asub)
-  ;;TODO: Use `dcache-rget-fcache' instead.
+  ;;TODO Use `dcache-rget-fcache' instead.
   ;; Instead use `with-temp-buffer' and `find-file-noselect' and `re-search-forward'
   (when nil
     (let ((scan (ignore-errors (cscan-file-uncached (expand-file-name ".svn/entries" asub)

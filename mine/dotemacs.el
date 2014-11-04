@@ -1,7 +1,7 @@
 ;;; package --- Summary coding: mule-utf-8-unix
 ;; Author: Per Nordlöw (per.nordlow@gmail.com)
 
-;;; TODO: http://draketo.de/light/english/emacs/babcore#sec-3-2
+;;; TODO http://draketo.de/light/english/emacs/babcore#sec-3-2
 ;;; Code:
 
 ;;; ===========================================================================
@@ -89,7 +89,7 @@
 
 ;;; Show function context
 (when (which-function-mode 1))
-(add-hook 'd-mode-hook (lambda () (which-function-mode 1))) ;TODO: Why is this needed?
+(add-hook 'd-mode-hook (lambda () (which-function-mode 1))) ;TODO Why is this needed?
 
 ;;; ===========================================================================
 ;;; Auto-Reverting
@@ -124,7 +124,7 @@
   (define-key global-map (kbd "C-c r") 'vr/replace)
   (define-key global-map (kbd "C-c q") 'vr/query-replace))
 
-;; TODO: Fix bug that occurs when these are not defined.
+;; TODO Fix bug that occurs when these are not defined.
 ;; Probably Some package I have added....
 (setq warning-suppress-types nil
       byte-compile-warnings t
@@ -271,7 +271,7 @@
   (global-set-key [(meta s) (meta n)] 'highlight-symbol-next)
   (global-set-key [(meta p)] 'highlight-symbol-prev)
   (global-set-key [(meta n)] 'highlight-symbol-next)
-  ;; TODO: Repeatable fails here...
+  ;; TODO Repeatable fails here...
   ;; (repeatable-command-advice highlight-symbol-prev)
   ;; (repeatable-command-advice highlight-symbol-next)
   (when (require 'hictx nil t)
@@ -327,7 +327,7 @@
 
 (defun setup-hide-ifdef ()
   "Setup hideif."
-  ;; TODO: `hide-ifdef-env'
+  ;; TODO `hide-ifdef-env'
   (when nil                             ;note: disabled for now because it's too slow
     (when (or (load-file (elsub "mine/hideif.elc"))
               (require 'hideif nil t))
@@ -373,7 +373,7 @@
 (dolist (hook hide-ifdef-modes)
   (add-hook hook 'setup-hide-ifdef t))
 
-(when nil                               ;TODO: What does this do?
+(when nil                               ;TODO What does this do?
   (defun hide-ifdef-region-internal (start end)
     (remove-overlays start end 'face 'hide-ifdef-shadow-face)
     (let ((o (make-overlay start end)))
@@ -425,7 +425,7 @@
     (ding)))
 
 ;;; ===========================================================================
-;;; TODO: Ugly to copy this here...
+;;; TODO Ugly to copy this here...
 
 (defun winner-redo ()			; If you change your mind.
   "Restore a more recent window configuration saved by Winner mode."
@@ -588,7 +588,7 @@
 ;;; http://www.emacswiki.org/emacs/AutoPairs
 ;;; https://github.com/capitaomorte/autopair
 ;;; http://stackoverflow.com/questions/7718975/intelligent-auto-closing-matching-characters
-(when nil                               ;TODO: All these disabled in favour of smartparens
+(when nil                               ;TODO All these disabled in favour of smartparens
   (when (eload 'parenthesis)      ;Insert pair of parenthesis
     (add-hook 'c-mode-common-hook
               (lambda()
@@ -706,7 +706,7 @@
 (eload 'finder+)
 
 ;;; ===========================================================================
-;;; TODO: Disabled because of error: ls-lisp--insert-directory: Symbol's value as variable is void: original-insert-directory
+;;; TODO Disabled because of error: ls-lisp--insert-directory: Symbol's value as variable is void: original-insert-directory
 ;; (eload 'ls-lisp+)
 
 (eload 'mouse3) ;NOTE: You can also (define-key global-map [remap mouse-save-then-kill] 'mouse-major-mode-menu)
@@ -728,7 +728,7 @@
 (eload 'hexrgb)                         ;Functions to manipulate RGB hex strings
 (eload 'ucs-cmds)                       ;Macro to create commands that insert Unicode chars.
 (when (eload 'modeline-posn) ; http://www.emacswiki.org/cgi-bin/wiki/ModeLinePosition
-  ;; TODO: Show argument count from structed.el aswell
+  ;; TODO Show argument count from structed.el aswell
   (setq-default modelinepos-style '(" %dch, %dw, %dl"
                                     (abs (- (mark t) (point)))
                                     (count-words-region (mark t) (point))
@@ -1179,7 +1179,7 @@ save it in `ffap-file-at-point-line-number' variable."
 ;;; CC-Mode
 (eload 'cc-patterns nil "cc-patterns.el") ;C,C++ Patterns
 (eload 'cc-assist nil "cc-assist.el") ;Coding Assistance for C,C++, and others.
-(when nil                               ;TODO: Disabled for now
+(when nil                               ;TODO Disabled for now
   (defun recognize-c-mode ()
     "Detect C file."
     (goto-char (point-min))
@@ -1189,7 +1189,7 @@ save it in `ffap-file-at-point-line-number' variable."
                                       "#define"
                                       "#include"
                                       ) symbol-end) nil t)
-        (dolist (spec auto-mode-alist) ;TODO: How do we distinguish C from C++ here?
+        (dolist (spec auto-mode-alist) ;TODO How do we distinguish C from C++ here?
           ;; (let ((regexp (car spec))
           ;;       (mode (cdr spec))
           ;;       (when (string-match))
@@ -1261,7 +1261,7 @@ save it in `ffap-file-at-point-line-number' variable."
                   ("/openssl.cnf\\'" . conf-mode) ;ALSA Configuration
                   )
                 auto-mode-alist))
-  (when nil                ;TODO: Enable
+  (when nil                ;TODO Enable
     (define-generic-mode
         'foo-mode                         ;; name of the mode to create
       '("!!")                           ;; comments start with '!!'
@@ -1622,7 +1622,7 @@ save it in `ffap-file-at-point-line-number' variable."
 ;; (unless
 ;;     (require 'd-mode nil t)
 ;;   (ignore-errors (package-install 'd-mode)))
-;;(setq load-path (delete "/home/per/.emacs.d/elpa/d-mode-20130807.32" load-path)) ;TODO: Fix for Emacs 24.4
+;;(setq load-path (delete "/home/per/.emacs.d/elpa/d-mode-20130807.32" load-path)) ;TODO Fix for Emacs 24.4
 (when (append-to-load-path (elsub "d-mode"))
   (autoload 'd-mode "d-mode" "Major mode for editing D code." t)
   (add-to-list 'auto-mode-alist '("\\.d[i]?\\'" . d-mode))
@@ -1758,7 +1758,7 @@ calls."
 
 ;;; ===========================================================================
 ;;; Highlight Swedish and C++ template "required from" in non-error.
-(when nil                               ;TODO: Disturbs?
+(when nil                               ;TODO Disturbs?
   (setcdr (assq 'gnu compilation-error-regexp-alist-alist)
           '("^\\(?:[[:alpha:]][-[:alnum:].]+: ?\\|[ 	]+\\(?:in \\|from \\)\\)?\\([0-9]*[^0-9\n]\\(?:[^\n :]\\| [^-/\n]\\|:[^ \n]\\)*?\\): ?\\([0-9]+\\)\\(?:-\\(?4:[0-9]+\\)\\(?:\\.\\(?5:[0-9]+\\)\\)?\\|[.:]\\(?3:[0-9]+\\)\\(?:-\\(?:\\(?4:[0-9]+\\)\\.\\)?\\(?5:[0-9]+\\)\\)?\\)?:\\(?: *\\(\\(?:Future\\|Runtime\\)?[WwVv]arning\\|W:\\)\\| *\\([Ii]nfo\\(?:\\>\\|rmationa?l?\\)\\|I:\\|required from\\|\\|instantiated from\\|[Nn]ote\\|[Aa]nm\\)\\| *[Ee]rror\\|[Ff]el\\|[0-9]?\\(?:[^0-9\n]\\|$\\)\\|[0-9][0-9][0-9]\\)"
             1
@@ -1767,7 +1767,7 @@ calls."
             (6 . 7))))
 
 ;;; mode line
-(when nil        ;TODO: Disabled in order for colored flycheck-mode-line to work
+(when nil        ;TODO Disabled in order for colored flycheck-mode-line to work
   (when (append-to-load-path (elsub "smart-mode-line"))
     (setq sml/theme 'dark)
     (require 'smart-mode-line)
@@ -1911,7 +1911,7 @@ match FILENAME."
           (add-to-list 'flycheck-clang-include-path dir)
           (add-to-list 'flycheck-gcc-include-path dir))
         (when (eq system-type 'gnu/linux)
-          ;; TODO: Fetch from from "make -B foo.o" when editing foo.c?
+          ;; TODO Fetch from from "make -B foo.o" when editing foo.c?
           (add-to-list 'flycheck-gcc-definitions "TARGET_LINUX")
           (add-to-list 'flycheck-clang-definitions "TARGET_LINUX"))))
 
@@ -1997,7 +1997,7 @@ DMD version 2.066."
   (when (require 'flycheck nil t)
     (flycheck-mode 1))
   (when (dmd-support-columns)
-    (flycheck-define-checker d-dmd      ;TODO: Integrate this with flycheck.el
+    (flycheck-define-checker d-dmd      ;TODO Integrate this with flycheck.el
       "A D syntax checker using the DMD compiler.
 
 See URL `http://dlang.org/'."
@@ -2018,7 +2018,7 @@ See URL `http://dlang.org/'."
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
   ;;            (require 'flycheck-d-unittest nil t))
   ;;   (setup-flycheck-d-unittest))
-  ;; TODO: Disabled for now...
+  ;; TODO Disabled for now...
   (setq flycheck-checkers
         (delq 'd-dmd-unittest flycheck-checkers))
 
@@ -2205,7 +2205,7 @@ functions, and some types.  It also provides indentation that is
   (autoload 'clojure-mode "clojure-mode" "Major mode for editing Clojure code." t)
   (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode)))
 (when nil
-  ;; TODO: Make this mode-local only in `clojure-mode'.
+  ;; TODO Make this mode-local only in `clojure-mode'.
   (setq inferior-lisp-program
         (let* ((java-path "java")       ; Path to java implementation
                                         ; Extra command-line options
@@ -2292,7 +2292,7 @@ functions, and some types.  It also provides indentation that is
 (when (append-to-load-path (elsub "pdee")))
 
 (defun python-mode-add-charedits ()
-  (ignore-errors                        ;TODO: Fix this!
+  (ignore-errors                        ;TODO Fix this!
     (when (require 'charedit nil t)
       (when nil
         (charedit-add-defs '((py-def . ?d)
@@ -2422,7 +2422,7 @@ functions, and some types.  It also provides indentation that is
 (autoload 'scons-mode "scons-mode" "Major mode for SCons SConstruct and SConscript file." t nil)
 (add-to-list 'auto-mode-alist `(,(rx (| "SConstruct" "SConscript")) . scons-mode))
 (add-to-list 'auto-mode-alist '("\\.scons\\'" . scons-mode))
-(when nil       ;TODO: Enable in scons-mode
+(when nil       ;TODO Enable in scons-mode
   ;; SCons builds into a 'build' subdir, but we want to find the
   ;; errors in the regular source dir.  So we remove
   ;; build/XXX/YYY/{dbg,final}/ from the filenames.
@@ -2461,7 +2461,7 @@ functions, and some types.  It also provides indentation that is
 (when (file-readable-p (elsub "others/visual-basic-mode.el"))
   (autoload 'visual-basic-mode "visual-basic-mode" "Visual Basic mode." t) ;Visual Basic Mode
   ;; If you are doing Rhino scripts, add
-  (add-to-list 'auto-mode-alist '("\\.\\(frm\\|bas\\|rvb\\|vbs\\)$" . visual-basic-mode))) ;TODO: Enable cls (conflicts LaTeX-mode)
+  (add-to-list 'auto-mode-alist '("\\.\\(frm\\|bas\\|rvb\\|vbs\\)$" . visual-basic-mode))) ;TODO Enable cls (conflicts LaTeX-mode)
 
 ;;; ===========================================================================
 ;;; Lua
@@ -2546,7 +2546,7 @@ functions, and some types.  It also provides indentation that is
 (defun haskell-fix-maps ()
   "Fix keys and menus."
   ;;(define-key-after haskell-mode-map KEY DEFINITION &optional AFTER)
-  ;; TODO: Add menu-entry for this (inferior-haskell-load-and-run)
+  ;; TODO Add menu-entry for this (inferior-haskell-load-and-run)
   (when (boundp 'haskell-mode-map)
     (let ((map haskell-mode-map))
       (define-key map [?\C-c ?\C-r] 'inferior-haskell-load-and-run)
@@ -2590,7 +2590,7 @@ functions, and some types.  It also provides indentation that is
                                def))))
   (inferior-haskell-send-command (inferior-haskell-process) arg))
 (defun pnw-setup-haskell-mode ()
-  ;; TODO: Add eldoc support for all symbols including operators along with documentation string.a
+  ;; TODO Add eldoc support for all symbols including operators along with documentation string.a
   ;; Fontify "(i-1,j-1)" in "a!(i-1,j-1)" using font-lock-keywords and sexp-after-point() `subscript' face
   (eldoc-mode 1)
   (when (boundp' haskell-operator-face)
@@ -2788,7 +2788,7 @@ functions, and some types.  It also provides indentation that is
   (unless (minibufferp)
     (when (cc-derived-mode-p major-mode)
       (just-one-space))))
-;; TODO: Disabled because it inserts an annoying extra space when editing
+;; TODO Disabled because it inserts an annoying extra space when editing
 ;; (global-set-key [(control k)] 'kill-and-join-forward)
 (global-set-key [(control k)] 'kill-line)
 (when (fboundp 'icicle-yank-pop-commands)
@@ -2813,7 +2813,7 @@ functions, and some types.  It also provides indentation that is
     "Use popup menu to access kill-ring."
     (interactive)
     (popup-menu 'yank-menu))
-  ;; TODO: Activate this
+  ;; TODO Activate this
   ;; (require 'popup-kill-ring nil t)
   )
 
@@ -2844,21 +2844,21 @@ functions, and some types.  It also provides indentation that is
 (setq-default gdb-use-separate-io-buffer t)
 (setq-default gdb-many-windows t)
 ;; BashDB
-;; TODO: How do I guide bashdb to search the current directory for
+;; TODO How do I guide bashdb to search the current directory for
 ;; source files. I thought "-L ." did it, but this is for something
 ;; else.
-(when (require 'bashdb nil t) ;TODO: Remove later.
+(when (require 'bashdb nil t) ;TODO Remove later.
   (setq gud-bashdb-command-name "bashdb ")
   (setq gud-zshdb-command-name "zshdb"))
 
 ;;; rocky/emacs-dbgr
 (when (append-to-load-path (elsub "emacs-dbgr"))
-  ;; TODO: Disabled require to speed up startup time: (require 'realgud nil t)
+  ;; TODO Disabled require to speed up startup time: (require 'realgud nil t)
   )
 
 ;;; Development Tools
 (eload 'file-magic)               ;file/magic code editing commands for Emacs
-(ignore-errors (eload 'oprofile-mode))  ;OProfile - http://oprofile.sourceforge.net/  TODO: Fix this error
+(ignore-errors (eload 'oprofile-mode))  ;OProfile - http://oprofile.sourceforge.net/  TODO Fix this error
 (eload 'gprof-utils)                    ;GProf
 (eload 'gprof-mode)                     ;GProf
 (eload 'oprofile)                   ;Interface to OProfile
@@ -3078,7 +3078,7 @@ functions, and some types.  It also provides indentation that is
     (global-set-key [(control XF86AudioStop)] 'emms-smart-browse)
     (global-set-key [(XF86AudioPause)] 'emms-pause)
     ))
-;; TODO: WARNING: WARNING: This crashes my Emacs a lot!
+;; TODO WARNING: WARNING: This crashes my Emacs a lot!
 (when nil
   (eload 'mode-line-frame))         ;Create information frame like mode-line^
 
@@ -3141,7 +3141,7 @@ functions, and some types.  It also provides indentation that is
   (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex) ; with AUCTeX LaTeX mode
   (add-hook 'latex-mode-hook 'turn-on-cdlatex))
 
-(when nil                               ;TODO: Disabled. Do we really need this?
+(when nil                               ;TODO Disabled. Do we really need this?
   (when (require 'goto-chg nil t)
     (defadvice goto-last-change (after ctx-flash-highlight-symbol-prev activate) (hictx-line)) (ad-activate 'goto-last-change)
     (global-set-key [(control .)] 'goto-last-change)))
@@ -3239,7 +3239,7 @@ And make sure that it really shows up!"
                  webjump-sample-sites))))
 
 ;;; Saving
-(when (require 'saveplace nil t) (setq-default save-place nil save-place-file "~/.emacs.d/places")) ;TODO: Disabled in favor of `desktop'.
+(when (require 'saveplace nil t) (setq-default save-place nil save-place-file "~/.emacs.d/places")) ;TODO Disabled in favor of `desktop'.
 (when nil (when (require 'session nil t) (add-hook 'after-init-hook 'session-initialize))) ;NOTE: Disabled in favour of `desktop'.
 ;;; Desktop
 (when t
@@ -3269,7 +3269,7 @@ And make sure that it really shows up!"
 	        "\\)$"))
 
   ;; See: http://www.emacswiki.org/emacs/DeskTop#toc4
-  ;; TODO: This doesn't work as expected.
+  ;; TODO This doesn't work as expected.
   (defun emacs-process-p (pid)
     "If pid is the process ID of an emacs process, return t, else nil.
 Also returns nil if pid is nil."
@@ -3333,7 +3333,7 @@ Also returns nil if pid is nil."
           '(command-history . 500)
           'extended-command-history
           'shell-command-history
-          'dired-shell-command-history ;; TODO: join with shell-command-history
+          'dired-shell-command-history ;; TODO join with shell-command-history
 
           'tags-table-list
           'tags-file-name
@@ -3347,7 +3347,7 @@ Also returns nil if pid is nil."
 
           '(mark-ring . 200)
           '(global-mark-ring . 200)
-          ;;(senator-tag-ring . 200) ;TODO: This fails
+          ;;(senator-tag-ring . 200) ;TODO This fails
 
           '(semantic-bookmark-ring . 200)
 
@@ -3565,7 +3565,7 @@ See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-fo
 
   ;; Prevent changes to window configuration.
   ;; NOTE: Disabled because otherwise Icicles opens other frame during completion help C-up/down.
-  ;; TODO: Gives disturbing behaviour in Emacs 24.1 so disabled.
+  ;; TODO Gives disturbing behaviour in Emacs 24.1 so disabled.
   ;; (setq pop-up-windows nil)
 
   (defun revert-retain-undo ()
@@ -3666,7 +3666,7 @@ http://stackoverflow.com/questions/4924389/is-there-a-way-to-retain-the-undo-lis
   ;; Change cursor color according to mode; inspired by
   ;; http://www.emacswiki.org/emacs/ChangingCursorDynamically
 
-  ;; TODO: This solution should not change `cursor-type' and call
+  ;; TODO This solution should not change `cursor-type' and call
   ;; `set-cursor-color' unless cursor has changed.
   (progn
     ;; valid values are t, nil, box, hollow, bar, (bar . WIDTH), hbar,
@@ -3803,7 +3803,7 @@ http://stackoverflow.com/questions/4924389/is-there-a-way-to-retain-the-undo-lis
   ;;(add-hook 'before-save-hook 'delete-trailing-control-M)
   (setq-default show-trailing-whitespace nil) ;Show the bastards
 
-  ;;TODO: Gives error:
+  ;;TODO Gives error:
   ;;(setq-mode-local completion-list-mode show-trailing-whitespace t)         ;NOTE: Makes no sense having this in read-only buffers.
   (defun delete-trailing-whitespace-and-indent ()
     "Delete trailing whitespace and then indent."
@@ -3818,7 +3818,7 @@ http://stackoverflow.com/questions/4924389/is-there-a-way-to-retain-the-undo-lis
       (when retab
         (indent-for-tab-command)))      ;restore indentation at cursor
     )
-  ;; WARNING: TODO: This is simply too slow for large c++ files such as hispui.cpp.
+  ;; WARNING: TODO This is simply too slow for large c++ files such as hispui.cpp.
   ;;(remove-hook 'before-save-hook 'delete-trailing-whitespace-and-indent)
 
   ;; =============== Visualization and Highlighting ================================
@@ -3864,7 +3864,7 @@ http://stackoverflow.com/questions/4924389/is-there-a-way-to-retain-the-undo-lis
       ))
 
 ;;; pabbrev.el --- Predictive abbreviation expansion
-  (when nil                             ;TODO: Fix and enable
+  (when nil                             ;TODO Fix and enable
     (when (require 'pabbrev nil t)
       ;; (global-pabbrev-mode)
       ;; (setq pabbrev-read-only-error nil)
@@ -4009,7 +4009,7 @@ If there is no expansion the command returned by
     )
 
   ;; http://julien.danjou.info/google-contacts.el.html
-  (when nil                             ;TODO: Fix by getting oauth2 via ELPA
+  (when nil                             ;TODO Fix by getting oauth2 via ELPA
     (when (require 'google-contacts nil t)
       ;; You can integrate directly Google Maps into Gnus;
       (when (require 'org-contacts-gnus nil t)
@@ -4082,7 +4082,7 @@ If there is no expansion the command returned by
 
   ;; =============== ENSIME - ENhanced Scala Interaction Mode for Emacs ================================
 
-  ;; TODO: Look in directory ../ensime
+  ;; TODO Look in directory ../ensime
 
   ;; =============== Shell Mode ================================
 
@@ -4110,7 +4110,7 @@ If there is no expansion the command returned by
     )
   (add-hook 'sh-mode-hook 'sh-mode-charedit)
 
-;;; TODO: Fix error about .zsh_history and activate.
+;;; TODO Fix error about .zsh_history and activate.
   ;;(eload 'shell-history)                  ;integration with shell history
 
 
@@ -4376,7 +4376,7 @@ PROMPT is as for `y-or-n-p'."
 
   ;; =============== Buffers ================================
 
-  (when nil ;TODO: Fix error regarding `menu-bar-update-buffers-maxbuf' and activate
+  (when nil ;TODO Fix error regarding `menu-bar-update-buffers-maxbuf' and activate
     (eload 'fix-buffers-list))
 
 ;;; http://www.emacswiki.org/emacs-en/Locales
@@ -4395,8 +4395,8 @@ PROMPT is as for `y-or-n-p'."
   ;; Sudo wrappers and other tools
   ;; See: http://stackoverflow.com/questions/95631/open-a-file-with-su-sudo-inside-emacs
   ;; See: http://stackoverflow.com/questions/2472273/how-do-i-run-a-sudo-command-in-emacs
-  ;; TODO: Don't add command to shell history.
-  (when nil                             ;TODO: Disabled in favor of sudo-ext.el
+  ;; TODO Don't add command to shell history.
+  (when nil                             ;TODO Disabled in favor of sudo-ext.el
     (defun sudo-shell-command (command &optional prompt output-buffer error-buffer)
       "Execute COMMAND and as root.
 Use PROMPT when querying the password."
@@ -4532,11 +4532,11 @@ Use PROMPT when querying the password."
       ))
 
   ;; Provides multiple noncontiguous selections. Based on `multi-region.el'.
-  ;; TODO: 3-Click should select current symbol.
-  ;; TODO: 4-Click should select current expression (in C).
-  ;; TODO: 5-Click should select current statement (in C).
+  ;; TODO 3-Click should select current symbol.
+  ;; TODO 4-Click should select current expression (in C).
+  ;; TODO 5-Click should select current statement (in C).
 
-  ;; TODO: Enable and fix override behaviour for M-w that disturbs slick-yank.
+  ;; TODO Enable and fix override behaviour for M-w that disturbs slick-yank.
   ;; (autoload 'multi-select-mode "multi-select" nil t)
   ;; (multi-select-mode 1)
 
@@ -4768,8 +4768,8 @@ Use PROMPT when querying the password."
     (eload 'flymake-cursor)               ;displays flymake error msg in minibuffer after delay
     (defun flymake-goto-prev-error-and-show-err-menu () (interactive) (flymake-goto-prev-error) (flymake-display-err-menu-for-current-line))
     (defun flymake-goto-next-error-and-show-err-menu () (interactive) (flymake-goto-next-error) (flymake-display-err-menu-for-current-line))
-    (global-set-key [(shift f7)] 'flymake-goto-prev-error) ;TODO: Support "At first hit"
-    (global-set-key [(shift f8)] 'flymake-goto-next-error) ;TODO: Support "At last hit"
+    (global-set-key [(shift f7)] 'flymake-goto-prev-error) ;TODO Support "At first hit"
+    (global-set-key [(shift f8)] 'flymake-goto-next-error) ;TODO Support "At last hit"
     (global-set-key (kbd "C-c C-d") 'flymake-display-err-menu-for-current-line)
     ;; (global-set-key (kbd "C-c C-n") 'flymake-goto-next-error)
     ;; (global-set-key (kbd "C-c C-p") 'flymake-goto-prev-error)
@@ -4838,7 +4838,7 @@ Use PROMPT when querying the password."
 	(interactive)
 	(search-forward (char-to-string last-command-event)))
       (when (eload 'charedit)
-	;; TODO: Also bind ")" to `cdlatex-pbb-pnw' or some analog function.
+	;; TODO Also bind ")" to `cdlatex-pbb-pnw' or some analog function.
 	(defun cdlatex-pbb-pnw ()
 	  "Insert a pair of parens, brackets or braces."
 	  (interactive)
@@ -5029,7 +5029,7 @@ FILENAME defaults to `buffer-file-name'."
     ;; org-babel.el
     ;; http://orgmode.org/worg/org-contrib/babel/
     ;; http://eschulte.github.com/babel-dev/
-    ;; TODO: Make work by adding path
+    ;; TODO Make work by adding path
     (when (require 'org-babel-init nil t)
       (require 'org-babel-octave)
       (require 'org-babel-matlab)
@@ -5085,7 +5085,7 @@ FILENAME defaults to `buffer-file-name'."
      '(command-frequency-table-file "~/.emacs.d/command-frequencies") ;needed for load to pick correct file
      )
     ;;(command-frequency-table-load nil t)
-    (when (ignore-errors ;TODO: Errors in `called-interactively-p' on Emacs 23 but not on 24.
+    (when (ignore-errors ;TODO Errors in `called-interactively-p' on Emacs 23 but not on 24.
 	    (command-frequency-mode 1))
       (command-frequency-autosave-mode 1)
       (defalias 'list-command-frequencies 'command-frequency))
@@ -5150,7 +5150,7 @@ substring completion."
 	(define-key dired-mode-map "," 'anything-dired-history-view)
 	)
 
-      ;; TODO: Merge these into anything-config.el
+      ;; TODO Merge these into anything-config.el
       (when t
 	(setq anything-c-source-file-name-history
 	      '((name . "File Name History")
@@ -5269,7 +5269,7 @@ substring completion."
 	     ;;anything-c-source-dired-history
 	     anything-c-source-ffap-guesser
 
-	     ;; @TODO: Replace with my own version in `makefile-targets' and
+	     ;; @TODO Replace with my own version in `makefile-targets' and
 	     ;;`compilation-read-build-target'.
 	     ;; anything-c-source-make-targets
 
@@ -5305,12 +5305,12 @@ substring completion."
 	     ;; anything-c-source-apropos-emacs-functions
 	     ;; anything-c-source-apropos-emacs-variables
 
-	     ;; TODO: Improve performance of `anything-c-source-apt' by only
+	     ;; TODO Improve performance of `anything-c-source-apt' by only
 	     ;; displaying when have typed at leasy, say two characters,
 	     ;; similar to behaviour of `anything-c-source-locate'.
 	     anything-c-source-apt
 
-	     ;; TODO: Add `anything-c-source-apt-file-search'
+	     ;; TODO Add `anything-c-source-apt-file-search'
 	     ;; that does "apt-file search /tidy.h" using my tools in auto-deb.el.
 
 	     anything-c-source-info-pages
@@ -5524,7 +5524,7 @@ substring completion."
 
   ;; =============== Backups ================================
 
-  ;; TODO: Wait until more mature!
+  ;; TODO Wait until more mature!
   ;; C-c v Save Specific Version
   ;; C-c b List Backups
   ;; C-c k Kill Buffer Prompt
@@ -5583,7 +5583,7 @@ substring completion."
   (when nil
     (when (require 'revive nil t)))
 
-  ;; TODO: Prevent Disturbing Frame Popup Behaviour
+  ;; TODO Prevent Disturbing Frame Popup Behaviour
   (ignore-errors (ad-remove-advice 'other-window 'around 'sr-advice-other-window))
 
   ;;; Unused stuff
@@ -5691,7 +5691,7 @@ substring completion."
 
   ;; Wikipedia Mode
   ;; See: http://en.wikipedia.org/wiki/Wikipedia:Wikipedia-mode.el
-  (when nil                  ;TODO: Disabled because it changes my key-bindings.
+  (when nil                  ;TODO Disabled because it changes my key-bindings.
     (autoload 'wikipedia-mode "wigkipedia-mode.el"
       "Major mode for editing documents in Wikipedia markup." t)
     (add-to-list 'auto-mode-alist '("\\.wiki\\'" . wikipedia-mode)))
@@ -5712,7 +5712,7 @@ substring completion."
   (eload 'escreen)                      ;emacs window session manager
 
   ;; See: http://journal.dedasys.com/articles/2008/06/06/indent-region-as
-  ;; TODO: I'd use ``make-indirect-buffer'' for this; that way, you
+  ;; TODO I'd use ``make-indirect-buffer'' for this; that way, you
   ;; can have all the bells and whistles of the programming language
   ;; in question (syntax highlighting, etc) while the text ends up in
   ;; the HTML buffer.
@@ -5744,7 +5744,7 @@ indent source code contained within HTML."
   ;; (eval-after-load "font-lock" '(eload 'font-lock+)) ;Enhancements to standard library `font-lock.el'.
 
   ;; file-journal.el --- revisit files by date
-  ;; TODO: Add this logic into session.el by adding read/write timestamps (already in file permissions).
+  ;; TODO Add this logic into session.el by adding read/write timestamps (already in file permissions).
   (when (and nil (eload 'file-journal))
     (setq fj-journal-file (elsub "file-journal"))
     (setq fj-journal-size 365)
@@ -5801,7 +5801,7 @@ indent source code contained within HTML."
   (when (eload 'pmdb-mode)
     (add-to-list 'auto-mode-alist '("\\.PMDB\\'" . pmdb-mode)))
 
-  ;; TODO: Support case when `mark-active' is non-nil.
+  ;; TODO Support case when `mark-active' is non-nil.
   (defun count-all-buffer (&optional buffer)
     "Count number of characters and words in BUFFER."
     (interactive)
@@ -9268,7 +9268,7 @@ BEG and END (region to sort)."
   ;; ===========================================================================================
   ;; blorg.el --- export a blog from an org file
 
-  ;; TODO: Errors:
+  ;; TODO Errors:
   ;; debugger-setup-buffer: Symbol's function definition is void: :blog-title
   (when nil
     (when (eload 'blorg)

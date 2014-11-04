@@ -1,7 +1,7 @@
 ;;; trashcans.el --- Trashcans
 ;; Author: Per Nordlöw
 
-;; (require 'trash-settings nil t)         ;TODO: integrate with `trash-settings'
+;; (require 'trash-settings nil t)         ;TODO integrate with `trash-settings'
 
 (defvar local-trashcans nil
   "List of directories that contain local trashcans.")
@@ -18,7 +18,7 @@
   (log-trash filename))
 (ad-activate 'move-file-to-trash)
 
-;;; TODO:
+;;; TODO
 ;; Trashes:
 ;; /a/.trash: Emptying [FILE...]...
 ;; /b/.trash: Trashing [FILE...]...

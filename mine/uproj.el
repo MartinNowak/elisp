@@ -1,20 +1,20 @@
 ;;; uproj.el --- Unified Interface to Project Target Building, Debugging, Running and Installing.
 ;; Author: Per Nordlöw
 
-;;; TODO: Do something with -fsignaling-nans.
+;;; TODO Do something with -fsignaling-nans.
 
-;;; TODO: -march=native for GCC/Clang Builds
-;;; TODO: Auto generate doc if "-D" is part of dmd flags and open it automatically with browse-url.
+;;; TODO -march=native for GCC/Clang Builds
+;;; TODO Auto generate doc if "-D" is part of dmd flags and open it automatically with browse-url.
 
-;;; TODO: Support ~/alt/bin/clang -x c++ -I~/alt/include/c++/v1 -L~/alt/lib64 -L~/alt/lib -std=gnu++0x -g -Wall t_poly.cpp -lm -lc++ -lstdc++ -lpthread -larmadillo -o t_poly.out
+;;; TODO Support ~/alt/bin/clang -x c++ -I~/alt/include/c++/v1 -L~/alt/lib64 -L~/alt/lib -std=gnu++0x -g -Wall t_poly.cpp -lm -lc++ -lstdc++ -lpthread -larmadillo -o t_poly.out
 
-;; TODO: Suport Clang Fixits: http://clang.llvm.org/diagnostics.html
+;; TODO Suport Clang Fixits: http://clang.llvm.org/diagnostics.html
 
-;; TODO: Temporary modify CC, CXX etc using "CC=gcc make TARGET" or "export
+;; TODO Temporary modify CC, CXX etc using "CC=gcc make TARGET" or "export
 ;; CC=gcc; make TARGET" or (setenv "CC" "gcc") instead of current and test on
 ;; hispui and hispui.exe targets in "~/FOI/HISP".
 
-;; TODO: Support ccache and distcc
+;; TODO Support ccache and distcc
 ;; (y-or-n-p "Distribute Build (using distcc)?")
 ;; (y-or-n-p "Use Compiler Cache (ccache)?")
 ;;  apt-get install ccache distcc pump distcc-pump distccmon-gnome
@@ -30,14 +30,14 @@
 ;; Put the names of the servers in your environment: export DISTCC_POTENTIAL_HOSTS='localhost red green blue'
 ;; Build: pump make -j8 CC=distcc
 
-;; TODO: Merge with auto-build.el.
-;; TODO: Use GHC's `-fforce-recomp' for now and optionally activate `-fglasgow-exts'.
+;; TODO Merge with auto-build.el.
+;; TODO Use GHC's `-fforce-recomp' for now and optionally activate `-fglasgow-exts'.
 ;;
-;; TODO: GH 7.4.1: The recompilation checker now takes into account what flags
+;; TODO GH 7.4.1: The recompilation checker now takes into account what flags
 ;; were used when compiling. For example, if you first run ghc -c Foo.hs, and
 ;; then ghc -DBAR -c Foo.hs, then GHC will now recompile Foo.hs.
 ;;
-;; TODO: Ask Each GCC Version for Compiler Flags upon loading of uproj.el using the flag
+;; TODO Ask Each GCC Version for Compiler Flags upon loading of uproj.el using the flag
 ;; --help=X where X can be either
 ;; - optimizers
 ;; This will display all of the optimization options supported by the compiler.
@@ -82,7 +82,7 @@
 ;; occurs.
 (defcustom compilation-niceness 10
   "Nicenessrity of build process. From -20 (highest nicenessrity) to
-  19 (lowest nicenessrity.). TODO: Should we pick a higher nicenessrity?"
+  19 (lowest nicenessrity.). TODO Should we pick a higher nicenessrity?"
   :group 'compilation)
 (defcustom compilation-jobs-count (round (1+ cpus-online-count)) ;either *1.5 or +1
   "Number of jobs (commands) builds should run simultaneously.
@@ -227,7 +227,7 @@ http://gcc.gnu.org/onlinedocs/gnat_ugn_unw/Compiling-Different-Versions-of-Ada.h
 (defcustom haskell-default-std-type "Haskell-2010" "Default Haskell Language Standard." :group 'compilation)
 
 (defvar c++-std-libraries '(("GNU's" "stdc++") ;GNU's C++ Standard Library
-                            ("LLVM's libc++ (libcxx)" "c++") ;LLVM's libc++ or libcxx. TODO: Check that it exists somewhere in
+                            ("LLVM's libc++ (libcxx)" "c++") ;LLVM's libc++ or libcxx. TODO Check that it exists somewhere in
                             )
   "C++ Standard Library Implementations.")
 
@@ -301,7 +301,7 @@ VERSION default to version of gdb"
               c-gcc-parallel-build-flags)
      ,c-gcc-debug-link-flags)
     ;; Debug and AddressSanitize: http://gcc.gnu.org/gcc-4.8/changes.html
-    ;; TODO: Restrict to GCC Version 4.8
+    ;; TODO Restrict to GCC Version 4.8
     ("AddressSanitized-Debug"
      ,(append c-gcc-debug-build-flags '("-fsanitize=address"
                                         "-fno-omit-frame-pointer"))
@@ -350,7 +350,7 @@ VERSION default to version of gdb"
      ,(append c-gcc-parallel-build-flags '("-pg")) ;using gprof
      ,c-gcc-debug-link-flags)
     ;; Profile Mode: See: http://gcc.gnu.org/onlinedocs/libstdc++/manual/profile_mode.html
-    ;; TODO: Open libstdcxx-profile.txt upon exit.
+    ;; TODO Open libstdcxx-profile.txt upon exit.
     ("Profile-C++-STL"
      ,(append c-gcc-parallel-build-flags '("-pg" "-D_GLIBCXX_PROFILE"))
      ,c-gcc-debug-link-flags)
@@ -615,7 +615,7 @@ VERSION default to version of gdb"
     ("Release-Debug" ("-O2" "-debug"))
     ("Release-DPH" ("-O2" "-Odph"))            ;Data means Parallel Haskell
     ("Release-Profile-DPH" ("-O2" "-Odph" "-prof")) ;DPH means Data Parallel Haskell
-    ("Threaded-Debug" ("-threaded" "-debug")) ;TODO: Needed?
+    ("Threaded-Debug" ("-threaded" "-debug")) ;TODO Needed?
     ("Threaded-Ticky-Ticky-Profile" ("-threaded" "-prof" "-ticky"))
     ("Threaded-Release" ("-threaded" "-O2"))
     ("Threaded-Release-Profile" ("-threaded" "-O2" "-prof"))
@@ -653,7 +653,7 @@ VERSION default to version of gdb"
 
 (defun compiler-executable-find (name &optional full)
   "Return List of Compiler Path of NAME."
-  (let ((filename (executable-find name))) ;TODO: Use `executable-find-auto-install-on-demand'.
+  (let ((filename (executable-find name))) ;TODO Use `executable-find-auto-install-on-demand'.
     (when filename
       (if full filename (file-name-sans-directory filename)))))
 
@@ -696,7 +696,7 @@ Picks completions from `exec-path'."
          (exec (compilation-read-compiler-rx-prefixes lang))
          (re (eval `(rx (: bos
                            ,exec
-                           (? (: "-" (* (in ".0-9")))) ;possible versioned. TODO: Use version-...
+                           (? (: "-" (* (in ".0-9")))) ;possible versioned. TODO Use version-...
                            eos))))
          (compiler
           (let ((icicle-default-in-prompt-format-function
@@ -802,10 +802,10 @@ COMPILER can be either `gcc', `clang', `gdc', `gdmd', `ghc', `ldc', `ldmd2'."
   (let* ((default (or default
                       (when compiler
                         (cond ((and (string-match "gcc" compiler)
-                                    (gcc-version-at-least "4.8" compiler)) ;TODO: Read this from variable
+                                    (gcc-version-at-least "4.8" compiler)) ;TODO Read this from variable
                                "AddressSanitized-Debug")
                               ((and (string-match "clang" compiler)
-                                    (clang-version-at-least "3.1" compiler)) ;TODO: Read this from variable
+                                    (clang-version-at-least "3.1" compiler)) ;TODO Read this from variable
                                "AddressSanitized-Debug")
                               ((string-match "dmd" compiler)
                                dmd-default-build-type)
@@ -1061,7 +1061,7 @@ otherwise choose any target."
          (tag :build-file-history)
          (kexpr 'Build-Tool-Script) ;ftypes-build-script-file-keys, '(Makefile SConstruct)
          (hist (fcache-get-tag fcache tag))
-         ;; TODO: Replace or merge with: (trace-file-upwards "~/justcxx/semnet/" 'Makefile nil nil 'name-recog)
+         ;; TODO Replace or merge with: (trace-file-upwards "~/justcxx/semnet/" 'Makefile nil nil 'name-recog)
          (bfile (abbreviate-file-name
                  (let* ((files (directory-files-of-types directory kexpr 'name-recog)))
                    (when files
@@ -1074,7 +1074,7 @@ otherwise choose any target."
                                             (car files))))
                            (completing-read "Build File: "
                                             files
-                                            nil ;; TODO: require doesn't work so use instead: `(lambda (filename) (file-exists-p (expand-file-name filename ,directory)))
+                                            nil ;; TODO require doesn't work so use instead: `(lambda (filename) (file-exists-p (expand-file-name filename ,directory)))
                                             t nil 'hist default))
                        (car files)))))))
     (when bfile
@@ -1270,8 +1270,8 @@ directory DIR."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Use: http://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html#Directory-Variables
-;; TODO: Cache this in fcache.
+;; TODO Use: http://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html#Directory-Variables
+;; TODO Cache this in fcache.
 (defvar uproj-targets
   '()
   "List that Associates Build Target with Directory, Type, Extra Flags and Shell-Command.";
@@ -1384,10 +1384,10 @@ directory DIR."
      (setq uproj-last-build-file (expand-file-name bfile directory))
      (setq uproj-last-build-target target)
      (progn
-       ;; TODO: (uproj-set-directory-target-compiler directory target compiler)
+       ;; TODO (uproj-set-directory-target-compiler directory target compiler)
        (setq uproj-last-build-compiler compiler))
      (progn
-       ;; TODO: Replace with (uproj-set-directory-target-build-type directory target build-type)
+       ;; TODO Replace with (uproj-set-directory-target-build-type directory target build-type)
        (setq uproj-last-build-type build-type))
      options
      jobs
@@ -1459,7 +1459,7 @@ Also rebuild recent project if needed."
   (interactive (list (read-file-name "Run file: ")
                      nil nil nil nil
                      (read-directory-name "Working Directory: ")))
-  ;;(when (require 'ede nil t)(ede-run-target)) ;TODO: Activate
+  ;;(when (require 'ede nil t)(ede-run-target)) ;TODO Activate
   (when (file-regular-p filename)
     (if (file-executable-p filename)
         (let ((threaded (and build-type
@@ -1638,7 +1638,7 @@ Also rebuild recent project if needed."
       (if (and (eq process-status 'exit)
                (zerop exit-status))        ;if success
           (progn
-            (message "TODO: How do we make this work nicely?")
+            (message "TODO How do we make this work nicely?")
             (when nil
               (when buf
                 (run-with-timer 5 nil 'compilation-exit-stash-away buf))))
@@ -1665,7 +1665,7 @@ and set the focus back to Emacs frame."
 (defun recompile-and-gud-run ()
   "ReCompile and Run."
   (interactive)
-  (call-interactively 'recompile)       ;TODO: Lookup executable of current debuggee and rebuild it.
+  (call-interactively 'recompile)       ;TODO Lookup executable of current debuggee and rebuild it.
   (when (and (require 'gud nil t)
              (or (require 'gdb nil t)
                  (require 'gdb-mi nil t))

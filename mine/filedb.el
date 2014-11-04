@@ -4,7 +4,7 @@
 ;; libraries `run-assoc' etc.
 
 ;; Author: Per Nordlöw.
-;; Ref: http://www.garykessler.net/library/file_sigs.html. TODO: Add more from this source.
+;; Ref: http://www.garykessler.net/library/file_sigs.html. TODO Add more from this source.
 
 ;; todo: Integrate with `magic-mode-alist' entries
 ;; See: ~/matlab/extern/examples/mex
@@ -14,16 +14,16 @@
 
 ;; See: TrID - File Identifier: http://mark0.net/soft-trid-e.html
 
-;; TODO: (add-to-list 'revert-without-query "tags" "TAGS") for all Uneditable files
+;; TODO (add-to-list 'revert-without-query "tags" "TAGS") for all Uneditable files
 
-;; TODO: Integrate `completion-ignored-extensions'.
+;; TODO Integrate `completion-ignored-extensions'.
 
-;; TODO: Register files of types and add some of them as Uneditable .\#\* \*\~ \*.bin \*.lbin \*.so \*.a \*.ln \*.blg \*.bbl \*.elc \*.lof \*.glo \*.idx \*.lot \*.fmt \*.tfm \*.class \*.fas \*.lib \*.mem \*.x86f \*.sparcf \*.dfsl \*.pfsl \*.d64fsl \*.p64fsl \*.lx64fsl \*.lx32fsl \*.dx64fsl \*.dx32fsl \*.fx64fsl \*.fx32fsl \*.sx64fsl \*.sx32fsl \*.wx64fsl \*.wx32fsl \*.fasl \*.ufsl \*.fsl \*.dxl \*.lo \*.la \*.gmo \*.mo \*.toc \*.aux \*.cp \*.fn \*.ky \*.pg \*.tp \*.vr \*.cps \*.fns \*.kys \*.pgs \*.tps \*.vrs \*.pyo
+;; TODO Register files of types and add some of them as Uneditable .\#\* \*\~ \*.bin \*.lbin \*.so \*.a \*.ln \*.blg \*.bbl \*.elc \*.lof \*.glo \*.idx \*.lot \*.fmt \*.tfm \*.class \*.fas \*.lib \*.mem \*.x86f \*.sparcf \*.dfsl \*.pfsl \*.d64fsl \*.p64fsl \*.lx64fsl \*.lx32fsl \*.dx64fsl \*.dx32fsl \*.fx64fsl \*.fx32fsl \*.sx64fsl \*.sx32fsl \*.wx64fsl \*.wx32fsl \*.fasl \*.ufsl \*.fsl \*.dxl \*.lo \*.la \*.gmo \*.mo \*.toc \*.aux \*.cp \*.fn \*.ky \*.pg \*.tp \*.vr \*.cps \*.fns \*.kys \*.pgs \*.tps \*.vrs \*.pyo
 
-;; TODO: Merge in file types and presentations from dired-filetype-face.el
-;; TODO: Import configs from quickrun.el
-;; TODO: Integrate all patterns relangs.el
-;; TODO: Add :import-pattern
+;; TODO Merge in file types and presentations from dired-filetype-face.el
+;; TODO Import configs from quickrun.el
+;; TODO Integrate all patterns relangs.el
+;; TODO Add :import-pattern
 ;; C/C++: (lambda (x) (rx-to-string "#include" (| "<$X>" "\"$X\"")))
 ;; Haskell: (lambda (x &optional y) (rx-to-string "import" x "as" y))
 ;; VHDL: (lambda (x) (rx "import" " " x))
@@ -34,15 +34,15 @@
 ;; FIXME: (file-match-cached "/bin/ls" t nil) should return `Uneditable'
 ;; along with `ELF' like (file-match-cached "/bin/ls" t nil t) does.
 
-;; TODO: (fmd-expr-from-symbol 'Some-Strange-Key)
+;; TODO (fmd-expr-from-symbol 'Some-Strange-Key)
 
-;; TODO: What to do about non-existing files in this case?
+;; TODO What to do about non-existing files in this case?
 ;; This errors: (file-match "/bin/ls" 'GUD-Debuggable) => nil
 ;; This errors: (file-match "/bin/nobody" 'GUD-Debuggable) => nil
 ;; This errors: (file-match-cached "/bin/nobody") => nil
 ;; This errors: (file-match-cached "/bin/nobody" t) errors
 
-;; TODO: Define :relations/:related matcher.
+;; TODO Define :relations/:related matcher.
 ;; - emacs-lisp-mode: $X.elc depends on $X.el
 ;; - sh-mode: "source $X"
 ;; - c-common-mode: #include "X", #include <X>
@@ -54,23 +54,23 @@
 ;; - "References"
 ;; - "Referenced by"
 
-;; TODO: See filedb-TODO.org
+;; TODO See filedb-TODO.org
 
-;; TODO: Checksums: moserial-2.30.0.X where X can be either: md5sum sha1sum sha256sum
+;; TODO Checksums: moserial-2.30.0.X where X can be either: md5sum sha1sum sha256sum
 ;; e0a71d54b239ed7f0dee50d745c05658c800ae51de342d827f6e3edc7a9c2646  moserial-2.30.0.tar.bz2
 ;; 6c6d45ae78c3026f1b72e05f193d55e67221e17dce2cf84c3c315f817bf6ffd7  moserial-2.30.0.tar.gz
 
-;; TODO: Doesn't (file-match-keys-all "/bin/ls" '(Java Pascal) '(C C++ Java) nil t) => (Java)
+;; TODO Doesn't (file-match-keys-all "/bin/ls" '(Java Pascal) '(C C++ Java) nil t) => (Java)
 
-;; TODO: Matcher for C/C++/Objective-C Dep file.
+;; TODO Matcher for C/C++/Objective-C Dep file.
 
-;; TODO: `file-compressed-p' does not work. Fix.
+;; TODO `file-compressed-p' does not work. Fix.
 ;;       - 1. (file-match "/usr/share/info/gzip.info.gz" 'GNU-zip)
 ;;       - 2. (fmd-compressed-p "/usr/share/info/gzip.info.gz" 'GNU-zip)
 ;;       EDebug cscan functions. What decoding is used and what does the buffer contain?
 
-;; TODO: Reuse package executable.el.
-;; TODO: When doing or-matching (or KEYS), used in discardals such as `file-uneditable-regular-p' sort on
+;; TODO Reuse package executable.el.
+;; TODO When doing or-matching (or KEYS), used in discardals such as `file-uneditable-regular-p' sort on
 ;; 1. RECOG:
 ;;    1. name-and-contents:
 ;;    1. name-or-contents:
@@ -79,19 +79,19 @@
 ;; We may need to have a `respect-order-flag' if we want to match them in a specific order.
 ;; Check performance improvement using uneditable.
 
-;; TODO: Add support for :build and :execute and running Matlab and Octave Extensions written in C/C++:
+;; TODO Add support for :build and :execute and running Matlab and Octave Extensions written in C/C++:
 ;; - Octave Oct: shell: mkoctfile file
 ;; - Octave Mex: shell: mkoctfile --mex file
 ;; - Matlab: shell: mex file
 ;; - Octave/Matlab: mex file
 ;; - Octave/Matlab: mexext file
 ;;
-;; TODO: Merge with dired-filetype-face.el
-;; TODO: Reuse `string-list-to-regexp' in `combinations.el' in construction of name and content matchers.
-;; TODO: Auto-detect paths in .list
-;; TODO: Support .jigdo and .zsync .manifest and .template
+;; TODO Merge with dired-filetype-face.el
+;; TODO Reuse `string-list-to-regexp' in `combinations.el' in construction of name and content matchers.
+;; TODO Auto-detect paths in .list
+;; TODO Support .jigdo and .zsync .manifest and .template
 ;;       Examples in directory: http://cdimage.ubuntu.com/dvd/current/
-;; TODO: Use filedb-magic to display a more descriptive buffer-file explanation in mode-line.
+;; TODO Use filedb-magic to display a more descriptive buffer-file explanation in mode-line.
 
 (eval-when-compile (require 'cl))
 (require 'rx)
@@ -124,7 +124,7 @@
   (or (executable-find "loimpress")
       (executable-find "ooimpress")))
 
-;; TODO: Reuse filedb registry logic.
+;; TODO Reuse filedb registry logic.
 (defun file-productions (filename)
   "Return list of files generated from FILENAME."
   (let* ((bare-old (file-name-sans-extension filename)))
@@ -155,7 +155,7 @@
 
 (when nil
   (with-temp-buffer
-    ;; TODO: Merge with (set-buffer (get-buffer-create "*magic.ttn-do-magic*"))
+    ;; TODO Merge with (set-buffer (get-buffer-create "*magic.ttn-do-magic*"))
     (insert-file-contents-literally (elsub "magic/magic.ttn-do-magic"))
     (goto-char (point-min))
     (forward-line 3)
@@ -169,7 +169,7 @@
   :prefix "fmd-"
   :group 'tools)
 
-;; TODO: Use Shorter: n-recog e-recog c-recog nac-recog noc-recog;
+;; TODO Use Shorter: n-recog e-recog c-recog nac-recog noc-recog;
 (defvar fmd-recogs
   (list
    '("Name" name-recog)  ;Recognize File Type solely through its @em name.
@@ -243,7 +243,7 @@ Error if that is void."
          'exist-recog)
         ))
 
-;;; TODO: Sort on 1. FTYPE, 2. RECOG, if precog are both `name-recog' put `lit' before `re'
+;;; TODO Sort on 1. FTYPE, 2. RECOG, if precog are both `name-recog' put `lit' before `re'
 (defun ftype-simplicity-rank (ftype)
   "Get Recognition Rank of FTYPE."
   (let ((precog (or (ftype-precog ftype) ;if given
@@ -298,7 +298,7 @@ Error if that is void."
       (gdb (concat gud-gdb-command-name
                    " -q"                ;quiet
                    " -e " filename
-                   ;; TODO: Fix this!
+                   ;; TODO Fix this!
                    ;; " -ex run"
                    ;; (concat
                    ;;  " -ex 'run"
@@ -547,7 +547,7 @@ key strings.
 
     ;; Images
     JPEG JPEG-2000 PNG GIF TIFF XPM XBM PBM PGM PPM PNM
-    BMP Apple-Icon ICO-Icon ICO-Cursor XCF ;TODO: Replace with super class key `Binary-Image'
+    BMP Apple-Icon ICO-Icon ICO-Cursor XCF ;TODO Replace with super class key `Binary-Image'
     CRW TGA PIC PIF SEA YTR
 
     ;; Sound
@@ -828,8 +828,8 @@ See http://oclint.org/"
              (:debug (lambda (filename &optional build-type compilation-window cwd args)
                        ))
              (:check "mlint")))
-  ;; TODO: Activate ".m" extension and distinguish from Matlab by checking, for example, comment style.
-  ;; TODO: Call something like `octave-shell-save-and-go'.
+  ;; TODO Activate ".m" extension and distinguish from Matlab by checking, for example, comment style.
+  ;; TODO Call something like `octave-shell-save-and-go'.
   (fmd-add 'Octave "Octave" "Script Code" 'txt
            '(:name (lit "octave" ext))
            'octave-mode 'man
@@ -852,7 +852,7 @@ See http://oclint.org/"
            '(:name (lit "jl" ext))
            'julia-mode 'man
            '((:execute "julia")
-             (:evaluate "julia -e")  ;TODO: Support eval-region in julia-mode.el
+             (:evaluate "julia -e")  ;TODO Support eval-region in julia-mode.el
              ))
 
   ;; Script Code
@@ -861,7 +861,7 @@ See http://oclint.org/"
                        :precog contents-recog
                        :generalize (Shell-Script Perl Python Ruby Lua Awk)
                        )
-           nil 'man nil nil "http://en.wikipedia.org/wiki/Shebang_(Unix)") ;TODO: 1 means to use contents-matcher (match-string 1) as interpreter
+           nil 'man nil nil "http://en.wikipedia.org/wiki/Shebang_(Unix)") ;TODO 1 means to use contents-matcher (match-string 1) as interpreter
 
   (fmd-add 'A-Script "A-Shell" "Script Code" 'txt
            `(:name (lit "ash" ext)
@@ -1119,15 +1119,15 @@ See http://oclint.org/"
                    :contents (re "#![[:space:]]*\\(/usr/bin/python\\|/usr/bin/env[[:space:]]+python\\)\\([0-9.]?\\)" 0 nil ,fmd-script-type-magic-limit)
                    :precog name-or-contents-recog)
            'python-mode 'man `((:build (lambda (filename &optional build-type compilation-window cwd args)
-                                         ;; TODO: Use wine python.exe setup.py py2exe[/color] to build Window binaries.
+                                         ;; TODO Use wine python.exe setup.py py2exe[/color] to build Window binaries.
                                          ))
                                (:execute (lambda (filename &optional build-type compilation-window cwd args)
                                            (find-file filename)
-                                           ;; TODO: Choose between pypy.* or python.* using `read-executables-filename'.
+                                           ;; TODO Choose between pypy.* or python.* using `read-executables-filename'.
                                            (if (region-active-p)
                                                (py-execute-region (region-beginning)
-                                                                  (region-end)) ;TODO: Use ASYNC?
-                                             (py-execute-buffer) ;TODO: Use ASYNC?
+                                                                  (region-end)) ;TODO Use ASYNC?
+                                             (py-execute-buffer) ;TODO Use ASYNC?
                                              )))
                                (:debug-pdb gud-pdb-command-name-fn)
                                (:debug-ipdb gud-ipdb-command-name-fn)
@@ -1267,7 +1267,7 @@ See http://oclint.org/"
            'cuda-mode 'man `((:execute "nvcc")))
 
   ;; Markup Languages
-  ;; TODO: Or use `browse-url'?
+  ;; TODO Or use `browse-url'?
   (fmd-add 'TexInfo "TexInfo" "Document Source Code" 'txt
            `(:name (lit "texi" ext))
            'texinfo-mode 'man `((:execute ("makeinfo %f" "texi2pdf %f" "texi2dvi %f"))))
@@ -1436,7 +1436,7 @@ See http://oclint.org/"
                    :contents (re "^[[:space:]]*\\(?:[a-zA-Z0-9-_y]+\\):[[:space:]]$" any)
                    :precog name-recog)
            'makefile-mode 'man `((:execute (lambda (filename &optional build-type compilation-window cwd args)
-                                             (concat (or ;; TODO: Enable when we know how to check whether (executable-find "remake") is available on remote compilation host
+                                             (concat (or ;; TODO Enable when we know how to check whether (executable-find "remake") is available on remote compilation host
                                                          (executable-find "gmake")
                                                          (executable-find "make")) " -f " filename)))
                                  (:targets 'makefile-targets)
@@ -1517,7 +1517,7 @@ See http://oclint.org/"
   (fmd-add 'Autoconf-input-template "Autoconf Template" "Autoconf Input"
            'txt
            `(:name (re "configure\\.\\(?:in\\|ac\\)" full)
-                   :contents (lit "AC_INIT(\\[\\(?:.*?\\)\\],\\[\\(?:.*?\\)\\])" any) ;TODO: Use match-data: ((1 "Project Name") (2 "Version"))
+                   :contents (lit "AC_INIT(\\[\\(?:.*?\\)\\],\\[\\(?:.*?\\)\\])" any) ;TODO Use match-data: ((1 "Project Name") (2 "Version"))
                    )
            'autoconf-mode 'man `((:execute "autoconf")))
   (fmd-add 'Autoconf-log "Autoconf Log" "Log" 'txt
@@ -1612,12 +1612,12 @@ See http://oclint.org/"
 
   ;; GNOME Theme Package
 
-  ;; TODO: It contains a theme_name directory that includes an index.theme file
+  ;; TODO It contains a theme_name directory that includes an index.theme file
   ;; and gtk and metacity directories. It is saved in a gzip-compressed-tar
   ;; format.
   (fmd-add 'GNOME-Theme-Package "GNOME-Theme-Package" "Theme" 'txt
            `(:name (lit "gtp" ext)
-                   :specialize (GNU-zip TAR) ;TODO: Express using Layers
+                   :specialize (GNU-zip TAR) ;TODO Express using Layers
                    )
            nil 'gen nil)
 
@@ -1652,7 +1652,7 @@ See http://oclint.org/"
                   (re ,(rx (| (in 0 7)
                               (in 14 26)
                               (in 28 31)))
-                      0 ;TODO: Add support for this context (CTX) of type consp by changing context to (0 . 512)
+                      0 ;TODO Add support for this context (CTX) of type consp by changing context to (0 . 512)
                       )
                   contents-recog)
            nil nil nil)
@@ -1856,7 +1856,7 @@ See http://oclint.org/"
   ;; Version Control
   (fmd-add 'VC-Db-Dir "VC-Db" "VC-Database" 'dir
            `(:name (lit ,vc-directory-exclusion-list full))
-           nil 'gen nil) ;TODO: Must be case-sensitive! (let (case-fold-flag) ..)
+           nil 'gen nil) ;TODO Must be case-sensitive! (let (case-fold-flag) ..)
   (fmd-add 'GIT-Ignore "GIT Ignore" "VC-Config" 't
            `(:name (lit ".gitignore" full))
            nil 'gen nil)
@@ -1931,7 +1931,7 @@ See http://oclint.org/"
   (fmd-add 'Compressed "Compressed" "Group" 't `(:generalize (CompressedZ GNU-zip BZip XZ LZIP LZX SZip Zip ISC MSCF-CAB MSCF-PPZ MSCF-SNP))
            nil 'gen nil)
 
-  ;; TODO: Replace with super class key `Image'
+  ;; TODO Replace with super class key `Image'
   (fmd-add 'Bitmap-Image "Bitmap Image" "Binary Data" 'bin nil
            nil 'gen nil)
 
@@ -1965,7 +1965,7 @@ See http://oclint.org/"
                    :precog contents-recog)
            nil 'gen `((:show "gimp")) nil "http://en.wikipedia.org/wiki/XCF_(file_format)")
 
-  ;; TODO: Support typical directories: '(:system-dir "/usr/share/inkscape/palettes/" :config-dir "~/.config/inkscape/")
+  ;; TODO Support typical directories: '(:system-dir "/usr/share/inkscape/palettes/" :config-dir "~/.config/inkscape/")
   (fmd-add 'GPL '("GPL" "GIMP Palette") "Palette" 'txt
 
            `(:name (lit ("gpl") ext)
@@ -2111,7 +2111,7 @@ See http://oclint.org/"
   (fmd-add 'Cryptographic-Certificate "Certificate" "Text" 'txt
            `(:name (lit ("crt" "pem" "0") ext)
                    :contents (lit ("-----BEGIN CERTIFICATE-----") 0)
-                   ;; TODO: Make this work
+                   ;; TODO Make this work
                    ;; :contents (and (lit ("-----BEGIN CERTIFICATE-----") 0)
                    ;;                (lit ("-----END CERTIFICATE-----") -1))
                    :precog contents-recog)
@@ -2120,7 +2120,7 @@ See http://oclint.org/"
   (fmd-add 'Cryptographic-Signature "Signature" "Text" 'txt
            `(:name (lit ("sig") ext)
                    :contents (re ("-----BEGIN \\([A-Z]+\\) SIGNATURE-----") 0)
-                   ;; TODO: Make this work
+                   ;; TODO Make this work
                    ;; :contents (and (lit ("-----BEGIN \\([A-Z]+\\) SIGNATURE-----") 0)
                    ;;                (lit ("-----BEGIN \\([A-Z]+\\) SIGNATURE-----") -1))
                    :precog contents-recog)
@@ -2160,7 +2160,7 @@ See http://oclint.org/"
            `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "tar xf %s " filename)))
              (:list (lambda (filename &optional build-type compilation-window cwd args) (format "tar tf %s " filename)))))
 
-  ;; TODO: Defiene `GZIP-TAR' `BZIP-TAR' `XZ-TAR' and turn `Compressed-TAR' into a `:generalize' of these.
+  ;; TODO Defiene `GZIP-TAR' `BZIP-TAR' `XZ-TAR' and turn `Compressed-TAR' into a `:generalize' of these.
   (fmd-add 'Compressed-TAR '("Compressed-TAR" "Compressed Tape Archive") "Compressed-Archive" 'bin
            `(:name (lit ("tgz" "tar.gz" "tar.z" "tar.Z"
                          "tbz" "tbz2" "tar.bz" "tar.bz2"
@@ -2176,7 +2176,7 @@ See http://oclint.org/"
            `((:extract (lambda (filename &optional build-type compilation-window cwd args) (format "jar xf %s " filename)))
              (:list (lambda (filename &optional build-type compilation-window cwd args) (format "tar xf %s " filename)))))
 
-  ;; TODO: Support File Set: X.rar, x.r00, x.r01, x.r02, ... and check that their name and content-CRC32 matches contents of X.sfv
+  ;; TODO Support File Set: X.rar, x.r00, x.r01, x.r02, ... and check that their name and content-CRC32 matches contents of X.sfv
   ;; Use function `file-rar-set-count'
   (fmd-add 'RAR '("RAR" "RAR Archive") "Archive" 'bin
            `(:name (lit ("rar") ext))
@@ -2765,7 +2765,7 @@ matchers at all available return nil. "
         cfun                            ;contents functions list
         comb-nre                        ;combined name matcher regexp
         comb-cre)                     ;combined content matched regexp
-    ;; TODO: Use `regexp-opt-depth' on each element in `ksyms' and emit "error "Skipping ksym %s because it contains regexp groups" ksym) if (not (= depth 0))
+    ;; TODO Use `regexp-opt-depth' on each element in `ksyms' and emit "error "Skipping ksym %s because it contains regexp groups" ksym) if (not (= depth 0))
     (case comb-op
       (or
        `(or          ;Note: comb-op needs its arguments spliced:
@@ -2789,7 +2789,7 @@ matchers at all available return nil. "
     (if (= (length kexpr) 1)            ;list of only 1 key
         (fmd-matcher (car kexpr) recog nil t) ;Note: May reuse ftypes-matchers!
       ;; otherwise list of several keys
-      (when (and (symbolp (car kexpr)) ;first is the symbol: 'or, 'not, 'and. TODO: use `fboundp'() instead.
+      (when (and (symbolp (car kexpr)) ;first is the symbol: 'or, 'not, 'and. TODO use `fboundp'() instead.
                  (memq (car kexpr) '(not null or and)))     ;first is logic operator
         (setq comb-op (car kexpr))     ;change default comb-op
         (setq kexpr (cdr kexpr)))       ;skip past op
@@ -2924,7 +2924,7 @@ QUERY-PROMPT) the user if the match should be performed."
     (fmd-matcher kexpr recog compile-flag)))
 ;; Use: (fmd-read-multi-matcher 'name-recog nil "Types: ")
 
-;; WARNING: TODO: IN-COMPLETE!
+;; WARNING: TODO IN-COMPLETE!
 (defun fmd-get-default-matcher (&optional matcher-type creation ptype)
   "Generate default matcher of type MATCHER-TYPE (currently
 'function or 'regexp or nil for default) that matches files that
@@ -3185,7 +3185,7 @@ containing only the keys that matched FILE-OR-CACHE."
                            (if ckeys ;if previous cached keys exist
                                (progn
                                  (setq ckeys (append ckeys new-hit))
-                                 (delete-dups ckeys)) ;TODO: Is there a eq variant of this?
+                                 (delete-dups ckeys)) ;TODO Is there a eq variant of this?
                              (setq ckeys new-hit))
                            (when fcache
                              (fcache-set-types fcache `((,recog ,ckeys))))))
@@ -3572,7 +3572,7 @@ found."
 ;; Use: (file-tags-root-directory-p "~/justcxx/")
 ;; Use: (file-tags-root-directory-p "~/justcxx/pmdb/")
 
-;; TODO: Use to help EDE figure out the project root directory using
+;; TODO Use to help EDE figure out the project root directory using
 ;; `semanticdb-project-predicate-functions' defaults to `ede-directory-project-p'
 ;; `semanticdb-project-root-functions' defaults to `ede-toplevel-project-or-nil'
 ;; Note: Compare with:
@@ -3782,7 +3782,7 @@ CACHED-ONLY is non-nil only use that cached types."
 
 ;; ---------------------------------------------------------------------------
 
-;;; TODO: Add :view as `find-file-read-only' of not already defined and :edit as `find-file' and :edit-binary `find-file-literally'
+;;; TODO Add :view as `find-file-read-only' of not already defined and :edit as `find-file' and :edit-binary `find-file-literally'
 (defun url-ops (url &optional category recog)
   "Get types that matches URL using RECOG. If CATEGORY is
 non-nil only try types that belong to that category."
@@ -3801,7 +3801,7 @@ non-nil only try types that belong to that category."
              (delete-dups ops)
              ops))
           ((file-directory-p url)
-           ;; TODO: Do something with directories.
+           ;; TODO Do something with directories.
            )
           ((string-match (rx (: "svn" (? "+ssh") "://")) url)
            '("git svn clone url>" url))
@@ -3912,7 +3912,7 @@ the build output."
            ;;   (funcall builder filename))
            )
           (t
-           (message "TODO: Handle string builder %s !" builder)
+           (message "TODO Handle string builder %s !" builder)
            filename))))
 
 ;; ---------------------------------------------------------------------------
@@ -3941,7 +3941,7 @@ the build output."
 ;; Use: (progn (setq dummy (file-try-debug "/bin/ls")) dummy)
 ;; Use: (progn (setq dummy (file-try-debug "/etc/passwd")) dummy)
 
-;; TODO: Merge with ede-debug-target()
+;; TODO Merge with ede-debug-target()
 (defun file-debug-single (filename &optional args silent)
   "Try to Debug FILENAME directly or (EDE) target associated with
 FILENAME. Optional argument ARGS is a list of string arguments to
@@ -4032,7 +4032,7 @@ associated with FILENAME."
 
 ;; Use: (benchmark-run 10 (file-box-p "/usr/share/info/gzip.info.gz"))
 
-;; TODO: There is big performance difference here! For some strange
+;; TODO There is big performance difference here! For some strange
 ;; reason `insert-file-contents-literally' is around 11 times slower
 ;; than `find-file-noselect'! See Google Groups post at
 ;; http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/f9d45022b5ae5ce2#.

@@ -7,7 +7,7 @@
 ;; ---------------------------------------------------------------------------
 
 (defvar file-icon-cache
-  (make-hash-table :size 1031           ;TODO: Is this a good default value?
+  (make-hash-table :size 1031           ;TODO Is this a good default value?
                    :test 'equal)
   "Hash table that maps filenames to icon images.")
 
@@ -26,7 +26,7 @@ POS defaults to point."
       (setq icon-file "/usr/share/icons/gnome/16x16/mimetypes/empty.png")) ;default icon
     (unless (delq nil (mapcar (lambda (o) (overlay-get o 'put-image))
                               (overlays-in (point) (1+ (point)))))
-      ;; TODO: Use hash-table from mime-type to object returned by `create-image'.
+      ;; TODO Use hash-table from mime-type to object returned by `create-image'.
       (put-image (create-image icon-file) (or pos (point)))
       (unless skip-overlay
         (setq overlay

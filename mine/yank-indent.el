@@ -14,7 +14,7 @@
                      ruby-mode html-mode))
   "List of modes in which a yank should be indented automatically.")
 
-;; TODO: Does this doesn't include case when M-w C-y.
+;; TODO Does this doesn't include case when M-w C-y.
 (defadvice yank (after indent-region activate)
   (if (member major-mode yank-indent-modes)
       (save-excursion                    ;otherwise point and mark gets swapped
@@ -25,7 +25,7 @@
           ))))
 (ad-activate 'yank)
 
-;; TODO: Does this doesn't include case when M-w C-y.
+;; TODO Does this doesn't include case when M-w C-y.
 (defadvice yank-pop (after indent-region activate)
   (if (member major-mode yank-indent-modes)
       (save-excursion                   ;otherwise point and mark gets swapped

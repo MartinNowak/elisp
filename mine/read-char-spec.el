@@ -42,7 +42,7 @@
 ;; 2009-06-17: Initial version, inspired by a conversation with ngirard
 ;;              in #emacs.
 
-;;; TODO: Merge with `read-char-choice'.
+;;; TODO Merge with `read-char-choice'.
 
 ;;; Code:
 

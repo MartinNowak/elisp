@@ -98,7 +98,7 @@ See http://superuser.com/questions/132225/how-to-get-back-to-an-active-minibuffe
 (when (ignore-errors
         (and (append-to-load-path
               (elsub "window-numbering"))
-             (require 'window-numbering nil t))) ;TODO: Errors in `called-interactively-p' on Emacs 23 but not on 24.
+             (require 'window-numbering nil t))) ;TODO Errors in `called-interactively-p' on Emacs 23 but not on 24.
   (let ((map window-numbering-keymap))
     (define-key map "\M-0" 'select-window-0-or-display-last-messages)
     )
@@ -192,7 +192,7 @@ See http://superuser.com/questions/132225/how-to-get-back-to-an-active-minibuffe
 
 ;;(when (eload 'dim-switch-window))
 
-(when (ignore-errors (eload 'winlay)) ;TODO: Remove recursive require error and activate.
+(when (ignore-errors (eload 'winlay)) ;TODO Remove recursive require error and activate.
   (defadvice toggle-window-split (after shrink-all-windows activate)
     (shrink-window-if-larger-than-buffer))
   (ad-activate 'toggle-window-split)

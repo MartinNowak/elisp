@@ -1,12 +1,12 @@
 ;;; file-dwim.el --- Execute (Buffer/File) DWIM.
 ;; Author: Per Nordlöw
 
-;; TODO:
+;; TODO
 ;; - c-mode and c++-mode: Auto-Build buffer-file-name into a temporary
 ;; sub-directory (if it contains a main function otherwise ask completing-read
 ;;                   projects that use current buffer) .temp-builds and run it from there
 
-;; - IN `file-dwim' (let ((eval-window (current-window)) ;TODO: Restore this
+;; - IN `file-dwim' (let ((eval-window (current-window)) ;TODO Restore this
 ;; - somewhere else through a global variable and `select-window'.
 
 ;; - Separate strace output from ordinary output into a separate buffers using
@@ -32,7 +32,7 @@
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Do `process-send-string' by binding it locally in `process-buffer'.
+;; TODO Do `process-send-string' by binding it locally in `process-buffer'.
 (defun file-dwim (filename &optional op args display-output compilation-window source-file build-type cwd)
   "Apply operation (Operate) OP on FILENAME.
 If op is `ask' read it.
@@ -49,7 +49,7 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                      (read-file-op filename nil nil (eq op 'try-last)))) ;ask for operation if not defined
              (opfun (or (file-op filename op)  ;operation value
                         (file-op filename :execute))) ;default to execute
-             (win (current-window)) ;TODO: Restore this somewhere else through a global variable and `select-window'.
+             (win (current-window)) ;TODO Restore this somewhere else through a global variable and `select-window'.
              )
         (let ((opfun (if (and (listp opfun)
                               (eq (car opfun) 'quote))
@@ -81,16 +81,16 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
            (when (fboundp 'matlab-shell-run-region)
              (matlab-shell-run-region start end)))
           ((cc-derived-mode-p)
-           (message "TODO: Execute region by copying region in an main stub compile and execute it."))
+           (message "TODO Execute region by copying region in an main stub compile and execute it."))
           (t
            (message "Execute region not supported in %s" (faze major-mode 'mode))))))
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: If prefix display all the output buffers simultaneously in
+;; TODO If prefix display all the output buffers simultaneously in
 ;; side-by-side windows. Ask Google Groups on functions for displaying
 ;; many windows in a grid at the same time.
-;; TODO: Return nil for now marked files.
+;; TODO Return nil for now marked files.
 (defun dired-marked-files-dwim (&optional arg)
   "Execute current file or all marked (or next ARG) files."
   (interactive "P")
@@ -105,9 +105,9 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                        files))
       (ding))))
 
-;; TODO: Use `(url-ops FILENAME)' and input result it to `read-char-spec'.
-;; TODO: Do we need special handling for ELF files?
-;; TODO: Input !, X performs the same action on all remaining files.
+;; TODO Use `(url-ops FILENAME)' and input result it to `read-char-spec'.
+;; TODO Do we need special handling for ELF files?
+;; TODO Input !, X performs the same action on all remaining files.
 (defun dired-operate-on-file (&optional arg)
   "Operate on current file or all marked (or next ARG) files."
   (interactive "P")
@@ -132,7 +132,7 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
 (defvar eval-dwim-history nil "History of evaluated files.")
 (add-to-history 'eval-dwim-history nil)
 
-;;; TODO: Integrate with https://github.com/syohex/emacs-quickrun
+;;; TODO Integrate with https://github.com/syohex/emacs-quickrun
 (defun eval-dwim (&optional arg process-language try-last)
   "Do What I Mean at Point.
 If regions is active evaluate it, otherwise if
@@ -141,7 +141,7 @@ evaluate buffer file."
   (interactive "P")
   ;; (message "FIME: Force english environment!") (sit-for 1)
   (if (and (eq major-mode 'dired-mode)
-           (ignore-errors (dired-get-marked-files)) ;TODO: Better way to get number of marked files?
+           (ignore-errors (dired-get-marked-files)) ;TODO Better way to get number of marked files?
            )
       (dired-marked-files-dwim arg)
     (if (use-region-p)                  ;if mark is active
@@ -160,7 +160,7 @@ evaluate buffer file."
                                                      (if default-file (format " (default %s)" default-file) ""))
                                              nil buffer-file t
                                              default-file)))
-               (builder (file-op filename :build nil 'name-recog)) ;TODO: Make use of `builder' (normally a string such as "wine").
+               (builder (file-op filename :build nil 'name-recog)) ;TODO Make use of `builder' (normally a string such as "wine").
                (process-environment
                 (cons (concat "LANGUAGE=" (or process-language "en")) ;default to english compilation language
                       process-environment))
@@ -183,7 +183,7 @@ evaluate buffer file."
 (global-set-key [(control return)] 'eval-dwim)
 (global-set-key [(f12)] 'eval-dwim)
 
-;; TODO: Activate this and merge interfaces!
+;; TODO Activate this and merge interfaces!
 ;;(add-hook 'sh-mode-hook (lambda () (define-key sh-mode-map "\C-c\C-x" 'eval-dwim)))
 
 (defun reeval-dwim (&optional arg process-language)

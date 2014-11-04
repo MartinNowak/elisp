@@ -16,7 +16,7 @@
                           (length s2)))))) ;sort them length starting with largest
     (dolist (part parts)
       ;; chip of misses from `table'
-      (setq table (completion-substring-all-completions part table pred 0)) ;TODO: What should point be here?
+      (setq table (completion-substring-all-completions part table pred 0)) ;TODO What should point be here?
       ;; use `safe-length' here?
       )
     table))

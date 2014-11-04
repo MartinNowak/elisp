@@ -11,46 +11,46 @@
 ;; Copyright (C) 2011 Per Nordlöw
 ;; Author: Per Nordlöw <per.nordlow@gmail.com>
 ;;
-;; TODO: Sort and Display Extended Attributes when they are supported by the filesystem
-;; TODO: Sort symlinks on destination-mod-time.
-;; TODO: v/V-U,M,S: Next/Previous Up-to-date/Modified,Same.
+;; TODO Sort and Display Extended Attributes when they are supported by the filesystem
+;; TODO Sort symlinks on destination-mod-time.
+;; TODO v/V-U,M,S: Next/Previous Up-to-date/Modified,Same.
 ;;
-;; TODO: Sort Files/Dirs on Mod-Time before accessing them.
+;; TODO Sort Files/Dirs on Mod-Time before accessing them.
 ;;
-;; TODO: Make use of `word-search-.*' instead of regexp search.
+;; TODO Make use of `word-search-.*' instead of regexp search.
 ;;
-;; TODO: Prune directory tree branches with no hits. Is this info already in the hit-tree?
-;; TODO: Cluster Function Calls on Argument Count. Especially in `cc-derived-mode-p' using structed.el and `c-arg-count'.
-;; TODO: Add colored hit-count-indicator to mode-line upon scan completion: TScan:#12, grey if no hits, green if any hits. Search for mode-line for details.
+;; TODO Prune directory tree branches with no hits. Is this info already in the hit-tree?
+;; TODO Cluster Function Calls on Argument Count. Especially in `cc-derived-mode-p' using structed.el and `c-arg-count'.
+;; TODO Add colored hit-count-indicator to mode-line upon scan completion: TScan:#12, grey if no hits, green if any hits. Search for mode-line for details.
 ;;
-;; TODO: Use maphash variant of `dotimes-with-progress-reporter' when scanning files in using maphash.
-;; TODO: Toggle Cluster Locality: File, Directory, Tree
-;; TODO: Select Cluster Sorting Order:
-;; TODO: Colorize skipped dirs in darker more passive color instead of red overstrike.
-;; TODO: Bug: Searching for `vc-git-dir-status-files' in vc-git.el.gz under "tscan-tests" gives no hits!
-;; TODO: Divide scan into directories using run-with-idle-timer.
-;; TODO: Use fcache relations last target using `file-chase-links'. Use this
+;; TODO Use maphash variant of `dotimes-with-progress-reporter' when scanning files in using maphash.
+;; TODO Toggle Cluster Locality: File, Directory, Tree
+;; TODO Select Cluster Sorting Order:
+;; TODO Colorize skipped dirs in darker more passive color instead of red overstrike.
+;; TODO Bug: Searching for `vc-git-dir-status-files' in vc-git.el.gz under "tscan-tests" gives no hits!
+;; TODO Divide scan into directories using run-with-idle-timer.
+;; TODO Use fcache relations last target using `file-chase-links'. Use this
 ;;       fcache instead of `file-directory-p' and `file-executable-p' in
 ;;       `tscan-directory'.
 ;;
-;; TODO: Prune sub-dirs with no filename or contents hits
-;; TODO: *Query-Replace* first opens literally to scan if there any hits at all
+;; TODO Prune sub-dirs with no filename or contents hits
+;; TODO *Query-Replace* first opens literally to scan if there any hits at all
 ;; and only if there are it again opens the buffer normally to query the
 ;; replaces.
 ;;
-;; TODO: Add mode-local clustering:
+;; TODO Add mode-local clustering:
 ;; - emacs-lisp-mode
 ;;   - Function: "(buffer-file-name)"
 ;;   - Symbol: "'buffer-file-name"
 ;;   - Symbol Value: "buffer-file-name"
 ;;
-;; TODO: Colorize Hit Cluster Backgrounds:
+;; TODO Colorize Hit Cluster Backgrounds:
 ;; - Textual File: (Black)
 ;; - Binary  File: (DarkGrey signifies less significant) filea
 ;;
-;; TODO: Skip Clustering Context for regexps like \_<int\_>
+;; TODO Skip Clustering Context for regexps like \_<int\_>
 ;;
-;; TODO: Enable `vc-sort' when we there is a function say `vc-state-directory'.
+;; TODO Enable `vc-sort' when we there is a function say `vc-state-directory'.
 ;;       Try M-x find-library RET vc RET and then look for dir-status in the
 ;;       comment/doc at the beginning of the file for the "full" story. Use:
 ;;       - (let ((default-directory "~/justcxx/")) (vc-git-command nil 'async "." "status" "-s") (display-buffer "*vc*"))
@@ -64,14 +64,14 @@
 ;;       Store in `fcache' using aset(fcache fcache-fi-vc-state intern('unregistered)) or aset(fcache fcache-fi-vc-state 'unregistered).
 ;;       See: http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/9e0a6e5170e9f48b
 ;;
-;; TODO: Sort on Symbol-Context (s c):
+;; TODO Sort on Symbol-Context (s c):
 ;;       - Symbol
 ;;       - Word
 ;;         - Prefix
 ;;         - Suffix
 ;;       - In-Word
 ;;
-;; TODO: Sort on Syntax-Context:
+;; TODO Sort on Syntax-Context:
 ;;       - Variables
 ;;         - Initialization
 ;;         - Assignment: (when (cc-derived-mode-p) `c-op-assignment')
@@ -82,9 +82,9 @@
 ;;       - Call
 ;;       - Reference (Pointer)
 ;;
-;; TODO: Group (Interface/Implementation) Header-Source Pairs (C,C++,Objective-C)
+;; TODO Group (Interface/Implementation) Header-Source Pairs (C,C++,Objective-C)
 ;;
-;; TODO: Sort on File-Type
+;; TODO Sort on File-Type
 ;;       - Files with Hits (Sort Descending on # Hits)
 ;;       - Language Type (C, C++, etc.)
 ;;       - Name Format (Context)
@@ -93,51 +93,51 @@
 ;;       - Cluster: after Context Word/Symbol Names; atomic_read32, atomic_inc32, atomic_cas32 in separate Clusters.
 ;;       - Directories: Start with smallest or fewest files.
 ;;
-;; TODO: Sort on File VC-State - `vc-sort' should order like:
+;; TODO Sort on File VC-State - `vc-sort' should order like:
 ;;       - Modified
 ;;       - New (unregistered)
 ;;       - Up-to-Date
 ;;       - Ignored
 ;;
-;; TODO: Fuzzy Clustering by treating '-', '_', and ' ' as similar.
+;; TODO Fuzzy Clustering by treating '-', '_', and ' ' as similar.
 ;;
-;; TODO: Remove empty clusters (tree branches) in `cscan' by nulling and handle
+;; TODO Remove empty clusters (tree branches) in `cscan' by nulling and handle
 ;; this case in `tscan' to gain some memory.
 ;;
-;; TODO: Highlight sub-hit-index by number: blue, green, red, yellow, orange, cyan, magenta
+;; TODO Highlight sub-hit-index by number: blue, green, red, yellow, orange, cyan, magenta
 ;;
-;; TODO: Add TRAMP prefix when opening unreadable files or directories because
+;; TODO Add TRAMP prefix when opening unreadable files or directories because
 ;; they are not accessible by current user. Use `file-readable-p', `fcache-readable' and
 ;; `file-accessible-directory-p'.
 ;;
-;; TODO: Upon file modification can we detect what region that changed and only
+;; TODO Upon file modification can we detect what region that changed and only
 ;; update the hits that overlap this region?
 ;;
-;; TODO: Propose to relax matching expression if no hits were found. Also add
+;; TODO Propose to relax matching expression if no hits were found. Also add
 ;;       this state in the menu. Relaxation types:
 ;;       - intra-token whitespace.
 ;;       - intra-char space: "abc" => "a.b.c"
 ;;
-;; TODO: Merge with tree-buffer.el or tree-mode.el
-;; TODO: Find all hits on the same line for the `cluster' case of `cscan-buffer'.
+;; TODO Merge with tree-buffer.el or tree-mode.el
+;; TODO Find all hits on the same line for the `cluster' case of `cscan-buffer'.
 ;;
-;; TODO: Can we make Directory/File/Hit Button actions a function that takes fcache and range as arguments?
-;; TODO: RET: If on directory button call tscan in that directory. This ask to scan as root using TRAMP
-;; TODO: "f n/p": next/previous file
-;; TODO: "d n/p": next/previous directory
-;; TODO: "F n/p": next/previous filename hit
-;; TODO: "D n/p": next/previous dirname hit
-;; TODO: "c n/p": next/previous file content hit
-;; TODO: "n n/p": next/previous file name hit
-;; TODO: "c n/p": next/previous cluster (group)
+;; TODO Can we make Directory/File/Hit Button actions a function that takes fcache and range as arguments?
+;; TODO RET: If on directory button call tscan in that directory. This ask to scan as root using TRAMP
+;; TODO "f n/p": next/previous file
+;; TODO "d n/p": next/previous directory
+;; TODO "F n/p": next/previous filename hit
+;; TODO "D n/p": next/previous dirname hit
+;; TODO "c n/p": next/previous file content hit
+;; TODO "n n/p": next/previous file name hit
+;; TODO "c n/p": next/previous cluster (group)
 ;;
-;; TODO: Add Tags to View.
+;; TODO Add Tags to View.
 ;;
-;; TODO: Support Time-Based Clustering of Values
-;; TODO: Merge ideas with `anything-grep.el'. See `anything.pdf'.
-;; TODO: Replace use of `tscan-file-links-string' with `tscan-fcache-links-string'.
+;; TODO Support Time-Based Clustering of Values
+;; TODO Merge ideas with `anything-grep.el'. See `anything.pdf'.
+;; TODO Replace use of `tscan-file-links-string' with `tscan-fcache-links-string'.
 ;;
-;; TODO: Support options with widgets: http://www.dina.kvl.dk/~abraham/custom/widget.html
+;; TODO Support options with widgets: http://www.dina.kvl.dk/~abraham/custom/widget.html
 ;;       - Use hide-region.el to hide Groups of Uneditable files.
 ;;       - Show All Hits (in binary and uneditable files).
 
@@ -976,7 +976,7 @@ If DISPLAY is equal to 'select select target window aswell."
         (add-text-properties hbeg-off hend-off (list 'face 'tscan-hit-face) lstr) ;highlight hit
 
         ;; check for other hits in same context and highlight them
-        (when nil                        ;TODO: Move this logic to cscan.el.
+        (when nil                        ;TODO Move this logic to cscan.el.
           (let (hbeg1 hend1)
             (while (and hits
                         (setq hbeg1 (car hits)) ;other hit beginning
@@ -1155,7 +1155,7 @@ SLT and return a nice illustrating string."
                                 (when type-names
                                   (concat " " type-names)))) ;types (keys)
 
-                            ;; TODO: Show stat for missing links?
+                            ;; TODO Show stat for missing links?
                             (let ((fsize (fcache-fsize fcache)))
                               (when fsize
                                 (concat " [" (propertize (file-size-human-readable fsize 'si) 'face 'tscan-file-size-face) "]")))
@@ -1209,7 +1209,7 @@ Uses its file cache FCACHE."
          (slt (when sl (fcache-follow-link fcache t))) ;symbolic link target (if any)
          (nhits (when (and nmatcher (funcall nmatcher sub)) (match-data)))) ;name matcher hit
 
-    ;; TODO: Percentage progress reporter instead?
+    ;; TODO Percentage progress reporter instead?
     (when nil
       (message (concat "Scanning sub file/directory "
                        (faze sub 'tscan-symlink-file-face)
@@ -1257,7 +1257,7 @@ Uses its file cache FCACHE."
                                       (when (and dacc rd (not sl))
                                         (let ((fsizes (dcache-dir-subs-fsize-sum (dcache-of asub) 'separate)))
                                           (when fsizes
-                                            ;; TODO: Format fsizes as in `size-indication-mode'.
+                                            ;; TODO Format fsizes as in `size-indication-mode'.
                                             (concat " ["
                                                     (propertize (file-size-human-readable (car fsizes) 'si) 'face 'tscan-file-size-face)
                                                     "+"
@@ -1723,7 +1723,7 @@ from FROM to TO."
 ;; Use: (re-search-forward "alpha" nil t)
 ;; Use: (query-replace-regexp-in-file "alpha" "alpha" "~/pnw/tmp/dummy.h" nil 'any)
 ;; Use: (query-replace-regexp "alpha" "alpha" nil (match-beginning 0) (point-max))
-;; Use: (query-replace-regexp-in-file "\\([^@]\\)TODO:" "\\1@todo:" "~/pnw/tmp/dummy.h")
+;; Use: (query-replace-regexp-in-file "\\([^@]\\)TODO" "\\1@todo:" "~/pnw/tmp/dummy.h")
 
 ;; ============================================================================
 

@@ -29,12 +29,12 @@
   `(menu-item ,(purecopy "Delete") vc-delete-file
               :help ,(purecopy "Delete file")))
 
-;; TODO: Fetch list of selections and apply operation to each of them.
+;; TODO Fetch list of selections and apply operation to each of them.
 ;; (define-key vc-dir-mode-map [?D] 'vc-delete-file)
 
 (require 'vc-ediff-head)
 
-;; TODO: Also see M-x vc-resolve-conflicts -- pop up an ediff-merge
+;; TODO Also see M-x vc-resolve-conflicts -- pop up an ediff-merge
 ;; session on a file with conflict markers
 
 (require 'vc-prompt-register)

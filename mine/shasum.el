@@ -17,7 +17,7 @@
         (eval `(defun ,fn (file)
                  ,(concat "Return FILE's " "SHA-" (upcase variant) " checksum (hash).")
                  (interactive "fFile to checksum: ")
-                 (shell-command (concat ,cmd " " file)) ;TODO: Use `start-process' instead.
+                 (shell-command (concat ,cmd " " file)) ;TODO Use `start-process' instead.
                  ))
         (eval `(defalias ',fn-short ',fn))
         ))))

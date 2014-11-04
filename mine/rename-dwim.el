@@ -1,10 +1,10 @@
 ;;; rename-dwim.el --- Renaming Enhancements.
 ;; Author: Per Nordlöw
 ;;
-;; TODO: Add advice for `make-directory' and `rename-file'.
-;; TODO: Specialize `rename-buffer-and-maybe-file' and
+;; TODO Add advice for `make-directory' and `rename-file'.
+;; TODO Specialize `rename-buffer-and-maybe-file' and
 ;; `delete-buffer-and-maybe-file' on `dired-mode' view.
-;; TODO: VC-Variants
+;; TODO VC-Variants
 ;; - Rename through VC.
 ;; - Rename through VC as *remove/delete* in <S_REPOS>... followed by *add* in repos <T_REPOS>.... Uses `vc-backend'
 ;; where VC may be better displayed as real name such SVN.
@@ -16,7 +16,7 @@
 (require 'font-lock-extras)
 (require 'power-utils)
 
-;;; TODO: Somehow relate to fcache-advices?
+;;; TODO Somehow relate to fcache-advices?
 ;;; http://stackoverflow.com/questions/13492752/auto-updating-of-file-name-history-upon-renamings-deletions
 (defun forget-file (file)
   (setq file-name-history (delete (abbreviate-file-name file) file-name-history)))
@@ -64,7 +64,7 @@
                                    (faze (car new-root) 'dir)))
             (vc-register new))))))
 
-;; TODO: Warn (when (and (downcase old) (downcase new))) are the same
+;; TODO Warn (when (and (downcase old) (downcase new))) are the same
 ;; and file system is case-insensitive.
 (defun rename-file-everywhere (old new &optional prompt)
   "Do vc-rename-file() on OLD if OLD is under Version Control
@@ -125,8 +125,8 @@ otherwise default delete-file() on OLD."
 ;; Because Buffers are associated with file names and not files.
 ;; Changing the buffer name would break backup for instance, which (by
 ;; default) renames the file and then writes it again.
-;; TODO: Merge with `rename-file-with-refs'
-;; TODO: Add support renaming other file using `ff-find-other-file'.
+;; TODO Merge with `rename-file-with-refs'
+;; TODO Add support renaming other file using `ff-find-other-file'.
 (defun rename-buffer-and-maybe-file ()
   "Rename current buffer and if available its visiting file."
   (interactive)
@@ -175,9 +175,9 @@ otherwise default delete-file() on OLD."
     (vc-find-file-hook)))
 (defalias 'rename-file-and-buffer 'rename-buffer-and-maybe-file)
 
-;; TODO: Remove all references (in C/C++ #include-statements) similar to what
+;; TODO Remove all references (in C/C++ #include-statements) similar to what
 ;; `delete-file-with-refs' by adding mode-local delete hooks.
-;; TODO: Support deleting other file using `ff-find-other-file'.
+;; TODO Support deleting other file using `ff-find-other-file'.
 (defun delete-buffer-and-maybe-file ()
   "Delete current buffer and if available its visiting file."
   (interactive)
@@ -210,7 +210,7 @@ otherwise default delete-file() on OLD."
 
   (defadvice rename-file (after rename-file-update-c-c++-includes (file newname) activate)
     "Update C and C++ include statements upon rename of file."
-    (when (called-interactively-p 'any) ;prevent save-file() triggering. TODO: Does this work!?
+    (when (called-interactively-p 'any) ;prevent save-file() triggering. TODO Does this work!?
       (let ((file (file-name-nondirectory file))
             (newname (file-name-nondirectory newname)))
         (update-c-c++-includes file newname))))
@@ -218,7 +218,7 @@ otherwise default delete-file() on OLD."
 
   (defadvice dired-do-rename (after rename-update-c-includes activate)
     "Update C include statements upon rename of file."
-    ;; TODO: Perform operation on all marked dired files and reuse rename-file() advice above.
+    ;; TODO Perform operation on all marked dired files and reuse rename-file() advice above.
     )
   ;;(ad-activate 'dired-do-rename))
   )

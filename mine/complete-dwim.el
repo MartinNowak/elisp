@@ -3,9 +3,9 @@
 
 ;;; See: EmacsWiki: TabCompletion:
 ;;; See: http://www.emacswiki.org/cgi-bin/wiki/TabCompletion
-;; TODO: Merge with `completion-at-point' and set `completion-at-point-functions' in Emacs 24.1 otherwise `complete-symbol'.
-;; TODO: Merge with `completion-at-point-functions' and `completion-in-region'.
-;; TODO: Reuse sym-comp.el functions?
+;; TODO Merge with `completion-at-point' and set `completion-at-point-functions' in Emacs 24.1 otherwise `complete-symbol'.
+;; TODO Merge with `completion-at-point-functions' and `completion-in-region'.
+;; TODO Reuse sym-comp.el functions?
 
 (require 'hippie-exp)
 (require 'semantic nil t)
@@ -72,7 +72,7 @@ using a menu, which default to `completing-read."
    ;; Minibuffer
    ((minibufferp)                       ;in minibuffer
     (minibuffer-complete)
-    ;; (unless (inhibit-messages (minibuffer-complete)) ;TODO: Make this skip printing messages
+    ;; (unless (inhibit-messages (minibuffer-complete)) ;TODO Make this skip printing messages
     ;;   (if buffer-read-only
     ;;       (progn
     ;;        (message "Can't complete, buffer is read-only!")
@@ -151,10 +151,10 @@ using a menu, which default to `completing-read."
 (global-set-key [(tab)] 'complete-dwim)
 (add-hook 'python-mode-hook (lambda () (local-set-key [(tab)] 'complete-dwim)) t)
 
-;; TODO: Only make this repeatable if `complete-dwim' key-binding is a multi-key.
+;; TODO Only make this repeatable if `complete-dwim' key-binding is a multi-key.
 ;;(when (eload 'repeatable) (repeatable-command-advice complete-dwim))
 
-;; TODO: Copy `kmacro-call-macro' structure
+;; TODO Copy `kmacro-call-macro' structure
 (when nil
   (defun ndabbrev-expand ()
     "Middle or Standard Dynamic Abbreviation Expansion.
@@ -206,7 +206,7 @@ First tries `mdabbrev-expand' and then standard
     (define-key unicomplete-map [(?a)] 'align-entire) ;Align (Complete Whitespace) (if transient-mark-mode is active)
     (define-key unicomplete-map [(?m)] 'apply-macro-to-region-lines) ;Apply macro (if transient mark mode is active)
 
-    ;; TODO: Merge this into local complete-symbol table
+    ;; TODO Merge this into local complete-symbol table
     ;;(define-key unicomplete-map [(?o)] 'try-complete-OpenGL-symbol) ;OpenGL Symbol
 
     (define-key unicomplete-map [(left)] 'yas/prev-field-group)

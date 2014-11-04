@@ -34,7 +34,7 @@ profiling by OProfile.")
 	)
     (read-file-name prompt dir nil nil file 'file-oprofileable-p)))
 
-;;; TODO: Support `args'.
+;;; TODO Support `args'.
 (defun oprofile-start-single (&optional filename args)
   "Start profiling a program with OProfile."
   (interactive)

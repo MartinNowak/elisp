@@ -5,30 +5,30 @@
 
 ;;; NOTE: Underscores in patterns means at least one underscore.
 
-;;; TODO: Represent variadics arguments as arg (0+ "," arg) or extend rx with csl1+ (Comma-Separated-List)
-;;; TODO: Represent variadics arguments as (? arg (0+ "," arg)) or extend rx with csl0+ (Comma-Separated-List)
+;;; TODO Represent variadics arguments as arg (0+ "," arg) or extend rx with csl1+ (Comma-Separated-List)
+;;; TODO Represent variadics arguments as (? arg (0+ "," arg)) or extend rx with csl0+ (Comma-Separated-List)
 
-;; TODO: Integrate `relangs-ada-c-types' and D-C-C++ aswell at http://dlang.org/ctod.html
+;; TODO Integrate `relangs-ada-c-types' and D-C-C++ aswell at http://dlang.org/ctod.html
 
-;; TODO: http://www.dsource.org/projects/visuald/wiki/Tour/CppConversion
-;; TODO: Merge in patterns from coolock.el and pnw-regexps.el and use as eldoc hints.
-;; TODO: http://en.literateprograms.org/
-;; TODO: http://www.algorithmist.com/
-;; TODO: http://www.wikivs.com/wiki/Main_Page
-;; TODO: http://rosettacode.org/wiki/Rosetta_Code
-;; TODO: git://github.com/stefanhusmann/emacs-else.git
-;; TODO: feval(@(x)x+1,1) and \see http://www.mathworks.com/matlabcentral/newsreader/view_thread/280225
-;; TODO: Extend eldoc to provide mark-sensitive documentation for code.
-;; TODO: Last Element: C++ *x.rbegin(), D x[$-1]
-;; TODO: http://wiki.glfw.org/wiki/Moving_from_GLFW_2_to_3
-;; TODO: http://www.adaic.org/resources/add_content/standards/05rm/html/RM-B-3.html
-;; TODO: Support Fortran unusual type resolution rules: http://www-classes.usc.edu/engr/ce/108/text/fbk01.htm
+;; TODO http://www.dsource.org/projects/visuald/wiki/Tour/CppConversion
+;; TODO Merge in patterns from coolock.el and pnw-regexps.el and use as eldoc hints.
+;; TODO http://en.literateprograms.org/
+;; TODO http://www.algorithmist.com/
+;; TODO http://www.wikivs.com/wiki/Main_Page
+;; TODO http://rosettacode.org/wiki/Rosetta_Code
+;; TODO git://github.com/stefanhusmann/emacs-else.git
+;; TODO feval(@(x)x+1,1) and \see http://www.mathworks.com/matlabcentral/newsreader/view_thread/280225
+;; TODO Extend eldoc to provide mark-sensitive documentation for code.
+;; TODO Last Element: C++ *x.rbegin(), D x[$-1]
+;; TODO http://wiki.glfw.org/wiki/Moving_from_GLFW_2_to_3
+;; TODO http://www.adaic.org/resources/add_content/standards/05rm/html/RM-B-3.html
+;; TODO Support Fortran unusual type resolution rules: http://www-classes.usc.edu/engr/ce/108/text/fbk01.htm
 
 (defconst relangs-Shell-to-D-regexp-replacements
   '(
     ("^\\([[:space:]]*\\)#" "\\1//")
     ((concat "[[:space:]]*" "\\(" ID "\\)" "[[:space:]]*" "=") "\\1auto\\2")
-    ((concat "^\\([[:space:]]*\\)function[[space]]*" "(" "\\(" SHELL_ID "\\)" ")") "\1auto") ;TODO: Make function name a D ID
+    ((concat "^\\([[:space:]]*\\)function[[space]]*" "(" "\\(" SHELL_ID "\\)" ")") "\1auto") ;TODO Make function name a D ID
     ("\\([^$]\\)#" "\\1")
     )
   "Mappings from Shell to D.")
@@ -307,7 +307,7 @@ X defaults to :related"
 
 (defconst relangs-nonnull
   (lambda ()
-    `((:lang D :expr (not "@nullable")) ;TODO: Support inverse logic
+    `((:lang D :expr (not "@nullable")) ;TODO Support inverse logic
       (:lang Ada2005 :expr (: "not" "null"))
       )) "Empty/Undefined/Null Literal Constant Value.")
 
@@ -430,7 +430,7 @@ X defaults to :related"
 
 (defconst relangs-long
   (lambda ()
-    `((:lang (C C++) :expr "long")    ;TODO: case on architecure type
+    `((:lang (C C++) :expr "long")    ;TODO case on architecure type
       (:lang Swift :expr "Long")
       (:lang D :expr "long")
       (:lang Ada :expr (| "Long_Integer"
@@ -440,7 +440,7 @@ X defaults to :related"
 
 (defconst relangs-unsigned-long
   (lambda ()
-    `((:lang (C C++ Java) :expr "unsigned long") ;TODO: case on architecure type
+    `((:lang (C C++ Java) :expr "unsigned long") ;TODO case on architecure type
       (:lang Swift :expr "ULong")
       (:lang (D C\#) :expr "ulong")
       (:lang Ada :expr "Interfaces.C.unsigned_long")
@@ -620,7 +620,7 @@ X defaults to :related"
   "Byte Size of EXPR."
   (lambda (expr)
     `((:lang (C C++ D) :expr (: "sizeof" "(" ,expr ")"))
-      (:lang D :expr (: ,expr ".sizeof"))))) ;TODO: Automatically brace around char*
+      (:lang D :expr (: ,expr ".sizeof"))))) ;TODO Automatically brace around char*
 ;; Use: (relangs-byte-sizeof-type)
 ;; Use: (relangs-byte-sizeof-type "double")
 
@@ -728,7 +728,7 @@ See
 
 (defconst relangs-function-definition
   (lambda (name args body)
-    `((:lang Python :expr (: "def" ,name "(" args ")" ":" body))  ;TODO: Indentation controlled
+    `((:lang Python :expr (: "def" ,name "(" args ")" ":" body))  ;TODO Indentation controlled
       (:lang Swift :expr (: "func" ,name))
       (:lang Rust :expr (: "fn" ,name))
       (:lang Emacs-Lisp :expr (: "(" "defun" ,name "(" args ")" body ")"))
@@ -748,12 +748,19 @@ See
   (lambda (name type value)
     `(
       (:lang Swift :expr (: "let" ,name "=" ,value))
-      (:lang Shell :reuse relangs-variable-definition) ;TODO: Support `:reuse'
+      (:lang Shell :reuse relangs-variable-definition) ;TODO Support `:reuse'
       (:lang Emacs-Lisp :expr (: "(" L* "defconst" L* name L+ value ")"))
       (:lang (C C+) :expr (: "const" type name "=" value ";"))
       (:lang Modelica :expr (: "constant" type name "=" value ";"))
       (:lang D :expr (: "enum" name "=" value ";")) ;NOTE: Type inferred from VALUE
       )) "Definition of Constant Named NAME having Value VALUE.")
+
+(defconst relangs-immutable-definition
+  (lambda (name type value)
+    `(
+      (:lang D :expr (: "immutable" name "=" value ";")) ;NOTE: Type inferred from VALUE
+      ;; TODO Inherit `relangs-constant-definition' for languages not having both const and immutable
+      )) "Definition of Immutable Named NAME having Value VALUE.")
 
 (defconst relangs-list-head
   (lambda ()
@@ -829,33 +836,33 @@ See
   (lambda (x y)
     `((:lang (C C++ D Java C\# Ada Lua) :expr (: x "<" y))
       (:lang Fortran-77 :expr (: x ".LT." y))
-      (:lang (Bash) :expr (| (: "if" "[" x "-lt" y "]") ;TODO: Only integer comparison
-                             (: "((" x "<" y "))"))) ;TODO: Only integer comparison
-      (:lang (Bash) :expr (| (: "if" "[[" x "<" y "]]") ;TODO: Only string comparison
-                             (: "if" "[" x "\\<" y "]"))) ;TODO: Only string comparison
+      (:lang (Bash) :expr (| (: "if" "[" x "-lt" y "]") ;TODO Only integer comparison
+                             (: "((" x "<" y "))"))) ;TODO Only integer comparison
+      (:lang (Bash) :expr (| (: "if" "[[" x "<" y "]]") ;TODO Only string comparison
+                             (: "if" "[" x "\\<" y "]"))) ;TODO Only string comparison
       )) "Relational Less-Than Operator")
 (defconst relangs-relational-greater-than
   (lambda (x y)
     `((:lang (C C++ D Java C\# Ada Lua) :expr (: x ">" y))
       (:lang Fortran-77 :expr (: x ".GT." y))
-      (:lang (Bash) :expr (| (: "if" "[" x "-gt" y "]") ;TODO: Only integer comparison
-                             (: "((" x ">" y "))"))) ;TODO: Only integer comparison
-      (:lang (Bash) :expr (| (: "if" "[[" x ">" y "]]") ;TODO: Only string comparison
-                             (: "if" "[" x "\\>" y "]"))) ;TODO: Only string comparison
+      (:lang (Bash) :expr (| (: "if" "[" x "-gt" y "]") ;TODO Only integer comparison
+                             (: "((" x ">" y "))"))) ;TODO Only integer comparison
+      (:lang (Bash) :expr (| (: "if" "[[" x ">" y "]]") ;TODO Only string comparison
+                             (: "if" "[" x "\\>" y "]"))) ;TODO Only string comparison
       )) "Relational Greater-Than Operator")
 (defconst relangs-relational-less-than-or-equal
   (lambda (x y)
     `((:lang (C C++ D Java C\# Ada Lua) :expr (: x "<=" y))
       (:lang Fortran-77 :expr (: x ".LE." y))
-      (:lang (Bash) :expr (| (: "if" "[" x "-lte" y "]") ;TODO: Only integer comparison
-                             (: "((" x "<=" y "))"))) ;TODO: Only integer comparison
+      (:lang (Bash) :expr (| (: "if" "[" x "-lte" y "]") ;TODO Only integer comparison
+                             (: "((" x "<=" y "))"))) ;TODO Only integer comparison
       )) "Relational Less-Than or Equal Operator")
 (defconst relangs-relational-greater-than-or-equal
   (lambda (x y)
     `((:lang (C C++ D Java C\# Ada Lua) :expr (: x ">=" y))
       (:lang Fortran-77 :expr (: x ".GE." y))
-      (:lang (Bash) :expr (| (: "if" "[" x "-gte" y "]") ;TODO: Only integer comparison
-                             (: "((" x ">=" y "))")))  ;TODO: Only integer comparison
+      (:lang (Bash) :expr (| (: "if" "[" x "-gte" y "]") ;TODO Only integer comparison
+                             (: "((" x ">=" y "))")))  ;TODO Only integer comparison
       )) "Relational Greater-Than or Equal Operator")
 
 ;;; Contents Equality
@@ -867,8 +874,8 @@ See
                              (: "eq(" x "," y ")")))
       (:lang Emacs-Lisp :expr (: "(equal" x y ")"))
       (:lang (Ada Pascal) :expr (: x "=" y))
-      (:lang (Bash) :expr (: "if" "[" x "-eq" y "]")) ;TODO: Only integer comparison
-      (:lang (Bash) :expr (: "if" "[" x "==" y "]")) ;TODO: Only string comparison
+      (:lang (Bash) :expr (: "if" "[" x "-eq" y "]")) ;TODO Only integer comparison
+      (:lang (Bash) :expr (: "if" "[" x "==" y "]")) ;TODO Only string comparison
       )) "Contents Equality Operator")
 (defconst relangs-content-not-equality-operator
   (lambda (x y)
@@ -888,8 +895,8 @@ See
       (:lang Emacs-Lisp :expr (: "(not" "(equal" x y ")" ")"))
       (:lang Ada :expr (: x "/=" y))
       (:lang Lua :expr (: x "~=" y))
-      (:lang (Bash) :expr (: "if" "[" x "-ne" y "]"))  ;TODO: Only integer comparison
-      (:lang (Bash) :expr (: "if" "[" x "!=" y "]")) ;TODO: Only string comparison
+      (:lang (Bash) :expr (: "if" "[" x "-ne" y "]"))  ;TODO Only integer comparison
+      (:lang (Bash) :expr (: "if" "[" x "!=" y "]")) ;TODO Only string comparison
       )) "Contents Non-Equality Operator")
 (define-opposites
   relangs-content-equality-operator
@@ -1058,7 +1065,7 @@ See
     `((:lang (Python Ada) :expr (: x "in" y))
       (:lang Java :expr (: x ".isinstance(" y ")"))
       (:lang D :expr (: x "in" y)
-             :time-complexity "O(c)")  ;TODO: if y is an associative array.
+             :time-complexity "O(c)")  ;TODO if y is an associative array.
       (:lang D :expr (| (: "find" "(" y "," x ")"))
              :include "std.algorithm"
              :time-complexity "O(y.length)")
@@ -1474,7 +1481,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
            :C-GLib ("g_new0" "g_try_new0")
            :C++ "new"
            :Matlab implicit
-           :Java implicit               ;TODO: Correct?
+           :Java implicit               ;TODO Correct?
            )
 
     (:name ("Delete")
@@ -1482,7 +1489,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
            :C-GLib "g_free"
            :C++ "delete"
            :Matlab "clear"
-           :Java implicit               ;TODO: Correct?
+           :Java implicit               ;TODO Correct?
            )
 
     ;; Inheritance
@@ -1695,7 +1702,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
      (buffer-name rename-buffer get-buffer get-buffer-create get-buffer-window)
      (pop-to-buffer switch-to-buffer switch-to-buffer-other-window)
      (display-buffer)
-     ;; TODO: Compare with (select-window (get-buffer-window buf))
+     ;; TODO Compare with (select-window (get-buffer-window buf))
      )
     ("string-operations"
      (string-match))
@@ -2193,12 +2200,12 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
           (goto-char (point-max))
           (re-search-backward "\\[back\\]")
           (insert "Related: ")
-          ;; FIXME: This doesn't show anything.
+          ;; FIXME This doesn't show anything.
           (help-insert-xref-button
            (symbol-name related) 'help-xref)
           (insert "\n\n"))))))
 
-;; TODO: Fix and activate!
+;; TODO Fix and activate!
 (when nil
   (defadvice describe-function (after related (function) compile)
     ;; (describe-function-related function)
@@ -2209,7 +2216,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
 
 (defun relangs-filter (relang-symbol lang-sym)
   "Get pattern from SYMBOL using MODE."
-  (let ((lang-sym lang-sym)) ;TODO: Make `lang-sym' optional and get from major-mode
+  (let ((lang-sym lang-sym)) ;TODO Make `lang-sym' optional and get from major-mode
     (delq nil
           (mapcar
            (lambda (entry)

@@ -27,10 +27,10 @@
           (vc-buffer-sync)
           (ediff-load-version-control)
           (if (vc-backend file)
-              (ediff-vc-internal "" "") ;;TODO: Delete old buffer
+              (ediff-vc-internal "" "") ;;TODO Delete old buffer
             (message "File %s is not under version control" (faze file 'file))
             (ding)))
-        ;; TODO: Set buffer background of head version to some passive color
+        ;; TODO Set buffer background of head version to some passive color
         ;; (darkgrey for dark backgrounds).
         ))))
 (defalias 'ediff-current-buffer-with-vc-head 'vc-ediff-current-buffer-with-head)

@@ -21,7 +21,7 @@
     ;; (load-file-if-exist (expand-file-name "eieio/linemark.elc" lispdir)) ;needed by mlint
     )
 
-  ;; NOTE: Must be set before Semantic/Senator load. TODO: Can we do this more elegantly?
+  ;; NOTE: Must be set before Semantic/Senator load. TODO Can we do this more elegantly?
   (setq-default senator-prefix-key [(control ?,)])
   (setq senator-prefix-key [(control ?,)])
 
@@ -257,7 +257,7 @@ Completion options are calculated with `semantic-analyze-possible-completions'."
           ;; If tag is a function that takes no arguments move beyond function arguments.
           (when (and (semantic-tag-of-class-p ans 'function)
                      (null (semantic-tag-function-arguments ans)))
-            ;; TODO: Do something!
+            ;; TODO Do something!
             )
           ans)))))
 
@@ -361,7 +361,7 @@ Completion options are calculated with `semantic-analyze-possible-completions'."
       ;; depends on the breadth of your project.
       (defalias 'semantic-analyze-interface-impl-toggle 'semantic-analyze-proto-impl-toggle)
       (defalias 'semantic-analyze-header-source-toggle 'semantic-analyze-proto-impl-toggle)
-      ;; TODO: http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/3ac6b30e2cea24a5#
+      ;; TODO http://groups.google.se/group/gnu.emacs.help/browse_thread/thread/3ac6b30e2cea24a5#
       )
 
     ))
@@ -377,7 +377,7 @@ Completion options are calculated with `semantic-analyze-possible-completions'."
         (setq senator-minor-mode-name "SN")) ;More Compact mode-line
       (when (boundp 'senator-prefix-map)
         (when (require 'repeatable nil t)
-          (repeatable-substitute-binding 'senator-complete-symbol senator-prefix-map)) ;TODO: This doesn't work because TAB is already bound?
+          (repeatable-substitute-binding 'senator-complete-symbol senator-prefix-map)) ;TODO This doesn't work because TAB is already bound?
         (progn                          ;harmonizes with M-.
           (define-key senator-prefix-map "." 'semantic-ia-fast-jump)
           (define-key c-mode-map [(control ?.)] 'semantic-ia-fast-jump)
@@ -409,7 +409,7 @@ Completion options are calculated with `semantic-analyze-possible-completions'."
 
     ;; 'semantic-ia-complete-tip
     ;; NOTE: Why isn't `push-tag-mark' defined?
-    ;; TODO: Skip pushing mark if advicee fails (use `around' advice instead).
+    ;; TODO Skip pushing mark if advicee fails (use `around' advice instead).
     (defadvice semantic-ia-fast-jump (before push-mark-advice activate compile)
       "Remember current buffer position.
 Use \\[pop-tag-mark] to go back."
@@ -572,7 +572,7 @@ previously recorded macro is then executed."
 
   ;; lmcompile.el/linemark.el. ToDo: Merge with fringe?
   (when (and nil
-             (require 'lmcompile nil t)) ;TODO: Disabled because of errors.
+             (require 'lmcompile nil t)) ;TODO Disabled because of errors.
     (add-hook 'compilation-finish-functions 'compilation-finish-highlight-linemarks)
     (defun compilation-finish-highlight-linemarks (buffer result-str)
       (interactive)

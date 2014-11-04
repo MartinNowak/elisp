@@ -42,7 +42,7 @@
 ;; (defvar find-file-region nil
 ;;   "Activate region prior to call to find-file.")
 
-;; ;;; TODO: Modify prompt
+;; ;;; TODO Modify prompt
 ;; (defun find-file-log-region ()
 ;;   (setq find-file-region ))
 ;; (defadvice find-file (before log-active-region activate compile) (find-file-log-region))

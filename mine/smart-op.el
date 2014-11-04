@@ -48,7 +48,7 @@
 ;; reimplementing as a minor mode and providing an initial patch for
 ;; that.
 
-;;; TODO:
+;;; TODO
 
 ;; - for c mode, probably it would be much better doing this in cc-mode.
 ;; - Merge with dpchiesa-elisp/smart-op.el

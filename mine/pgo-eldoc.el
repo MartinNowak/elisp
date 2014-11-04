@@ -79,7 +79,7 @@
   (require 'eldoc-extension nil t)
   )
 
-;; Note: TODO: defadvice doesn't work when eldoc-display-message-no-interference-p is compiled so I override it for now! UGLY!
+;; Note: TODO defadvice doesn't work when eldoc-display-message-no-interference-p is compiled so I override it for now! UGLY!
 (when nil
   (if t
       (defun eldoc-display-message-no-interference-p ()

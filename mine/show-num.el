@@ -3,7 +3,7 @@
 (require 'faze)
 (require 'relangs)
 
-;;; TODO: Reuse relangs/coolock/pnw-regexps
+;;; TODO Reuse relangs/coolock/pnw-regexps
 (defun number-literal-message ()
   (when nil
     (when (and (not isearch-mode)
@@ -51,9 +51,9 @@ See http://stackoverflow.com/questions/10360196/how-to-display-numbers-in-differ
     (math-format-radix number)))
 (eval-when-compile (assert-equal (number-to-string-in-radix 10 2) "1010"))
 
-;;; TODO: Ask Drew to fixes tap-thing-at-point so that it fetches also at the
+;;; TODO Ask Drew to fixes tap-thing-at-point so that it fetches also at the
 ;;; end like eldoc does.
-;;; TODO: Reuse relangs/coolock/pnw-regexps
+;;; TODO Reuse relangs/coolock/pnw-regexps
 (defun number-literal-message ()
   (when nil
     (unless (or (minibufferp)

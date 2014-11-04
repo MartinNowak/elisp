@@ -1,29 +1,29 @@
 ;;; cc-assist.el --- Development Tools and Assistance such auto-templates for CC Mode.
 ;; Author: Per Nordlöw <per.nordlow@gmail.com>
 
-;; TODO: - Support C++11 Initializer List
+;; TODO - Support C++11 Initializer List
 ;; - Constructor:            vec(const std::initializer_list<T>& list) { passert_eq(list.size(), size()) ; std::copy(begin(list), end(list), begin(*this)); }
 ;; - Assignment Constructor: vec& operator = (const std::initializer_list<T>& list) { passert_eq(list.size(), size()); std::copy(begin(list), end(list), begin(*this)); }
 
-;; TODO: Support C++11 Inheriting Constructors
+;; TODO Support C++11 Inheriting Constructors
 ;; struct D1 : B1 {
 ;; using B1::B1; // implicitly declares D1( int )
 ;; int x;
 ;; };
 
-;;; TODO: When to use r-value refs? http://www.reddit.com/r/cpp/comments/tuvdf/where_to_use_rvalue_references_in_my_code/
+;;; TODO When to use r-value refs? http://www.reddit.com/r/cpp/comments/tuvdf/where_to_use_rvalue_references_in_my_code/
 
-;; TODO: - Add list of standard exceptions. c++-insert-throw-statement, c++-insert-catch-statement.
+;; TODO - Add list of standard exceptions. c++-insert-throw-statement, c++-insert-catch-statement.
 
-;; TODO: - Create Final (Non-Overridable) virtual function
-;; TODO: - Override virtual function from Base-Class
+;; TODO - Create Final (Non-Overridable) virtual function
+;; TODO - Override virtual function from Base-Class
 
-;; TODO: - Ease use of type traits (e.g. is_floating_point) and template
+;; TODO - Ease use of type traits (e.g. is_floating_point) and template
 ;; metaprogramming (e.g. the enable_if template), you can specialize your
 ;; templates for types with particular characteristics and thus implement
 ;; optimizations.
 
-;; TODO:
+;; TODO
 ;; Insert =>
 ;;   Pointer =>
 ;; Be sure to use const qualification for pointers where appropriate.
@@ -39,13 +39,13 @@
 ;; - const shared_ptr<T> x;       // Immutable/Constant shared pointer to mutable/non-constant T.
 ;; - const shared_ptr<const T> x; // Immutable/Constant shared pointer to immutable/constant T.
 
-;; TODO:
+;; TODO
 ;; Auto-Convert GCC's "typeof()" to C++11's "decltype()". Both in face `font-lock-keyword-face'.
 
-;; TODO: Add template menu support for Boost and wxWidgets classes and move these to
+;; TODO Add template menu support for Boost and wxWidgets classes and move these to
 ;; cc-assist-stl/boost/wxwidgets.el
 
-;; TODO: In c-mode and matlab-mode handle
+;; TODO In c-mode and matlab-mode handle
 ;; tranpose of if-else if statements such as
 ;; if nargin >= 2
 ;; X = varargin{2};
@@ -55,14 +55,14 @@
 ;; ...
 ;; end
 
-;; TODO:
+;; TODO
 ;; defun c++-stl-sequencify-structure()
 ;; Link* begin(List& lst) { return lst.head; }
 ;; Link* end(List& lst) { return nullptr; }
 ;; Link* operator++(Link* p) { return p->next; }
 ;; int& operator*(Link* p) { return p->val; }
 
-;; TODO: Perfect Forward Construct Arguments such as in
+;; TODO Perfect Forward Construct Arguments such as in
 ;; class Blob {
 ;;    std::vector<std::string> m_v;
 ;; public:
@@ -165,7 +165,7 @@
     (c++-mode "error: return type specification for constructor invalid"
               (lambda ()
                 (c-beginning-of-defun)
-                ;; TODO: erase type definition
+                ;; TODO erase type definition
                 ))
     (c++-mode "error: specializing member ‘\\(.*\\)’ requires ‘template<>’ syntax" ;M1: ::nameof<int8_t>
               (lambda ()
@@ -463,7 +463,7 @@ See also: http://dlang.org/ddoc.html"
    " * Deprecated: Superseded by ... ." "\n"
    " * Bugs: ..." "\n"
    " * Authors: Per Nordlöw, per.nordlow@gmail.com" "\n"
-   " * Date: " display-time-string "\n" ;TODO: Use format: May 19, 1975
+   " * Date: " display-time-string "\n" ;TODO Use format: May 19, 1975
    " * See_Also: foo, bar, http://www.digitalmars.com/d/phobos/index.html" "\n"
    " * Standards: Conforms to ..." "\n"
    " * Version: ..." "\n"
@@ -950,7 +950,7 @@ to the implementation body."
 
 ;; ============================================================================
 
-;;; TODO: Auto-Detect upon @ or \\ when buffer opened
+;;; TODO Auto-Detect upon @ or \\ when buffer opened
 (defvar c-doxygen-tag-prefix "\\"
   "Doxygen Tag Prefix")
 (make-variable-buffer-local 'c-doxygen-tag-prefix)
@@ -1039,7 +1039,7 @@ current buffer. C++-FLAG is non-nil if we want a C++ header."
     ("H" . "C")
     ("HH" . "CC")
     ("hxx" . "cxx")
-    ("cpp" . "hpp")                     ;TODO: Extend cdr to be a list ("hpp" "h") which are tried in given order.
+    ("cpp" . "hpp")                     ;TODO Extend cdr to be a list ("hpp" "h") which are tried in given order.
     ("c++" . "h++")
     ("H" . "C")
     ("HH" . "CC")
@@ -1155,7 +1155,7 @@ in current frame."
           (when (y-or-n-p-defaults (format "Insert D Source Template?") t)
             (c-insert-source-template filename 'd-mode)))
         ))))
-;; TODO: Use with `auto-insert-mode'.
+;; TODO Use with `auto-insert-mode'.
 (add-hook 'find-file-hook 'c-auto-insert-empty-file-template t)
 ;; (defadvice find-file (after c-insert-template (file))
 ;;   (when (called-interactively-p 'any)
@@ -1255,7 +1255,7 @@ Deprecated in favor of `c-auto-insert-pragma-once'."
         (end-of-line) (forward-char)
         (c-insert-general-doxygen-stub descr))
       )))
-;; TODO: Fix this!
+;; TODO Fix this!
 ;; (setq comment-insert-comment-function 'c-insert-general-multiline-comment)
 
 ;; ---------------------------------------------------------------------------
@@ -1321,7 +1321,7 @@ Deprecated in favor of `c-auto-insert-pragma-once'."
     (insert size))
   (insert "]")
   (when (and value (not (string-equal value ""))) ;value
-    (insert " = " value))           ;TODO: Ask for at most SIZE number of values.
+    (insert " = " value))           ;TODO Ask for at most SIZE number of values.
   (when (and alignment (not (string-equal alignment ""))) ;alignment
     (let ((num (string-to-number alignment)))
       (when (> num 0)
@@ -1961,7 +1961,7 @@ If region is active wrap it in namespace NAME."
 (defun c++-restrict-template-function ()
   )
 
-;; TODO: Use `semantic-fetch-tags', `semantic-current-tag', `semantic-tag-prototype-p'
+;; TODO Use `semantic-fetch-tags', `semantic-current-tag', `semantic-tag-prototype-p'
 ;; Help remember syntax for template templates:
 ;; template<template <class> class T>
 ;; reuse `c++-restrict-template-function'
@@ -1975,7 +1975,7 @@ If region is active wrap it in namespace NAME."
            (bounds (bounds-of-thing-nearest-point thing)) ;suport afpt, bfpt and nearest-point
 
            ;; identifiers
-           ;; TODO: Filter out functions and variables and sort them on occurrence
+           ;; TODO Filter out functions and variables and sort them on occurrence
            ;; Use `function' or `class' instead of `code' as context.
            (ids (set-difference (delq nil (cscan-buffer c-id-regexp nil (list bounds 'code) t nil t 'string))
                                 '("return")))
@@ -1983,7 +1983,7 @@ If region is active wrap it in namespace NAME."
            (types (or (semantic-ctxt-scoped-types (car bounds))
                       ids))
 
-           ;; TODO: pick most common type
+           ;; TODO pick most common type
            (default-type (car (delete-dups types)))
 
            (c-type (or c-type
@@ -2046,7 +2046,7 @@ If region is active wrap it in namespace NAME."
         (d-mode
          (re-search-forward "(")
          (backward-char)
-         ;; TODO: for variables: (insert "template (" tparam-concept " " tparam ")!" "\n")
+         ;; TODO for variables: (insert "template (" tparam-concept " " tparam ")!" "\n")
          (insert "(")
          (when (> (length tparam-concept) 0)
            (insert tparam-concept " "))
@@ -2118,7 +2118,7 @@ See http://www2.research.att.com/~bs/C++11FAQ.html#lambda"
                        (c++11-read-lambda-expression-stub-arguments)))
   (c++11-insert-lambda-expression-stub capture parameters return-type))
 
-;; TODO: Support class member functions if inside class member Class::start():
+;; TODO Support class member functions if inside class member Class::start():
 ;; std::thread(&Class::fun, this);
 (defun c++11-insert-thread-stub (function thread-name &optional join)
   "Insert C++11 Thread FUNCTION Creation Stub using std::thread."
@@ -2200,7 +2200,7 @@ Example: virtual f() override;"
        ))
 ;; Use: (region-parenthesized-p)
 
-;;; TODO: Move to relangs
+;;; TODO Move to relangs
 (defun c-insert-function-type (r-type type-1)
   "Insert C/C++-Style Function (Pointer) Type.
 Example is `R(*cmp)(T1, T2)' and
@@ -2209,7 +2209,7 @@ Example is `R(*cmp)(T1, T2)' and
   (insert r-type "(*)(" type-1 ")")
   )
 
-;;; TODO: Move to relangs
+;;; TODO Move to relangs
 (defun c++11-insert-function-type (r-type type-1)
   "Insert C++11-Style Function Type.
 Example std::function<R(T1,T2,...)>"
@@ -2373,7 +2373,7 @@ Exception is named E-NAME and type E-TYPE."
     (insert-indented "\n} catch (const " (or e-type "") "&" (if e-name (concat " " e-name) "") ") {")
     (insert-indented "\n\n}")
 
-    ;; TODO: Functionize
+    ;; TODO Functionize
     (unless (looking-forward "[[:space]]*$")
       (insert-indented "\n")
       )
@@ -2391,7 +2391,7 @@ Exception is named E-NAME and type E-TYPE."
 
 ;; ---------------------------------------------------------------------------
 
-;; C/C++ Refactoring Functions. TODO: (defgroup c++ify-refactor)
+;; C/C++ Refactoring Functions. TODO (defgroup c++ify-refactor)
 
 ;; Block Movers: Probably you can use ‘delete-and-extract-region’
 ;; instead of ‘kill-region’ plus ‘yank’.
@@ -2684,7 +2684,7 @@ management tool, otherwise do nothing."
     (save-excursion
       (when buffer (set-buffer buffer))
       (goto-char (point-min))
-      (while (re-search-forward (concat "^" _* "#include" _+ "<" "\\(.*\\)" ">") nil t) ;for all includes. TODO: Reuse regexp
+      (while (re-search-forward (concat "^" _* "#include" _+ "<" "\\(.*\\)" ">") nil t) ;for all includes. TODO Reuse regexp
         (let ((include-file (match-string-no-properties 1)))
           (unless (catch 'exist
                     (dolist (dir include-dirs)
@@ -2709,7 +2709,7 @@ operation. If WARN-FLAG is non-nil warn if header is already included."
         (when (or (not query)
                   (y-or-n-p-defaults (format "Include C/C++ header file %s providing %s? "
                                              (faze hdr 'file)
-                                             (faze sym (ectag-get-kind-face sym)) ;TODO: Add 'f suffix to make lookups work
+                                             (faze sym (ectag-get-kind-face sym)) ;TODO Add 'f suffix to make lookups work
                                              )))
           (insert-relative (concat "#include " hdr "\n")
                            (concat "^" _* "#" _* "include" _+ "[<\"]" ".*" "[\">]" _* "\n") 'last))
@@ -2772,7 +2772,7 @@ operation. If WARN-FLAG is non-nil warn if header is already included."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Create hash-table: NAMESPACE::SYMBOL-NAME => INCLUDE-FILE and use it here.
+;; TODO Create hash-table: NAMESPACE::SYMBOL-NAME => INCLUDE-FILE and use it here.
 (defun assure-c++-include-from-symbol (&optional beg end length)
   "Assure that the required C++ STL header is included in current
 buffer and if not, include it (if possible where the other
@@ -2856,7 +2856,7 @@ SYM is optionally defined in NAMESPACE."
   (insert-indented sym "<>") (backward-char)
   (c-assure-include-from-symbol sym alist namespace))
 
-;;; TODO: Merge `c++-insert-smart-pointer' and `c++11-insert-smart-pointer'.
+;;; TODO Merge `c++-insert-smart-pointer' and `c++11-insert-smart-pointer'.
 (defun c++-insert-smart-pointer (ptr-type value-type name)
   (interactive (list (car (read-c++-symbol "C++ Smart Pointer" c++-smart-pointers
                                            'font-lock-class-face
@@ -2936,7 +2936,7 @@ SYM is optionally defined in NAMESPACE."
   (c++-insert-symbol sym c++-tbb-algorithms nil "tbb"))
 ;; Use: (c++-insert-tbb-algorithm "parallel_do")
 
-;; TODO: If ARG C++ify C-comment to C++ if in c++-mode.
+;; TODO If ARG C++ify C-comment to C++ if in c++-mode.
 (defun c-insert-doxygen-line-comment (&optional arg)
   "Insert a Doxygen-styled line comment at the end of the current line."
   (interactive)
@@ -2965,7 +2965,7 @@ SYM is optionally defined in NAMESPACE."
     (t
      nil)))
 
-;; TODO: Call c-insert-doxygen-line-comment if we are standing after a variable declaration/definition.
+;; TODO Call c-insert-doxygen-line-comment if we are standing after a variable declaration/definition.
 (defun c-end-of-doxygen-line-comment ()
   "Go to end of enhanced (Doxygen) line comments."
   (when (cc-derived-mode-p)
@@ -3252,7 +3252,7 @@ This menu will get created automatically if you have the `easymenu' package.")
     )
   "Menu Stubs in C mode.")
 
-;; TODO: Reuse `c-stubs-menu-list' here.
+;; TODO Reuse `c-stubs-menu-list' here.
 (defconst c++-stubs-menu-list
   '("Insert"
 
@@ -3323,7 +3323,7 @@ This menu will get created automatically if you have the `easymenu' package.")
     )
   "Menu Stubs in C/C++ mode.")
 
-;; TODO: Reuse `c-stubs-menu-list' here.
+;; TODO Reuse `c-stubs-menu-list' here.
 (defconst d-stubs-menu-list
   '("Insert"
 
@@ -3387,13 +3387,13 @@ This menu will get created automatically if you have the `easymenu' package.")
     "--"
     ["Make Function Inline and Move to the Header (inside Class Definition)" c-make-function-inline-and-move-to-header t]
     ["Postfix Increment/Decrement Operators to Prefix" c-postfix-to-prefix-inc-dec t]
-    ["Convert int,FALSE,TRUE to bool,false,true" c-int-to-bool t] ;TODO:
+    ["Convert int,FALSE,TRUE to bool,false,true" c-int-to-bool t] ;TODO
     "--"
-    ["Make member variable global" c-make-member-variable-global t] ;TODO:
-    ["Make member function global" c-make-member-function-global t] ;TODO:
+    ["Make member variable global" c-make-member-variable-global t] ;TODO
+    ["Make member function global" c-make-member-function-global t] ;TODO
     "--"
-    ["Make global variable a member" c-make-global-variable-member t] ;TODO:
-    ["Make global function a member" c-make-global-function-member t] ;TODO:
+    ["Make global variable a member" c-make-global-variable-member t] ;TODO
+    ["Make global function a member" c-make-global-function-member t] ;TODO
     )
   "C Refactorings (in both C and C++).")
 
@@ -3401,7 +3401,7 @@ This menu will get created automatically if you have the `easymenu' package.")
   '("Refactor"
 
     ["Disable Copy Constructor using boost::noncopyable" c-make-copy-ctor-noncopyable t]
-    ["Convert [m,c,re]alloc and free to new and delete or delete[]" c-alloc-free-to-new-delete t] ;TODO:
+    ["Convert [m,c,re]alloc and free to new and delete or delete[]" c-alloc-free-to-new-delete t] ;TODO
     ;; Look especially in ctors and dtors.
     "--"
     ["C++ify Type Cast" c++ify-c-type-casts t]
@@ -3410,14 +3410,14 @@ This menu will get created automatically if you have the `easymenu' package.")
     ;; - [[reinterpret_cast<T>()]] Incompatible Pointer Type Conversion
     ;; - [[dynamic_cast<T>()]] (RTTI Polymorphism)
     "--"
-    ["Convert std::vector into std/boost::array if never resized" c++-vector-to-array t] ;TODO:
-    ["Convert variable length stack array into std/boost::array if never resized" c++-vector-to-array t] ;TODO:
-    ["Convert function to C++ member function" c-function-to-c++-member-function t] ;TODO:
+    ["Convert std::vector into std/boost::array if never resized" c++-vector-to-array t] ;TODO
+    ["Convert variable length stack array into std/boost::array if never resized" c++-vector-to-array t] ;TODO
+    ["Convert function to C++ member function" c-function-to-c++-member-function t] ;TODO
     "--"
-    ["C++ify Type Limits" c-function-to-c++-member-function t] ;TODO: (SIZE/SHORT/INT/LONG)_MIN/MAX int stdint.h converts std::numeric_limits<size_t>::min()/max() to in <limits>
+    ["C++ify Type Limits" c-function-to-c++-member-function t] ;TODO (SIZE/SHORT/INT/LONG)_MIN/MAX int stdint.h converts std::numeric_limits<size_t>::min()/max() to in <limits>
     ["C++ify Comments" c++ify-c-comments t]
     ["C++ify C MIN and MAX macros calls to std::min and std::max" c++ify-min-and-max t]
-    ["C++ify Logical Operators" c-to-c++-logical-operators t] ;TODO: && to and, || to or, ! to not
+    ["C++ify Logical Operators" c-to-c++-logical-operators t] ;TODO && to and, || to or, ! to not
     ["C++ify Convert &A+ -> B+ (.C+)* to A" c++ify-strip-struct-c-inherit-refs t]
     ["C++ify Struct Function to Member Function" c++ify-struct-function-to-member-function t]
     ["C++ify new function to constructor" c++ify-new-function-to-constructor t]
@@ -3461,19 +3461,19 @@ This menu will get created automatically if you have the `easymenu' package.")
     "--"
     ["Make Function Inline and Move to the Header (inside Class Definition)" c-make-function-inline-and-move-to-header t]
     ["Postfix Increment/Decrement Operators to Prefix" c-postfix-to-prefix-inc-dec t]
-    ["Convert int,FALSE,TRUE to bool,false,true" c-int-to-bool t] ;TODO:
+    ["Convert int,FALSE,TRUE to bool,false,true" c-int-to-bool t] ;TODO
     "--"
-    ["Make member variable global" c-make-member-variable-global t] ;TODO:
-    ["Make member function global" c-make-member-function-global t] ;TODO:
+    ["Make member variable global" c-make-member-variable-global t] ;TODO
+    ["Make member function global" c-make-member-function-global t] ;TODO
     "--"
-    ["Make global variable a member" c-make-global-variable-member t] ;TODO:
-    ["Make global function a member" c-make-global-function-member t] ;TODO:
+    ["Make global variable a member" c-make-global-variable-member t] ;TODO
+    ["Make global function a member" c-make-global-function-member t] ;TODO
     "--"
     ["D Templatize Function" d-templatize-function t]
     )
   "D Refactorings (in both C and D).")
 
-;; TODO: Make these sub-menu of "C" and "C++" menu.
+;; TODO Make these sub-menu of "C" and "C++" menu.
 (add-hook 'c-mode-hook (lambda () (easy-menu-define c-stubs-menu c-mode-map "C Stubs Menu" c-stubs-menu-list)) t)
 (add-hook 'c-mode-hook (lambda () (easy-menu-define c-refactor-menu c-mode-map "C Refactor Menu" c-refactor-menu-list)) t)
 
@@ -3483,7 +3483,7 @@ This menu will get created automatically if you have the `easymenu' package.")
 (add-hook 'd-mode-hook (lambda () (easy-menu-define d-stubs-menu d-mode-map "D Stubs Menu" d-stubs-menu-list)) t)
 (add-hook 'd-mode-hook (lambda () (easy-menu-define d-refactor-menu d-mode-map "D Refactor Menu" d-refactor-menu-list)) t)
 
-;;; TODO: C-to-C++ Refactorings
+;;; TODO C-to-C++ Refactorings
 ;; ** Enums are type-safe in C++
 ;; ** Cache members should be declared in C++ as =mutable=
 ;; ** Templatize
@@ -3847,7 +3847,7 @@ This command assumes point is not in a string or comment."
 (defun d-insert-ddoc-macro (macro)
   "Insert DDoc Macro MACRO."
   (interactive (list
-                ;; TODO: Support Icicles explanations using Control up-down
+                ;; TODO Support Icicles explanations using Control up-down
                 (completing-read "DDoc Macro: " d-ddoc-macros)
                 ))
   (insert "$(" macro " )")
@@ -3955,7 +3955,7 @@ pressed outside the comment"
 ;; ======================================================================
 ;; interface for the user
 
-;;; TODO: Maybe reuse some of these...
+;;; TODO Maybe reuse some of these...
 (when nil
   (defun c++-generate-definition-as-kill ()
     "generate a class member definition (constructors, functions, static variables) for the declaration before point and put it in kill-ring. After that you can `yank' it to your implementation file. you can also use `c++-yank-member-function' which will indent after yank and place the point nicely.

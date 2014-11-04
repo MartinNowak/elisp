@@ -291,7 +291,7 @@ Prefer functions over variables over faces."
 
 ;; ---------------------------------------------------------------------------
 
-;;; TODO: Merge or replace with `file-size-human-readable'.
+;;; TODO Merge or replace with `file-size-human-readable'.
 (defun number-to-iso-postfixed-string (number &optional binary)
   "Convert NUMBER to ISO-postfixed string.
 If BINARY is non-nil use bibytes prefixes KiB, MiB, GiB instead of

@@ -1,6 +1,6 @@
 ;;; vc-roots.el --- Handle VC Root Directories.
 ;; Author: Per Nordlöw
-;; TODO: Reuse refactor out presentation logic from tscan.el by supporting a custom list/tree of directories just to show.
+;; TODO Reuse refactor out presentation logic from tscan.el by supporting a custom list/tree of directories just to show.
 
 (require 'fcache)
 (require 'vc-dir)
@@ -83,7 +83,7 @@ An entry is either a string path or a (ROOT-DIR BACKENDS-SYMBOL-LIST")
 
 (defun vc-roots-inspect-directory (&optional directory)
   (file-vc-root-directory-p directory)
-  ;; TODO: nil is needed for correct behaviour when `vc-roots-inspect-directory' is
+  ;; TODO nil is needed for correct behaviour when `vc-roots-inspect-directory' is
   ;; added to `find-directory-functions'.
   nil)
 
@@ -152,7 +152,7 @@ Possible values for VC-ROOT-BACKEND-SYMBOL are found in `vc-backend-dir-type'."
         (sort vc-roots-db
               (lambda (root-spec-1
                        root-spec-2)
-                ;; TODO: Replace with `fcache-path-lessp' function
+                ;; TODO Replace with `fcache-path-lessp' function
                 (string-lessp (vc-root-path root-spec-1)
                               (vc-root-path root-spec-2))))))
 
@@ -186,7 +186,7 @@ Possible values for VC-ROOT-BACKEND-SYMBOL are found in `vc-backend-dir-type'."
                         "\n")
                 (make-text-button beg (+ beg (length path))
                                   'face 'font-lock-directory-name-face
-                                  'target vc-root))) ;TODO: Link executes (vc-dir DIR)
+                                  'target vc-root))) ;TODO Link executes (vc-dir DIR)
           (insert (propertize vc-root 'face 'font-lock-directory-name-face) "\n")))
       (setq buffer-read-only t)
       (goto-char (point-min)))))
@@ -211,7 +211,7 @@ Possible values for VC-ROOT-BACKEND-SYMBOL are found in `vc-backend-dir-type'."
             (group (+ any)) "\n"
             (* anything)))
      "\\1"
-     (shell-command-to-string (concat "pushd " root-directory "; svn info")) ;TODO: Replace with call-process
+     (shell-command-to-string (concat "pushd " root-directory "; svn info")) ;TODO Replace with call-process
      )))
 ;; Use: (vc-svn-origin "~/elisp/ruby-mode")
 
@@ -224,7 +224,7 @@ Possible values for VC-ROOT-BACKEND-SYMBOL are found in `vc-backend-dir-type'."
               (group (+ any)) "\n"
               (* anything)))
        "\\1"
-       (shell-command-to-string (concat "pushd " root-directory "; git remote show origin")) ;TODO: Replace with call-process
+       (shell-command-to-string (concat "pushd " root-directory "; git remote show origin")) ;TODO Replace with call-process
        ))))
 ;; Use: (vc-git-origin "~/elisp")
 ;; Use: (benchmark-run 100 (vc-git-origin "~/elisp"))

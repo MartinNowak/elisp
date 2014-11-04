@@ -67,7 +67,7 @@
 ;; ===========================================================================
 ;; Show ASCII-Table
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki.pl?AsciiTable
-;; TODO: Merge with ascii-table.el
+;; TODO Merge with ascii-table.el
 
 (defun list-ascii-table ()
   "Display basic ASCII table (0 thru 128)."

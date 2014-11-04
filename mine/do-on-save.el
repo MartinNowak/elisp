@@ -1,14 +1,14 @@
 ;;; do-on-save.el --- Perform Operations (Compile, Load, Test, Debug, etc.) upon Saving Buffer.
 ;; Author: Per Nordlöw
 
-;;; TODO: Notify if byte-compile-file changed generated .elc
+;;; TODO Notify if byte-compile-file changed generated .elc
 ;;; Here are some alternative solutions:
 ;;; See: http://www.emacswiki.org/cgi-bin/wiki/AutoCompileInit
 
 (require 'read-char-spec)
 (require 'filedb)
 
-;; TODO: Check if .elc needs rebuild using .el (using filedb.el interface).
+;; TODO Check if .elc needs rebuild using .el (using filedb.el interface).
 (defun query-byte-compile (&optional prompt)
   "Ask the user whether to byte-compile the current buffer
 if its name ends in `.el' and the `.elc' file also exists."
@@ -129,7 +129,7 @@ buffer."
   (when (and (or (eq major-mode 'python-mode)
                  (string-suffix-p ".py" (downcase (file-name-sans-directory buffer-file-name))))
              (executable-find-auto-install-on-demand "pyflakes"))
-    ;; TODO: Call it and only show it if exit status is non-zero.
+    ;; TODO Call it and only show it if exit status is non-zero.
     (case (read-char-spec "Do on save" `((?f ?f "Run pyflakes on buffer)")
                                          (?l ?l "Run pylint on buffer)")
                                          (?q nil "Quit")))

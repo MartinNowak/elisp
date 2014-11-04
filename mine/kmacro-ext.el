@@ -70,7 +70,7 @@ region is active."
 If an error during execution ask user to revert any changes that
 occurred."
   (interactive "P")
-  ;; TODO: Warning: This fucks things up!
+  ;; TODO Warning: This fucks things up!
   ;; (when (and (consp buffer-undo-list)
   ;;            (null (car buffer-undo-list)))
   ;;   (pop buffer-undo-list))

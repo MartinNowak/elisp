@@ -1,9 +1,9 @@
 ;;; file-xattr.el --- File Extended Attributes.
 ;; Author: Per Nordlöw
-;;; TODO: Use `set-file-extended-attributes' and `file-extended-attributes' when present.
-;;; TODO: Extend to sets of filenames to parallelize shell command
-;;; TODO: Parse attributes into lists of cons cells
-;;; TODO: Write C versions using `[sg]etxattr', `l[sg]etxattr' `f[sg]etxattr'. Reuse `file-attributes'.
+;;; TODO Use `set-file-extended-attributes' and `file-extended-attributes' when present.
+;;; TODO Extend to sets of filenames to parallelize shell command
+;;; TODO Parse attributes into lists of cons cells
+;;; TODO Write C versions using `[sg]etxattr', `l[sg]etxattr' `f[sg]etxattr'. Reuse `file-attributes'.
 
 (provide 'file-xattr)
 

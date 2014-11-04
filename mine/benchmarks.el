@@ -12,7 +12,7 @@
 ;; Use: (bench (directory-files "/usr/lib"))
 ;; Use: (bench (sha1sum "/bin/ls"))
 
-(when nil				;TODO: Fix and activate!
+(when nil				;TODO Fix and activate!
   (when (require 'elk-test nil t)
     (deftest "bench-1"
       (let ((length 100000))

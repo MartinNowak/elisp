@@ -721,7 +721,7 @@ This commands either calls `just-one-space' or `delete-blank-lines'."
 
 ;; See: http://groups.google.com/group/gnu.emacs.help/browse_thread/thread/4d4f5d16d8ca1191#
 
-(progn                             ;TODO: Make this part of paredit.el
+(progn                             ;TODO Make this part of paredit.el
   (defun beginning-of-list ()
     "Move to beginning of list, before first element."
     (interactive)
@@ -1668,7 +1668,7 @@ for lists."
 
 (defun nsublist (list from &optional to)
   "Like `sublist' but LIST is modified.
-TODO: Why is this function slower than `sublist'?"
+TODO Why is this function slower than `sublist'?"
   (let ((start (nthcdr from list)))     ;start reference
     (if to (nbutlast start
                      (- (+ from (length start)) ;if extract list at the end this makes it much faster
@@ -1737,7 +1737,7 @@ Opposite of `add-to-list'."
 
 ;; ---------------------------------------------------------------------------
 
-;; TODO: Fix this.
+;; TODO Fix this.
 (defun font-existsp (font)
   "Return non-nil if the symbol FONT exists as a font."
   (when window-system

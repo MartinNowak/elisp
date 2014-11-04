@@ -1,6 +1,6 @@
 ;;; thingatpt-syntax.el --- Syntactic context thing at point.)
 ;; Copyright (C) 2008 Per Nordlöw)
-;; TODO: Merge with `semantic-ctxt'.
+;; TODO Merge with `semantic-ctxt'.
 
 (require 'cc-utils)
 (require 'pnw-regexps)
@@ -8,7 +8,7 @@
 (require 'thingatpt-pnw)
 (require 'cc-patterns)
 
-;; TODO: Use `defenum' alias for `define-enumeration' in defenum.el.
+;; TODO Use `defenum' alias for `define-enumeration' in defenum.el.
 (defconst tag-ctx-function-definition 1)
 (defconst tag-ctx-function-declaration 2)
 
@@ -71,7 +71,7 @@ mode to use for syntactic analysis that defaults to
                        )
                   (if (string-equal (match-string 1) "new")
                       tag-ctx-class-ctor-call
-                    tag-ctx-class-dtor-call) ;TODO: Lookup class of `sym' and go to its dtor
+                    tag-ctx-class-dtor-call) ;TODO Lookup class of `sym' and go to its dtor
                   )
 
                  ;; class declaration (must be before variable declaration) or definition
@@ -92,7 +92,7 @@ mode to use for syntactic analysis that defaults to
                     tag-ctx-class-reference)
                   )
 
-                 ;; TODO: function argument of type function pointer. See argument
+                 ;; TODO function argument of type function pointer. See argument
                  ;; to pPatt for details on syntax.
 
                  ;; cpp macro definition or reference

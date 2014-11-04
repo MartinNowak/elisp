@@ -73,8 +73,8 @@ after the match."
 
 ;; ---------------------------------------------------------------------------
 
-;;; TODO: Integrate `query-replace-from-region'.
-;;; TODO: Integrate `query-replace-regexp-from-region'.
+;;; TODO Integrate `query-replace-from-region'.
+;;; TODO Integrate `query-replace-regexp-from-region'.
 ;;; using (eload 'replace-from-region)
 (defun query-replace-dwim ()
   "Call the query replace command you want (Do What I Mean)."

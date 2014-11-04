@@ -1,6 +1,6 @@
 ;;; pgo-hippie-expand.el --- Setup Hippie Expand and its Extensions.
 ;; `try-expand-whole-kill'
-;; TODO: Support `hictx' of modified part of abbrev expansions.
+;; TODO Support `hictx' of modified part of abbrev expansions.
 
 (require 'dabbrev-substring)
 (require 'dabbrev-acronym)
@@ -46,7 +46,7 @@ otherwise. See: http://www.emacswiki.org/cgi-bin/wiki/HippieExpand#toc4"
                           (mapcar
                            (lambda (tag-key) (ectag-get tag-key :name))
                            (all-completions he-search-string (ectags-lazy-completion-table)))
-                          'string-lessp))) ;TODO: Sort on :file instead. Filter out :name before sort()
+                          'string-lessp))) ;TODO Sort on :file instead. Filter out :name before sort()
   (while (and he-expand-list (he-string-member (car he-expand-list) he-tried-table))
     (setq he-expand-list (cdr he-expand-list)))
   (if (null he-expand-list)
@@ -126,7 +126,7 @@ otherwise. See: http://www.emacswiki.org/cgi-bin/wiki/HippieExpand#toc4"
             (he-substitute-string (concat " " r))
             t)))))))
 
-;; TODO: Doesn't work form suffixes such `-command-list'.
+;; TODO Doesn't work form suffixes such `-command-list'.
 (defun hippie-expand-mode-local (arg)
   (interactive "P")
   (setq hippie-expand-try-functions-list
@@ -275,7 +275,7 @@ See: `hippie-expand-try-functions-list'."
       nil
       )
      ((at-syntax-string-p)
-      ;; TODO: dabbrev-complete-string
+      ;; TODO dabbrev-complete-string
       nil
       )
      ((at-syntax-comment-p)
@@ -288,7 +288,7 @@ See: `hippie-expand-try-functions-list'."
 
   ;; See: http://www.emacswiki.org/cgi-bin/wiki/MicheleBini
 
-  (when nil                             ;TODO: We already have this in Emacs.
+  (when nil                             ;TODO We already have this in Emacs.
     (define-key esc-map "\t" 'complete-symbol)
     (defun complete-symbol (arg) "\
 Perform tags completion on the text around point.
@@ -317,7 +317,7 @@ language you are using."
     (interactive
      (list
       (let ((default (thing-at-point 'symbol)))
-        ;; TODO: Use icicle-transform-function instead?
+        ;; TODO Use icicle-transform-function instead?
         (completing-read (concat "Find symbol" (when default (concat " (default " default ")")) ": ")
                          (obarray-lazy-completion-table) nil t nil nil default))))
     (when (fboundp 'elisp-find-definition)
@@ -359,11 +359,11 @@ language you are using."
      ((and (memq major-mode '(dired-mode))
            (find-thing-at-point-dired)))
      ((at-syntax-code-p)
-      ;; TODO:
+      ;; TODO
       nil
       )
      ((at-syntax-string-p)
-      ;; TODO: dabbrev-complete-string
+      ;; TODO dabbrev-complete-string
       nil
       )
      ((at-syntax-comment-p)

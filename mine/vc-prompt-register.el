@@ -49,7 +49,7 @@ prompt whether or not we should register it there."
                    (when (require 'git-emacs nil t)
                      (git-ignore file)))
                   (t
-                   (message "TODO: Write and call `vc-ignore' and `vc-ignore-file'."))
+                   (message "TODO Write and call `vc-ignore' and `vc-ignore-file'."))
                   ))
            (?q)
            ))))))

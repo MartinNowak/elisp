@@ -16,7 +16,7 @@
       (append vc-directory-exclusion-list '(".VirtualBox" ".arch-ids"))
       "Directories to exclude/ignore when scanning files recursively.")
 
-;; TODO: Auto-add all `filedb' patterns with `name-recog'.
+;; TODO Auto-add all `filedb' patterns with `name-recog'.
 (defun tgrep-get-exclude-string ()
   "Argument string to grep that exludes/ignore stuff that we normally
   don't want to include in search."
@@ -87,7 +87,7 @@
 (defvar tgrep-flags-history nil)
 (when (require 'desktop nil t) (add-to-list 'desktop-globals-to-save 'tgrep-flags-history t))
 
-;; TODO: Replace this with fmd structures and members
+;; TODO Replace this with fmd structures and members
 (setq grep-language-syntax-modes
   '(
     ("Text" . text-mode)
@@ -189,7 +189,7 @@ and Replace)."
                    (ws-relax-flag (if (y-or-n-p-defaults "Relax whitespace? ")
                                       'space
                                     nil))
-                   (major-mode-string (car (rassoc major-mode grep-language-syntax-modes))) ;try to lookup major-mode description. TODO: Reuse fmd or some other structure here!
+                   (major-mode-string (car (rassoc major-mode grep-language-syntax-modes))) ;try to lookup major-mode description. TODO Reuse fmd or some other structure here!
                    (mode (cdr (assoc (completing-read (format "Syntax Language (default %s): "
                                                               (faze (if major-mode-string major-mode-string "C") 'type)) ;default to C syntax
                                                       grep-language-syntax-modes nil t nil nil
@@ -240,7 +240,7 @@ and Replace)."
                  ;;(setq npatt (replace-regexp-in-string "\\([+?]\\)" "\\\\\\1" npatt))
                  )
                 (t
-                 ;; TODO: Handle this case
+                 ;; TODO Handle this case
                  )
                 )
 

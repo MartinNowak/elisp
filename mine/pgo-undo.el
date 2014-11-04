@@ -40,7 +40,7 @@
 ;;; See: http://www.emacswiki.org/emacs/UndoTree
 (append-to-load-path (elsub "undo-tree"))
 (when (eload 'undo-tree (elsub "undo-tree/") "undo-tree.el")
-  (when (global-undo-tree-mode) ;TODO: Errors in `called-interactively-p' on Emacs 23 but not on 24.
+  (when (global-undo-tree-mode) ;TODO Errors in `called-interactively-p' on Emacs 23 but not on 24.
     (progn
       (setq-default undo-tree-visualizer-timestamps t) ;show timestamps
       (setq-default undo-tree-visualizer-spacing 11)

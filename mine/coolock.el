@@ -1,12 +1,12 @@
 ;;; coolock.el - Ultra fancy extensions to font locking. Could need some performance love, if possible.
 ;; Author: Per Nordlöw
 
-;;; TODO: Change order of D highlighting: 1: (comment t), 2: (opBinary() append), 3: (function call append)
-;;; TODO: Add overlay .length to .$ in d-mode
-;;; TODO: Add support for c++11 lambda expressions.
-;;; TODO: Support hexadecimal floating point literals: 0x1.fffffffffffffp1023
-;;; TODO: 0x800fffffffffffffull
-;;; TODO: Highlight template type arguments using bold font-lock-type-face template WeightedNode(Value, Label = string, Weight = double)
+;;; TODO Change order of D highlighting: 1: (comment t), 2: (opBinary() append), 3: (function call append)
+;;; TODO Add overlay .length to .$ in d-mode
+;;; TODO Add support for c++11 lambda expressions.
+;;; TODO Support hexadecimal floating point literals: 0x1.fffffffffffffp1023
+;;; TODO 0x800fffffffffffffull
+;;; TODO Highlight template type arguments using bold font-lock-type-face template WeightedNode(Value, Label = string, Weight = double)
 
 (require 'pnw-regexps)
 (require 'obarray-utils)
@@ -122,7 +122,7 @@
 ;; (car (car (coolock/hash-bang)))
 
 ;;; C Number
-;;; TODO: Merge these into one regexp with 3+3+3 matchers.
+;;; TODO Merge these into one regexp with 3+3+3 matchers.
 (defun coolock/c-number (&optional mode)
   "Return Basic C-Style Number Literal Syntax Highlighting."
   (list
@@ -156,7 +156,7 @@
            (2 'font-lock-number-face keep)
            ))))
 
-;;; TODO: Merge these into one regexp.
+;;; TODO Merge these into one regexp.
 (defun coolock/advanced-number (&optional mode)
   "Return Advanced C-Style Number Literal Syntax Highlighting."
   (list
@@ -254,7 +254,7 @@
            ))
    ))
 
-;;; TODO: Merge these into one regexp with 2+2+3 matchers.
+;;; TODO Merge these into one regexp with 2+2+3 matchers.
 (defun coolock/haskell-number ()
   "Return Basic Haskell-Style Number Literal Syntax Highlighting."
   (list
@@ -336,7 +336,7 @@
   "C/C++ sizeof() expression. Not that relevant as the argument
   can be both a variable and a type" )
 
-;;; TODO: To replace in|out entry in ada-mode.el
+;;; TODO To replace in|out entry in ada-mode.el
 (defconst coolock/ada-variable-or-parameter
   (rx symbol-start
       (group-n 1
@@ -591,7 +591,7 @@ See: http://dlang.org/property.html")
            (2 'font-lock-function-name-face append)
            ))))
 
-;;; TODO: Put this before function matcher in keywords and change `prepend' to `append'.
+;;; TODO Put this before function matcher in keywords and change `prepend' to `append'.
 (defun coolock/d-template-builtin-operators ()
   "See http://dlang.org/operatoroverloading.html"
   (list
@@ -695,7 +695,7 @@ See also: http://dlang.org/traits.html"
 ;;; 	  '(1 'font-lock-special-literal-face prepend)
 ;;; 	  )
 
-   ;; TODO: Make it work for statements such as: free(bufA[i])
+   ;; TODO Make it work for statements such as: free(bufA[i])
    (cons (concat Y< "\\(?:" "[[:alnum:]_]*" "_" "\\)?"
                  "\\(?:" "free" "\\|" "delete" $>
                  "(" _* $< "[[:word:]_]+" $> _* ")")
@@ -1150,7 +1150,7 @@ name string NAME."
   (when name
     (let* ((prefix (and pchar (string-to-char pchar)))
            (quoted (memq prefix '(?\` ?\'))) ;if its quoted or not
-           (face (or (symbol-ref-face name)      ;TODO: Don't care about quoted for now!
+           (face (or (symbol-ref-face name)      ;TODO Don't care about quoted for now!
                      (if (and name (string-match emacs-lisp-special-constant name))
                          'font-lock-special-constant-face
                        ))))
@@ -1161,7 +1161,7 @@ name string NAME."
 ;; Use: (coolock/elisp-symbol nil "find-file")
 ;; Use: (coolock/elisp-symbol t "find-file")
 
-;; TODO: Use overlays instead!
+;; TODO Use overlays instead!
 (defun coolock/elisp-comma (limit)
   "Emacs Lisp Comma Evaluation Highlighter up to LIMIT.
 Return t if `forward-sexp' otherwise nil."
@@ -1912,7 +1912,7 @@ Return t if `forward-sexp' otherwise nil."
    (cons (concat Y< "source" _+
                  $< CID $>
                  )
-         '((1 'font-lock-file-name-face keep) ;TODO: Highlight only if \1 lies in current directory.
+         '((1 'font-lock-file-name-face keep) ;TODO Highlight only if \1 lies in current directory.
            ))))
 
 (defun coolock/sh-cmd-call-not-matcher (limit)

@@ -8,7 +8,7 @@
 (defvar comment-dwim-repeats 0
   "Repeat counter for `comment-dwim-really'.")
 
-;; TODO: If comment on line use that syntax.
+;; TODO If comment on line use that syntax.
 ;; `comment-search-forward' and `comment-search-backward' to `line-comment-position'
 (defun comment-dwim-really (arg)
   "Wrapper for `comment-dwim' that formats multi-line comments in
@@ -35,7 +35,7 @@ c++-mode, java-mode and csharp-mode."
                  (t
                   (if (c-beginning-of-topmost-intro-p)
                       (progn
-                        ;; TODO: Support standing before, inside and between comment and definition.
+                        ;; TODO Support standing before, inside and between comment and definition.
                         (skip-ws-forward)
                         (thing-nearest-point 'defun)
                         (c-indent-command)

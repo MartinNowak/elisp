@@ -1,8 +1,8 @@
 ;;; file-dwim.el --- Execute (Buffer/File).
 
-;; TODO: Add apitrace to trace OpenGL: https://github.com/apitrace/apitrace
+;; TODO Add apitrace to trace OpenGL: https://github.com/apitrace/apitrace
 
-;; TODO: Call setup_coredumps containing
+;; TODO Call setup_coredumps containing
 ;; ulimit -c 100000000;            # Dump all Segfaults smaller than 100 Megs
 ;; #COREDIR=/tmp/coredumps;         # /tmp/coredumps or $HOME/.cache/coredumps
 ;; if [ $COREDIR ]; then
@@ -21,7 +21,7 @@
 
 ;; Use: (locate-file-completion-table exec-path '("") "gcc" nil nil)
 
-;;; TODO: Remove these variables and store these using dcache and fcache instead.
+;;; TODO Remove these variables and store these using dcache and fcache instead.
 (defvar file-execute-args-last nil "Last Execute Arguments.")
 (defvar file-execute-args-history nil "Execute Arguments History.")
 (when (require 'desktop nil t) (add-to-list 'desktop-globals-to-save 'file-execute-args-history t))
@@ -59,12 +59,12 @@
         ;;(message "status:%s" status)
         (goto-char (point-min))         ;goto beginning
 
-        ;; TODO: No effect probably because of a save-excursion somewhere. Use
+        ;; TODO No effect probably because of a save-excursion somewhere. Use
         ;; `add-hook' or `defadvice' instead.
 
         ;; (goto-char (point-min))         ;goto beginning
 
-        ;; TODO: Expand window height to half that of current frame.
+        ;; TODO Expand window height to half that of current frame.
         ;; (min (/ (frame-height) 2)
         ;;      (window-buffer-height (current-window pbuffer)))
 
@@ -94,7 +94,7 @@
              (message "Execution of %s finished %s"
                       (faze xfile 'file)
                       (faze "successfully" 'success)))
-           ;; TODO: Display using GREEN in `mode-line'.
+           ;; TODO Display using GREEN in `mode-line'.
            (when (and (bufferp pbuffer)
                       (buffer-live-p pbuffer))
              (let* ((output-file (with-current-buffer pbuffer
@@ -125,11 +125,11 @@
                    (post-gprof xfile gmon)
                    ))
 
-               ;; TODO: post gperftools handling
+               ;; TODO post gperftools handling
 
                )))
           ((string-match "exited abnormally with code \\([0-9]+\\)\n" event)
-           ;; TODO: Display using `font-lock-warning-face' in `mode-line'.
+           ;; TODO Display using `font-lock-warning-face' in `mode-line'.
            (message "Execution of %s finished with %s exitcode %s"
                     (faze xfile 'file)
                     (faze "abnormal" 'compilation-error)
@@ -150,26 +150,26 @@
                    (eq exit-status 9) ;SIGKILL: Kill (terminate immediately)
                    (eq exit-status 11)  ;SIGSEGV: Segmentation violation
                    )
-                  ;; TODO: Display using `font-lock-alert-face' in `mode-line'.
+                  ;; TODO Display using `font-lock-alert-face' in `mode-line'.
                   (when (and (bufferp pbuffer)
                              (buffer-live-p pbuffer))
                     (with-current-buffer pbuffer
                       (if xfile
-                          (let ((core (concat xfile ".11.core"))) ;TODO: First set this format in /proc/
+                          (let ((core (concat xfile ".11.core"))) ;TODO First set this format in /proc/
                             (unless (file-exists-p core) ;if core file does not exists
                               (setq core "core")) ;default to standard naming
                             (when (and (file-exists-p core) ;if core file exists
                                        (y-or-n-p (format "Debug core dump of %s?" (faze xfile 'file))))
                               (file-debug-elf-core xfile core)
                               )
-                            ;; (message "file-execute-completed: TODO: Call file-debug-single with core file %s"
+                            ;; (message "file-execute-completed: TODO Call file-debug-single with core file %s"
                             ;;          core)
                             )
                         (warn "Symbol `file-execute-prog' is nil!")))))
                  (t
-                  (message "file-execute-completed: TODO: Handle exit-status %s" exit-status))))
+                  (message "file-execute-completed: TODO Handle exit-status %s" exit-status))))
           (t
-           (message "file-execute-completed: TODO: Handle %s" event)
+           (message "file-execute-completed: TODO Handle %s" event)
            ))))
 
 (defun read-file-execute-args (filename)
@@ -265,7 +265,7 @@ Optionally execute through the process PREFIX, typically \"[sl]trace\" or (PRE-F
 Optionally display output buffer if DISPLAY-OUTPUT is non-nil.
 Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
   ;;(set (make-local-variable 'executable-command) command)
-  ;; TODO: Use standard compilation mode if we are executing a Makefile or similar.
+  ;; TODO Use standard compilation mode if we are executing a Makefile or similar.
   ;; (let ((compilation-error-regexp-alist executable-error-regexp-alist))
   ;;   (compilation-start command t (lambda (x) (concat "*interpretation-" command "-" "*"))))
   (interactive (read-file-name-debuggable "Execute program file"))
@@ -317,7 +317,7 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                              ,(concat "-N" (number-to-string
                                             (read-number "Number of OS threads to use: " compilation-jobs-count)))
                              "-RTS")))
-        ;; TODO: Use ghc flag -sstderr and ask to trigger call of ThreadScope
+        ;; TODO Use ghc flag -sstderr and ask to trigger call of ThreadScope
         )        )
 
     (when compilation-window (delete-window compilation-window)) ;hide compilation-window if visible
@@ -345,7 +345,7 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
                 (setq pre-filter-args
                       (append pre-filter-args
                               '("-tt")  ;timestamp
-                              ;; TODO: Lookup all commands called by ELF filename
+                              ;; TODO Lookup all commands called by ELF filename
                               (let ((types (multi-read-thing "Trace" nil nil nil nil nil "all"
                                                              '("file"
 

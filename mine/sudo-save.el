@@ -29,7 +29,7 @@
 ;; AND after file save.  This allows the Emacs process to grant ownership to the
 ;; user and then restore ownership just after save.
 
-;; TODO:
+;; TODO
 ;;
 ;; - Actually what we SHOULD do is actually do a chown this way and NOT a chmod.
 ;;

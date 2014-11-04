@@ -50,7 +50,7 @@
 
 (defun dmd-compilation-error-install ()
   "Install dmd-compilation-error."
-  ;; TODO: Functionize this
+  ;; TODO Functionize this
   (let ((entry (assq 'dmd
                      compilation-error-regexp-alist-alist)))
     (if entry
