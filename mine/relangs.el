@@ -192,11 +192,12 @@ X defaults to :related"
       )) "Print Expression EXPR.")
 
 (defconst relangs-print-line
-  (lambda (expr)
-    `((:lang C++ :expr (: "std::cout << " ,expr " << std::endl"))
-      (:lang Rust :expr (: "std::io::println(" (+ ,expr) ")"))
-      (:lang D :expr (: "writeln(" (+ ,expr) ")"))
-      (:lang Swift :expr (: "println(" (+ ,expr) ")"))
+  (lambda (exprs)
+    `((:lang C++ :expr (: "std::cout" "<<" (CSE ,exprs) "<<" "std::endl"))
+      (:lang Rust :expr (: "std::io::println" "(" (CSE ,exprs) ")"))  ;`cse' means comma separated expressions
+      (:lang D :expr (: "writeln" "(" (CSE ,exprs) ")"))
+      (:lang Ruby :expr (: "puts" "(" (CSE ,exprs) ")"))
+      (:lang Swift :expr (: "println" "(" (CSE ,exprs) ")"))
       )) "Print EXPR on a separate line.")
 
 (defconst relangs-begins-with
@@ -830,6 +831,28 @@ See
     `((:lang (C++) :expr "std::cmp")
       (:lang (Python) :expr "__cmp__")
       )) "Compare/Sig")
+
+(defconst relangs-name-of-current-file
+  (lambda ()
+    `((:lang (C-GCC C++-GCC D Ruby) :expr "__FILE__")
+      )) "Name of current source file as a string.")
+
+(defconst relangs-name-of-current-line
+  (lambda ()
+    `((:lang (C-GCC C++-GCC D Ruby) :expr "__LINE__")
+      )) "Value of current source line as an integer.")
+
+(defconst relangs-name-of-current-function
+  (lambda ()
+    `((:lang (C-GCC C++-GCC D Ruby) :expr "__FUNCTION__")
+      (:lang (Bash) :expr (| "$FUNCNAME"
+                             "${FUNCNAME}"))
+      )) "Name of current source function as a string.")
+
+(defconst relangs-qualified-name-of-current-function
+  (lambda ()
+    `((:lang (C-GCC C++-GCC D Ruby) :expr "__PRETTY_FUNCTION__")
+      )) "Qualified name of current source function as a string.")
 
 ;;; Relational
 (defconst relangs-relational-less-than
