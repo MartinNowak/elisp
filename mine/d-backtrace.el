@@ -9,8 +9,8 @@
 (defconst d-backtrace-regexp
   (rx (: bol
          "#" (group-n 9 (+ (in digit))) ": "
-         (group-n 2 (+ (not (in space))))
-         " line (" (group-n 3 (+ (in digit))) ")"
+         (group-n 2 (+ (not (in "?" space))))  ;file
+         " line (" (group-n 3 (+ (in digit))) ")" ;line
          (? (: " in " (group-n 8 (+ nonl))))
          eol)))
 
