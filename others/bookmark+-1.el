@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Mon Oct 27 11:03:06 2014 (-0700)
+;; Last-Updated: Sat Nov  8 19:17:07 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 7410
+;;     Update #: 7431
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -301,6 +301,7 @@
 ;;    `bmkp-default-handlers-for-file-types',
 ;;    `bmkp-desktop-jump-save-before-flag.',
 ;;    `bmkp-desktop-no-save-vars',
+;;    `bmkp-edit-annotation-mode-inherit-from',
 ;;    `bmkp-guess-default-handler-for-file-flag',
 ;;    `bmkp-handle-region-function', `bmkp-incremental-filter-delay',
 ;;    `bmkp-last-as-first-bookmark-file',
@@ -315,7 +316,8 @@
 ;;    `bmkp-temporary-bookmarking-mode-hook',
 ;;    `bmkp-temporary-bookmarking-mode-lighter',
 ;;    `bmkp-this-file/buffer-cycle-sort-comparer', `bmkp-use-region',
-;;    `bmkp-w3m-allow-multi-tabs-flag', `bmkp-write-bookmark-file-hook'.
+;;    `bmkp-w3m-allow-multi-tabs-flag',
+;;    `bmkp-write-bookmark-file-hook'.
 ;;
 ;;  Non-interactive functions defined here:
 ;;
@@ -941,6 +943,15 @@ in the default handler.  For that it uses `dired-guess-default' and
 They are removed from `desktop-globals-to-save' for the duration of
 the save (only)."
   :type '(repeat (variable :tag "Variable")) :group 'bookmark-plus)
+
+;;;###autoload (autoload 'bmkp-edit-annotation-mode-inherit-from "bookmark+")
+(defcustom bmkp-edit-annotation-mode-inherit-from (if (fboundp 'org-mode) 'org-mode 'text-mode)
+  "Symbol for mode that `bmkp-edit-annotation-mode' is to inherit from.
+Or nil if no parent mode.
+
+You must restart Emacs after changing the value of this option, for
+the change to take effect."
+  :type  'symbol :group 'bookmark-plus)
 
 ;;;###autoload (autoload 'bmkp-handle-region-function "bookmark+")
 (defcustom bmkp-handle-region-function 'bmkp-handle-region-default
@@ -1905,27 +1916,25 @@ BOOKMARK is a bookmark name or a bookmark record."
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
-;; 1. Emacs BUG fix: Need bookmark arg in `interactive' spec.
-;; 2. Usable for older Emacs versions also.
+;; 1. Derive from value of option `bmkp-edit-annotation-mode-inherit-from'.
+;; 2. First, remove parent map from `bookmark-edit-annotation-mode-map', so it is derived anew.
+;; 3. Corrected typo in doc string: *send-EDITED-*.
+;; 4. Need to use `eval', to pick up option value and reset parent keymap.
 ;;
 ;;;###autoload (autoload 'bookmark-edit-annotation-mode "bookmark+")
-(defun bookmark-edit-annotation-mode (bookmark)
-  "Mode for editing the annotation of bookmark BOOKMARK.
-When you have finished composing, type \\[bookmark-send-annotation].
-BOOKMARK is a bookmark name or a bookmark record.
+(eval
+ `(progn
+   ;; Get rid of default parent, so `bmkp-edit-annotation-mode-inherit-from' is used for the map.
+   (when (keymapp bookmark-edit-annotation-mode-map)
+     (set-keymap-parent bookmark-edit-annotation-mode-map nil))
+   (define-derived-mode bookmark-edit-annotation-mode ,bmkp-edit-annotation-mode-inherit-from
+       "Edit Bookmark Annotation"
+     "Mode for editing the annotation of a bookmark.
+When you have finished composing, use \\[bookmark-send-edited-annotation].
 
-\\{bookmark-edit-annotation-mode-map}"
-  (interactive (list (bookmark-completing-read "Edit annotation of bookmark"
-                                               (bmkp-default-bookmark-name)
-                                               (bmkp-annotated-alist-only))))
-  (kill-all-local-variables)
-  (make-local-variable 'bookmark-annotation-name)
-  (setq bookmark-annotation-name  bookmark)
-  (use-local-map bookmark-edit-annotation-mode-map)
-  (setq major-mode  'bookmark-edit-annotation-mode
-        mode-name   "Edit Bookmark Annotation")
-  (bookmark-insert-annotation bookmark)
-  (if (fboundp 'run-mode-hooks) (run-mode-hooks 'text-mode-hook) (run-hooks 'text-mode-hook)))
+\\{bookmark-edit-annotation-mode-map}")
+   ;; Define this key because Org mode co-opts `C-c C-c' as a prefix key.
+   (define-key bookmark-edit-annotation-mode-map "\C-c\C-\M-c" 'bookmark-send-edited-annotation)))
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -1941,7 +1950,8 @@ BOOKMARK is a bookmark name or a bookmark record.
   "Use buffer contents as annotation for a bookmark.
 Lines beginning with `#' are ignored."
   (interactive)
-  (unless (eq major-mode 'bookmark-edit-annotation-mode) (error "Not in `bookmark-edit-annotation-mode'"))
+  (unless (derived-mode-p 'bookmark-edit-annotation-mode)
+    (error "Not in mode derived from `bookmark-edit-annotation-mode'"))
   (goto-char (point-min))
   (while (< (point) (point-max))
     (if (bmkp-looking-at-p "^#")
@@ -1971,8 +1981,9 @@ BOOKMARK is a bookmark name or a bookmark record."
                                                (bmkp-default-bookmark-name)
                                                (bmkp-annotated-alist-only))))
   (pop-to-buffer (generate-new-buffer-name "*Bookmark Annotation Compose*"))
-  (bookmark-edit-annotation-mode bookmark))
-
+  (bookmark-insert-annotation bookmark)
+  (bookmark-edit-annotation-mode)
+  (set (make-local-variable 'bookmark-annotation-name) bookmark))
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
@@ -7742,15 +7753,14 @@ the file is an image file then the description includes the following:
                                                  (pp-to-string (bookmark-prop-get bookmark 'function))))))
                    (variable-list-p  (format "Variable list:\n%s\n"
                                              (pp-to-string (bookmark-prop-get bookmark 'variables))))
-                   (search-hits-p    (concat "Icicles search hits:\n%s\n"
+                   (search-hits-p    (format "Icicles search hits:\n%s\n\n"
                                              (mapconcat (lambda (hit)
                                                           (let ((hit-copy  (copy-sequence hit)))
                                                             (set-text-properties 0 (length hit-copy) ()
                                                                                  hit-copy)
                                                             hit-copy))
                                                         (bookmark-prop-get bookmark 'hits)
-                                                        "\n\t")
-                                             "\n"))
+                                                        "\n\t")))
                    (gnus-p           (format "Gnus, group:\t\t%s, article: %s, message-id: %s\n"
                                              (bookmark-prop-get bookmark 'group)
                                              (bookmark-prop-get bookmark 'article)
@@ -8496,7 +8506,7 @@ in the same directory, then you will need to relock it.)"
       (icicle-candidate-set-retrieve))))
 
 ;;;###autoload (autoload 'bmkp-retrieve-icicle-search-hits "bookmark+")
-(defun bmkp-retrieve-icicle-search-hits ()
+(defun bmkp-retrieve-icicle-search-hits () ; Bound to `C-x C-M-<' during Icicles completion.
   "Replace the current set of Icicles search hits by those from a bookmark.
 You are prompted for the bookmark name.
 This makes sense only if the buffer(s) or file(s) currently being
@@ -8506,7 +8516,7 @@ searched correspond to the recorded search hits."
   (bmkp-retrieve-icicle-search-hits-1))
 
 ;;;###autoload (autoload 'bmkp-retrieve-more-icicle-search-hits "bookmark+")
-(defun bmkp-retrieve-more-icicle-search-hits ()
+(defun bmkp-retrieve-more-icicle-search-hits () ; Bound to `C-x C-<' during Icicles completion.
   "Add the Icicles search hits from a bookmark to the current set of hits.
 You are prompted for the bookmark name.
 This makes sense only if the buffer(s) or file(s) currently being
@@ -8531,7 +8541,7 @@ searched correspond to the recorded search hits."
     (bookmark-jump bmk)))
 
 ;;;###autoload (autoload 'bmkp-set-icicle-search-hits-bookmark "bookmark+")
-(defun bmkp-set-icicle-search-hits-bookmark ()
+(defun bmkp-set-icicle-search-hits-bookmark () ; Bound to `C-x C-M->' during Icicles completion.
   "Record the current set of Icicles search-hit candidates as a bookmark."
   (interactive)
   (unless (and (boundp 'icicle-searching-p)  icicle-searching-p)

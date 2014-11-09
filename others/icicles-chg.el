@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2007-2014, Drew Adams, all rights reserved.
 ;; Created: Tue Nov 27 07:47:53 2007
-;; Last-Updated: Mon Oct 27 22:58:45 2014 (-0700)
+;; Last-Updated: Sat Nov  8 19:04:15 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 11327
+;;     Update #: 11330
 ;; URL: http://www.emacswiki.org/icicles-chg.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -2131,6 +2131,8 @@
  
 ;;;(@* "CHANGE LOG FOR `icicles-fn.el'")
 ;;
+;; 2014/11/08 dadams
+;;     icicle-barf-if-*: Use or, not unless, so return non-nil if no error raised.
 ;; 2014/10/27 dadams
 ;;     icicle-make-char-candidate, icicle-read-char-by-name:
 ;;       Respect icicle-read-char-by-name-multi-completion-flag: nothing special if nil.
@@ -4173,6 +4175,8 @@
 ;;       macros needs to be byte-compiled anew after loading the updated macros.
 ;; ****************************************************************************************************
 ;;
+;; 2014/11/07 dadams
+;;     Added: icicle-with-icy-mode-OFF, icicle-with-icy-mode-ON.
 ;; 2014/08/24 dadams
 ;;     icicle-define-search-bookmark-command: Better prompt for context regexp.
 ;; 2014/08/23 dadams

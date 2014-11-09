@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Thu Aug 28 20:08:09 2014 (-0700)
+;; Last-Updated: Sat Nov  8 20:05:59 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 14825
+;;     Update #: 14830
 ;; URL: http://www.emacswiki.org/bookmark+-doc.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search,
@@ -324,9 +324,16 @@
 ;;       (bookmark) name.  Then copy it to the `kill-ring' anytime, in
 ;;       any Emacs session.
 ;;
-;;     - Icicles search-hits bookmarks.  Save a set of search results
-;;       as a bookmark, then jump to the bookmark to restore them.
-;;       (You need library Icicles to use this feature.)
+;;     - Icicles search-hits bookmarks.  (You need library Icicles to
+;;       use this feature.)  During Icicles search you can use `C-x
+;;       C-M->' to save the current set of completion candidates
+;;       (search hits matching your current input) as an Icicles
+;;       search-hits bookmark.  During a later Icicles search you can
+;;       retrieve those search hits saved in the bookmark, by using
+;;       `C-x C-M-<`.  You can add to (instead of replacing) the
+;;       current set of hits with hits retrieved from a bookmark using
+;;       `C-x C-<'.  This is the only way you can "jump" to such a
+;;       bookmark.
 ;;
 ;;     In particular, note that you can use the following kinds of
 ;;     bookmarks to quickly switch among different projects (sets of
@@ -2041,7 +2048,7 @@
 ;;  You use command `bmkp-set-bookmark-file-bookmark', bound to `C-x p
 ;;  y', to create a bookmark-file bookmark.  Jumping to such a
 ;;  bookmark just loads the bookmark file that it records.  With `C-u'
-;;  (e.g. `C-u C-x p j project-foo'), jumping switches bookmark files.
+;;  (e.g. `C-u C-x j y project-foo'), jumping switches bookmark files.
 ;;  Without `C-u' it accumulates the loaded bookmarks.
 ;;
 ;;  A bookmark-file bookmark is not only an added convenience.  You
