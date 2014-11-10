@@ -1,4 +1,4 @@
-;;; @(#) gnus-alias.el -- an alternative to gnus-posting-styles
+;;; gnus-alias.el --- an alternative to gnus-posting-styles
 ;;; @(#) $Id: gnus-alias.el,v 1.4 2003/08/16 23:05:10 jcasa Exp $
 
 ;; This file is not part of Emacs
@@ -8,6 +8,7 @@
 ;; Maintainer:      Joe Casadonte (emacs@northbound-train.com)
 ;; Created:         September 08, 2001
 ;; Keywords:        personality, identity, news, mail, gnus
+;; Version:          1.4
 ;; Latest Version:  http://www.northbound-train.com/emacs.html
 
 ;; COPYRIGHT NOTICE
@@ -1299,8 +1300,8 @@ responsible for the subsequent mess)."
   "Goto beginning of signature or end of buffer."
   (goto-char (point-min))
   (save-match-data
-    (re-search-forward message-signature-separator nil 'move))
-  (beginning-of-line))
+    (when (re-search-forward message-signature-separator nil 'move)
+      (beginning-of-line))))
 
 ;;; **************************************************************************
 (defun gnus-alias-goto-first-empty-header (or-body)
@@ -1426,5 +1427,3 @@ PREFIX is an optional prefeix to each header block."
 (run-hooks 'gnus-alias-load-hook)
 
 ;;; gnus-alias.el ends here
-;;; **************************************************************************
-;;;; *****  EOF  *****  EOF  *****  EOF  *****  EOF  *****  EOF  *************
