@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Sun Nov  9 18:34:26 2014 (-0800)
+;; Last-Updated: Mon Nov 10 13:47:35 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 7439
+;;     Update #: 7454
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -289,7 +289,7 @@
 ;;
 ;;  User options defined here:
 ;;
-;;    `bmkp-autofile-filecache',
+;;    `bmkp-annotation-modes-inherit-from', `bmkp-autofile-filecache',
 ;;    `bmkp-auto-idle-bookmark-min-distance',
 ;;    `bmkp-auto-idle-bookmark-mode-delay',
 ;;    `bmkp-auto-idle-bookmark-mode-lighter',
@@ -302,7 +302,6 @@
 ;;    `bmkp-default-handlers-for-file-types',
 ;;    `bmkp-desktop-jump-save-before-flag.',
 ;;    `bmkp-desktop-no-save-vars',
-;;    `bmkp-edit-annotation-mode-inherit-from',
 ;;    `bmkp-guess-default-handler-for-file-flag',
 ;;    `bmkp-handle-region-function', `bmkp-incremental-filter-delay',
 ;;    `bmkp-last-as-first-bookmark-file',
@@ -531,10 +530,11 @@
 ;;  ***** NOTE: The following commands defined in `bookmark.el'
 ;;              have been REDEFINED HERE:
 ;;
-;;    `bookmark-delete', `bookmark-edit-annotation',
-;;    `bookmark-edit-annotation-mode', `bookmark-insert',
-;;    `bookmark-insert-annotation', `bookmark-insert-location',
-;;    `bookmark-jump', `bookmark-jump-other-window', `bookmark-load',
+;;    `bookmark-default-annotation-text', `bookmark-delete',
+;;    `bookmark-edit-annotation', `bookmark-edit-annotation-mode',
+;;    `bookmark-insert', `bookmark-insert-annotation',
+;;    `bookmark-insert-location', `bookmark-jump',
+;;    `bookmark-jump-other-window', `bookmark-load',
 ;;    `bookmark-relocate', `bookmark-rename', `bookmark-save',
 ;;    `bookmark-send-edited-annotation', `bookmark-set',
 ;;    `bookmark-set-name', `bookmark-yank-word'.
@@ -945,10 +945,11 @@ They are removed from `desktop-globals-to-save' for the duration of
 the save (only)."
   :type '(repeat (variable :tag "Variable")) :group 'bookmark-plus)
 
-;;;###autoload (autoload 'bmkp-edit-annotation-mode-inherit-from "bookmark+")
-(defcustom bmkp-edit-annotation-mode-inherit-from (if (fboundp 'org-mode) 'org-mode 'text-mode)
-  "Symbol for mode that `bmkp-edit-annotation-mode' is to inherit from.
-Or nil if no parent mode.
+;;;###autoload (autoload 'bmkp-annotation-modes-inherit-from "bookmark+")
+(defcustom bmkp-annotation-modes-inherit-from (if (fboundp 'org-mode) 'org-mode 'text-mode)
+  "Symbol for mode that bookmark annotation modes are to inherit from.
+Or nil if no parent mode.  The annotation modes are
+`bmkp-edit-annotation-mode' and `bmkp-show-annotation-mode'.
 
 You must restart Emacs after changing the value of this option, for
 the change to take effect."
@@ -1899,6 +1900,23 @@ bookmark file.  Saving the file depends on `bookmark-save-flag'."
     bmk))                               ; Return the bookmark.
 
 
+;; REPLACES ORIGINAL in `bookmark.el'.
+;;
+;; Mention `C-c C-M-c', not `C-c C-c'.
+;;
+;;;###autoload (autoload 'bookmark-default-annotation-text "bookmark+")
+(defun bookmark-default-annotation-text (bookmark-name)
+  "Return default annotation text for BOOKMARK-NAME.
+The default annotation text is simply some text explaining how to use
+annotations."
+  (concat "#  Type the annotation for bookmark `" bookmark-name "' here.\n"
+	  "#  All lines that start with a `#' will be deleted.\n"
+	  "#  Type `C-c C-M-c' when done.\n#\n"
+	  "#  Author: " (user-full-name) " <" (user-login-name) "@"
+	  (system-name) ">\n"
+	  "#  Date:    " (current-time-string) "\n"))
+
+
 ;; REPLACES ORIGINAL in `bookmark.el' (Emacs 24.4+).
 ;;
 ;; Usable for older Emacs versions also.
@@ -1917,7 +1935,7 @@ BOOKMARK is a bookmark name or a bookmark record."
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
-;; 1. Derive from value of option `bmkp-edit-annotation-mode-inherit-from'.
+;; 1. Derive from value of option `bmkp-annotation-modes-inherit-from'.
 ;; 2. First, remove parent map from `bookmark-edit-annotation-mode-map', so it is derived anew.
 ;; 3. Corrected typo in doc string: *send-EDITED-*.
 ;; 4. Need to use `eval', to pick up option value and reset parent keymap.
@@ -1925,17 +1943,24 @@ BOOKMARK is a bookmark name or a bookmark record."
 ;;;###autoload (autoload 'bookmark-edit-annotation-mode "bookmark+")
 (eval
  `(progn
-   ;; Get rid of default parent, so `bmkp-edit-annotation-mode-inherit-from' is used for the map.
+   ;; Get rid of default parent, so `bmkp-annotation-modes-inherit-from' is used for the map.
    (when (keymapp bookmark-edit-annotation-mode-map)
      (set-keymap-parent bookmark-edit-annotation-mode-map nil))
-   (define-derived-mode bookmark-edit-annotation-mode ,bmkp-edit-annotation-mode-inherit-from
+   (define-derived-mode bookmark-edit-annotation-mode ,bmkp-annotation-modes-inherit-from
        "Edit Bookmark Annotation"
      "Mode for editing the annotation of a bookmark.
-When you have finished composing, use \\[bookmark-send-edited-annotation].
+When you have finished composing, use `C-c C-M-c'.
 
 \\{bookmark-edit-annotation-mode-map}")
    ;; Define this key because Org mode co-opts `C-c C-c' as a prefix key.
    (define-key bookmark-edit-annotation-mode-map "\C-c\C-\M-c" 'bookmark-send-edited-annotation)))
+
+(define-derived-mode bookmark-show-annotation-mode bookmark-edit-annotation-mode
+    "Show Bookmark Annotation"
+  "Mode for displaying the annotation of a bookmark.
+
+\\{bookmark-show-annotation-mode-map}"
+  (setq buffer-read-only  t))
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -1947,7 +1972,7 @@ When you have finished composing, use \\[bookmark-send-edited-annotation].
 ;; 5. Delete window also, if `misc-cmds.el' loaded.
 ;;
 ;;;###autoload (autoload 'bookmark-send-edited-annotation "bookmark+")
-(defun bookmark-send-edited-annotation ()
+(defun bookmark-send-edited-annotation () ; Bound to `C-c C-M-c' in `bookmark-edit-annotation-mode'.
   "Use buffer contents as annotation for a bookmark.
 Lines beginning with `#' are ignored."
   (interactive)
@@ -3169,9 +3194,8 @@ bookmark files that were created using the bookmark functions."
 ;; 2. Added optional arg MSG-P.  Show message if no annotation.
 ;; 3. Name buffer after the bookmark.
 ;; 4. MSG-P means message if no annotation.
-;; 5. Use `view-mode'.  `q' uses `quit-window'.
-;; 6. Fit frame to buffer if `one-windowp'.
-;; 7. Restore frame selection.
+;; 5. Fit frame to buffer if `one-windowp'.
+;; 8. Restore frame selection.
 ;;
 (defun bookmark-show-annotation (bookmark &optional msg-p)
   "Show the annotation for BOOKMARK, or follow it if external.
@@ -3197,7 +3221,7 @@ If no annotation and MSG-P is non-nil, show a no-annotation message."
                                  'face 'bmkp-heading)
               (insert ann))
             (goto-char (point-min))
-            (view-mode-enter (cons (selected-window) (cons nil 'quit-window)))
+            (bookmark-show-annotation-mode)
             (when (fboundp 'fit-frame-if-one-window) (fit-frame-if-one-window)))
           (select-frame-set-input-focus oframe))))))
 
