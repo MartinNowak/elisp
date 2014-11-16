@@ -1011,6 +1011,7 @@ You can now enter ediff with C-c ^ E."
 ;;; ===========================================================================
 ;;; FISH Shell
 (when (append-to-load-path (elsub "fish"))
+  (autoload 'fish-mode "fish-mode" "fish-mode" t)
   (add-to-list 'auto-mode-alist '("\\.fish\\'" . fish-mode))
   (add-to-list 'interpreter-mode-alist '("fish" . fish-mode)))
 
