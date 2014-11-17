@@ -200,6 +200,37 @@ X defaults to :related"
       (:lang Swift :expr (: "println" "(" (CSE ,exprs) ")"))
       )) "Print EXPR on a separate line.")
 
+(defconst relangs-function-parameter-count
+  (lambda ()
+    `((:lang Bash :expr "$#")
+      (:lang Fish :expr "count" "$argv")
+      )) "Function Parameter Count.")
+
+(defconst relangs-function-parameter-arguments
+  (lambda ()
+    `((:lang Bash :expr (| "\"$@\""
+                           "$@"))
+      (:lang Fish :expr "$argv")
+      )) "Function Parameters.")
+
+(defconst relangs-if-else-statement
+  (lambda (if-expr if-stmt
+                   elif-expr elif-stmt
+                   else-stmt)
+    `((:lang Bash :expr (: "if" if-expr ";" "then" if-stmt "elif" elif-expr elif-stmt "else" else-stmt "fi"))
+      (:lang Fish :expr (: "if" if-expr if-stmt "else" "if" elif-expr elif-stmt "else" else-stmt "end"))
+      )) "If Statement.")
+
+(defconst relangs-function-definition
+  (lambda (name desc stmts)
+    `((:lang Bash :expr (: "function" ,name "()"
+                           (: "{" ,stmts "}")))
+      (:lang Fish :expr (: "function" ,name
+                           (? "-d" ,desc)
+                           (| (: "{" ,stmts "}")
+                              (: ,stmts "end"))))
+      )) "Function Definition.")
+
 (defconst relangs-begins-with
   (lambda (whole prefix)
     `((:lang Python :expr (: whole ".startswith(" prefix ")"))
@@ -739,11 +770,19 @@ See
 
 (defconst relangs-variable-definition
   (lambda (name type value)
-    `((:lang Shell :expr (: ,name "=" ,value))
+    `((:lang Shell :expr (: ,name (unspaced "=") ,value))
+      (:lang (CShell Fish) :expr (: "set" ,name ,value))
+      (:lang Python :expr (: ,name "=" ,value))
       (:lang Swift :expr (: "var" ,name "=" ,value))
       (:lang Emacs-Lisp :expr (: "(" L* "def" (| "var" "custom") L* ,name L+ ,value ")"))
       (:lang (C C++) :expr (: ""))
       )) "Definition of Variable Named NAME having Value VALUE.")
+
+(defconst relangs-exported-variable-definition
+  (lambda (name type value)
+    `((:lang Shell :expr (: "export" ,name (unspaced "=") ,value))
+      (:lang (CShell Fish) :expr (: "set" "-x" ,name ,value))
+      )) "Definition of Exported Variable Named NAME having Value VALUE.")
 
 (defconst relangs-constant-definition
   (lambda (name type value)
@@ -1014,6 +1053,8 @@ See
     (:lang (Ada Python Lua) :expr (: "and"))
     (:lang Lisp :expr (: "(and X..."))
     (:lang Fortran-77 :expr (: ".AND."))
+    (:lang Shell :expr (: "&&"))
+    (:lang Fish :expr (: ";" "and"))
     ) "Logical And Operation")
 (defconst relangs-logical-or
   `((:lang C :expr (: "||"))
@@ -1075,6 +1116,14 @@ See
     (:lang (Make Pascal Go Ada) :expr (: "X := V"))
     )
   "Variable X Assignment to V")
+
+(defconst relangs-variable-reference
+  (lambda (name)
+    `((:lang (Shell) :expr (: (| (: "${" ,name "}")
+                                 (: "$" ,name))))
+      (:lang (Fish) :expr (: "$" ,name))
+      ))
+  "Reference of Variable NAME.")
 
 (defconst relangs-range-operator
   (lambda (x y)
