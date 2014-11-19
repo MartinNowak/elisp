@@ -100,3 +100,6 @@
 [submodule "lua-mode"]
 	path = lua-mode
 	url = https://github.com/immerrr/lua-mode.git
+[submodule "ac-dcd"]
+	path = ac-dcd
+	url = https://github.com/nordlow/ac-dcd.git
