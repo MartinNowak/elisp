@@ -628,6 +628,7 @@ extern \"C\" { extern char *gets(char *__s) { return 0; }; }
               (d-mode "void"))
             " main(" (c-main-arguments mode) ")")
     (c-indent-command)
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when (memq mode '(c-mode c++-mode))
@@ -652,6 +653,7 @@ extern \"C\" { extern char *gets(char *__s) { return 0; }; }
           (setq kill (car kill-ring))
           ))
     (insert-indented "if (" expression ")")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
@@ -679,6 +681,7 @@ extern \"C\" { extern char *gets(char *__s) { return 0; }; }
           (setq kill (car kill-ring))
           ))
     (insert-indented "if (" expression ")")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
@@ -711,6 +714,7 @@ extern \"C\" { extern char *gets(char *__s) { return 0; }; }
           (setq kill (car kill-ring))
           ))
     (insert-indented "for (" expression ")")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
@@ -752,6 +756,7 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
                      (when filter
                        (concat ".filter!(" filter ")"))
                      ")")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
@@ -774,6 +779,7 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
           (setq kill (car kill-ring))
           ))
     (insert-indented "while (" expression ")")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
@@ -801,6 +807,7 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
           (setq kill (car kill-ring))
           ))
     (insert-indented "with (" symbol ")")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
@@ -827,6 +834,7 @@ See http://stackoverflow.com/questions/18601898/preferred-foreach-index-type/186
           (setq kill (car kill-ring))
           ))
     (insert-indented "do")
+    (insert-indented "\n")
     (c-insert-open-brace)
     (insert-indented "\n")
     (when kill
