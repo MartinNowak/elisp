@@ -466,7 +466,7 @@ this setting temporarily."
 (unless (fboundp 'constrain-to-field) (defun constrain-to-field (&rest _ignore) (point)))
 (unless (fboundp 'field-beginning)    (defalias 'field-beginning (symbol-function 'ignore)))
 (unless (fboundp 'field-end)          (defalias 'field-end (symbol-function 'ignore)))
-
+ 
 ;;; Utility Functions ------------------------------------------------
 
 
@@ -511,7 +511,7 @@ this setting temporarily."
                                  (concat "\\(?:" regexp "\\)\\'")
                                (concat "\\(" regexp "\\)\\'"))))))
       (not (null pos)))))
-
+ 
 ;;; THINGS -----------------------------------------------------------
 
 
@@ -761,7 +761,7 @@ Optional arg SYNTAX-TABLE is a syntax table to use."
   (let ((thing+bds  (tap-thing-nearest-point-with-bounds thing syntax-table)))
     (and thing+bds
          (car thing+bds))))
-
+ 
 ;;; FORMS, SEXPS -----------------------------------------------------
 
 (defun tap-form-at-point-with-bounds (&optional thing predicate syntax-table)
@@ -899,7 +899,7 @@ Optional args:
   (let ((form+bds  (tap-form-nearest-point-with-bounds thing predicate syntax-table)))
     (and form+bds
          (car form+bds))))
-
+ 
 ;;; SYMBOLS ----------------------------------------------------------
 
 (defun tap-symbol-at-point-with-bounds ()
@@ -1015,7 +1015,7 @@ All but the first return strings, not (non-nil) symbols."
   (let ((symb+bds  (tap-symbol-nearest-point-with-bounds t)))
     (and symb+bds
          (car symb+bds))))
-
+ 
 ;;; LISTS ------------------------------------------------------------
 
 (defun tap-list-at/nearest-point-with-bounds (at/near &optional up unquotedp)
@@ -1214,7 +1214,7 @@ include the enclosing `(' and `)' characters."
 See `tap-list-contents-at-point'."
   (let ((full  (tap-bounds-of-thing-nearest-point 'list)))
     (and full  (buffer-substring (1+ (car full)) (1- (cdr full))))))
-
+ 
 ;;; SYMBOL NAMES, WORDS, SENTENCES, etc. -----------------------
 
 
@@ -1478,7 +1478,7 @@ enclosing `\"' characters."
 See `tap-string-contents-at-point'."
     (let ((full  (tap-bounds-of-thing-nearest-point 'string)))
       (and full  (buffer-substring (1+ (car full)) (1- (cdr full)))))))
-
+ 
 ;;; COMMANDS ---------------------------------------------------------
 
 

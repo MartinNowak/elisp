@@ -8,7 +8,8 @@
 ;; This file is not part of GNU Emacs.
 
 ;; ada-gpr is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
+;; it under the terms of the GNU General Public License as published
+by
 ;; the Free Software Foundation; either version 2, or (at your option)
 ;; any later version.
 
@@ -187,4 +188,4 @@ t)))
 ;;; provide ourselves
 (provide 'ada-gpr-mode)
 (provide 'ada-gpr)
-;;; ada-gpr.el ends here
+;;; ada-gpr.el ends here 
