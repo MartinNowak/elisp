@@ -305,4 +305,6 @@ contains the sub-directory
 ;;; https://stackoverflow.com/questions/1680750/is-there-any-way-to-get-ediff-to-not-open-its-navigation-interface-in-an-externa
 (setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
 
+(defalias 'vc-blame 'vc-annotate)
+
 (provide 'vc-and-ediff)
