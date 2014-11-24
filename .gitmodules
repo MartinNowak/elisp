@@ -103,3 +103,6 @@
 [submodule "ac-dcd"]
 	path = ac-dcd
 	url = https://github.com/nordlow/ac-dcd.git
+[submodule "vagrant-tramp"]
+	path = vagrant-tramp
+	url = https://github.com/dougm/vagrant-tramp.git
