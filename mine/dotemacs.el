@@ -2866,6 +2866,27 @@ functions, and some types.  It also provides indentation that is
 (eload 'strace-mode)                ;Mode (only font-locking) for strace output.
 (eload 'valgrind)                   ;Valgrind - http://valgrind.org/
 
+(defun comint-previous-input-dinged (arg)
+  (interactive "*p")
+  (unless (ignore-errors
+            (comint-previous-input arg ))
+    (message "No previous comint history input")
+    ()))
+
+(defun comint-next-input-dinged (arg)
+  (interactive "*p")
+  (unless (ignore-errors
+            (comint-next-input arg ))
+    (message "No next comint history input")
+    (ding)))
+
+(defun comint-fix-previous-next-input ()
+  (let ((map comint-mode-map))
+    (local-set-key [(meta p)] 'comint-previous-input-dinged)
+    (local-set-key [(meta n)] 'comint-next-input-dinged)))
+
+(add-hook 'comint-mode-hook 'comint-fix-previous-next-input) t
+
 ;; Display output from the debugged program in a separate buffer.
 (defun pnw-gud-setup-hook ()
   ;; Browse history with up and down key.
