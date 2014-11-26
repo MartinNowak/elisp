@@ -879,7 +879,8 @@ See http://oclint.org/"
            'sh-mode 'man
            '((:execute "bash")
              (:debug (lambda (filename &optional build-type compilation-window cwd args)
-                       (bashdb (concat gud-bashdb-command-name " " filename))))))
+                       ;; Usage: bashdb [bashdb-opts] -- bash-script-name script-arg1 script-arg2...
+                       (bashdb (concat gud-bashdb-command-name " " filename " " (mapconcat 'identity args " ")))))))
 
   (fmd-add 'Csh-Script "csh" "Script Code" 'txt
            `(:name (lit "csh" ext)
