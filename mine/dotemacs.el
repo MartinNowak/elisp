@@ -1847,7 +1847,7 @@ match FILENAME."
                   flycheck-pylint-disabled-messages-string '("C0103" "C0301" "C0302" "C0303" "C0321"
                                                              "R0903" "R0904"
                                                              "R0913" "R0914" "R0915"
-                                                             "W0511"
+                                                             "W0311" "W0511"
                                                              "missing-docstring"
                                                              "invalid-name"
                                                              "unnecessary-semicolon"))))
