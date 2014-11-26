@@ -117,6 +117,12 @@
 (when nil (fset 'yes-or-no-p 'y-or-n-p)) ;replace "yes" and RET with just typing 'y'.  Several emacs actions
 
 ;;; ===========================================================================
+;;; PEG (Parsing Expression Grammar)
+(when (require 'peg nil t))
+(when (eload 'peg-mode)
+  (add-to-list 'auto-mode-alist '("\\.peg\\'" . peg-mode)))
+
+;;; ===========================================================================
 ;;; Visual Regexp
 (when (append-to-load-path (elsub "visual-regexp"))
   (autoload 'vr/replace "visual-regexp" "Visual Regexp Replace" t)
