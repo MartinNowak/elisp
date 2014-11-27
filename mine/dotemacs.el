@@ -1927,15 +1927,21 @@ match FILENAME."
       (let ((cs (trace-file-upwards "." "config_spec.xml")))
         (when cs
           (let* ((top (car cs))
-                 (build-dir (car (last (directory-files
-                                        (expand-file-name "build" top)
-                                        t))))
-                 (include-dir (expand-file-name "include" build-dir)))
-            (setq flycheck-gnat-include-path
-                  (append
-                   std-path
-                   (list (expand-file-name "components" include-dir)
-                         (expand-file-name "subsystems" include-dir))))))))))
+                 (build-root-dir (expand-file-name "build" top))
+                 (build-dir (when (and build-root-dir
+                                       (file-directory-p build-root-dir))
+                              (car (last (directory-files
+                                          build-root-dir
+                                          t)))))
+                 (include-dir (when (and build-dir
+                                         (file-directory-p build-dir))
+                                (expand-file-name "include" build-dir))))
+            (when include-dir
+              (setq flycheck-gnat-include-path
+                    (append
+                     std-path
+                     (list (expand-file-name "components" include-dir)
+                           (expand-file-name "subsystems" include-dir)))))))))))
 (add-hook 'flycheck-before-syntax-check-hook
           'setup-flycheck-common-stuff t)
 
@@ -2324,15 +2330,23 @@ functions, and some types.  It also provides indentation that is
                            )))))
 ;; Use: (python-mode-add-charedits)
 
+;;; https://tkf.github.io/emacs-jedi/latest/
+(when nil ; TODO: disabled because this fails
+  (when (require 'jedi nil t)
+    (jedi:install-server)
+    (add-hook 'python-mode-hook 'jedi:setup)
+    ;; (setq jedi:complete-on-dot t)          ; optional
+    ))
+
 ;;; https://github.com/pdee/pdee
 (when nil
   (let ((sub (elsub "python")))
     (when (and (append-to-load-path sub))
       (setq py-install-directory sub)
       (require 'python-mode nil t)
-      (setq py-load-pymacs-p t)
-      (require 'auto-complete-config)
-      (ac-config-default)
+      ;; (setq py-load-pymacs-p t)
+      ;; (require 'auto-complete-config)
+      ;; (ac-config-default)
       )))
 
 ;;; Pymacs
@@ -2416,13 +2430,6 @@ functions, and some types.  It also provides indentation that is
     (eload 'anything-ipython)))
 
 (add-hook 'python-mode-hook 'python-mode-add-charedits t)
-
-;;; https://tkf.github.io/emacs-jedi/latest/
-(when (require 'jedi nil t)
-  (jedi:install-server)
-  (add-hook 'python-mode-hook 'jedi:setup)
-  ;; (setq jedi:complete-on-dot t)          ; optional
-  )
 
 ;;; ===========================================================================
 ;;; SCons
