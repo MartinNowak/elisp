@@ -49,6 +49,7 @@
     ))
 
 (require 'main-function)
+(require 'compiler-version)
 (require 'cscan)
 
 ;; ---------------------------------------------------------------------------
@@ -299,6 +300,9 @@ Currently supported through GCC's flags -MD."
                                                   compiler build-type (file-name-directory out-filename) t)))
                                       (when flags
                                         " " (mapconcat 'identity flags " ")))
+
+                                    (when (compiler-version-at-least "4.8" compiler)
+                                      " -fno-diagnostics-show-caret")
 
                                     (when warn-flags
                                       (concat " " (mapconcat 'identity warn-flags " ")))
