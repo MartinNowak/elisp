@@ -301,8 +301,13 @@ Currently supported through GCC's flags -MD."
                                       (when flags
                                         " " (mapconcat 'identity flags " ")))
 
-                                    (when (compiler-version-at-least "4.8" compiler)
+                                    (when (and (string-match "gcc" compiler)
+                                               (compiler-version-at-least "4.8" compiler))
                                       " -fno-diagnostics-show-caret")
+
+                                    (when (and (string-match "clang" compiler)
+                                               (compiler-version-at-least "3.1" compiler))
+                                      " -fno-caret-diagnostics")
 
                                     (when warn-flags
                                       (concat " " (mapconcat 'identity warn-flags " ")))
