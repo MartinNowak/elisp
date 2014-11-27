@@ -2882,14 +2882,14 @@ functions, and some types.  It also provides indentation that is
 (defun comint-previous-input-dinged (arg)
   (interactive "*p")
   (unless (ignore-errors
-            (comint-previous-input arg ))
+            (progn (comint-previous-input arg) t))
     (message "No previous comint history input")
-    ()))
+    (ding)))
 
 (defun comint-next-input-dinged (arg)
   (interactive "*p")
   (unless (ignore-errors
-            (comint-next-input arg ))
+            (progn (comint-next-input arg) t))
     (message "No next comint history input")
     (ding)))
 
