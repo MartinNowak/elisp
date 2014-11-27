@@ -436,6 +436,7 @@ VERSION default to version of gdb"
 (defconst clang-warn-types
   `(("All" ,clang-default-warnings)
     ("All-Extra" ("-Wall -Wextra -Wmaybe-uninitialized"))
+    ("Everything" ("-Weverything"))
     )
   "Clang Warn Types. First element becomes default.")
 
