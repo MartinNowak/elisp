@@ -18,7 +18,7 @@
                                (match-string 1 str))))
                      ((string-match "dmd" compiler)
                       (let ((str (shell-command-to-string compiler)))
-                        (progn (string-match "DMD\\(32\\|64\\) D Compiler v\\([0-9\.]+\\)" str)
+                        (progn (string-match "DMD\\(32\\|64\\) D Compiler v\\([0-9\.-]+[a-z\.-]*\\)" str)
                                (match-string 2 str))))))))
     (when str
       (car (last (split-string str "\n"))))))
