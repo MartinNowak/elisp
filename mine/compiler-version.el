@@ -56,8 +56,9 @@
 ;; Use: (compiler-version-at-least "3.3" "clang")
 ;; Use: (compiler-version-at-least "3.2" "clang")
 ;; Use: (compiler-version-at-least "3.1" "clang")
+;; Use: (compiler-version-at-least "3.5" "clang")
 ;; Use: (compiler-version-at-least "3.0" "clang")
-;; Use: (compiler-version-at-least "2.065" "dmd")
+;; Use: (compiler-version-at-least "2.067" "dmd")
 (defun gcc-version-at-least (version &optional compiler) (compiler-version-at-least version (or compiler "gcc")))
 (defun clang-version-at-least (version &optional compiler) (compiler-version-at-least version (or compiler "clang")))
 (eval-when-compile
