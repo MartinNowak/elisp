@@ -1958,7 +1958,8 @@ match FILENAME."
   (interactive)
   (let ((dmd (executable-find "dmd"))
         (dcd (executable-find "dcd-server")))
-    (when dcd
+    (when (and dmd
+               dcd)
       (start-process "DCD" nil dcd
                      (concat "-I" (expand-file-name "~/justd"))
                      (concat "-I" (expand-file-name "src/druntime/import"
