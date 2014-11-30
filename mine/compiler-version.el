@@ -32,12 +32,14 @@
 ;; Use: (compiler-version "gcc")
 ;; Use: (compiler-version "clang")
 ;; Use: (compiler-version "dmd")
+
 (defun gcc-version (&optional compiler) (compiler-version (or compiler "gcc")))
 (defun clang-version (&optional compiler) (compiler-version (or compiler "clang")))
 (defun dmd-version (&optional compiler) (compiler-version (or compiler "dmd")))
 ;; Use: (gcc-version)
 ;; Use: (clang-version)
 ;; Use: (dmd-version)
+
 (defun compiler-version-at-least (version &optional compiler)
   "Return non-nil if GCC COMPILER has at least version VERSION-STRING."
   (let ((version-installed (compiler-version compiler)))
@@ -59,6 +61,7 @@
 ;; Use: (compiler-version-at-least "3.5" "clang")
 ;; Use: (compiler-version-at-least "3.0" "clang")
 ;; Use: (compiler-version-at-least "2.067" "dmd")
+
 (defun gcc-version-at-least (version &optional compiler) (compiler-version-at-least version (or compiler "gcc")))
 (defun clang-version-at-least (version &optional compiler) (compiler-version-at-least version (or compiler "clang")))
 (eval-when-compile
