@@ -647,6 +647,13 @@
 (when (fboundp 'electric-pair-mode) (electric-pair-mode 1))
 ;; See: http://www.emacswiki.org/emacs-en/AutoPairs
 
+(defun c-no-hanging-semi ()
+  ;; TODO How do I get information about if comma or semicolon was pressed?
+  ;; See: https://stackoverflow.com/questions/27217515/tweaking-emacs-electric-behaviour
+  nil)
+
+(add-to-list 'c-hanging-semi&comma-criteria 'c-no-hanging-semi)
+
 (when (append-to-load-path (elsub "Sublain"))
   (require 'sublain nil t)
   )
