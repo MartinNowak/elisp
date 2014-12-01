@@ -2339,35 +2339,25 @@ functions, and some types.  It also provides indentation that is
 ;; Use: (python-mode-add-charedits)
 
 ;;; https://tkf.github.io/emacs-jedi/latest/
-(when nil ; TODO: disabled because this fails
+(when nil ;TODO: fails
   (when (require 'jedi nil t)
     (jedi:install-server)
     (add-hook 'python-mode-hook 'jedi:setup)
     ;; (setq jedi:complete-on-dot t)          ; optional
     ))
 
-;;; https://github.com/pdee/pdee
-(when nil
-  (let ((sub (elsub "python")))
-    (when (and (append-to-load-path sub))
-      (setq py-install-directory sub)
-      (require 'python-mode nil t)
-      ;; (setq py-load-pymacs-p t)
-      ;; (require 'auto-complete-config)
-      ;; (ac-config-default)
-      )))
-
 ;;; Pymacs
-(when (append-to-load-path (elsub "pymacs"))
-  (let ((pymacs-root (elsub "pymacs")))
-    (when (append-to-load-path pymacs-root)
-      (setq pymacs-load-path `(,pymacs-root))
-      (add-to-PATH (expand-file-name pymacs-root) "PYTHONPATH")))
-  ;;(progn (eload 'pycomplete) (eload 'pycomplete+))
-  (autoload 'pymacs-load "pymacs" nil t)
-  (autoload 'pymacs-eval "pymacs" nil t)
-  (autoload 'pymacs-apply "pymacs")
-  (autoload 'pymacs-call "pymacs"))
+(when nil                               ;TODO fails
+  (when (append-to-load-path (elsub "pymacs"))
+    (let ((pymacs-root (elsub "pymacs")))
+      (when (append-to-load-path pymacs-root)
+        (setq pymacs-load-path `(,pymacs-root))
+        (add-to-PATH (expand-file-name pymacs-root) "PYTHONPATH")))
+    ;;(progn (eload 'pycomplete) (eload 'pycomplete+))
+    (autoload 'pymacs-load "pymacs" nil t)
+    (autoload 'pymacs-eval "pymacs" nil t)
+    (autoload 'pymacs-apply "pymacs")
+    (autoload 'pymacs-call "pymacs")))
 
 (defun pnw-setup-python-mode ()
   (defvar py-mode-map python-mode-map)
@@ -2375,7 +2365,7 @@ functions, and some types.  It also provides indentation that is
   ;;(set-variable 'py-indent-offset 4)
   ;;(set-variable 'py-smart-indentation nil)
   (set-variable 'indent-tabs-mode nil)
-  (when (and (append-to-load-path (elsub "~/elisp/python/extensions"))
+  (when (and (append-to-load-path (elsub "pdee/extensions"))
              (require 'highlight-indentation nil t)
              (fboundp' highlight-indentation))
     (highlight-indentation))
