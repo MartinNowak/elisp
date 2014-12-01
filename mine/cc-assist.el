@@ -3822,6 +3822,7 @@ This command assumes point is not in a string or comment."
                                         ;Tell `info-look' what mode to use.
   (local-set-key [(meta ?\()] 'c-insert-parens)
   (charedit-local-set-key ?B 'c-insert-embedded-gdb-breakpoint 'code)
+  (define-key c-mode-base-map ";" nil)
   )
 (add-hook 'c-mode-common-hook 'c-assist-common-hook t)
 

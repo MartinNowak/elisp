@@ -139,7 +139,7 @@
       line-number-mode t
       column-number-mode t
       inhibit-startup-message t
-      debug-on-error t
+      debug-on-error nil
       apropos-do-all t			;apropos does more but slower
       transient-mark-mode 't
       history-length t
