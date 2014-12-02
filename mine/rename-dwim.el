@@ -197,6 +197,7 @@ otherwise default delete-file() on OLD."
 (global-set-key [(control x) (control r)] 'rename-buffer-and-maybe-file) ;I newer use `set-goal-column'
 (global-set-key [(control x) (control n)] 'find-file-read-only) ;I newer use `set-goal-column'
 (global-set-key [(control x) (control d)] 'delete-buffer-and-maybe-file) ;I newer use `set-goal-column'
+(global-set-key [(control x) (control delete)] 'delete-buffer-and-maybe-file) ;I newer use `set-goal-column'
 
 (define-key-after menu-bar-file-menu [rename-buffer-file]
   `(menu-item "Rename Buffer-File..." rename-buffer-and-maybe-file :help "Rename Buffer and its File if it exists")
