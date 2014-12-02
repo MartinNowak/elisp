@@ -1,10 +1,10 @@
-;;; delight.el - A dimmer switch for your lighter text.
+;;; delight.el --- A dimmer switch for your lighter text.
 ;;
 ;; Author: Phil S.
 ;; URL: http://www.emacswiki.org/emacs/DelightedModes
 ;; Version: 1.03
 
-;; Commentary:
+;;; Commentary:
 ;;
 ;; Enables you to customise the mode names displayed in the mode line.
 ;;
@@ -52,10 +52,12 @@
 
 ;;; Changelog:
 ;;
-;; 1.03 - Added support for `mode-line-mode-menu'.
-;; 1.02 - Bug fix for missing 'cl requirement for destructuring-bind macro.
-;; 1.01 - Added support for using the keyword :major as the FILE argument
-;;        for major modes, to avoid also processing them as minor modes.
+;; 1.03 (2014-05-30) Added support for `mode-line-mode-menu'.
+;; 1.02 (2014-05-04) Bug fix for missing 'cl requirement for
+;;       destructuring-bind macro.
+;; 1.01 (2014-05-04) Allow the keyword :major as the FILE argument for
+;;       major modes, to avoid also processing them as minor modes.
+;; 1.00 (2013-06-25) Initial release.
 
 ;;; Code:
 
@@ -161,3 +163,4 @@ When `mode-name' is displayed in other contexts (such as in the
     ad-do-it))
 
 (provide 'delight)
+;;; delight.el ends here

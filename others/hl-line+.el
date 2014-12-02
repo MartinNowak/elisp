@@ -8,14 +8,14 @@
 ;; Created: Sat Aug 26 18:17:18 2006
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Tue May 20 20:18:25 2014 (-0700)
+;; Last-Updated: Fri Nov 28 19:03:55 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 490
+;;     Update #: 496
 ;; URL: http://www.emacswiki.org/hl-line+.el
 ;; Doc URL: http://www.emacswiki.org/HighlightCurrentLine
 ;; Doc URL: http://www.emacswiki.org/CrosshairHighlighting
 ;; Keywords: highlight, cursor, accessibility
-;; Compatibility: GNU Emacs: 22.x, 23.x, 24.x
+;; Compatibility: GNU Emacs: 22.x, 23.x, 24.x, 25.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -115,6 +115,8 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2014/05/17 dadams
+;;     hl-line-overlay-priority: Set default value to -50 (work around Emacs bug #16192 fix).
 ;; 2014/05/20 dadams
 ;;     (global-)hl-line-highlight: No-op if in the minibuffer (update for Emacs 24.4+).
 ;; 2013/06/08 dadams
@@ -203,13 +205,13 @@ A list of `major-mode' values (symbols)."
   :group 'hl-line)
 
 ;;;###autoload
-(defcustom hl-line-overlay-priority 300
+(defcustom hl-line-overlay-priority -50
   "*Priority to use for `hl-line-overlay' and `global-hl-line-overlay'.
 A higher priority can make the hl-line highlighting appear on top of
 other overlays that might exist."
   :type '(choice
           (const   :tag "No priority (default priority)"  nil)
-          (integer :tag "Priority"  300))
+          (integer :tag "Priority"  -50))
   :group 'hl-line)
 
 (defvar hl-line-idle-interval 5
@@ -286,6 +288,7 @@ use `\\[toggle-hl-line-when-idle]."
 (defun hl-line-unhighlight-now ()
   "Turn off `global-hl-line-mode' and unhighlight current line now."
   (global-hl-line-mode -1)
+  ;; $$$$$$ Do we need to worry about `global-hl-line-unhighlight-all' here?
   (global-hl-line-unhighlight)
   (remove-hook 'pre-command-hook 'hl-line-unhighlight-now))
 

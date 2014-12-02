@@ -8,13 +8,13 @@
 ;; Created: Sat Sep 11 10:40:32 2004
 ;; Version: 0
 ;; Package-Requires: ((doremi "0") (faces+ "0") (frame-fns "0") (hexrgb "0"))
-;; Last-Updated: Thu Dec 26 08:48:15 2013 (-0800)
+;; Last-Updated: Sun Nov 30 20:32:51 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 3000
+;;     Update #: 3007
 ;; URL: http://www.emacswiki.org/doremi-frm.el
 ;; Doc URL: http://www.emacswiki.org/DoReMi
 ;; Keywords: frames, extensions, convenience, keys, repeat, cycle
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x
+;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -571,8 +571,8 @@
                   ;; hexrgb-defined-colors, hexrgb-defined-colors-alist,
                   ;; hexrgb-increment-blue, hexrgb-increment-green, hexrgb-increment-red,
                   ;; hexrgb-hsv-to-rgb, hexrgb-rgb-to-hsv
-(require 'ring)
-(unless (fboundp 'ring-member)          ; Emacs 23
+(require 'ring) ;; ring-insert, ring-member, ring-next (Emacs 23)
+(unless (fboundp 'ring-member)          ; < Emacs 23
   (require 'ring+)) ;; ring-insert, ring-member, ring-next
 (require 'frame-fns) ;; frame-geom-spec-cons, frame-geom-value-cons, get-a-frame
 (require 'faces+) ;; face-background-20+, face-foreground-20+, Emacs 20: read-face-name
