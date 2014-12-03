@@ -2389,7 +2389,7 @@ functions, and some types.  It also provides indentation that is
   )
 (add-hook 'python-mode-hook 'pnw-setup-python-mode t)
 
-;;(add-hook 'python-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'python-mode-hook 'turn-on-eldoc-mode)
 
 (defun python-mode-setup-keys ()
   (when (and (require 'pymacs nil t)
