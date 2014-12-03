@@ -2257,7 +2257,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     local-write-file-hooks
 
     tramp-handle-file-local-copy-hook
-    ) "Emacs Hooks")
+    ) "Emacs Hooks.")
 
 (homo-relate 'trace-function
              :related
@@ -2347,7 +2347,13 @@ LANG defaults major-mode language, for example `c' if `c-mode' etc."
     (:lang D :expr "Range")
     (:lang C++ :expr "Pair of Iterators")
     (:lang Java :expr "InputStream")
-    ) "Range Concept Names")
+    ) "Range Concept Names.")
+
+(defconst relangs-file-tree-walk
+  `((:lang D :expr "dirEntries")
+    (:lang C :expr "ftw" "(" ")")
+    (:lang Emacs-Lisp :expr "file-tree-walk")
+    ) "Walk File Tree.")
 
 (provide 'relangs)
 ;;; relangs.el ends here
