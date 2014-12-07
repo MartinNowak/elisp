@@ -2003,6 +2003,14 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang Python :expr (: "re.sub(" ,REGEXP "," ,REP "," ,STRING ""))
       "String Regular Expression REGEXP with Replacement REP in STRING.")))
 
+(defconst relangs-reverse-range
+  (lambda (range)
+    `(
+      (:lang D :expr (: "retro" "(" ,range ")"))
+      (:lang Python :expr (: ,range "[::-1]"))
+      (:lang Ruby :expr (: ,range "." "reverse"))
+      "Reverse RANGE.")))
+
 (defconst relangs-positive-numbers
   (lambda ()
     `(
@@ -2096,7 +2104,7 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     (remove (rm) delete erase destroy clear)
     (run execute (exec) call)
     (shift translate)
-    (mirror reverse)
+    (mirror reverse retro reversed)
     (vector array)
     ) "List of Associations Synonyms often used in Computer and
   Programming Contexts")
