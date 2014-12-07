@@ -8,15 +8,15 @@
 ;; Created: Tue Mar  5 16:30:45 1996
 ;; Version: 0
 ;; Package-Requires: ((frame-fns "0"))
-;; Last-Updated: Wed Oct 15 18:00:48 2014 (-0700)
+;; Last-Updated: Sat Dec  6 15:20:03 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 2993
+;;     Update #: 3010
 ;; URL: http://www.emacswiki.org/frame-cmds.el
 ;; Doc URL: http://emacswiki.org/FrameModes
 ;; Doc URL: http://www.emacswiki.org/OneOnOneEmacs
 ;; Doc URL: http://www.emacswiki.org/Frame_Tiling_Commands
 ;; Keywords: internal, extensions, mouse, frames, windows, convenience
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x
+;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -99,11 +99,13 @@
 ;;
 ;;  Commands defined here:
 ;;
-;;    `delete-1-window-frames-on', `delete/iconify-window',
-;;    `delete/iconify-windows-on', `delete-other-frames',
-;;    `delete-windows-for', `enlarge-font', `enlarge-frame',
-;;    `enlarge-frame-horizontally', `hide-everything', `hide-frame',
-;;    `iconify-everything', `iconify/map-frame', `iconify/show-frame',
+;;    `create-frame-tiled-horizontally',
+;;    `create-frame-tiled-vertically', `delete-1-window-frames-on',
+;;    `delete/iconify-window', `delete/iconify-windows-on',
+;;    `delete-other-frames', `delete-windows-for', `enlarge-font',
+;;    `enlarge-frame', `enlarge-frame-horizontally',
+;;    `hide-everything', `hide-frame', `iconify-everything',
+;;    `iconify/map-frame', `iconify/show-frame',
 ;;    `jump-to-frame-config-register', `maximize-frame',
 ;;    `maximize-frame-horizontally', `maximize-frame-vertically',
 ;;    `mouse-iconify/map-frame', `mouse-iconify/show-frame',
@@ -122,7 +124,8 @@
 ;;    `show-a-frame-on', `show-buffer-menu', `show-frame',
 ;;    `show-hide', `shrink-frame', `shrink-frame-horizontally',
 ;;    `tell-customize-var-has-changed', `tile-frames',
-;;    `tile-frames-horizontally', `tile-frames-vertically',
+;;    `tile-frames-horizontally', `tile-frames-side-by-side',
+;;    `tile-frames-top-to-bottom', `tile-frames-vertically',
 ;;    `toggle-max-frame', `toggle-max-frame-horizontally',
 ;;    `toggle-max-frame-vertically'.
 ;;
@@ -272,6 +275,10 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2014/12/06 dadams
+;;     Added: create-frame-tiled-horizontally, create-frame-tiled-vertically.
+;;     Added aliases: tile-frames-side-by-side, tile-frames-top-to-bottom.
+;;     window-mgr-title-bar-pixel-height: Changed default value for ns to 50.  Thx to Nate Eagleson.
 ;; 2014/10/15 dadams
 ;;     window-mgr-title-bar-pixel-height: Added default value for ns (Next).  Thx to Nate Eagleson.
 ;; 2014/10/13 dadams
@@ -596,7 +603,8 @@ Candidates include `jump-to-frame-config-register' and `show-buffer-menu'."
 
 ;; Use `cond', not `case', for Emacs 20 byte-compiler.
 (defcustom window-mgr-title-bar-pixel-height (cond ((eq window-system 'mac) 22)
-						   ((eq window-system 'ns)  40)
+                                                   ;; For older versions of OS X, 40 might be better.
+						   ((eq window-system 'ns)  50)
 						   (t  27))
   "*Height of frame title bar provided by the window manager, in pixels.
 You might alternatively call this constant the title-bar \"width\" or
@@ -1274,9 +1282,11 @@ In Lisp code:
   (show-frame frame))
 
 ;;;###autoload
+(defalias 'tile-frames-side-by-side 'tile-frames-horizontally)
+;;;###autoload
 (defun tile-frames-horizontally (&optional frames)
-  "Tile frames horizontally.
-Interatively:
+  "Tile frames horizontally (side by side).
+Interactively:
   With prefix arg, you are prompted for names of two frames to tile.
   With no prefix arg, all visible frames are tiled, except a
        standalone minibuffer frame, if any.
@@ -1285,9 +1295,11 @@ If called from a program, all frames in list FRAMES are tiled."
   (frcmds-tile-frames 'horizontal frames))
 
 ;;;###autoload
+(defalias 'tile-frames-top-to-bottom 'tile-frames-vertically)
+;;;###autoload
 (defun tile-frames-vertically (&optional frames)
-  "Tile frames vertically.
-Interatively:
+  "Tile frames vertically (stacking from the top of the screen downward).
+Interactively:
   With prefix arg, you are prompted for names of two frames to tile.
   With no prefix arg, all visible frames are tiled, except a
        standalone minibuffer frame, if any.
@@ -1295,9 +1307,27 @@ If called from a program, all frames in list FRAMES are tiled."
   (interactive (and current-prefix-arg  (frcmds-read-args-for-tiling)))
   (frcmds-tile-frames 'vertical frames))
 
+;;;###autoload
+(defun create-frame-tiled-horizontally ()
+  "Like `\\[make-frame-command]', but horizontally tile it with the selected frame."
+  (interactive)
+  (let* ((fr1  (selected-frame))
+         (fr2  (make-frame-command)))
+    (frcmds-tile-frames 'horizontal (list fr1 fr2))))
+
+;;;###autoload
+(defun create-frame-tiled-vertically ()
+  "Like `\\[make-frame-command]', but vertically tile it with the selected frame."
+  (interactive)
+  (let* ((fr1  (selected-frame))
+         (fr2  (make-frame-command)))
+    (frcmds-tile-frames 'vertical (list fr1 fr2))))
+
 (defun frcmds-tile-frames (direction frames)
   "Tile visible frames horizontally or vertically, depending on DIRECTION.
-Arg DIRECTION is `horizontal' or `vertical'.
+Arg DIRECTION is `horizontal' or `vertical' (meaning side by side or
+above and below, respectively).
+
 Arg FRAMES is the list of frames to tile.  If nil, then tile all visible
 frames (except a standalone minibuffer frame, if any)."
   (let ((visible-frames   (or frames
