@@ -106,3 +106,6 @@
 [submodule "vagrant-tramp"]
 	path = vagrant-tramp
 	url = https://github.com/dougm/vagrant-tramp.git
+[submodule "android-mode"]
+	path = android-mode
+	url = git://github.com/remvee/android-mode.git
