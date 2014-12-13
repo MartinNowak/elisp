@@ -160,13 +160,30 @@ X defaults to :related"
     `((:lang C++ :expr (: "boost:lexical_cast<std::string>(" ,expr ")"))
       (:lang C++11 :expr (: "std::to_string(" ,expr ")"))
       (:lang D :expr (: "to!string(" ,expr ")"))
+      (:lang Ruby :expr (: ,expr "." "to_s"))
       (:lang Python-2 :expr (: "str(" ,expr ")"))
       )) "Convert (Cast) EXPR to a string.")
 
+(defconst relangs-convert-to-integer
+  (lambda (expr)
+    `((:lang C++ :expr (: "boost:lexical_cast<int>(" ,expr ")"))
+      (:lang C++11 :expr (: "std::to_int(" ,expr ")"))
+      (:lang D :expr (: "to!int(" ,expr ")"))
+      (:lang Ruby :expr (: ,expr "." "to_i"))
+      (:lang Python-2 :expr (: "int(" ,expr ")"))
+      )) "Convert (Cast) EXPR to an integer.")
+
 (defconst relangs-to-string-conversion-member
   (lambda (expr)
-    `((:lang (D) :expr (: "toString(" ,expr ")"))
+    `((:lang D :expr (: "toString(" ,expr ")"))
+      (:lang Python :expr (: "__str__(" ,expr ")"))
       )) "To String Conversion of expression EXPR.")
+
+(defconst relangs-string-to-number
+  (lambda (x y)
+    `((:lang Emacs-Lisp :expr ("(string-to-number" x ")"))
+      (:lang Python :expr (: "(float " x ")"))
+      )) "Interpret string $X$ as a number.")
 
 (defconst relangs-convert-to-wstring
   (lambda (expr)
@@ -1432,12 +1449,6 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
     (:lang D :expr ("" x "[0..$]"))
     ) "Return whole slice of X")
 
-(defconst relangs-number-to-string
-  (lambda (x y)
-   `((:lang Emacs-Lisp :expr ("(string-to-number" x ")"))
-     (:lang Python :expr (: "(float " x ")"))
-     )) "Interpret string $X$ as a number.")
-
 (define-opposites 'number-to-string 'string-to-number)
 
 (defconst relangs-current-graphics-state
@@ -2010,6 +2021,17 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang Python :expr (: ,range "[::-1]"))
       (:lang Ruby :expr (: ,range "." "reverse"))
       "Reverse RANGE.")))
+
+(defconst relangs-repeat-range
+  (lambda (range count)
+    `((:lang D :expr (: "repeat" "(" ,range "," ,count ")") :import "std.range")
+      (:lang (Python Ruby) :expr (: ,range * ,count))
+      "Repeat RANGE COUNT types.")))
+
+(defconst relangs-repeat-infinitely-range
+  (lambda (range count)
+    `((:lang D :expr (: "repeat" "(" ,range ")") :import "std.range")
+      "Repeat RANGE infinitely.")))
 
 (defconst relangs-positive-numbers
   (lambda ()
