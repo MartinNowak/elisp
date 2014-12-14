@@ -170,6 +170,7 @@
 
 (global-set-key [(control x) (control y)] 'find-library)
 (global-set-key [(control x) (control l)] 'icicle-locate-file-pnw)
+(define-key dired-mode-map [(control x) (control l)] 'icicle-locate-file-pnw)
 
 (global-set-key [(control shift meta ?p)] 'previous-buffer)
 (global-set-key [(control shift meta ?n)] 'next-buffer)
