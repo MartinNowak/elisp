@@ -522,13 +522,13 @@ Indexing is same as for `c-goto-arg'."
       (ding))))
 
 (defun c-backward-token-balanced (&optional count limit past-ws) (interactive "P")
-  (if (looking-back (concat "}" L*))
+  (if (looking-back (concat "}" "[[:space:]\n]*"))
       (progn (backward-sexp-safe count)      ;because `c-backward-token' fails here
              (when past-ws
                (skip-chars-backward " \t\n")))
     (c-backward-token count t limit past-ws)))
 (defun c-forward-token-balanced (&optional count limit past-ws) (interactive "P")
-  (if (looking-at (concat L* "{"))
+  (if (looking-at (concat "[[:space:]\n]*" "{"))
       (progn (forward-sexp-safe count)            ;because `c-forward-token' fails here
              (when past-ws
                (skip-chars-forward " \t\n")))
@@ -538,7 +538,7 @@ Indexing is same as for `c-goto-arg'."
   "Search TOKEN forwards."
   (interactive "s")
   (let* ((hp)                            ;hit point
-         (patt (concat L* "\\(" token "\\)"))) ;pattern
+         (patt (concat "[[:space:]\n]*" "\\(" token "\\)"))) ;pattern
     (save-excursion
       (setq hp (catch 'hit
                  (if (looking-at patt)
@@ -556,7 +556,7 @@ Indexing is same as for `c-goto-arg'."
   "Search TOKEN backwards."
   (interactive "s")
   (let* ((hp)                            ;hit point
-         (patt (concat "\\(" token "\\)" L*))) ;pattern
+         (patt (concat "\\(" token "\\)" "[[:space:]\n]*"))) ;pattern
     (save-excursion
       (setq hp (catch 'hit
                  (if (looking-back patt)
