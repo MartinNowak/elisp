@@ -1245,7 +1245,7 @@ See
       (:lang Python :expr (: "max(x, ...)"))
       (:lang C++ :expr (: "std::max(x, y)"))
       (:lang GLSL :expr (: "max(x, y)") :ref "http://www.opengl.org/sdk/docs/manglsl/xhtml/max.xml")
-      (:lang Ruby :expr (: "[" x "]" "." "max") :ref "http://stackoverflow.com/questions/1359370/how-do-you-find-a-max-max-with-ruby")
+      (:lang Ruby :expr (: "[" x "]" "." "max") :ref "http://stackoverflow.com/questions/1359370/how-do-you-find-a-min-max-with-ruby")
       )) "Maximum Algorithm.")
 
 (defconst relangs-minimum-maximum-algorithm
@@ -1448,6 +1448,22 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
   `((:lang D :expr ("" x "[]"))
     (:lang D :expr ("" x "[0..$]"))
     ) "Return whole slice of X")
+
+(defconst relangs-scalar-value-to-array
+  (lambda (scalar)
+    `((:lang (D Python Ruby) :expr (: "[" ,scalar "]"))
+      )) "Scalar value to array.")
+
+(defconst relangs-array-append
+  (lambda (x y)
+    `((:doc (: "Append " ,y " to end of the Array " ,x ".")) (:see "http://stackoverflow.com/questions/14114228/add-to-a-dynamic-array-in-d")
+      (:lang Python :expr (: ,x ".append(" ,y ")") :if (:lang Python "isinstance(",x", list)"))
+      (:lang C++ :expr (: ,x "push_back(" ,y ")"))
+      (:lang D :expr (: ,x " ~= " ,y) :if (and (is-of array ,x)
+                                               (| (is-of element ,y)
+                                                  (is-of array ,y))))
+      )) "Append Y to end of array X.")
+;; Use: (funcall relangs-array-append 111 222)
 
 (define-opposites 'number-to-string 'string-to-number)
 
@@ -1979,17 +1995,6 @@ See: http://en.wikipedia.org/wiki/Assertion_(computing)")
       (:lang Fortran-77 :bin-op (: ,x "//" ,y))
       ) "Concatenate Strings X and Y."))
 ;; Use: (funcall relangs-string-concatenation "111" "222")
-
-(defconst relangs-array-append
-  (lambda (x y)
-    `((:doc (: "Append " ,y " to end of the Array " ,x ".")) (:see "http://stackoverflow.com/questions/14114228/add-to-a-dynamic-array-in-d")
-      (:lang Python :expr (: ,x ".append(" ,y ")") :if (:lang Python "isinstance(",x", list)"))
-      (:lang C++ :expr (: ,x "push_back(" ,y ")"))
-      (:lang D :expr (: ,x " ~= " ,y) :if (and (is-of array ,x)
-                                             (| (is-of element ,y)
-                                                (is-of array ,y))))
-      )) "Append Y to end of array X.")
-;; Use: (funcall relangs-array-append 111 222)
 
 (defconst relangs-list-of-strings-to-string
   (lambda (X)
