@@ -774,6 +774,8 @@ function arguments in cc-modes."
   (add-hook 'pascal-mode-hook 'cc-structed-setup-keybindings t)
   (add-hook 'python-mode-hook 'cc-structed-setup-keybindings t)
   (add-hook 'ruby-mode-hook 'cc-structed-setup-keybindings t)
+  (add-hook 'comint-mode-hook 'cc-structed-setup-keybindings t)
+
   (add-hook 'matlab-mode-hook 'matlab-structed-setup-keybindings t)
   (add-hook 'matlab-shell-mode-hook 'matlab-structed-setup-keybindings t)
   )
@@ -787,6 +789,8 @@ function arguments in cc-modes."
   (remove-hook 'pascal-mode-hook 'cc-structed-setup-keybindings)
   (remove-hook 'python-mode-hook 'cc-structed-setup-keybindings)
   (remove-hook 'ruby-mode-hook 'cc-structed-setup-keybindings)
+  (remove-hook 'comint-mode-hook 'cc-structed-setup-keybindings)
+
   (remove-hook 'matlab-mode-hook 'matlab-structed-setup-keybindings)
   (remove-hook 'matlab-shell-mode-hook 'matlab-structed-setup-keybindings t)
   )
