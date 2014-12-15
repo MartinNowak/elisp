@@ -912,7 +912,6 @@ You can now enter ediff with C-c ^ E."
 
 (eload 'memoize)                       ;Memoize Elisp Functions
 
-(eload 'slick-edit)        ;Quick Single-Line Kill and Yank used in SlickEdit.
 (eload 'tooltip-utils)                ;My tooltip Utilities.
 (eload 'pgo-undo)                      ;Undo and Redo
 ;; (load-file (elsub "mine/trash-settings.elc"))
@@ -3221,6 +3220,9 @@ See: https://tex.stackexchange.com/questions/161717/all-lines-itemized-when-mark
                                    (string-equal LaTeX-command "latex"))
                           "latex -shell-escape" "latex")))
   )
+
+;;; Put this to override `icicle-yank-maybe-completing'
+(eload 'slick-edit)          ;Quick Single-Line Kill and Yank used in SlickEdit.
 
 ;;; emacsclient -e "(show-frame)"
 (defun show-frame (&optional frame)
