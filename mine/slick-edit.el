@@ -53,7 +53,8 @@
 (global-set-key [(control ?w)] 'slick-kill-region)
 
 (defun slick-yank (&rest rest)
-  "Yank Do What I Mean (DWIM."
+  "Yank Do What I Mean (DWIM.
+Will replace current active region with yank."
   (interactive "*P")
   (if (and slick-kill-active
            (memq last-command '(copy-region-as-kill
@@ -69,11 +70,17 @@
                         (message "Inserted line copy%s" (if (zerop slick-yank-count)
                                                             ""
                                                           (format " %s" slick-yank-count)))))
-    (setq slick-kill-active nil)        ;not active anymore
-    (setq slick-yank-count 0)
-    (yank (delq nil rest))              ;normal yank
-    (unless (minibufferp)
-      (message "Inserted killed region"))))
+    (save-excursion
+      (let ((replaced mark-active))
+        (if mark-active (delete-region (region-beginning)
+                                       (region-end)))
+        (setq slick-kill-active nil)    ;not active anymore
+        (setq slick-yank-count 0)
+        (yank (delq nil rest))          ;normal yank
+        (unless (minibufferp)
+          (message (if replaced
+                       "Replace region with killed region"
+                     "Inserted killed region")))))))
 (global-set-key [remap yank] 'slick-yank) ;Undo: (global-set-key [remap yank] nil)
 
 (defface yank '((t (:inherit highlight))) "Face used to highlight yanks." :group 'slick-edit)
