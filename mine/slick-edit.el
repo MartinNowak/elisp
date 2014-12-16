@@ -71,9 +71,10 @@ Will replace current active region with yank."
                                                             ""
                                                           (format " %s" slick-yank-count)))))
     (save-excursion
-      (let ((replaced mark-active))
-        (if mark-active (delete-region (region-beginning)
-                                       (region-end)))
+      (let ((replaced nil;; mark-active
+                      ))
+        ;; (if mark-active (delete-region (region-beginning)
+        ;;                                (region-end)))
         (setq slick-kill-active nil)    ;not active anymore
         (setq slick-yank-count 0)
         (yank (delq nil rest))          ;normal yank
