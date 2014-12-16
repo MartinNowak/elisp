@@ -6,14 +6,14 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:22:14 2006
-;; Last-Updated: Mon Oct 27 22:50:09 2014 (-0700)
+;; Last-Updated: Mon Dec 15 09:45:31 2014 (-0800)
 ;;           By: dradams
-;;     Update #: 6087
+;;     Update #: 6094
 ;; URL: http://www.emacswiki.org/icicles-opt.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x
+;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -1334,6 +1334,7 @@ with Emacs 23) option `icicle-Completions-text-scale-decrease'."
                                                  "icicle-bookmark-marked-p"
                                                  "icicle-bookmark-modified-p"
                                                  "icicle-bookmark-navlist-p"
+                                                 "icicle-bookmark-non-dir-file-p"
                                                  "icicle-bookmark-non-file-p"
                                                  "icicle-bookmark-omitted-p"
                                                  "icicle-bookmark-orphaned-file-p"
@@ -5047,8 +5048,17 @@ toggle Icicle mode off and then back on."
     (bmkp-local-file-jump icicle-bookmark-local-file (fboundp 'bmkp-local-file-jump))  ; `C-x j l'
     (bmkp-local-file-jump-other-window
      icicle-bookmark-local-file-other-window (fboundp 'bmkp-local-file-jump))          ; `C-x 4 j l'
+;;;     (bmkp-local-non-dir-file-jump icicle-bookmark-local-non-dir-file
+;;;      (fboundp 'bmkp-local-non-dir-file-jump))                                      ; Not bound
+;;;     (bmkp-local-non-dir-file-jump-other-window
+;;;      icicle-bookmark-local-non-dir-file-other-window
+;;;      (fboundp 'bmkp-local-non-dir-file-jump))                                      ; Not bound
     (bmkp-man-jump icicle-bookmark-man  (fboundp 'bmkp-man-jump))                      ; `C-x j m'
     (bmkp-man-jump-other-window icicle-bookmark-man-other-window  (fboundp 'bmkp-man-jump)) ; `C-x 4 j m'
+;;;     (bmkp-non-dir-file-jump icicle-bookmark-non-dir-file
+;;;      (fboundp 'bmkp-non-dir-file-jump))                                            ; Not bound
+;;;     (bmkp-non-dir-file-jump-other-window icicle-bookmark-non-dir-file-other-window
+;;;      (fboundp 'bmkp-non-dir-file-jump))                                            ; Not bound
     (bmkp-non-file-jump icicle-bookmark-non-file (fboundp 'bmkp-non-file-jump))        ; `C-x j b'
     (bmkp-non-file-jump-other-window
      icicle-bookmark-non-file-other-window (fboundp 'bmkp-non-file-jump))              ; `C-x 4 j b'
@@ -5058,6 +5068,11 @@ toggle Icicle mode off and then back on."
     (bmkp-remote-file-jump icicle-bookmark-remote-file (fboundp 'bmkp-remote-file-jump)) ; `C-x j n'
     (bmkp-remote-file-jump-other-window
      icicle-bookmark-remote-file-other-window (fboundp 'bmkp-remote-file-jump))        ; `C-x 4 j n'
+;;;     (bmkp-remote-non-dir-file-jump icicle-bookmark-remote-non-dir-file
+;;;      (fboundp 'bmkp-remote-non-dir-file-jump))                                     ; Not bound
+;;;     (bmkp-remote-non-dir-file-jump-other-window
+;;;      icicle-bookmark-remote-non-dir-file-other-window
+;;;      (fboundp 'bmkp-remote-non-dir-file-jump))                                     ; Not bound
     (bmkp-specific-buffers-jump
      icicle-bookmark-specific-buffers (fboundp 'bmkp-specific-buffers-jump))           ; `C-x j = b'
     (bmkp-specific-buffers-jump-other-window
