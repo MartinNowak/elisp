@@ -2969,24 +2969,7 @@ functions, and some types.  It also provides indentation that is
 (add-hook 'gud-mode-hook 'pnw-gud-setup-hook)
 
 ;;; Comments
-(defun c-adjust-comments ()
-  (setq comment-start "/*"
-        comment-end "*/"))
-(add-hook 'c-mode-hook 'c-adjust-comments)
-(add-hook 'c++-mode-hook 'c-adjust-comments)
-(add-hook 'd-mode-hook 'c-adjust-comments)
-(add-hook 'flex-mode-hook 'c-adjust-comments)
-;;(eload 'c-comment-edit)             ;Edit C comments
 (eload 'comment-dwim nil "comment-dwim.el")
-(global-set-key [(control c) (\;)] 'comment-region)
-(global-set-key [(control c) (meta \;)] 'uncomment-region)
-(add-hook 'lisp-mode-hook (lambda () (local-set-key [(control c) (\;)] 'comment-region)))
-(add-hook 'emacs-lisp-mode-hook (lambda () (local-set-key [(control c) (meta \;)] 'comment-region)))
-(add-hook 'sh-mode-hook (lambda ()
-                          ;; override shell mode case statement template insertion
-                          (local-set-key [(control c) (\;)] 'comment-region)
-                          (local-set-key [(control c) (meta \;)] 'uncomment-region)
-                          ))
 
 ;;; YASnippet
 (when (eload 'yasnippet (elsub "yasnippet"))

@@ -1,4 +1,4 @@
-;;; comment-dwim.el --- Comment Do What I Mean.
+;;; newcomment-ext.el --- Extensions to newcomment.el.
 ;; Author: Per Nordlöw
 
 (require 'paredit)
@@ -104,4 +104,4 @@ c++-mode, java-mode and csharp-mode."
 (global-set-key [(control c) (meta \;)] 'uncomment-region)
 (global-set-key [(meta \;)] 'comment-dwim)
 
-(provide 'comment-dwim)
+(provide 'newcomment-ext)

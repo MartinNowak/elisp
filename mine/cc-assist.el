@@ -2973,24 +2973,6 @@ SYM is optionally defined in NAMESPACE."
     (t
      nil)))
 
-;; TODO Call c-insert-doxygen-line-comment if we are standing after a variable declaration/definition.
-(defun c-end-of-doxygen-line-comment ()
-  "Go to end of enhanced (Doxygen) line comments."
-  (when (cc-derived-mode-p)
-    (unless (looking-back _1)
-      (re-search-forward (concat "/*\\**" "[<!]*"
-                                 "\\("
-                                 _*
-                                 "\\_<" ;text already present
-                                 "\\|"
-                                 " "
-                                 "\\)")))))
-
-(defadvice comment-dwim (after end-of-c-doxygen-line activate)
-  "Adjust cursor to correct position of enhanced comments."
-  (c-end-of-doxygen-line-comment))
-(ad-activate 'comment-dwim)
-
 (defun c-insert-doxygen-group-comment (group-doc)
   "Insert a Doxygen-styled group."
   (interactive "sDocumentation for group: ")
