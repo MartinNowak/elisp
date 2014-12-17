@@ -235,7 +235,8 @@
 (temp-buffer-resize-mode 1)               ;Show everything in minibuffer.
 
 (set-scroll-bar-mode 'right)            ;scrollbar position
-(horizontal-scroll-bar-mode -1)         ;disabled horizontal scrollbar
+(when (fboundp 'horizontal-scroll-bar-mode)
+  (horizontal-scroll-bar-mode -1))         ;disabled horizontal scrollbar
 (toggle-scroll-bar t)                   ;show scrollbar
 (show-paren-mode 1)
 (blink-cursor-mode 1)              ;may annoy some users

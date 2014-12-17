@@ -64,17 +64,17 @@ Will replace current active region with yank."
                                 kill-region
                                 slick-kill-region
                                 yank)))
-      (save-excursion (bol)
-                      (prog1 (yank rest)
-                        (incf slick-yank-count)
-                        (message "Inserted line copy%s" (if (zerop slick-yank-count)
-                                                            ""
-                                                          (format " %s" slick-yank-count)))))
-    (save-excursion
-      (let ((replaced nil;; mark-active
-                      ))
-        ;; (if mark-active (delete-region (region-beginning)
-        ;;                                (region-end)))
+      (save-excursion
+        (bol)
+        (prog1 (yank rest)
+          (incf slick-yank-count)
+          (message "Inserted line copy%s" (if (zerop slick-yank-count)
+                                              ""
+                                            (format " %s" slick-yank-count)))))
+    (progn
+      (let ((replaced mark-active))
+        (if mark-active (delete-region (region-beginning)
+                                       (region-end)))
         (setq slick-kill-active nil)    ;not active anymore
         (setq slick-yank-count 0)
         (yank (delq nil rest))          ;normal yank
