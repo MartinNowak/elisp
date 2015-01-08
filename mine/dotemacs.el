@@ -132,50 +132,50 @@
 
 ;; TODO Fix bug that occurs when these are not defined.
 ;; Probably Some package I have added....
-(setq warning-suppress-types nil
-      byte-compile-warnings t
-      read-buffer-completion-ignore-case t
-      read-file-name-completion-ignore-case t
-      line-number-mode t
-      column-number-mode t
-      inhibit-startup-message t
-      debug-on-error nil
-      apropos-do-all t			;apropos does more but slower
-      transient-mark-mode 't
-      history-length t
-      history-delete-duplicates t
-      completion-auto-help t
-      completion-styles (quote (basic partial-completion emacs22 initials substring))
-      ps-paper-type 'a4
-      show-paren-delay 0.25
-      confirm-nonexistent-file-or-buffer 'after-completion
-      show-paren-style 'parenthesis
-      auto-save-timeout 20
-      auto-save-interval 60
-      display-time-interval 1
-      display-time-day-and-date t
-      display-time-24hr-format t
-      display-time-string-forms
-	'(
-	  ;;       (substring year -2)
-	  year
-	  "-" month
-	  "-" day
-	  " " 24-hours
-	  ":" minutes
-	  ;;       ":" seconds
-	  ;;     (if time-zone " (") time-zone (if time-zone ")")
-	  ;;     (if mail " Mail" "")
-	  )
-	visible-bell nil               ;NOTE: I disabled this because I don't like the flickering.
-	ring-bell-function
-	(lambda ()
-	  ;;(message "Bell ringed at %s" this-command)
-	  (unless (memq this-command '(isearch-abort
-				       abort-recursive-edit
-				       exit-minibuffer keyboard-quit delete-backward-char))
-	    (ding)))
-	)
+(setq-default warning-suppress-types nil
+              byte-compile-warnings t
+              read-buffer-completion-ignore-case t
+              read-file-name-completion-ignore-case t
+              line-number-mode t
+              column-number-mode t
+              inhibit-startup-message t
+              debug-on-error nil
+              apropos-do-all t			;apropos does more but slower
+              transient-mark-mode 't
+              history-length t
+              history-delete-duplicates t
+              completion-auto-help t
+              completion-styles (quote (basic partial-completion emacs22 initials substring))
+              ps-paper-type 'a4
+              show-paren-delay 0.25
+              confirm-nonexistent-file-or-buffer 'after-completion
+              show-paren-style 'parenthesis
+              auto-save-timeout 20
+              auto-save-interval 60
+              display-time-interval 1
+              display-time-day-and-date t
+              display-time-24hr-format t
+              display-time-string-forms
+              '(
+                ;;       (substring year -2)
+                year
+                "-" month
+                "-" day
+                " " 24-hours
+                ":" minutes
+                ;;       ":" seconds
+                ;;     (if time-zone " (") time-zone (if time-zone ")")
+                ;;     (if mail " Mail" "")
+                )
+              visible-bell nil               ;NOTE: I disabled this because I don't like the flickering.
+              ring-bell-function
+              (lambda ()
+                ;;(message "Bell ringed at %s" this-command)
+                (unless (memq this-command '(isearch-abort
+                                             abort-recursive-edit
+                                             exit-minibuffer keyboard-quit delete-backward-char))
+                  (ding)))
+              )
 (when (and (require 'compile nil t)
            (boundp 'compilation-do-echo-command))
   (setq-default compilation-do-echo-command nil)) ;do echo compilations for now
