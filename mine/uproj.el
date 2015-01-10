@@ -797,16 +797,16 @@ Picks completions from `exec-path'."
 ;; Use: (compilation-build-type-flags "gcc" "GPerfTools-Profile")
 ;; Use: (compilation-build-type-flags "gcc" "GPerfTools-Profile" nil t)
 
-(defun compilation-read-build-type (&optional compiler default)
+(defun compilation-read-build-type (&optional build-system compiler default)
   "Read Build Type for compiler COMPILER.
 COMPILER can be either `gcc', `clang', `gdc', `gdmd', `ghc', `ldc', `ldmd2'."
   (let* ((default (or default
                       (when compiler
                         (cond ((and (string-match "gcc" compiler)
-                                    (gcc-version-at-least "4.8" compiler)) ;TODO Read this from variable
+                                    (gcc-version-at-least "4.8" compiler)) ;TODO read from variable
                                "AddressSanitized-Debug")
                               ((and (string-match "clang" compiler)
-                                    (clang-version-at-least "3.1" compiler)) ;TODO Read this from variable
+                                    (clang-version-at-least "3.1" compiler)) ;TODO read from variable
                                "AddressSanitized-Debug")
                               ((string-match "dmd" compiler)
                                dmd-default-build-type)
@@ -818,22 +818,25 @@ COMPILER can be either `gcc', `clang', `gdc', `gdmd', `ghc', `ldc', `ldmd2'."
                                ghc-default-build-type)))
                       (car c-standard-build-options)))
          (type (let ((icicle-default-in-prompt-format-function
-                      (lambda (default) (format " (%s)" (faze default 'type)))))
+                      (lambda (default)
+                        (format " (%s)"
+                                (faze default 'type)))))
                  (completing-read "Build Type: "
                                   (compilation-compiler-build-types compiler)
                                   nil t nil 'uproj-build-type-history default))))
-    (if (member (capitalize type) c-standard-build-options)
+    (if (member (capitalize type)
+                c-standard-build-options)
         nil
       type)))
-;; Use: (compilation-read-build-type)
-;; Use: (compilation-read-build-type "gcc")
-;; Use: (compilation-read-build-type "gcc-4.7")
-;; Use: (compilation-read-build-type "clang")
-;; Use: (compilation-read-build-type "ghc")
-;; Use: (compilation-read-build-type "gdc")
-;; Use: (compilation-read-build-type "gdmd")
-;; Use: (compilation-read-build-type "ldmd2")
-;; Use: (compilation-read-build-type "dmd")
+;; Use: (compilation-read-build-type nil)
+;; Use: (compilation-read-build-type nil "gcc")
+;; Use: (compilation-read-build-type nil "gcc-4.7")
+;; Use: (compilation-read-build-type nil "clang")
+;; Use: (compilation-read-build-type nil "ghc")
+;; Use: (compilation-read-build-type nil "gdc")
+;; Use: (compilation-read-build-type nil "gdmd")
+;; Use: (compilation-read-build-type nil "ldmd2")
+;; Use: (compilation-read-build-type nil "dmd")
 
 (defun compilation-read-jobs (&optional directory bfile target compiler build-type)
   "Read Job Count for target."
@@ -1356,27 +1359,27 @@ directory DIR."
     (when (> (length lang) 0)
       lang)))
 ;; Use: (read-locale)
-
+ 
 (defun uproj-read-arguments ()
   (let* ((roots (compilation-read-root-directory))
          (directory (if (listp roots) (car roots) roots))
          (bfile (compilation-read-build-file directory))
          (target (compilation-read-build-target directory bfile))
          (clean (string-equal target "clean")) ;check if we are cleaning up
-         (lang (if (string-match "dub\\.json" bfile)
-                   "d"
-                 nil))
+         (build-system (when (string-match "dub\\.json" bfile)
+                         "dub"))
+         (lang (when (string-equal build-system "dub")
+                 "d"))
          (compiler (unless clean
                      (compilation-read-compiler lang)))
          (build-type (unless clean
-                       (compilation-read-build-type)))
+                       (compilation-read-build-type build-system compiler)))
          (options (unless clean
                     (when (or (null compiler)
                               (or (string-match "gcc" compiler)))
                       (read-gcc-options "Warnings" compiler))))
          (jobs (if clean 1
-                 (compilation-read-jobs directory bfile target compiler build-type)
-                 ))
+                 (compilation-read-jobs directory bfile target compiler build-type)))
          (niceness (read-niceness "Build Priority (in range -20 to 19): "))
          (host (compilation-read-host directory bfile target compiler build-type))
          (process-language (read-locale "Build Language: ")))

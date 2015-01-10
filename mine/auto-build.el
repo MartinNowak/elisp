@@ -199,28 +199,35 @@ Currently supported through GCC's flags -MD."
       (setq compiler (let* ((tag :build-compiler)
                             (val (fcache-get-tag fcache tag)))
                        (or (when try-last val)
-                           (fcache-set-tag fcache tag (compilation-read-compiler lang
-                                                                                 val))))))
+                           (fcache-set-tag fcache tag
+                                           (compilation-read-compiler
+                                            lang val))))))
     (unless build-type
       (setq build-type (let* ((tag :build-type)
                               (val (fcache-get-tag fcache tag)))
                          (or (when try-last val)
-                             (fcache-set-tag fcache tag (compilation-read-build-type compiler
-                                                                                     (fcache-get-tag fcache tag)))))))
+                             (fcache-set-tag fcache tag
+                                             (compilation-read-build-type nil
+                                              compiler
+                                              (fcache-get-tag fcache tag)))))))
     (unless std
       (setq std (let* ((tag :language-standard)
                        (val (fcache-get-tag fcache tag)))
                   (or (when try-last val)
-                      (fcache-set-tag fcache tag (compilation-read-language-standard lang
-                                                                                     compiler
-                                                                                     (or (fcache-get-tag fcache tag)
-                                                                                         "D-2.0")))))))
+                      (fcache-set-tag fcache tag
+                                      (compilation-read-language-standard
+                                       lang
+                                       compiler
+                                       (or (fcache-get-tag fcache tag)
+                                           "D-2.0")))))))
 
     (when (string-equal lang "c++")
       (setq libs (let* ((tag :c++-library-suffix)
                         (val (fcache-get-tag fcache tag)))
                    (or (when try-last val)
-                       (fcache-set-tag fcache tag (concat libs " -l" (second (compilation-read-c++-library-suffix)))))))
+                       (fcache-set-tag fcache tag
+                                       (concat libs " -l"
+                                               (second (compilation-read-c++-library-suffix)))))))
       (when (and (string-match "gcc" compiler)
                  (string-match (regexp-quote "-lc++") libs))
         (setq libs (concat libs " -nostdlib -lc"))))
@@ -237,7 +244,7 @@ Currently supported through GCC's flags -MD."
                                          (string-equal lang "d"))
                                      (auto-build-output-program compiler filename build-type)
                                    (c-output-object compiler filename build-type))))
-      (let* ((split-height-threshold 1)  ;force vertical split
+      (let* ((split-height-threshold 1) ;force vertical split
              (ccache-exec (when (member (downcase lang)
                                         '("c" "c++"
                                           "objective-c" "objective-c++"))
@@ -427,7 +434,7 @@ Currently supported through GCC's flags -MD."
          (compiler (compilation-read-compiler lang))
          (std (compilation-read-language-standard lang))
          (warn-flags (compilation-read-warn-type-flags compiler)))
-    (unless build-type (setq build-type (compilation-read-build-type compiler)))
+    (unless build-type (setq build-type (compilation-read-build-type nil compiler)))
 
     (let ((has-main (file-haskell-main-function filename)))
       (unless out-filename (setq out-filename
