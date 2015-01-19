@@ -4,16 +4,16 @@
 ;; Description: Startup assignments: hooks etc.
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
-;; Copyright (C) 1996-2014, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2015, Drew Adams, all rights reserved.
 ;; Created: Thu Dec 28 09:15:00 1995
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Thu Dec 26 09:47:57 2013 (-0800)
+;; Last-Updated: Thu Jan  1 11:14:36 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 777
+;;     Update #: 788
 ;; URL: http://www.emacswiki.org/setup.el
 ;; Keywords: internal, local
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x
+;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -51,6 +51,11 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2014/11/28 dadams
+;;     Set cursor-in-non-selected-windows to box, by default.
+;; 2014/01/26 dadams
+;;     lisp-indentation-hack:
+;;       For Emacs 22+, use load-history-filename-element, not assoc.
 ;; 2013/07/14 dadams
 ;;     Removed require of fit-frame.el.
 ;; 2011/08/19 dadams
@@ -156,6 +161,8 @@
                        ;; show-paren-match-face, show-paren-mode
 (require 'oneonone nil t) ;; (no error if not found):
                               ;; 1on1-emacs, 1on1-toggle-box-cursor-when-idle
+
+(defvar cursor-in-non-selected-windows) ; Emacs 22+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 (eval-after-load "pp-c-l" '(pretty-control-l-mode 1)) ; Turn on pretty display of `^L'.
@@ -215,6 +222,9 @@
 
 (eval-after-load "paren" '(show-paren-mode 999)) ; Show matching parentheses.
 
+(when (boundp 'cursor-in-non-selected-windows)
+  (setq-default cursor-in-non-selected-windows  'box))
+
 ;; This must be done *after* loading `paren.el'.
 ;(setq window-setup-hook                 ; Note: `setq', *not* `add-hook'.  This
 ;      (function                         ; is needed bc `paren.el' sets this to
@@ -257,7 +267,10 @@
   "Better Lisp indenting.  Use in Lisp mode hooks
 such as `lisp-mode-hook', `emacs-lisp-mode-hook', and
 `lisp-interaction-mode-hook'."
-  (unless (assoc "cl-indent" load-history) (load "cl-indent" nil t))
+  (unless (if (fboundp 'load-history-regexp) ; Emacs 22+
+              (load-history-filename-element (load-history-regexp "cl-indent"))
+            (assoc "cl-indent" load-history))
+    (load "cl-indent" nil t))
   (set (make-local-variable 'lisp-indent-function) 'common-lisp-indent-function)
   (setq lisp-indent-maximum-backtracking  10)
   (put 'define-derived-mode              'common-lisp-indent-function '(4 4 4 2 &body))

@@ -4,12 +4,12 @@
 ;; Description: First part of package Bookmark+.
 ;; Author: Drew Adams, Thierry Volpiatto
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
-;; Copyright (C) 2000-2014, Drew Adams, all rights reserved.
+;; Copyright (C) 2000-2015, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Tue Dec 16 08:13:11 2014 (-0800)
+;; Last-Updated: Sat Jan 17 12:15:17 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 7512
+;;     Update #: 7548
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -46,7 +46,7 @@
 ;;       Web'.
 ;;
 ;;    2. From the Emacs-Wiki Web site:
-;;       http://www.emacswiki.org/cgi-bin/wiki/BookmarkPlus.
+;;       http://www.emacswiki.org/BookmarkPlus.
 ;;
 ;;    3. From the Bookmark+ group customization buffer:
 ;;       `M-x customize-group bookmark-plus', then click link
@@ -97,7 +97,8 @@
 ;;    `bmkp-add-tags', `bmkp-all-tags-jump',
 ;;    `bmkp-all-tags-jump-other-window', `bmkp-all-tags-regexp-jump',
 ;;    `bmkp-all-tags-regexp-jump-other-window',
-;;    `bmkp-autofile-add-tags', `bmkp-autofile-all-tags-jump',
+;;    `bmkp-annotate-bookmark', `bmkp-autofile-add-tags',
+;;    `bmkp-autofile-all-tags-jump',
 ;;    `bmkp-autofile-all-tags-jump-other-window',
 ;;    `bmkp-autofile-all-tags-regexp-jump',
 ;;    `bmkp-autofile-all-tags-regexp-jump-other-window',
@@ -543,10 +544,9 @@
 ;;              have been REDEFINED HERE:
 ;;
 ;;    `bookmark-default-annotation-text', `bookmark-delete',
-;;    `bookmark-edit-annotation', `bookmark-edit-annotation-mode',
-;;    `bookmark-insert', `bookmark-insert-annotation',
-;;    `bookmark-insert-location', `bookmark-jump',
-;;    `bookmark-jump-other-window', `bookmark-load',
+;;    `bookmark-edit-annotation-mode', `bookmark-insert',
+;;    `bookmark-insert-annotation', `bookmark-insert-location',
+;;    `bookmark-jump', `bookmark-jump-other-window', `bookmark-load',
 ;;    `bookmark-relocate', `bookmark-rename', `bookmark-save',
 ;;    `bookmark-send-edited-annotation', `bookmark-set',
 ;;    `bookmark-set-name', `bookmark-yank-word'.
@@ -557,16 +557,18 @@
 ;;
 ;;    `bookmark--jump-via', `bookmark-alist-from-buffer',
 ;;    `bookmark-all-names', `bookmark-completing-read',
-;;    `bookmark-default-handler', `bookmark-exit-hook-internal',
-;;    `bookmark-get-bookmark', `bookmark-get-bookmark-record' (Emacs
-;;    20-22), `bookmark-get-handler' (Emacs 20-22),
+;;    `bookmark-default-handler', `bookmark-edit-annotation' (command
+;;    here), `bookmark-exit-hook-internal', `bookmark-get-bookmark',
+;;    `bookmark-get-bookmark-record' (Emacs 20-22),
+;;    `bookmark-get-handler' (Emacs 20-22),
 ;;    `bookmark-import-new-list', `bookmark-handle-bookmark',
 ;;    `bookmark-jump-noselect' (Emacs 20-22), `bookmark-location',
 ;;    `bookmark-make-record', `bookmark-make-record-default',
 ;;    `bookmark-maybe-load-default-file', `bookmark-maybe-rename',
 ;;    `bookmark-prop-get' (Emacs 20-22), `bookmark-prop-set',
-;;    `bookmark-show-annotation', `bookmark-show-all-annotations',
-;;    `bookmark-store' (Emacs 20-22), `bookmark-write-file'.
+;;    `bookmark-show-annotation' (command here),
+;;    `bookmark-show-all-annotations' (command here), `bookmark-store'
+;;    (Emacs 20-22), `bookmark-write-file'.
 ;;
 ;;
 ;;  ***** NOTE: The following variables defined in `bookmark.el'
@@ -1697,21 +1699,22 @@ BOOKMARK is a bookmark name or a bookmark record."
 
   (defvar bookmark-make-record-function 'bookmark-make-record-default
     "Function called with no arguments, to create a bookmark record.
-It should return the new record, which should be a cons cell of the
-form (NAME . ALIST) or just ALIST, where ALIST is as described in
-`bookmark-alist'.  If it cannot construct the record, then it should
-raise an error.
+Modes can set this buffer-locally to enable bookmarking of locations
+that should be treated specially for the mode.  Global commands can
+bind this and then create a bookmark, to get special treatment
+anywhere.
+
+The function value should return a new bookmark record, which should
+be a cons cell of the form (NAME . ALIST) or just ALIST, where ALIST
+is as described in `bookmark-alist'.  If it cannot construct the
+record, then it should raise an error.
 
 NAME is a string that names the new bookmark.  NAME can be nil, in
 which case a default name is used.
 
 ALIST can contain an entry (handler . FUNCTION) which sets the handler
 to FUNCTION, which is then used instead of `bookmark-default-handler'.
-FUNCTION must accept the same arguments as `bookmark-default-handler'.
-
-You can set this variable buffer-locally to enable bookmarking of
-locations that should be treated specially, such as Info nodes, news
-posts, images, pdf documents, etc.")
+FUNCTION must accept the same arguments as `bookmark-default-handler'.")
 
   (defun bookmark-prop-get (bookmark prop)
     "Return property PROP of BOOKMARK, or nil if no such property.
@@ -2010,19 +2013,27 @@ Lines beginning with `#' are ignored."
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
-;; Added `interactive' spec.
+;; Make it a command (added `interactive' spec).  Prefix arg means add or edit (choose any bookmark).
 ;;
 ;;;###autoload (autoload 'bookmark-edit-annotation "bookmark+")
 (defun bookmark-edit-annotation (bookmark)
   "Pop up a buffer for editing bookmark BOOKMARK's annotation.
-BOOKMARK is a bookmark name or a bookmark record."
-  (interactive (list (bookmark-completing-read "Edit annotation of bookmark"
-                                               (bmkp-default-bookmark-name)
-                                               (bmkp-annotated-alist-only))))
+Interactively, you are prompted for the bookmark name.  With a prefix
+arg, you can choose any bookmark.  Otherwise, only annotated bookmarks
+are candidates.
+
+Non-interactively, BOOKMARK is a bookmark name or a bookmark record."
+  (interactive
+   (let ((alist  (and (not current-prefix-arg)  (bmkp-annotated-alist-only))))
+     (list (bookmark-completing-read (format "%s annotation for bookmark"
+                                             (if current-prefix-arg "Add or edit" "Edit"))
+                                     (bmkp-default-bookmark-name alist)
+                                     alist))))
   (pop-to-buffer (generate-new-buffer-name "*Bookmark Annotation Compose*"))
   (bookmark-insert-annotation bookmark)
   (bookmark-edit-annotation-mode)
   (set (make-local-variable 'bookmark-annotation-name) bookmark))
+
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
@@ -2625,8 +2636,8 @@ Otherwise, call `bmkp-goto-position' to go to the recorded position."
           (t
            ;; Bookmark with a region.  Go to it and activate the region.
            (if (and file  (file-readable-p file)  (not (buffer-live-p buf)))
-               (with-current-buffer (let ((enable-local-variables  ())) (find-file-noselect file))
-                 (setq buf  (buffer-name)))
+;;; $$$$$$$    (with-current-buffer (let ((enable-local-variables  ())) (find-file-noselect file))
+               (with-current-buffer (find-file-noselect file) (setq buf  (buffer-name)))
              ;; No file found.  If no buffer either, then signal that file doesn't exist.
              (unless (or (and buf  (get-buffer buf))
                          (and bufname  (get-buffer bufname)  (not (string= buf bufname))))
@@ -3203,19 +3214,24 @@ bookmark files that were created using the bookmark functions."
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
-;; 1. Handle external annotations (jump to their destinations).
-;; 2. Added optional arg MSG-P.  Show message if no annotation.
-;; 3. Name buffer after the bookmark.
-;; 4. MSG-P means message if no annotation.
-;; 5. Fit frame to buffer if `one-windowp'.
-;; 8. Restore frame selection.
+;; 1. Make it a command (added `interactive' spec).
+;; 2. Handle external annotations (jump to their destinations).
+;; 3. Added optional arg MSG-P.  Show message if no annotation.
+;; 4. Name buffer after the bookmark.
+;; 5. MSG-P means message if no annotation.
+;; 6. Fit frame to buffer if `one-windowp'.
+;; 7. Restore frame selection.
 ;;
+;;;###autoload (autoload 'bookmark-show-annotation "bookmark+")
 (defun bookmark-show-annotation (bookmark &optional msg-p)
   "Show the annotation for BOOKMARK, or follow it if external.
 BOOKMARK is a bookmark name or a bookmark record.
 If it is a record then it need not belong to `bookmark-alist'.
 If the annotation is external then jump to its destination.
 If no annotation and MSG-P is non-nil, show a no-annotation message."
+  (interactive (list (bookmark-completing-read "Show annotation of bookmark"
+                                               (bmkp-default-bookmark-name)
+                                               (bmkp-annotated-alist-only))))
   (let* ((bmk       (bookmark-get-bookmark bookmark 'NOERROR))
          (bmk-name  (bmkp-bookmark-name-from-record bmk))
          (ann       (and bmk  (bookmark-get-annotation bmk)))
@@ -3241,15 +3257,18 @@ If no annotation and MSG-P is non-nil, show a no-annotation message."
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
-;; 1. Use name `*Bookmark Annotations*', not `*Bookmark Annotation*'.
-;; 2. Don't list bookmarks that have no annotation.
-;; 3. Highlight bookmark names.  Don't indent annotations.  Add a blank line after each annotation.
-;; 4. Use `view-mode'.  `q' uses `quit-window'.
-;; 5. Fit frame to buffer if `one-windowp'.
-;; 6. Restore frame selection.
+;; 1. Make it a command (added `interactive' spec).
+;; 2. Use name `*Bookmark Annotations*', not `*Bookmark Annotation*'.
+;; 3. Don't list bookmarks that have no annotation.
+;; 4. Highlight bookmark names.  Don't indent annotations.  Add a blank line after each annotation.
+;; 5. Use `view-mode'.  `q' uses `quit-window'.
+;; 6. Fit frame to buffer if `one-windowp'.
+;; 7. Restore frame selection.
 ;;
+;;;###autoload (autoload 'bookmark-show-all-annotations "bookmark+")
 (defun bookmark-show-all-annotations ()
   "Display the annotations for all bookmarks."
+  (interactive)
   (let ((oframe  (selected-frame)))
     (save-selected-window
       (pop-to-buffer (get-buffer-create "*Bookmark Annotations*"))
@@ -3588,6 +3607,22 @@ Non-nil optional arg SAME-COUNT-P means do not increment
 `bookmark-alist-modification-count'."
   (unless same-count-p (setq bookmark-alist-modification-count  (1+ bookmark-alist-modification-count)))
   (when (bookmark-time-to-save-p) (bookmark-save)))
+
+;;;###autoload (autoload 'bmkp-annotate-bookmark "bookmark+")
+(defun bmkp-annotate-bookmark (bookmark)
+  "Annotate BOOKMARK.  Pop up a buffer to add or edit the annotation.
+Interactively, this is the same as using command
+`bookmark-edit-annotation' with a prefix arg.  You are prompted for
+the bookmark name.  Command `bookmark-edit-annotation' can be more
+convenient for editing an existing annotation, because you choose
+among only the already annotated bookmarks, not all bookmarks.
+
+Non-interactively, BOOKMARK is a bookmark name or a bookmark record."
+  (interactive (list (bookmark-completing-read "Annotate bookmark" (bmkp-default-bookmark-name))))
+  (pop-to-buffer (generate-new-buffer-name "*Bookmark Annotation Compose*"))
+  (bookmark-insert-annotation bookmark)
+  (bookmark-edit-annotation-mode)
+  (set (make-local-variable 'bookmark-annotation-name) bookmark))
 
 ;;;###autoload (autoload 'bmkp-edit-bookmark-name-and-location "bookmark+")
 (defun bmkp-edit-bookmark-name-and-location (bookmark &optional edit-record-p)
@@ -4450,22 +4485,34 @@ this is `bmkp-this-buffer-bmenu-list'."
 Set `bmkp-last-specific-file' to the current file name.
 If the current buffer is not visiting a file, prompt for the file name."
   (interactive)
-  (setq bmkp-last-specific-file     (or (buffer-file-name)
-                                        (let ((icicle-unpropertize-completion-result-flag  t))
-                                          (read-file-name "File: ")))
-        bmkp-bmenu-filter-function  'bmkp-last-specific-file-alist-only
-        bmkp-bmenu-title            (format "File `%s' Bookmarks" bmkp-last-specific-file))
-  (let ((bookmark-alist         (funcall bmkp-bmenu-filter-function))
-        (bmkp-bmenu-state-file  nil))   ; Prevent restoring saved state.
-    (unless bookmark-alist (error "No bookmarks for file `%s'" bmkp-last-specific-file))
-    (setq bmkp-latest-bookmark-alist  bookmark-alist)
-    (pop-to-buffer (get-buffer-create "*Bookmark List*"))
-    (bookmark-bmenu-list 'filteredp))
-  (when (interactive-p)
-    (bmkp-msg-about-sort-order (bmkp-current-sort-order)
-                               (format "Only bookmarks for file `%s' are shown"
-                                       bmkp-last-specific-file)))
-  (raise-frame))
+  (unless bookmark-alist (bookmark-maybe-load-default-file)) ; Just to be sure.
+  (let ((orig-last-spec-file  bmkp-last-specific-file)
+        (orig-filter-fn       bmkp-bmenu-filter-function)
+        (orig-title           bmkp-bmenu-title)
+        (orig-latest-alist    bmkp-latest-bookmark-alist))
+    (condition-case err
+        (progn
+          (setq bmkp-last-specific-file     (or (buffer-file-name)
+                                                (let ((icicle-unpropertize-completion-result-flag  t))
+                                                  (read-file-name "File: ")))
+                bmkp-bmenu-filter-function  'bmkp-last-specific-file-alist-only
+                bmkp-bmenu-title            (format "File `%s' Bookmarks" bmkp-last-specific-file))
+          (let ((bookmark-alist         (funcall bmkp-bmenu-filter-function))
+                (bmkp-bmenu-state-file  nil)) ; Prevent restoring saved state.
+            (unless bookmark-alist (error "No bookmarks for file `%s'" bmkp-last-specific-file))
+            (setq bmkp-latest-bookmark-alist  bookmark-alist)
+            (pop-to-buffer (get-buffer-create "*Bookmark List*"))
+            (bookmark-bmenu-list 'filteredp))
+          (when (interactive-p)
+            (bmkp-msg-about-sort-order (bmkp-current-sort-order)
+                                       (format "Only bookmarks for file `%s' are shown"
+                                               bmkp-last-specific-file)))
+          (raise-frame))
+      (error (progn (setq bmkp-last-specific-file     orig-last-spec-file
+                          bmkp-bmenu-filter-function  orig-filter-fn
+                          bmkp-bmenu-title            orig-title
+                          bmkp-latest-bookmark-alist  orig-latest-alist)
+                    (error "%s" (error-message-string err)))))))
 
 ;;;###autoload (autoload 'bmkp-this-buffer-bmenu-list "bookmark+")
 (defun bmkp-this-buffer-bmenu-list ()
@@ -4807,8 +4854,7 @@ and return only the tags for the currently loaded bookmarks."
 If FILE is a relative file name, it is expanded in `default-directory.
 If FILE does not name a valid, bookmark file then nil is returned.
 Non-nil NAMES-ONLY-P means return a list of only the tag names.
-Otherwise, return an alist of the full tags.
-"
+Otherwise, return an alist of the full tags."
   (setq file  (expand-file-name file))
   (let ((bookmark-save-flag  nil)       ; Just to play safe.
         (bmk-alist           ())
@@ -7506,6 +7552,7 @@ use this as the `handler' property.  New sound bookmarks use
 (when (> emacs-major-version 21)
   (defun bmkp-compilation-target-set (&optional prefix) ; Bound to `C-c C-b' in compilation mode
     "Set a bookmark at the start of the line for this compilation hit.
+The bookmark is set in the indicated file at the indicated line.
 You are prompted for the bookmark name.  But with a prefix arg, you
 are prompted only for a PREFIX string.  In that case, and in Lisp
 code, the bookmark name is PREFIX followed by the (relative) file name
@@ -8140,8 +8187,8 @@ Update the recorded position if `bmkp-save-new-location-flag'.
 Arguments are respectively the bookmark, its file, buffer, buffer
 name, recorded position, and the context strings for the position."
   (if (and file  (file-readable-p file)  (not (buffer-live-p buf)))
-      (with-current-buffer (let ((enable-local-variables  ())) (find-file-noselect file))
-        (setq buf  (buffer-name)))
+;;; $$$$$$$ (with-current-buffer (let ((enable-local-variables  ())) (find-file-noselect file))
+      (with-current-buffer (find-file-noselect file) (setq buf  (buffer-name)))
     ;; No file found.  See if a non-file buffer exists for this.  If not, raise error.
     (unless (or (and buf  (get-buffer buf))
                 (and bufname  (get-buffer bufname)  (not (string= buf bufname))))

@@ -4,17 +4,17 @@
 ;; Description:
 ;; Author: Markus Hoenika
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
-;; Copyright (C) 2004-2014, Drew Adams, all rights reserved.
+;; Copyright (C) 2004-2015, Drew Adams, all rights reserved.
 ;; Created: Thu Jan 15 11:13:38 2004
 ;; Version: 0
 ;; Package-Requires: ((cygwin-mount "0"))
-;; Last-Updated: Thu Dec 26 09:47:27 2013 (-0800)
+;; Last-Updated: Thu Jan  1 11:13:26 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 140
+;;     Update #: 158
 ;; URL: http://www.emacswiki.org/setup-cygwin.el
 ;; Doc URL: http://www.emacswiki.org/NTEmacsWithCygwin
 ;; Keywords: os, unix, cygwin
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x
+;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -31,6 +31,11 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2014/01/30 dadams
+;;     Added: setcyg-dir-p.
+;;     cygwin-root-directory: Look for "C:/cygwin64/" first, then "C:/cygwin/".
+;; 2014/01/14 dadams
+;;     Added: add-to-list definition with APPEND, for Emacs 20.
 ;; 2013/06/02 dadams
 ;;     Set env var CYGWIN to nodosfilewarning, to workaround ediff-buffers problem with names of temp files.
 ;;     Set null-device to /dev/null.
@@ -77,19 +82,43 @@
 
 (require 'cygwin-mount)
 
+(when (< emacs-major-version 21)
+  (defun add-to-list (list-var element &optional append)
+    "Add to the value of LIST-VAR the element ELEMENT if it isn't there yet.
+The test for presence of ELEMENT is done with `equal'.
+If ELEMENT is added, it is added at the beginning of the list,
+unless the optional argument APPEND is non-nil, in which case
+ELEMENT is added at the end.
+
+If you want to use `add-to-list' on a variable that is not defined
+until a certain package is loaded, you should put the call to `add-to-list'
+into a hook function that will be run only after loading the package.
+`eval-after-load' provides one way to do this.  In some cases
+other hooks, such as major mode hooks, can do the job."
+    (if (member element (symbol-value list-var))
+        (symbol-value list-var)
+      (set list-var
+           (if append
+               (append (symbol-value list-var) (list element))
+             (cons element (symbol-value list-var)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgroup setup-cygwin nil
   "Set up Emacs to use Cygwin.")
 
-(defcustom cygwin-root-directory "C:/cygwin/"
+(defun setcyg-dir-p (directory)
+  "Return DIRECTORY if DIRECTORY is a readable directory, nil otherwise."
+  (and (file-directory-p directory)  (file-readable-p directory)  directory))
+
+(defcustom cygwin-root-directory (or (setcyg-dir-p "C:/cygwin64/")  (setcyg-dir-p "C:/cygwin/"))
   "Root directory of Cygwin installation.
 It should have subdirectories `bin' and `usr/info'.
 Subdirectory `bin' should have file `bin/bash.exe'."
   :group 'setup-cygwin :type 'directory)
 
-(unless (file-directory-p cygwin-root-directory)
-  (error "Cannot find Cygwin - customize `cygwin-root-directory'"))
+(unless (setcyg-dir-p cygwin-root-directory)
+  (error "Cannot find Cygwin.  Please customize option `cygwin-root-directory'"))
 
 
 ;;; Make Cygwin paths accessible

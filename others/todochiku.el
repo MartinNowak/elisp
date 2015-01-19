@@ -1,5 +1,6 @@
-;;; todochiku.el - A mode for interfacing with Growl, Snarl, and the like.
+;;; todochiku.el --- A mode for interfacing with Growl, Snarl, and the like.
 (defconst todochiku-version "0.0.8")
+;; Version: 0.0.8
 
 ;; Copyright (c)2008 Jonathan Arkell. (by)(nc)(sa)  Some rights reserved.
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
@@ -320,8 +321,5 @@ This would be better done through a customization probably."
 ;; 	  '(after todochiku-on-message-advice)
 ;; 	  (todochiku-message "Emacs Message" (apply 'format args) "")))
 
-;; We basically provide the same thing as growl.el
-(provide 'growl)
-
 (provide 'todochiku)
-
+;;; todochiku.el ends here

@@ -2,12 +2,12 @@
 
 ;; Copyright (C) 1992, 1994, 2000, 2004 Free Software Foundation, Inc.
 ;;               2005 Lars Hansen
-;;               2010-2014 Drew Adams
+;;               2010-2015 Drew Adams
 
 ;; Author: Sebastian Kremer <sk@thp.uni-koeln.de>
 ;; Modified by: Francis J. Wright <F.J.Wright at qmul.ac.uk>
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
-;; Last-Updated: Thu Dec 26 09:39:39 2013 (-0800)
+;; Last-Updated: Thu Jan  1 11:01:59 2015 (-0800)
 ;;           By: dradams
 ;; URL: http://www.emacswiki.org/ls-lisp.el
 ;; Keywords: unix, dired, microsoft windows
@@ -402,6 +402,9 @@ w32-symlinks.el from http://www.emacswiki.org/emacs/w32-symlinks.el."
 ;; DADAMS: Note: This works in Emacs 20 also, but it has a different signature
 ;; from the vanilla Emacs 20 version of the function, which has as args:
 ;; (file switches &optional wildcard full-directory-p).
+;;
+;; 2014-09-08 DADAMS: Added, per Emacs 23+:
+;; (when (file-name-absolute-p file) (setq file  (expand-file-name file)))
 (defun ls-lisp-insert-directory
   (file switches time-index wildcard full-directory-p)
   "Insert directory listing for FILE, formatted according to SWITCHES.
@@ -478,6 +481,7 @@ regexp*.  FULL-DIRECTORY-P means a full directory listing is expected."
     ;; If not full-directory-p, FILE *must not* end in /, as
     ;; file-attributes will not recognize a symlink to a directory,
     ;; so must make it a relative filename as ls does:
+    (when (file-name-absolute-p file) (setq file  (expand-file-name file)))
     (if (eq (aref file (1- (length file))) ?/)
 	(setq file (substring file 0 -1)))
     (let ((fattr (file-attributes file)))
