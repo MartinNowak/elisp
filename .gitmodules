@@ -112,3 +112,6 @@
 [submodule "emacs-refactor"]
 	path = emacs-refactor
 	url = https://github.com/chrisbarrett/emacs-refactor.git
+[submodule "sigmakee-mode"]
+	path = sigmakee-mode
+	url = https://github.com/aindilis/sigmakee-mode.git

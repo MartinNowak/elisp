@@ -2483,6 +2483,11 @@ functions, and some types.  It also provides indentation that is
   (add-hook 'lua-mode-hook 'hs-minor-mode))
 
 ;;; ===========================================================================
+(when (append-to-load-path (elsub "sigmakee-mode"))
+  (autoload 'sigmakee-mode "sigmakee-mode" "sigmakeee editing mode." t)
+  (add-to-list 'auto-mode-alist '("\\.kif\\'" . sigmakee-mode)))
+
+;;; ===========================================================================
 ;;; Ruby
 (defun ruby-interpolate ()
   "In a double quoted string, interpolate."
