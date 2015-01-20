@@ -115,3 +115,6 @@
 [submodule "sigmakee-mode"]
 	path = sigmakee-mode
 	url = https://github.com/aindilis/sigmakee-mode.git
+[submodule "dash"]
+	path = dash
+	url = https://github.com/magnars/dash.el.git
