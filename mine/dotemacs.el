@@ -584,6 +584,10 @@
 ;;; ===========================================================================
 ;;; Structal (Parenthesises) Editing
 
+;;; dash needed by smartparens
+(when (and (append-to-load-path (elsub "dash"))
+           (require 'dash nil t)))
+
 ;;; smartparens
 (when (and (prepend-to-load-path (elsub "smartparens"))
            (require 'smartparens nil t)
