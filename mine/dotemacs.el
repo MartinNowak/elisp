@@ -2393,7 +2393,8 @@ functions, and some types.  It also provides indentation that is
   )
 (add-hook 'python-mode-hook 'pnw-setup-python-mode t)
 
-(add-hook 'python-mode-hook 'turn-on-eldoc-mode)
+(when (string-equal (system-name) "lappis")
+  (add-hook 'python-mode-hook 'turn-on-eldoc-mode))
 
 (defun python-mode-setup-keys ()
   (when (and (require 'pymacs nil t)
@@ -3416,19 +3417,19 @@ Also returns nil if pid is nil."
 (defun message-pretty-save ()
   "Advanced message() function.
 See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-for-save-buffer/24116386#24116386"
-  (let ((filename buffer-file-name))
-    (message "Wrote %s [%s%s]"
-             filename
-             (format "%d lines"
-                     (count-lines (point-min)
-                                  (point-max)))
-             (if (and (eq major-mode 'd-mode)
-                      (executable-find "dscanner"))
-                 (format ", %d logical lines"
-                         (d-file-logical-lines-count filename))
-               ""))))
-(add-hook 'after-save-hook
-          'message-pretty-save t)
+  (when nil                             ;disabled because it takes to long for large buffers
+    (let ((filename buffer-file-name))
+      (message "Wrote %s [%s%s]"
+               filename
+               (format "%d lines"
+                       (count-lines (point-min)
+                                    (point-max)))
+               (if (and (eq major-mode 'd-mode)
+                        (executable-find "dscanner"))
+                   (format ", %d logical lines"
+                           (d-file-logical-lines-count filename))
+                 "")))))
+(add-hook 'after-save-hook 'message-pretty-save t)
 
 (uniquify-environment-variable "PATH")
 
