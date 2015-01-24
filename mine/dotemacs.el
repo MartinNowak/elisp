@@ -2393,7 +2393,8 @@ functions, and some types.  It also provides indentation that is
   )
 (add-hook 'python-mode-hook 'pnw-setup-python-mode t)
 
-(when (string-equal (system-name) "lappis")
+(when (and nil
+           (string-equal (system-name) "lappis"))
   (add-hook 'python-mode-hook 'turn-on-eldoc-mode))
 
 (defun python-mode-setup-keys ()
