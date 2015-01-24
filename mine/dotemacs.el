@@ -2045,7 +2045,8 @@ See URL `http://dlang.org/'."
   ;;   (setup-flycheck-d-unittest))
   ;; TODO Disabled for now...
   (setq flycheck-checkers
-        (delq 'd-dmd-unittest flycheck-checkers))
+        (delq 'c/c++-cppcheck
+              (delq 'd-dmd-unittest flycheck-checkers)))
 
   (when (require 'ffap nil t)
     (setq ffap-alist
