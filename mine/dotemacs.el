@@ -276,8 +276,8 @@
   (setq highlight-symbol-idle-delay 0.5)
   (global-set-key [(meta s) (meta p)] 'highlight-symbol-prev)
   (global-set-key [(meta s) (meta n)] 'highlight-symbol-next)
-  (global-set-key [(meta p)] 'highlight-symbol-prev)
-  (global-set-key [(meta n)] 'highlight-symbol-next)
+  (global-set-key [(control ?,)] 'highlight-symbol-prev)
+  (global-set-key [(control ?.)] 'highlight-symbol-next)
   ;; TODO Repeatable fails here...
   ;; (repeatable-command-advice highlight-symbol-prev)
   ;; (repeatable-command-advice highlight-symbol-next)
