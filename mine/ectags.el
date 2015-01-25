@@ -1134,7 +1134,7 @@ symbol, without scope (in more conservative languages)."
 (defun ectags-default-global-keybindings ()
   "Set up global keybindings for `ectags'."
   (global-set-key [(meta ?.)] 'find-ectag)
-  (global-set-key [(meta control ?.)] 'find-ectag-regexp)
+  (global-set-key [(control ?:)] 'find-ectag-regexp)
   (global-set-key [(control c) (control shift meta ?§)] 'visit-ectags-table) ;least often
   (global-set-key [(control c) (?§)] 'ectags-query-replace-string)
   (global-set-key [(control c) (meta ?§)] 'ectags-query-replace-regexp)
