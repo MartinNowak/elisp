@@ -4501,14 +4501,6 @@ Use PROMPT when querying the password."
     ;;(remove-hook 'after-change-major-mode-hook 'gud-auto-tool-bar)
     ;;(add-hook 'gud-mode-hook (lambda () (tool-bar-mode 1)))
 
-    (setq gdb-executable (or (executable-find "gdb-7.3")
-                             "gdb")
-          gud-gdb-command-name (concat gdb-executable gdb-common-flags)
-          gud-gud-gdb-command-name gud-gdb-command-name
-          gud-gdba-command-name gud-gdb-command-name)
-
-
-
     ;; The graphical interface described above can currently only be
     ;; used to debug a single program at a time. Here are two files,
     ;; multi-gud.el, multi-gdb-ui.el, that should allow multiple debug
