@@ -1226,7 +1226,7 @@ Deprecated in favor of `c-auto-insert-pragma-once'."
                   (goto-char (point-min)))
                 (insert "#pragma once\n\n"))
               )))))))
-(add-hook 'before-save-hook 'c-auto-insert-pragma-once t)
+;; NOTE Disabled because too annoying by default: (add-hook 'before-save-hook 'c-auto-insert-pragma-once t)
 
 ;; ---------------------------------------------------------------------------
 
