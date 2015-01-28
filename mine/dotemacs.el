@@ -2864,6 +2864,10 @@ functions, and some types.  It also provides indentation that is
 (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
 ;;; Debugging
+(let ((gdb-ibuclaw "~/opt/x86_64-unknown-linux-gnu/gdb-ibuclaw/bin/gdb"))
+  (when (file-executable-p gdb-ibuclaw)
+    (setq-default gud-gdb-command-name  ;use
+                  (concat gdb-ibuclaw " -i=mi")))) ;Ian Buclaw's D patched GDB
 (add-to-list 'auto-mode-alist '("\\.gdb\\'" . gdb-script-mode))
 (setq-default gdb-use-separate-io-buffer t)
 (setq-default gdb-many-windows t)
