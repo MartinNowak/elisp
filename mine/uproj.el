@@ -1725,7 +1725,7 @@ and set the focus back to Emacs frame."
 ;; Compilation Keys
 
 ;; (global-set-key [(control meta f9)] 'remote-compile)
-(global-set-key [(control shift f9)] 'gud-run)
+(global-set-key [(control x) (control a) (control ?\ )] 'gud-run)
 (global-set-key [(control x) (control a) (control c)] 'gud-cont)
 
 (global-set-key [(f6)] 'first-error-safe)
