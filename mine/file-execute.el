@@ -384,7 +384,7 @@ Optional COMPILATION-WINDOW gives the window where FILENAME was compiled."
             (comint-mode))              ;so we can interact with prompts.
 
           ;; minor modes
-          (compilation-shell-minor-mode)
+          (compilation-shell-minor-mode t)
           ;;(compilation-mode)
 
           ;; Store states

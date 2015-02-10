@@ -3551,12 +3551,13 @@ See https://stackoverflow.com/questions/24115904/extending-minibuffer-message-fo
     (defadvice load (before debug-log (file)) (message "### Now loading: %s" file))
     )
 
-  (when nil (eload 'bookmark+)          ;Extensions to `bookmark.el'.
-        (eload 'bookmark+-1)            ;Extensions to `bookmark.el'.
-        (eload 'bookmark+-bmu)          ;Extensions to `bookmark.el'.
-        (eload 'bookmark+-lit)          ;Bookmark highlighting for Bookmark+.
-        (eload 'one-key-bmkp)           ;one-key menus for bookmarks
-        )
+  (when nil
+    (eload 'bookmark+)		 ;Extensions to `bookmark.el'.
+    (eload 'bookmark+-1)            ;Extensions to `bookmark.el'.
+    (eload 'bookmark+-bmu)          ;Extensions to `bookmark.el'.
+    (eload 'bookmark+-lit)          ;Bookmark highlighting for Bookmark+.
+    (eload 'one-key-bmkp)           ;one-key menus for bookmarks
+    )
 
   (when nil
     (when (eload 'find-things-fast (elsub "find-things-fast")) ;Find things fast, leveraging the power of git
