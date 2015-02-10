@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2015, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Thu Feb  5 21:52:58 2015 (-0800)
+;; Last-Updated: Mon Feb  9 06:26:03 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 15824
+;;     Update #: 15852
 ;; URL: http://www.emacswiki.org/bookmark+-chg.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+
@@ -146,6 +146,13 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-1.el'")
 ;;
+;; 2015/02/08 dadams
+;;     Added: bmkp-properties-to-keep, bmkp-tagged-alist-only, bmkp-untagged-alist-only.
+;;     Renamed: bmkp-icicle-* to bmkp-icicles-*.
+;;     bmkp-this-buffer-bmenu-list, bmkp-navlist-bmenu-list: Restore original values in case of error.
+;;     bookmark-set: Do not overwrite properties listed in option bmkp-properties-to-keep.
+;;     bmkp-prompt-for-tags-flag: Updated doc string wrt adding, not replacing.
+;;     bmkp-autofile-filecache: Corrected autoload cookie (typo).
 ;; 2015/02/05 dadams
 ;;     bookmark-insert-annotation: BOOKMARK can be a bookmark or its name.
 ;; 2015/02/03 dadams
@@ -1108,6 +1115,11 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-bmu.el'")
 ;;
+;; 2015/02/08 dadams
+;;     Added: bmkp-bmenu-show-only-untagged-bookmarks.  Added it to bmkp-bmenu-show-types-menu.
+;;     Renamed: bmkp-bmenu-*icicle-* to bmkp-bmenu-icicles-*,
+;;              bmkp-bmenu-show-only-*- to bmkp-bmenu-show-only-*-bookmarks.
+;;     Use new macro bmkp-define-show-only-command for the simple bmkp-bmenu-show-only-* commands.
 ;; 2014/12/18 dadams
 ;;     bmkp-bmenu-show-only-specific-file: Restore vars if error.
 ;; 2014/12/04 dadams
@@ -1737,6 +1749,9 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-lit.el'")
 ;;
+;; 2015/02/08 dadams
+;;     Renamed: bmkp-bmenu-show-only-lighted to bmkp-bmenu-show-only-lighted-bookmarks.
+;;     bmkp-bmenu-show-only-lighted-bookmarks: Use macro bmkp-define-show-only-command to define it.
 ;; 2014/07/06 dadams
 ;;     Added: bmkp-last-auto-light-when-jump, bmkp-last-auto-light-when-set,
 ;;            bmkp-toggle-auto-light-when-jump, bmkp-toggle-auto-light-when-set.
@@ -1800,6 +1815,8 @@
 ;;       that depends on macros needs to be byte-compiled anew after loading the updated macros.
 ;; **************************************************************************************************
 ;;
+;; 2015/02/08 dadams
+;;     Added: bmkp-define-show-only-command.
 ;; 2014/07/11 dadams
 ;;     bmkp-define-sort-command: Use setq, not push, for Emacs 20.
 ;; 2014/07/06 dadams
@@ -1837,6 +1854,8 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+.el'")
 ;;
+;; 2015/02/08 dadams
+;;     Version 2015.02.08
 ;; 2015/01/04 dadams
 ;;     Version 2015.01.04.
 ;; 2013/04/14 dadams
