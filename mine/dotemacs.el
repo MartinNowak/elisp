@@ -9,7 +9,9 @@
 (when (require 'package nil t)
   (when (boundp 'package-archives)
     (add-to-list 'package-archives
-                 '("melpa" . "http://melpa.milkbox.net/packages/") t))
+                 '("melpa" . "http://melpa.milkbox.net/packages/") t)
+    (add-to-list 'package-archives
+                 '("elpy" . "http://jorgenschaefer.github.io/packages/")))
   (package-initialize)
   ;; (package-refresh-contents)
   )
@@ -24,6 +26,7 @@
   (package-install 'flycheck-haskell)
   (package-install 'flycheck-color-mode-line)
   ;; (package-install 'smartparens)
+  ;; (package-install 'elpy)
   )
 
 (defvar pnw-me? (string-equal user-full-name "Per Nordlöw"))
