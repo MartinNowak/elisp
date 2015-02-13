@@ -2029,7 +2029,11 @@ DMD version 2.066."
       "A D syntax checker using the DMD compiler.
 
 See URL `http://dlang.org/'."
-      :command ("dmd" "-vcolumns" "-debug" "-o-"
+      :command ("dmd"
+                "-vcolumns"
+                "-debug"
+                "-o-"
+                "-vgc"                  ;show GC allocations
                 "-wi"     ; Compilation will continue even if there are warnings
                 (eval (concat "-I" (flycheck-d-base-directory)))
                 ;;(option-list "-I" flycheck-dmd-include-path s-prepend)
@@ -2040,7 +2044,11 @@ See URL `http://dlang.org/'."
        (warning line-start (file-name) "(" line "," column "): "
                 (or "Warning"
                     "Deprecation") ": " (message) line-end)
-       (info line-start (file-name) "(" line "," column "):        " (message) line-end))
+       (info line-start (file-name) "(" line "," column "):        " (message) line-end)
+       ;; todo use special font
+       (info line-start
+             (file-name) "(" line "," column "): vgc: " (message)
+             line-end))
       :modes d-mode))
 
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
