@@ -118,3 +118,6 @@
 [submodule "dash"]
 	path = dash
 	url = https://github.com/magnars/dash.el.git
+[submodule "zop-to-char"]
+	path = zop-to-char
+	url = https://github.com/thierryvolpiatto/zop-to-char.git
