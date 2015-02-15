@@ -1895,7 +1895,9 @@ match FILENAME."
    "../public"
    "../include"
    "../../public"
-   "../../include")
+   "../../include"
+   "../../../public"
+   "../../../include")
   "Flycheck include paths common for many languages.")
 
 (defun setup-flycheck-common-stuff ()
