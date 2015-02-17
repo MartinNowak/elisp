@@ -2051,7 +2051,8 @@ See URL `http://dlang.org/'."
        (info line-start
              (file-name) "(" line "," column "): vgc: " (message)
              line-end))
-      :modes d-mode))
+      :modes d-mode
+      :next-checkers ((warnings-only . d-dscanner-style))))
 
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
   ;;            (require 'flycheck-d-unittest nil t))
