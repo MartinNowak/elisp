@@ -2052,7 +2052,8 @@ See URL `http://dlang.org/'."
              (file-name) "(" line "," column "): vgc: " (message)
              line-end))
       :modes d-mode
-      :next-checkers ((warnings-only . d-dscanner-style))))
+      ;; TODO use warnings only for :next-checkers ((warnings-only . d-dscanner-style))
+      ))
 
   ;; (when (and (append-to-load-path (elsub "flycheck-d-unittest"))
   ;;            (require 'flycheck-d-unittest nil t))
