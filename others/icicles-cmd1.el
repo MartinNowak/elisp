@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2015, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:25:04 2006
-;; Last-Updated: Sun Feb  8 09:08:07 2015 (-0800)
+;; Last-Updated: Fri Feb 20 12:39:38 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 27383
+;;     Update #: 27391
 ;; URL: http://www.emacswiki.org/icicles-cmd1.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: extensions, help, abbrev, local, minibuffer,
@@ -3354,7 +3354,7 @@ default for this command:
 (defun icicle-describe-opt-of-type-complete (strg pred completion-mode)
   "Completion function for `icicle-describe-option-of-type'.
 This is used as the value of `minibuffer-completion-table'."
-  (setq strg  icicle-current-input)
+  (unless strg (setq strg  icicle-current-input))
   ;; Parse strg into its option part and its type part: OPS  and TPS.
   ;; Make raw alist of all options and their types: ((a . ta) (b . tb)...).
   (lexical-let* ((num-prefix  (prefix-numeric-value icicle-pref-arg))
@@ -7235,7 +7235,7 @@ Same as `icicle-buffer' except it uses a different window." ; Doc string
   "Completion function for `icicle-buffer'.
 Used as the value of `icicle-buffer-complete-fn' and hence as
 `minibuffer-completion-table'."
-  (setq strg  icicle-current-input)
+  (unless strg (setq strg  icicle-current-input))
   (lexical-let* ((name-pat     (let ((icicle-list-use-nth-parts  '(1)))
                                  (icicle-transform-multi-completion strg)))
                  ;; FIXME.  We want to prepend "^" here for any Icicles prefix completion method that needs it.
@@ -7249,7 +7249,7 @@ Used as the value of `icicle-buffer-complete-fn' and hence as
                                  (concat "^" (regexp-quote name-pat))))
                  (content-pat  (let ((icicle-list-use-nth-parts  '(2)))
                                  (icicle-transform-multi-completion strg)))
-                 (bufs         (mapcar (lambda (buf) (buffer-name buf)) icicle-bufflist))
+                 (bufs         (delq nil (mapcar (lambda (buf) (buffer-name buf)) icicle-bufflist)))
                  (bufs         (if icicle-buffer-ignore-space-prefix-flag
                                    (icicle-remove-if (lambda (buf) (icicle-string-match-p "^ " buf)) bufs)
                                  bufs))
@@ -8133,7 +8133,7 @@ With a prefix argument, use absolute file names
  With a negative prefix arg, you can choose also by date:
   Completion candidates include the last modification date.
 
-all of these commands let you search file content, as well as file
+All of these commands let you search file content, as well as file
 names (unless you use an Emacs version prior to 23).  See
 `icicle-find-file' and `icicle-find-file-absolute' for more
 information.

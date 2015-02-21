@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 1996-2015, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:25:04 2006
-;; Last-Updated: Wed Jan 21 09:01:17 2015 (-0800)
+;; Last-Updated: Fri Feb 20 12:30:04 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 19644
+;;     Update #: 19651
 ;; URL: http://www.emacswiki.org/icicles-mcmd.el
 ;; Doc URL: http://www.emacswiki.org/Icicles
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
@@ -5867,7 +5867,8 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
     (if (null icicle-completion-candidates)
         (message "Nothing to delete - use `S-TAB', `TAB', or a cycle key")
       (if allp
-          (if (not (let ((icicle-completion-candidates  icicle-completion-candidates))
+          (if (not (let ((icicle-completion-candidates  icicle-completion-candidates)
+                         (enable-recursive-minibuffers  t))
                      (yes-or-no-p "Are you SURE you want to DELETE ALL of the matching objects? ")))
               (message "OK, nothing deleted")
             (dolist (cand icicle-completion-candidates) (icicle-delete-candidate-object-1 cand t))
@@ -7231,29 +7232,33 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                                            initial-cands)
                                          icicle-completion-candidates)))
   (icicle-maybe-sort-and-strip-candidates)
-  (message "Displaying completion candidates...")
-  (with-output-to-temp-buffer "*Completions*" (display-completion-list icicle-completion-candidates))
-  (minibuffer-message "  [Set of candidates COMPLEMENTED]")
-  ;; This part of the code is similar to part of `icicle-candidate-set-retrieve-1'.
-  (cond ((and (consp icicle-completion-candidates)  (null (cdr icicle-completion-candidates)))
-         ;; $$$$$$ Should this now use `icicle-current-input'
-         ;;        instead of (car icicle-completion-candidates), for PCM?
-         (icicle-remove-Completions-window)
-         (icicle-insert-completion (car icicle-completion-candidates)) ; Insert sole cand.
-         (minibuffer-message "  [Sole candidate restored]")
-         (save-selected-window (select-window (minibuffer-window))
-                               (icicle-highlight-complete-input))
-         (setq icicle-mode-line-help  (car icicle-completion-candidates)))
-        ((consp icicle-completion-candidates)
-         (deactivate-mark)
-         (icicle-display-candidates-in-Completions)
-         (let ((icicle-minibuffer-setup-hook ; Pre-complete
-                (cons (if (eq icicle-last-completion-command
-                              'icicle-apropos-complete-no-display)
-                          'icicle-apropos-complete-no-display
-                        'icicle-apropos-complete)
-                      icicle-minibuffer-setup-hook)))
-           (icicle-narrow-candidates)))))
+  (cond ((null icicle-completion-candidates)
+         (save-selected-window (icicle-remove-Completions-window))
+         (minibuffer-message "  [No candidates after complementing]"))
+        (t
+         (message "Displaying completion candidates...")
+         (with-output-to-temp-buffer "*Completions*" (display-completion-list icicle-completion-candidates))
+         (minibuffer-message "  [Set of candidates COMPLEMENTED]")
+         ;; This part of the code is similar to part of `icicle-candidate-set-retrieve-1'.
+         (cond ((and (consp icicle-completion-candidates)  (null (cdr icicle-completion-candidates)))
+                ;; $$$$$$ Should this now use `icicle-current-input'
+                ;;        instead of (car icicle-completion-candidates), for PCM?
+                (icicle-remove-Completions-window)
+                (icicle-insert-completion (car icicle-completion-candidates)) ; Insert sole cand.
+                (minibuffer-message "  [Sole candidate restored]")
+                (save-selected-window (select-window (minibuffer-window))
+                                      (icicle-highlight-complete-input))
+                (setq icicle-mode-line-help  (car icicle-completion-candidates)))
+               ((consp icicle-completion-candidates)
+                (deactivate-mark)
+                (icicle-display-candidates-in-Completions)
+                (let ((icicle-minibuffer-setup-hook ; Pre-complete
+                       (cons (if (eq icicle-last-completion-command
+                                     'icicle-apropos-complete-no-display)
+                                 'icicle-apropos-complete-no-display
+                               'icicle-apropos-complete)
+                             icicle-minibuffer-setup-hook)))
+                  (icicle-narrow-candidates)))))))
 
 (defun icicle-candidate-set-truncate (n) ; Bound to `M-$' in minibuffer.
   "Trim the set of current completion candidates at the end.
