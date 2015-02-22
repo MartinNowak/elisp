@@ -2453,9 +2453,15 @@ functions, and some types.  It also provides indentation that is
 
 ;;; ===========================================================================
 ;;; SCons
-(autoload 'scons-mode "scons-mode" "Major mode for SCons SConstruct and SConscript file." t nil)
-(add-to-list 'auto-mode-alist `(,(rx (| "SConstruct" "SConscript")) . scons-mode))
-(add-to-list 'auto-mode-alist '("\\.scons\\'" . scons-mode))
+
+(add-to-list 'auto-mode-alist `(,(rx (| "SConstruct" "SConscript")) . python-mode))
+(add-to-list 'auto-mode-alist '("\\.scons\\'" . python-mode))
+
+;; TODO enable when I get font-locking to work
+(when nil
+  (autoload 'scons-mode "scons-mode" "Major mode for SCons SConstruct and SConscript file." t nil)
+  (add-to-list 'auto-mode-alist `(,(rx (| "SConstruct" "SConscript")) . scons-mode))
+  (add-to-list 'auto-mode-alist '("\\.scons\\'" . scons-mode)))
 (when nil       ;TODO Enable in scons-mode
   ;; SCons builds into a 'build' subdir, but we want to find the
   ;; errors in the regular source dir.  So we remove
