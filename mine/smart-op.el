@@ -152,7 +152,17 @@ When ONLY-AFTER, insert space at back only."
              (cond ((looking-forward "=")
                     (insert "="))
                    (t
-                    (when (looking-back "[^[:space:]]!")
+                    (when (looking-back (rx (: (not space)
+                                               (| "+" "-" ;additive
+                                                  "~"     ;concatenation
+                                                  "*" "/" "^^"  ;multiplicative
+                                                  "|" "&" "^"  ;bitwise
+                                                  "||" "&&" ;logical
+                                                  "!" "!<>" "<>" ;equality
+                                                  "!<" "!>"
+                                                  "<<" ">>"  ;shift
+                                                  "<<<" ">>>" ;rotation
+                                                  ))))
                       (save-excursion
                         (backward-char 1)
                         (insert " ")))
@@ -209,6 +219,12 @@ When ONLY-AFTER, insert space at back only."
       (cond ((smart-op-comment-line-p)
              (smart-op-insert "." t)
              (insert " "))
+            ((and (eq major-mode 'd-mode)
+                  (looking-back (rx (: (not space) (| ".")))))  ;D range expression
+             (save-excursion
+               (backward-char 1)
+               (insert " "))
+             (insert ". "))
             ((or (looking-back "[[:digit:]]" (1- (point)))
                  (and (memq major-mode '(c-mode
                                          c++-mode
