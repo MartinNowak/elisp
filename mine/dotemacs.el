@@ -2878,11 +2878,16 @@ functions, and some types.  It also provides indentation that is
                            data-debug-eval-expression
                            icicle-pp-eval-expression))
       (when (fboundp 'paredit-mode)
-        (paredit-mode 1)
-        (local-set-key [return] 'minibuffer-complete-and-exit) ;override `paredit-newline'
-        (local-set-key "<return>" 'minibuffer-complete-and-exit) ;override `paredit-newline'
+        ;; NOTE disabled because too annoying to press M-return to exit:
+        (paredit-mode -1)
+        (local-set-key [return] 'exit-minibuffer)
+        (local-set-key "<return>" 'exit-minibuffer)
+        ;; NOTE this doesn't work when paredit-mode is disabled:
+        ;; (local-set-key [return] 'minibuffer-complete-and-exit) ;override `paredit-newline'
+        ;; (local-set-key "<return>" 'minibuffer-complete-and-exit) ;override `paredit-newline'
         )))
 (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
+;;(remove-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
 ;;; Debugging
 (let ((gdb-ibuclaw "~/opt/x86_64-unknown-linux-gnu/gdb-ibuclaw/bin/gdb"))
