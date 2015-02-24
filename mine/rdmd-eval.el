@@ -19,7 +19,10 @@
                                nil
                                'd-eval-expression-history
                                def))))
-  (message (shell-command-to-string (concat "rdmd --eval=\"" arg "\""))))
+
+  (message (replace-regexp-in-string    ;strip ending whitespace
+            "[[:space:]\n]*\\'" ""
+            (shell-command-to-string (concat "rdmd --eval=\"" arg "\"")))))
 
 (defun d-eval-expression-hook ()
   (let ((km d-mode-map))
