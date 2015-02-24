@@ -120,7 +120,6 @@ If TRIM is non-nil mark end is not extended to a complete line."
                       )
               "" (matlab-shell-collect-command-output arg))))
   (defvar matlab-eval-expression-history nil "MATLAB Expression Evaluation History.")
-
   (when (require 'desktop nil t)
     (add-to-list 'desktop-globals-to-save 'matlab-eval-expression-history t))
   (define-key matlab-mode-map [(meta ?:)] 'matlab-eval-expression)

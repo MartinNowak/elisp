@@ -1767,13 +1767,10 @@ calls."
 (defun ffap-d-mode (name)
   (ffap-locate-file name t ffap-d-path))
 
-;;; ===========================================================================
-;;; DMD C++ Source
-(add-to-list 'auto-mode-alist
-             '("dmd/src/.*\\.[ch]\\'" . c++-mode))
+;;; DMD C++ source file extensions
+(add-to-list 'auto-mode-alist '("dmd/src/.*\\.[ch]\\'" . c++-mode))
 
-;;; ===========================================================================
-
+(require 'rdmd-eval)
 (require 'dmd-compilation-error)
 (require 'd-backtrace)
 
