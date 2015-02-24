@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2015, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 13:43:55 2010 (-0700)
-;; Last-Updated: Sun Feb 15 10:53:22 2015 (-0800)
+;; Last-Updated: Sun Feb 22 15:14:50 2015 (-0800)
 ;;           By: dradams
-;;     Update #: 7627
+;;     Update #: 7683
 ;; URL: http://www.emacswiki.org/bookmark+-1.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -276,8 +276,9 @@
 ;;    `bmkp-specific-buffers-jump',
 ;;    `bmkp-specific-buffers-jump-other-window',
 ;;    `bmkp-specific-files-jump',
-;;    `bmkp-specific-files-jump-other-window',
-;;    `bmkp-switch-bookmark-file', `bmkp-switch-bookmark-file-create',
+;;    `bmkp-specific-files-jump-other-window', `bmkp-store-org-link'
+;;    (Emacs 24.4+), `bmkp-switch-bookmark-file',
+;;    `bmkp-switch-bookmark-file-create',
 ;;    `bmkp-switch-to-last-bookmark-file', `bmkp-tag-a-file',
 ;;    `bmkp-temporary-bookmarking-mode', `bmkp-temporary-jump',
 ;;    `bmkp-temporary-jump-other-window',
@@ -480,6 +481,7 @@
 ;;    `bmkp-remove-if', `bmkp-remove-if-not', `bmkp-remove-omitted',
 ;;    `bmkp-rename-for-marked-and-omitted-lists',
 ;;    `bmkp-repeat-command', `bmkp-replace-existing-bookmark',
+;;    `bmkp-reset-bmkp-store-org-link-checking-p' (Emacs 24.4+),
 ;;    `bmkp-retrieve-icicle-search-hits-1',
 ;;    `bmkp-root-or-sudo-logged-p', `bmkp-same-creation-time-p',
 ;;    `bmkp-same-file-p', `bmkp-save-new-region-location',
@@ -491,7 +493,7 @@
 ;;    `bmkp-some-unmarked-p', `bmkp-sorting-description',
 ;;    `bmkp-sort-omit', `bmkp-sound-jump',
 ;;    `bmkp-specific-buffers-alist-only',
-;;    `bmkp-specific-files-alist-only',
+;;    `bmkp-specific-files-alist-only', `bmkp-store-org-link-1',
 ;;    `bmkp-string-less-case-fold-p', `bmkp-tagged-alist-only',
 ;;    `bmkp-tagged-bookmark-p', `bmkp-tagged-cp', `bmkp-tag-name',
 ;;    `bmkp-tags-in-bookmark-file', `bmkp-tags-list',
@@ -537,11 +539,11 @@
 ;;    `bmkp-return-buffer', `bmkp-reverse-multi-sort-p',
 ;;    `bmkp-reverse-sort-p', `bmkp-snippet-history',
 ;;    `bmkp-sorted-alist', `bmkp-specific-buffers-history',
-;;    `bmkp-specific-files-history', `bmkp-tag-history',
-;;    `bmkp-tags-alist', `bmkp-temporary-history', `bmkp-types-alist',
-;;    `bmkp-url-history', `bmkp-use-w32-browser-p',
-;;    `bmkp-variable-list-history', `bmkp-version-number',
-;;    `bmkp-w3m-history'.
+;;    `bmkp-specific-files-history', `bmkp-store-org-link-checking-p',
+;;    `bmkp-tag-history', `bmkp-tags-alist', `bmkp-temporary-history',
+;;    `bmkp-types-alist', `bmkp-url-history',
+;;    `bmkp-use-w32-browser-p', `bmkp-variable-list-history',
+;;    `bmkp-version-number', `bmkp-w3m-history'.
 ;;
 ;;
 ;;  ***** NOTE: The following commands defined in `bookmark.el'
@@ -673,15 +675,12 @@
 ;; bmkp-with-output-to-plain-temp-buffer
 
 (eval-when-compile (require 'bookmark+-bmu))
-;; bmkp-bmenu-before-hide-marked-alist,
-;; bmkp-bmenu-before-hide-unmarked-alist, bmkp-bmenu-commands-file, bmkp-replace-regexp-in-string,
-;; bmkp-bmenu-filter-function, bmkp-bmenu-filter-pattern,
+;; bmkp-bmenu-before-hide-marked-alist, bmkp-bmenu-before-hide-unmarked-alist, bmkp-bmenu-commands-file,
+;; bmkp-replace-regexp-in-string, bmkp-bmenu-filter-function, bmkp-bmenu-filter-pattern,
 ;; bmkp-bmenu-first-time-p, bmkp-flagged-bookmarks, bmkp-bmenu-goto-bookmark-named,
-;; bmkp-bmenu-marked-bookmarks, bmkp-bmenu-omitted-bookmarks,
-;; bmkp-bmenu-refresh-menu-list, bmkp-bmenu-show-all,
-;; bmkp-bmenu-state-file, bmkp-bmenu-title, bmkp-looking-at-p,
-;; bmkp-maybe-unpropertize-bookmark-names, bmkp-sort-orders-alist,
-;; bookmark-bmenu-toggle-filenames
+;; bmkp-bmenu-marked-bookmarks, bmkp-bmenu-omitted-bookmarks, bmkp-bmenu-refresh-menu-list,
+;; bmkp-bmenu-show-all, bmkp-bmenu-state-file, bmkp-bmenu-title, bmkp-looking-at-p,
+;; bmkp-maybe-unpropertize-bookmark-names, bmkp-sort-orders-alist, bookmark-bmenu-toggle-filenames
 
 
 ;; (eval-when-compile (require 'bookmark+-lit nil t))
@@ -733,6 +732,7 @@
 (defvar Info-current-node)              ; In `info.el'
 (defvar Info-current-file)              ; In `info.el'
 (defvar Man-arguments)                  ; In `man.el'
+(defvar org-store-link-functions)       ; In `org.el'
 (defvar read-file-name-completion-ignore-case) ; Emacs 23+
 (defvar last-repeatable-command)        ; In `repeat.el'
 (defvar w3m-current-title)              ; In `w3m.el'
@@ -2039,10 +2039,7 @@ Lines beginning with `#' are ignored."
   (unless (derived-mode-p 'bookmark-edit-annotation-mode)
     (error "Not in mode derived from `bookmark-edit-annotation-mode'"))
   (goto-char (point-min))
-  (while (< (point) (point-max))
-    (if (bmkp-looking-at-p "^#")
-        (bookmark-kill-line t)
-      (forward-line 1)))
+  (while (< (point) (point-max)) (if (bmkp-looking-at-p "^#") (bookmark-kill-line t) (forward-line 1)))
   (let ((annotation      (buffer-substring-no-properties (point-min) (point-max)))
         (bookmark        bookmark-annotation-name)
         (annotation-buf  (current-buffer)))
@@ -2496,9 +2493,9 @@ If it is a record then it need not belong to `bookmark-alist'."
          (cell  (assq prop (bmkp-bookmark-data-from-record bmk))))
     (if cell
         (setcdr cell val)
-      (if (consp (car (cadr bmk)))      ; Old format: ("name" ((filename . "f")...))
-          (setcdr bmk (list (cons (cons prop val) (cadr bmk))))
-        (setcdr bmk (cons (cons prop val) (cdr bmk))))) ; New: ("name" (filename . "f")...)
+      (setcdr bmk (if (consp (car (cadr bmk)))
+                      (list (cons (cons prop val) (cadr bmk))) ; Old format: ("name" ((filename . "f")...))
+                    (cons (cons prop val) (cdr bmk))))) ; New format:        ("name" (filename . "f")...)
     ;; This is the same as `add-to-list' with `EQ' (not available for Emacs 20-21).
     (unless (memq bmk bmkp-modified-bookmarks)
       (setq bmkp-modified-bookmarks  (cons bmk bmkp-modified-bookmarks)))))
@@ -4133,8 +4130,8 @@ Although this function modifies BOOKMARK, it does not increment
 does not count toward needing to save or showing BOOKMARK as modified."
   (let ((vis                      (bookmark-prop-get bookmark 'visits))
         (bmkp-modified-bookmarks  bmkp-modified-bookmarks))
-    (if vis (bookmark-prop-set bookmark 'visits (1+ vis)) (bookmark-prop-set bookmark 'visits 0))
-    (bookmark-prop-set bookmark 'time (current-time))
+    (bookmark-prop-set bookmark 'visits (if vis (1+ vis) 0))
+    (bookmark-prop-set bookmark 'time   (current-time))
     (unless batchp (bookmark-bmenu-surreptitiously-rebuild-list 'NO-MSG-P))
     (let ((bookmark-save-flag  nil))  (bmkp-maybe-save-bookmarks 'SAME-COUNT-P))))
 
@@ -8266,11 +8263,9 @@ Otherwise, return non-nil if region was relocated."
   (and bmkp-save-new-location-flag
        (y-or-n-p "Region relocated.  Do you want to save new region limits? ")
        (progn
-         (bookmark-prop-set bookmark 'front-context-string (bmkp-position-post-context-region
-                                                            beg end))
+         (bookmark-prop-set bookmark 'front-context-string (bmkp-position-post-context-region beg end))
          (bookmark-prop-set bookmark 'rear-context-string (bmkp-position-pre-context-region beg))
-         (bookmark-prop-set bookmark 'front-context-region-string (bmkp-end-position-pre-context
-                                                                   beg end))
+         (bookmark-prop-set bookmark 'front-context-region-string (bmkp-end-position-pre-context beg end))
          (bookmark-prop-set bookmark 'rear-context-region-string (bmkp-end-position-post-context end))
          (bookmark-prop-set bookmark 'position beg)
          (bookmark-prop-set bookmark 'end-position end)
@@ -11828,6 +11823,45 @@ Non-interactively:
                   (when msg-p (message "Deleted bookmark `%s'" (car bmks-to-delete))))
                  (t
                   (when msg-p (message "No bookmarks at point to delete"))))))))
+
+;; Because of Emacs bug #19915, we need to use `advice-add' for `org-store-link', so this feature
+;; is available only for Emacs 24.4+.
+(when (fboundp 'advice-add)
+             
+  (defvar bmkp-store-org-link-checking-p nil
+    "Whether `bmkp-(bmenu-)store-org-link(-1)' call is checking applicability.")
+
+  (defun bmkp-store-org-link (arg)
+    "Store a link to a bookmark for insertion in an Org-mode buffer.
+You are prompted for the bookmark name.
+
+If you use a numeric prefix arg then the bookmark will be jumped to in
+the same window.  Without a numeric prefix arg, the link will use
+another window.  The link type is `bookmark' or `bookmark-other-win',
+respectively."
+    (interactive "P")
+    (require 'org)
+    (let ((org-store-link-functions  (append org-store-link-functions '(bmkp-store-org-link-1))))
+      (call-interactively #'org-store-link)))
+
+  (defun bmkp-store-org-link-1 ()
+    "Store a link to a bookmark for insertion in an Org-mode buffer.
+See command `bmkp-store-org-link'."
+    (setq bmkp-store-org-link-checking-p  (not bmkp-store-org-link-checking-p))
+    (require 'org)
+    (or bmkp-store-org-link-checking-p  ; Non-nil return is all that is needed for checking.
+        (let* ((other-win  (and current-prefix-arg  (not (consp current-prefix-arg))))
+               (bmk        (bmkp-completing-read-lax
+                            (format "Store %sOrg link for bookmark" (if other-win "other-window " ""))))
+               (link       (format "bookmark%s:%s" (if other-win "-other-win" "") bmk))
+               (bmk-desc   (format "Bookmark: %s" bmk)))
+          (org-store-link-props :type "bookmark" :link link :description bmk-desc))))
+
+  (advice-add 'org-store-link :before #'bmkp-reset-bmkp-store-org-link-checking-p)
+  (defun bmkp-reset-bmkp-store-org-link-checking-p (&rest _IGNORE)
+    "Reset `bmkp-store-org-link-checking-p' to nil."
+    (setq bmkp-store-org-link-checking-p  nil)))
+
 
 ;; Same as `icicle-thing-at-point'.
 (defun bmkp-thing-at-point (thing &optional syntax-table)
