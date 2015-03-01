@@ -308,7 +308,7 @@ When ONLY-AFTER, insert space at back only."
              (insert "+")
              (indent-according-to-mode))
             ((and (memq major-mode smart-op-modes)
-                  (looking-back "+ " (- (point) 2)))
+                  (looking-back "[a-zA-Z_]+ " (- (point) 2)))
              (delete-char -2)
              (delete-horizontal-space)
              (insert "++")
