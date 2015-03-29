@@ -6,9 +6,9 @@
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
 ;; Copyright (C) 2000-2015, Drew Adams, all rights reserved.
 ;; Created: Fri Sep 15 07:58:41 2000
-;; Last-Updated: Sun Feb 22 15:36:27 2015 (-0800)
+;; Last-Updated: Mon Mar 23 11:13:40 2015 (-0700)
 ;;           By: dradams
-;;     Update #: 15897
+;;     Update #: 15911
 ;; URL: http://www.emacswiki.org/bookmark+-chg.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+
@@ -146,7 +146,11 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-1.el'")
 ;;
-;; 2015/01/22 dadams
+;; 2015/03/23 dadams
+;;     bookmark-show-all-annotations: When in Bookmark List buffer, respect the sort order.
+;; 2015/02/24 dadams
+;;     bmkp-get-autofile-bookmark: Corrected 2015-02-15 fix - ensure BDIR is non-nil too, before test.
+;; 2015/02/22 dadams
 ;;     Moved here from bookmark+-bmu.el:
 ;;       bmkp-reset-bmkp-store-org-link-checking-p, bmkp-store-org-link-checking-p.
 ;;       Advice of org-store-link (not needed for bmkp-bmenu-store-org-link).
@@ -155,7 +159,7 @@
 ;;                        Update bmkp-full-record property on bookmark name, unless DONT-UPDATE-NAME.
 ;;     bmkp-record-visit, bmkp-save-new-region-location, bmkp-goto-position:
 ;;       Use arg DONT-UPDATE-NAME in sequence of calls to bookmark-prop-set.
-;; 2015/01/21 dadams
+;; 2015/02/21 dadams
 ;;     Added: bmkp-store-org-link, bmkp-store-org-link-1.
 ;; 2015/02/15 dadams
 ;;     bmkp-get-autofile-bookmark: Corrected test for same file to use absolute file names.
@@ -1131,6 +1135,12 @@
  
 ;;;(@* "CHANGE LOG FOR `bookmark+-bmu.el'")
 ;;
+;; 2015/03/20 dadams
+;;     Added: bmkp-bmenu-show-this-annotation+move-down, bmkp-bmenu-show-this-annotation+move-up,
+;;            bmkp-bmenu-kill-annotation, bmkp-remap.
+;;     Bind bmkp-bmenu-show-this-annotation+move-(down|up) to M-down, M-up.
+;;     bmkp-bmenu-describe-this+move-(down|up): Move first, then describe, not reverse.
+;;     bmkp-bmenu-describe-this-bookmark: Wrap with save-selected-frame.
 ;; 2015/02/22 dadams
 ;;     Moved to bookmark+-1.el from here:
 ;;       bmkp-reset-bmkp-store-org-link-checking-p, bmkp-store-org-link-checking-p.
