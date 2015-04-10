@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2015, Drew Adams, all rights reserved.
 ;; Copyright (C) 2009, Thierry Volpiatto, all rights reserved.
 ;; Created: Mon Jul 12 09:05:21 2010 (-0700)
-;; Last-Updated: Fri Mar 20 20:06:49 2015 (-0700)
+;; Last-Updated: Fri Apr  3 09:50:54 2015 (-0700)
 ;;           By: dradams
-;;     Update #: 3675
+;;     Update #: 3680
 ;; URL: http://www.emacswiki.org/bookmark+-bmu.el
 ;; Doc URL: http://www.emacswiki.org/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, w3m, gnus
@@ -371,12 +371,14 @@
          (load-library "bookmark+-mac") ; Use load-library to ensure latest .elc.
        (error nil))
      (require 'bookmark+-mac)))         ; Require, so can load separately if not on `load-path'.
-;; bmkp-define-sort-command, bmkp-with-help-window, bmkp-with-output-to-plain-temp-buffer
+;; bmkp-define-show-only-command, bmkp-define-sort-command, bmkp-menu-bar-make-toggle,
+;; bmkp-with-help-window, bmkp-with-output-to-plain-temp-buffer
 
 (put 'bmkp-with-output-to-plain-temp-buffer 'common-lisp-indent-function '(4 &body))
 
 
-;;; These functions are used in macro `bmkp-define-sort-command'.
+;;; These functions are used in macro `bmkp-define-sort-command'.  The first is used in the macro code
+;;; that produces the function code, so its definition is also in `bookmark+-mac.el'.
 ;;;
 (defun bmkp-replace-regexp-in-string (regexp rep string &optional fixedcase literal subexp start)
   "Replace all matches for REGEXP with REP in STRING and return STRING."
