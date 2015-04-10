@@ -1837,6 +1837,7 @@ match FILENAME."
     (define-key map "p" 'flycheck-previous-error-repeatable)
     map))
 (add-hook 'flycheck-mode-hook 'flycheck-set-repeatable-navigation t)
+(set-default 'flycheck-d-dmd-executable "/usr/bin/dmd")
 
 ;; Highlight navigation hits
 (defadvice flycheck-error-list-previous-error (after ctx-flash-flycheck-previous-error activate)
