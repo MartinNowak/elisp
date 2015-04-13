@@ -3,6 +3,7 @@
 ;; Author: Per Nordlöw (per.nordlow@gmail.com)
 ;; Keywords: languages, D
 ;; See also: http://dlang.org/ddoc.html
+;; Version: 0.1.0
 
 ;;; Code:
 
@@ -131,8 +132,8 @@
   (run-hooks 'ddoc-mode-hook)
   )
 
-(add-to-list 'auto-mode-alist '("\\.dd\\'" . ddoc-mode))
+;;;###autoload(add-to-list 'auto-mode-alist '("\\.dd\\'" . ddoc-mode))
 
 (provide 'ddoc-mode)
 
-;;; ddoc.el ends here
+;;; ddoc-mode.el ends here
